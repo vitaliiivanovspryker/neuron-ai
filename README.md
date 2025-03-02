@@ -1,3 +1,6 @@
+[![Latest Stable Version](https://poser.pugx.org/inspector-apm/inspector-php/v/stable)](https://packagist.org/packages/inspector-apm/inspector-php)
+[![License](https://poser.pugx.org/inspector-apm/inspector-php/license)](//packagist.org/packages/inspector-apm/inspector-php)
+
 # Neuron AI
 
 PHP AI Framework with built-in observability - powered by Inspector.dev
