@@ -13,8 +13,10 @@ class ElasticsearchVectorStore implements VectorStoreInterface
     /**
      * @throws \Exception
      */
-    public function __construct(protected Client $client, protected string $indexName)
-    {
+    public function __construct(
+        protected Client $client,
+        protected string $indexName
+    ) {
         /** @var Elasticsearch $existResponse */
         $existResponse = $client->indices()->exists(['index' => $indexName]);
         $existStatusCode = $existResponse->getStatusCode();
@@ -142,14 +144,13 @@ class ElasticsearchVectorStore implements VectorStoreInterface
         if (\array_key_exists('filter', $additionalArguments)) {
             $searchParams['body']['knn']['filter'] = $additionalArguments['filter'];
         }
-        /** @var array{hits: array{hits: array{array{_source: array{embedding: float[], content: string, formattedContent: string, sourceType: string, sourceName: string, hash: string, chunkNumber: int}}}}} $rawResponse */
+
         $rawResponse = $this->client->search($searchParams);
 
         $documents = [];
         foreach ($rawResponse['hits']['hits'] as $hit) {
-            $document = new Document();
+            $document = new Document($hit['_source']['content']);
             $document->embedding = $hit['_source']['embedding'];
-            $document->content = $hit['_source']['content'];
             $document->sourceType = $hit['_source']['sourceType'];
             $document->sourceName = $hit['_source']['sourceName'];
             $document->hash = $hit['_source']['hash'];
@@ -166,7 +167,6 @@ class ElasticsearchVectorStore implements VectorStoreInterface
             return;
         }
 
-        /** @var array{string: array{mappings: array{embedding: array{mapping: array{embedding: array{dims: int}}}}}} $response */
         $response = $this->client->indices()->getFieldMapping([
             'index' => $this->indexName,
             'fields' => 'embedding',

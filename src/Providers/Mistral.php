@@ -2,6 +2,7 @@
 
 namespace NeuronAI\Providers;
 
+use GuzzleHttp\RequestOptions;
 use NeuronAI\Messages\AssistantMessage;
 use NeuronAI\Messages\Message;
 use GuzzleHttp\Client;
@@ -55,7 +56,7 @@ class Mistral implements AIProviderInterface
         }
 
         $result = $this->client->post('/chat/completions', [
-            'json' => [
+            RequestOptions::JSON => [
                 'model' => $this->model,
                 'messages' => $prompt,
             ]

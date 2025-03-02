@@ -10,7 +10,7 @@ class VoyageEmbeddingProvider implements EmbeddingsProviderInterface
     protected Client $client;
 
     public function __construct(
-        protected string $key,
+        string $key,
         protected string $model
     ) {
         $this->client = new Client([
@@ -18,7 +18,7 @@ class VoyageEmbeddingProvider implements EmbeddingsProviderInterface
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer ' . $this->key,
+                'Authorization' => 'Bearer ' . $key,
             ],
         ]);
     }

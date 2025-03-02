@@ -2,32 +2,74 @@
 
 namespace NeuronAI\RAG\VectorStore;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 use NeuronAI\RAG\Document;
-use \Probots\Pinecone\Client;
 
 class PineconeVectorStore implements VectorStoreInterface
 {
-    public function __construct(
-        protected Client $client,
-        protected string $indexName
-    ) {
-        // todo: setup the vector index
+    protected Client $client;
 
-        // https://github.com/probots-io/pinecone-php
+    public function __construct(
+        string $key,
+        protected string $indexName,
+        array $spec,
+        string $version = '2025-01'
+    ) {
+        $this->client = new Client([
+            'base_uri' => 'https://api.pinecone.io',
+            'headers' => [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+                'Api-Key' => $key,
+                'X-Pinecone-API-Version' => $version,
+            ]
+        ]);
+
+        $response = $this->client->get("indexes/{$this->indexName}");
+
+        if ($response->getStatusCode() === 200) {
+            return;
+        }
+
+        // Create the index
+        $this->client->post('indexes', [
+            RequestOptions::JSON => [
+                'name' => $indexName,
+                'spec' => $spec,
+            ]
+        ]);
     }
 
     public function addDocument(Document $document): void
     {
-        // TODO: Implement addDocument() method.
+        $this->addDocuments([$document]);
     }
 
     public function addDocuments(array $documents): void
     {
-        // TODO: Implement addDocuments() method.
+        $this->client->post("indexes/{$this->indexName}/vectors/upsert", [
+            RequestOptions::JSON => array_map(function (Document $document) {
+                return [
+                    'id' => $document->id??uniqid(),
+                    'values' => $document->embedding,
+                ];
+            }, $documents)
+        ]);
     }
 
     public function similaritySearch(array $embedding, int $k = 4): iterable
     {
-        // TODO: Implement similaritySearch() method.
+        $result = $this->client->get("indexes/{$this->indexName}/query", [
+            RequestOptions::QUERY => [
+                'namespace' => '',
+                'vector' => $embedding,
+                'top_k' => $k,
+            ]
+        ])->getBody()->getContents();
+
+        $result = json_decode($result, true);
+
+        return $result['matches'];
     }
 }
