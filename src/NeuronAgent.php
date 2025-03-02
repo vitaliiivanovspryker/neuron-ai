@@ -4,11 +4,11 @@ namespace NeuronAI;
 
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\Embeddings\EmbeddingsProviderInterface;
-use NeuronAI\src\Messages\Message;
-use NeuronAI\src\Messages\UserMessage;
-use NeuronAI\src\Tools\Tool;
-use NeuronAI\src\Tools\ToolCallMessage;
-use NeuronAI\src\Tools\ToolInterface;
+use NeuronAI\Messages\Message;
+use NeuronAI\Messages\UserMessage;
+use NeuronAI\Tools\Tool;
+use NeuronAI\Tools\ToolCallMessage;
+use NeuronAI\Tools\ToolInterface;
 
 class NeuronAgent implements \SplSubject
 {
@@ -100,7 +100,7 @@ class NeuronAgent implements \SplSubject
      */
     public function run(?Message $message = null): Message
     {
-        if (!is_null($message)) {
+        if (!\is_null($message)) {
             $this->resolveChatHistory()->addMessage($message);
         }
 
@@ -147,7 +147,7 @@ class NeuronAgent implements \SplSubject
     public function addMessage(string|Message $message): self
     {
         $this->resolveChatHistory()->addMessage(
-            is_string($message) ? new UserMessage($message) : $message
+            \is_string($message) ? new UserMessage($message) : $message
         );
 
         return $this;
@@ -217,7 +217,7 @@ class NeuronAgent implements \SplSubject
         $group = $this->observers[$event];
         $all = $this->observers["*"];
 
-        return array_merge($group, $all);
+        return \array_merge($group, $all);
     }
 
     public function attach(\SplObserver $observer, string $event = "*"): self

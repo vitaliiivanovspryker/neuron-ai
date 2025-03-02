@@ -21,7 +21,7 @@ abstract class AbstractChatHistory implements \JsonSerializable
 
     public function calculateTotalUsage(): int
     {
-        return array_reduce($this->getMessages(), function (int $carry, AbstractMessage $message) {
+        return \array_reduce($this->getMessages(), function (int $carry, AbstractMessage $message) {
             if ($message->getUsage() instanceof Usage) {
                 $carry = $carry + $message->getUsage()->getTotal();
             }
@@ -32,7 +32,7 @@ abstract class AbstractChatHistory implements \JsonSerializable
 
     public function toArray(): array
     {
-        return array_map(function (AbstractMessage $message) {
+        return \array_map(function (AbstractMessage $message) {
             return $message->toArray();
         }, $this->getMessages());
     }

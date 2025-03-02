@@ -12,7 +12,7 @@ class MemoryVectorStore implements VectorStoreInterface
     private array $documents = [];
 
     public function __construct(
-        private readonly SimilarityInterface $similarity = new CosineSimilarity()
+        protected SimilarityInterface $similarity = new CosineSimilarity()
     ) {}
 
     public function addDocument(Document $document): void

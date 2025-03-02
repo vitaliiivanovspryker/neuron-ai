@@ -58,7 +58,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
         if ($document->embedding === null) {
             throw new \Exception('document embedding must be set before adding a document');
         }
-        $this->setVectorDimIfNotSet(count((array) $document->embedding));
+        $this->setVectorDimIfNotSet(\count((array) $document->embedding));
         $this->client->index([
             'index' => $this->indexName,
             'body' => [
@@ -119,8 +119,8 @@ class ElasticsearchVectorStore implements VectorStoreInterface
      */
     public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array
     {
-        $numCandidates = max(50, $k * 4);
-        if (array_key_exists('num_candidates', $additionalArguments)) {
+        $numCandidates = \max(50, $k * 4);
+        if (\array_key_exists('num_candidates', $additionalArguments)) {
             $numCandidates = $additionalArguments['num_candidates'];
         }
         $searchParams = [
@@ -139,7 +139,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
                 ],
             ],
         ];
-        if (array_key_exists('filter', $additionalArguments)) {
+        if (\array_key_exists('filter', $additionalArguments)) {
             $searchParams['body']['knn']['filter'] = $additionalArguments['filter'];
         }
         /** @var array{hits: array{hits: array{array{_source: array{embedding: float[], content: string, formattedContent: string, sourceType: string, sourceName: string, hash: string, chunkNumber: int}}}}} $rawResponse */
@@ -174,7 +174,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
 
         $mappings = $response[$this->indexName]['mappings'];
         if (
-            array_key_exists('embedding', $mappings)
+            \array_key_exists('embedding', $mappings)
             && $mappings['embedding']['mapping']['embedding']['dims'] === $vectorDim
         ) {
             return;
