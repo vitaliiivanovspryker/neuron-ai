@@ -32,7 +32,7 @@ class VoyageEmbeddingProvider implements EmbeddingsProviderInterface
             ]
         ]);
 
-        $response = json_decode($response->getBody()->getContents(), true);
+        $response = \json_decode($response->getBody()->getContents(), true);
 
         return $response['data'][0]['embedding'];
     }

@@ -47,12 +47,12 @@ class OpenAI implements AIProviderInterface
 
     public function chat(array|string $prompt): Message
     {
-        if (is_string($prompt)) {
+        if (\is_string($prompt)) {
             $prompt = [['role' => 'user', 'content' => $prompt]];
         }
 
         if (isset($this->system)) {
-            array_unshift($prompt, ['role' => 'system', 'content' => $this->system]);
+            \array_unshift($prompt, ['role' => 'system', 'content' => $this->system]);
         }
 
         $result = $this->client->post('/chat/completions', [
@@ -62,7 +62,7 @@ class OpenAI implements AIProviderInterface
             ]
         ])->getBody()->getContents();
 
-        $result = json_decode($result, true);
+        $result = \json_decode($result, true);
 
         // todo: Add usage to the response message
 
