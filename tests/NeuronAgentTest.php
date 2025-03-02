@@ -11,7 +11,7 @@ class NeuronAgentTest extends TestCase
     /**
      * @var NeuronAgent
      */
-    public $neuron;
+    public NeuronAgent $neuron;
 
     /**
      * Sets up the fixture, for example, open a network connection.

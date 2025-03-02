@@ -220,12 +220,11 @@ class NeuronAgent implements \SplSubject
         return \array_merge($group, $all);
     }
 
-    public function attach(\SplObserver $observer, string $event = "*"): self
+    public function attach(\SplObserver $observer, string $event = "*"): void
     {
         $this->initEventGroup($event);
 
         $this->observers[$event][] = $observer;
-        return $this;
     }
 
     public function detach(\SplObserver $observer, string $event = "*"): void
