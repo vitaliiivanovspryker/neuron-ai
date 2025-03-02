@@ -9,7 +9,7 @@ PHP AI Framework with built-in observability - powered by Inspector.dev
 
 ## Requirements
 
-- PHP: ^7.4|^8.0
+- PHP: ^8.0
 
 ## Install
 
