@@ -3,7 +3,7 @@
 
 # Neuron AI
 
-PHP AI Framework with built-in observability - powered by Inspector.dev
+PHP AI Framework with built-in observability - powered by [Inspector.dev](https://inspector.dev)
 
 > Before moving on, please consider giving us a GitHub star ⭐️. Thank you!
 
