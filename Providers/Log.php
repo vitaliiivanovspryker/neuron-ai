@@ -1,0 +1,60 @@
+<?php
+
+namespace App\Extensions\NeuronAI\Providers;
+
+use App\Extensions\NeuronAI\Agent\Messages\AssistantMessage;
+use App\Extensions\NeuronAI\Agent\Messages\Message;
+use Psr\Log\LoggerInterface;
+
+class Log implements AIProviderInterface
+{
+    /**
+     * Log AI driver constructor.
+     *
+     * @param LoggerInterface|null $logger
+     */
+    public function __construct(protected ?LoggerInterface $logger = null)
+    {
+    }
+
+    /**
+     * @inerhitDoc
+     */
+    public function systemPrompt(string $prompt): AIProviderInterface
+    {
+        return $this;
+    }
+
+    /**
+     * @param array|string $prompt
+     * @return Message
+     * @throws \Exception
+     */
+    public function chat(array|string $prompt): Message
+    {
+        if ($this->logger) {
+            if (is_string($prompt)) {
+                $this->logger->debug("Prompting AI with: {$prompt}");
+            } else {
+                $this->logger->debug('Prompting AI with: ', $prompt);
+            }
+        }
+
+        return new AssistantMessage("I'm the log Neuron AI driver");
+    }
+
+    public function contextWindow(): int
+    {
+        return 1000000000;
+    }
+
+    public function maxCompletionTokens(): int
+    {
+        return 1000000000;
+    }
+
+    public function setTools(array $tools): AIProviderInterface
+    {
+        return $this;
+    }
+}
