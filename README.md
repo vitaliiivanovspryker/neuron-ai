@@ -1,5 +1,5 @@
-[![Latest Stable Version](https://poser.pugx.org/inspector-apm/inspector-php/v/stable)](https://packagist.org/packages/inspector-apm/inspector-php)
-[![License](https://poser.pugx.org/inspector-apm/inspector-php/license)](//packagist.org/packages/inspector-apm/inspector-php)
+[![Latest Stable Version](https://poser.pugx.org/inspector-apm/neuron-ai/v/stable)](https://packagist.org/packages/inspector-apm/neuron-ai)
+[![License](https://poser.pugx.org/inspector-apm/neuron-ai/license)](//packagist.org/packages/inspector-apm/neuron-ai)
 
 # Neuron AI
 
