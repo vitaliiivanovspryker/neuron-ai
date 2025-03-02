@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Extensions\NeuronAI\Agent\Messages;
+namespace NeuronAI\Messages;
 
 class Message extends AbstractMessage
 {

@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Extensions\NeuronAI\Agent\Messages;
-
-use App\Extensions\NeuronAI\Agent\Messages\Usage;
+namespace NeuronAI\Messages;
 
 abstract class AbstractMessage implements \JsonSerializable
 {

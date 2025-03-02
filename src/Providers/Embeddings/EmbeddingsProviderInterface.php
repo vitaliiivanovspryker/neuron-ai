@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Extensions\NeuronAI\Providers\Embeddings;
+namespace NeuronAI\Providers\Embeddings;
 
-use App\Extensions\NeuronAI\RAG\Document;
+use NeuronAI\RAG\Document;
 
 interface EmbeddingsProviderInterface
 {

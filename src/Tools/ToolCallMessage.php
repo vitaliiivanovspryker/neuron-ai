@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Extensions\NeuronAI\Agent\Tools;
+namespace NeuronAI\Tools;
 
-use App\Extensions\NeuronAI\Agent\Messages\AssistantMessage;
+use NeuronAI\Messages\AssistantMessage;
 
 class ToolCallMessage extends AssistantMessage
 {

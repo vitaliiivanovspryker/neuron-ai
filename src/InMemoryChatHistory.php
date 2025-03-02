@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Extensions\NeuronAI\Agent;
+namespace NeuronAI;
 
-use App\Extensions\NeuronAI\Agent\Messages\AbstractMessage;
+use NeuronAI\Messages\AbstractMessage;
 
 class InMemoryChatHistory extends AbstractChatHistory
 {

@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Extensions\NeuronAI\Providers;
+namespace NeuronAI\Providers;
 
-use App\Extensions\NeuronAI\Agent\Messages\AssistantMessage;
-use App\Extensions\NeuronAI\Agent\Messages\Message;
+use NeuronAI\Messages\AssistantMessage;
+use NeuronAI\Messages\Message;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Http;
-use League\CommonMark\Exception\LogicException;
 
 class Mistral implements AIProviderInterface
 {
@@ -84,6 +82,6 @@ class Mistral implements AIProviderInterface
 
     public function setTools(array $tools): AIProviderInterface
     {
-        throw new LogicException('Not implemented');
+        throw new \LogicException('Not implemented');
     }
 }

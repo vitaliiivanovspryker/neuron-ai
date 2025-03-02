@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Extensions\NeuronAI\RAG\VectorStore\SimilarityAlgorithms;
+namespace NeuronAI\RAG\VectorStore\SimilarityAlgorithms;
 
 interface SimilarityInterface
 {

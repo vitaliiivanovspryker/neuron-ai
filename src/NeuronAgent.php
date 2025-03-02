@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Extensions\NeuronAI\Agent;
+namespace NeuronAI;
 
-use App\Extensions\NeuronAI\Agent\Messages\Message;
-use App\Extensions\NeuronAI\Agent\Messages\UserMessage;
-use App\Extensions\NeuronAI\Agent\Tools\Tool;
-use App\Extensions\NeuronAI\Agent\Tools\ToolCallMessage;
-use App\Extensions\NeuronAI\Agent\Tools\ToolInterface;
-use App\Extensions\NeuronAI\Providers\AIProviderInterface;
-use App\Extensions\NeuronAI\Providers\Embeddings\EmbeddingsProviderInterface;
+use NeuronAI\Providers\AIProviderInterface;
+use NeuronAI\Providers\Embeddings\EmbeddingsProviderInterface;
+use NeuronAI\src\Messages\Message;
+use NeuronAI\src\Messages\UserMessage;
+use NeuronAI\src\Tools\Tool;
+use NeuronAI\src\Tools\ToolCallMessage;
+use NeuronAI\src\Tools\ToolInterface;
 
 class NeuronAgent implements \SplSubject
 {

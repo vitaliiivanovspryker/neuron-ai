@@ -2,8 +2,8 @@
 
 namespace App\Extensions\NeuronAI\Providers;
 
-use App\Extensions\NeuronAI\Agent\Messages\AssistantMessage;
-use App\Extensions\NeuronAI\Agent\Messages\Message;
+use NeuronAI\Messages\AssistantMessage;
+use NeuronAI\Messages\Message;
 use Psr\Log\LoggerInterface;
 
 class Log implements AIProviderInterface

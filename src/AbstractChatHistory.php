@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Extensions\NeuronAI\Agent;
+namespace NeuronAI;
 
-use App\Extensions\NeuronAI\Agent\Messages\AbstractMessage;
-use App\Extensions\NeuronAI\Agent\Messages\Usage;
+use NeuronAI\Messages\AbstractMessage;
+use NeuronAI\Messages\Usage;
 
 abstract class AbstractChatHistory implements \JsonSerializable
 {

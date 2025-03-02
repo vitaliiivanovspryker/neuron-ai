@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Extensions\NeuronAI\RAG;
+namespace NeuronAI\RAG;
 
 class Document
 {

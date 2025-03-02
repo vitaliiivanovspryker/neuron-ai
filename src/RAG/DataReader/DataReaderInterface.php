@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Extensions\NeuronAI\RAG\DataReader;
+namespace NeuronAI\RAG\DataReader;
 
-use App\Extensions\NeuronAI\RAG\Document;
+use NeuronAI\RAG\Document;
 
 interface DataReaderInterface
 {

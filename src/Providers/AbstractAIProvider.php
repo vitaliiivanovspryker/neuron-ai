@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Extensions\NeuronAI\Providers;
+namespace NeuronAI\Providers;
 
-use App\Extensions\NeuronAI\Providers\Embeddings\EmbeddingsProviderInterface;
+use NeuronAI\Providers\Embeddings\EmbeddingsProviderInterface;
 
 abstract class AbstractAIProvider implements AIProviderInterface
 {

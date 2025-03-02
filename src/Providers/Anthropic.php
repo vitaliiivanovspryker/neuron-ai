@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Extensions\NeuronAI\Providers;
+namespace NeuronAI\Providers;
 
-use App\Extensions\NeuronAI\Agent\Messages\Message;
-use App\Extensions\NeuronAI\Agent\Tools\Tool;
-use App\Extensions\NeuronAI\Agent\Tools\ToolInterface;
-use App\Extensions\NeuronAI\Agent\Tools\ToolCallMessage;
-use App\Extensions\NeuronAI\Agent\Tools\ToolProperty;
-use App\Extensions\NeuronAI\Agent\Messages\Usage;
+use NeuronAI\Messages\Message;
+use NeuronAI\Tools\Tool;
+use NeuronAI\Tools\ToolInterface;
+use NeuronAI\Tools\ToolCallMessage;
+use NeuronAI\Tools\ToolProperty;
+use NeuronAI\Messages\Usage;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Http;
 
 class Anthropic implements AIProviderInterface
 {

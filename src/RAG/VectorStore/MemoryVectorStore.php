@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Extensions\NeuronAI\RAG\VectorStore;
+namespace NeuronAI\RAG\VectorStore;
 
-use App\Extensions\NeuronAI\RAG\Document;
-use App\Extensions\NeuronAI\RAG\VectorStore\SimilarityAlgorithms\CosineSimilarity;
-use App\Extensions\NeuronAI\RAG\VectorStore\SimilarityAlgorithms\SimilarityInterface;
+use NeuronAI\RAG\Document;
+use NeuronAI\RAG\VectorStore\SimilarityAlgorithms\CosineSimilarity;
+use NeuronAI\RAG\VectorStore\SimilarityAlgorithms\SimilarityInterface;
 
 class MemoryVectorStore implements VectorStoreInterface
 {

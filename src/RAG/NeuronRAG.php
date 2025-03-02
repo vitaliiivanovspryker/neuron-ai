@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Extensions\NeuronAI\RAG;
+namespace NeuronAI\RAG;
 
-use App\Extensions\NeuronAI\Agent\NeuronAgent;
-use App\Extensions\NeuronAI\Agent\Messages\Message;
-use App\Extensions\NeuronAI\Agent\Messages\UserMessage;
-use App\Extensions\NeuronAI\RAG\VectorStore\VectorStoreInterface;
+use NeuronAI\NeuronAgent;
+use NeuronAI\Messages\Message;
+use NeuronAI\Messages\UserMessage;
+use NeuronAI\RAG\VectorStore\VectorStoreInterface;
 
 class NeuronRAG extends NeuronAgent
 {

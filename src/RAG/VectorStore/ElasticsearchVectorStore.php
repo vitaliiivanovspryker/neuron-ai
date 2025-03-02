@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Extensions\NeuronAI\RAG\VectorStore;
+namespace NeuronAI\RAG\VectorStore;
 
-use App\Extensions\NeuronAI\RAG\Document;
+use NeuronAI\RAG\Document;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\Response\Elasticsearch;
 

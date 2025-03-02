@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Extensions\NeuronAI\Agent\Tools;
+namespace NeuronAI\Tools;
 
 class ToolProperty
 {

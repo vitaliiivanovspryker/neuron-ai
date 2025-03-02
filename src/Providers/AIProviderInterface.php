@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Extensions\NeuronAI\Providers;
+namespace NeuronAI\Providers;
 
-use App\Extensions\NeuronAI\Agent\Messages\Message;
-use App\Extensions\NeuronAI\Providers\Embeddings\EmbeddingsProviderInterface;
+use NeuronAI\Messages\Message;
+use NeuronAI\Providers\Embeddings\EmbeddingsProviderInterface;
 
 interface AIProviderInterface
 {
