@@ -3,7 +3,7 @@
 namespace NeuronAI\Tests;
 
 
-use App\Extensions\NeuronAI\Agent\NeuronAgent;
+use NeuronAI\NeuronAgent;
 use PHPUnit\Framework\TestCase;
 
 class NeuronAgentTest extends TestCase
@@ -27,6 +27,6 @@ class NeuronAgentTest extends TestCase
     public function testInstance()
     {
         $this->assertInstanceOf(NeuronAgent::class, $this->neuron);
-        $this->assertInstanceOf(\SplObserver::class, $this->neuron);
+        $this->assertInstanceOf(\SplSubject::class, $this->neuron);
     }
 }
