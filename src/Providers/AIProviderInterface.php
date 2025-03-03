@@ -12,7 +12,7 @@ interface AIProviderInterface
      * @param string $prompt
      * @return AIProviderInterface
      */
-    public function systemPrompt(string $prompt): AIProviderInterface;
+    public function systemPrompt(string $prompt): self;
 
     /**
      * Set the tools to be exposed to the LLM.
