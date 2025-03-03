@@ -3,9 +3,11 @@
 namespace NeuronAI\Providers;
 
 use GuzzleHttp\RequestOptions;
+use NeuronAI\Exceptions\ProviderException;
 use NeuronAI\Messages\AssistantMessage;
 use NeuronAI\Messages\Message;
 use GuzzleHttp\Client;
+use NeuronAI\Messages\UserMessage;
 
 class Mistral implements AIProviderInterface
 {
@@ -48,11 +50,13 @@ class Mistral implements AIProviderInterface
     public function chat(array|string $prompt): Message
     {
         if (\is_string($prompt)) {
-            $prompt = [['role' => 'user', 'content' => $prompt]];
+            $prompt = [
+                new UserMessage($prompt),
+            ];
         }
 
         if (isset($this->system)) {
-            \array_unshift($prompt, ['role' => 'system', 'content' => $this->system]);
+            \array_unshift($prompt, new AssistantMessage($this->system));
         }
 
         $result = $this->client->post('/chat/completions', [
@@ -73,6 +77,6 @@ class Mistral implements AIProviderInterface
 
     public function setTools(array $tools): AIProviderInterface
     {
-        throw new \LogicException('Not implemented');
+        throw new ProviderException('Tools not supported in Mistral provider');
     }
 }

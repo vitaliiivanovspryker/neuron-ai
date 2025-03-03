@@ -3,6 +3,8 @@
 namespace NeuronAI;
 
 use NeuronAI\Exceptions\InvalidMessageInstance;
+use NeuronAI\Exceptions\MissingCallbackParameter;
+use NeuronAI\Exceptions\ToolCallableNotSet;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Messages\Message;
 use NeuronAI\Messages\UserMessage;
@@ -79,6 +81,8 @@ class Agent implements \SplSubject
      *
      * @param Message|null $message
      * @return Message
+     * @throws MissingCallbackParameter
+     * @throws ToolCallableNotSet
      */
     public function run(?Message $message = null): Message
     {
