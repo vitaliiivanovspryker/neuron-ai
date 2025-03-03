@@ -2,12 +2,14 @@
 
 namespace NeuronAI\RAG\VectorStore\SimilarityAlgorithms;
 
+use NeuronAI\Exceptions\SimilarityCalculationException;
+
 class CosineSimilarity implements SimilarityInterface
 {
     public function calculate(array $vector1, array $vector2): float
     {
         if (\count($vector1) !== \count($vector2)) {
-            throw new \InvalidArgumentException('Arrays must have the same length.');
+            throw new SimilarityCalculationException('Arrays must have the same length to apply cosine similarity.');
         }
 
         // Calculate the dot product of the two vectors

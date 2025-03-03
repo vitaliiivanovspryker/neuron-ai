@@ -2,6 +2,7 @@
 
 namespace NeuronAI;
 
+use NeuronAI\Exceptions\InvalidMessageInstance;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Messages\Message;
 use NeuronAI\Messages\UserMessage;
@@ -143,7 +144,7 @@ class Agent implements \SplSubject
 
         foreach ($messages as $message) {
             if (!$message instanceof Message) {
-                throw new \Exception('Messages must be instance of '.Message::class.' class');
+                throw new InvalidMessageInstance('Messages must be instance of '.Message::class.' class');
             }
             $this->resolveChatHistory()->addMessage($message);
         }

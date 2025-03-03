@@ -2,6 +2,9 @@
 
 namespace NeuronAI\Tools;
 
+use NeuronAI\Exceptions\MissingCallbackParameter;
+use NeuronAI\Exceptions\ToolCallableNotSet;
+
 class Tool implements ToolInterface
 {
     /**
@@ -70,17 +73,19 @@ class Tool implements ToolInterface
      *
      * @param array $input
      * @return mixed
+     * @throws MissingCallbackParameter
+     * @throws ToolCallableNotSet
      */
     public function execute(array $input): mixed
     {
         if (!isset($this->callback)) {
-            throw new \BadMethodCallException('No callback defined for execution.');
+            throw new ToolCallableNotSet('No callback defined for execution.');
         }
 
         // Validate required parameters
         foreach ($this->properties as $property) {
             if ($property->isRequired() && ! \array_key_exists($property->getName(), $input)) {
-                throw new \InvalidArgumentException("Missing required parameter: {$property->getName()}");
+                throw new MissingCallbackParameter("Missing required parameter: {$property->getName()}");
             }
         }
 
