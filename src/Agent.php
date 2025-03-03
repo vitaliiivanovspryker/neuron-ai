@@ -214,7 +214,6 @@ class Agent implements \SplSubject
     public function attach(\SplObserver $observer, string $event = "*"): void
     {
         $this->initEventGroup($event);
-
         $this->observers[$event][] = $observer;
     }
 
