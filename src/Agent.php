@@ -122,12 +122,12 @@ class Agent implements \SplSubject
         return $this->resolveChatHistory()->calculateTotalUsage();
     }
 
-    public function instructions(): string
+    public function instructions(): ?string
     {
         return $this->instructions;
     }
 
-    public function setInstructions(string $instructions): self
+    public function setInstructions(?string $instructions): self
     {
         $this->instructions = $instructions;
         return $this;

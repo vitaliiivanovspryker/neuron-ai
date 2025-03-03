@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Extensions\NeuronAI\Providers;
+namespace NeuronAI\Providers;
 
 use NeuronAI\Messages\AssistantMessage;
 use NeuronAI\Messages\Message;
-use NeuronAI\Providers\AIProviderInterface;
 use Psr\Log\LoggerInterface;
 
 class Log implements AIProviderInterface
@@ -41,7 +40,7 @@ class Log implements AIProviderInterface
             }
         }
 
-        return new AssistantMessage("I'm the log Neuron AI driver");
+        return new AssistantMessage("I'm the fake Neuron AI driver");
     }
 
     public function setTools(array $tools): AIProviderInterface
