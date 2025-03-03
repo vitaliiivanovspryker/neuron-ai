@@ -27,8 +27,7 @@ class OpenAI implements AIProviderInterface
     public function __construct(
         protected string $key,
         protected string $model,
-        protected int $context_window,
-        protected int $max_tokens,
+        protected int $max_tokens = 1024,
     ) {
         $this->client = new Client([
             'base_uri' => 'https://api.openai.com/v1',
@@ -70,16 +69,6 @@ class OpenAI implements AIProviderInterface
         // todo: Add tool call management
 
         return new AssistantMessage($result['choices'][0]['message']['content']);
-    }
-
-    public function contextWindow(): int
-    {
-        return $this->context_window;
-    }
-
-    public function maxCompletionTokens(): int
-    {
-        return $this->max_tokens;
     }
 
     public function setTools(array $tools): AIProviderInterface

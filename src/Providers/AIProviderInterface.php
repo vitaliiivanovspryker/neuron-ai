@@ -3,7 +3,6 @@
 namespace NeuronAI\Providers;
 
 use NeuronAI\Messages\Message;
-use NeuronAI\Providers\Embeddings\EmbeddingsProviderInterface;
 
 interface AIProviderInterface
 {
@@ -38,14 +37,14 @@ interface AIProviderInterface
     /**
      * The context window limitation of the LLM.
      *
-     * @return int
+     * @return ?int
      */
-    public function contextWindow(): int;
+    //public function contextWindow(): ?int;
 
     /**
      * The maximum number of tokens to generate before stopping.
      *
-     * @return int
+     * @return ?int
      */
-    public function maxCompletionTokens(): int;
+    //public function maxCompletionTokens(): ?int;
 }

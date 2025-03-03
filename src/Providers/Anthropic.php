@@ -2,7 +2,10 @@
 
 namespace NeuronAI\Providers;
 
+use GuzzleHttp\Exception\GuzzleException;
+use NeuronAI\Messages\AssistantMessage;
 use NeuronAI\Messages\Message;
+use NeuronAI\Messages\UserMessage;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\ToolCallMessage;
@@ -40,9 +43,8 @@ class Anthropic implements AIProviderInterface
     public function __construct(
         protected string $key,
         protected string $model,
-        protected string $version,
-        protected int $max_tokens,
-        protected int $context_window,
+        protected string $version = '2023-06-01',
+        protected int $max_tokens = 8192,
         protected ?float $temperature = null,
         protected ?array $stop_sequences = null,
     ) {
@@ -68,14 +70,14 @@ class Anthropic implements AIProviderInterface
     /**
      * Send a prompt to the AI agent.
      *
-     * @param array|string $prompt
-     * @return Message
-     * @throws \Exception
+     * @throws GuzzleException
      */
     public function chat(array|string $prompt): Message
     {
         if (\is_string($prompt)) {
-            $prompt = [['role' => 'user', 'content' => $prompt]];
+            $prompt = [
+                new UserMessage($prompt)
+            ];
         }
 
         $json = \array_filter([
@@ -106,7 +108,7 @@ class Anthropic implements AIProviderInterface
                 $content['input']
             );
         } else {
-            $response = new Message('assistant', \last($result['content'])['text']);
+            $response = new AssistantMessage(\last($result['content'])['text']);
         }
 
         // Attach the usage for the current interaction
@@ -120,26 +122,6 @@ class Anthropic implements AIProviderInterface
         }
 
         return $response;
-    }
-
-    /**
-     * The context window limitation of the LLM.
-     *
-     * @return int
-     */
-    public function contextWindow(): int
-    {
-        return $this->context_window;
-    }
-
-    /**
-     * The maximum number of tokens to generate before stopping.
-     *
-     * @return int
-     */
-    public function maxCompletionTokens(): int
-    {
-        return  $this->max_tokens;
     }
 
     public function setTools(array $tools): self

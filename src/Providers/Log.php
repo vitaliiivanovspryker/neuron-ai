@@ -44,16 +44,6 @@ class Log implements AIProviderInterface
         return new AssistantMessage("I'm the log Neuron AI driver");
     }
 
-    public function contextWindow(): int
-    {
-        return 1000000000;
-    }
-
-    public function maxCompletionTokens(): int
-    {
-        return 1000000000;
-    }
-
     public function setTools(array $tools): AIProviderInterface
     {
         return $this;
