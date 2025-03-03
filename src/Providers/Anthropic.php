@@ -26,9 +26,9 @@ class Anthropic implements AIProviderInterface
      * System instructions.
      * https://docs.anthropic.com/claude/docs/system-prompts#how-to-use-system-prompts
      *
-     * @var string
+     * @var ?string
      */
-    protected string $system;
+    protected ?string $system;
 
     /**
      * https://docs.anthropic.com/en/docs/build-with-claude/tool-use/overview
@@ -49,7 +49,7 @@ class Anthropic implements AIProviderInterface
         protected ?array $stop_sequences = null,
     ) {
         $this->client = new Client([
-            'base_uri' => 'https://api.anthropic.com/v1',
+            'base_uri' => 'https://api.anthropic.com',
             'headers' => [
                 'Content-Type' => 'application/json',
                 'x-api-key' => $this->key,
@@ -61,7 +61,7 @@ class Anthropic implements AIProviderInterface
     /**
      * @inerhitDoc
      */
-    public function systemPrompt(string $prompt): AIProviderInterface
+    public function systemPrompt(?string $prompt): AIProviderInterface
     {
         $this->system = $prompt;
         return $this;
@@ -94,7 +94,7 @@ class Anthropic implements AIProviderInterface
         }
 
         // https://docs.anthropic.com/claude/reference/messages_post
-        $result = $this->client->post('messages', compact('json'))
+        $result = $this->client->post('v1/messages', compact('json'))
             ->getBody()->getContents();
 
         $result = \json_decode($result, true);

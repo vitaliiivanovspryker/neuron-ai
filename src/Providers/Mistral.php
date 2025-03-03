@@ -22,9 +22,9 @@ class Mistral implements AIProviderInterface
      * System instructions.
      * https://docs.mistral.ai/capabilities/completion/#chat-messages
      *
-     * @var string
+     * @var ?string
      */
-    protected string $system;
+    protected ?string $system;
 
     public function __construct(
         protected string $key,
@@ -32,7 +32,7 @@ class Mistral implements AIProviderInterface
         protected int $max_tokens = 1024
     ) {
         $this->client = new Client([
-            'base_uri' => 'https://api.mistral.ai/v1',
+            'base_uri' => 'https://api.mistral.ai',
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
@@ -41,7 +41,7 @@ class Mistral implements AIProviderInterface
         ]);
     }
 
-    public function systemPrompt(string $prompt): AIProviderInterface
+    public function systemPrompt(?string $prompt): AIProviderInterface
     {
         $this->system = $prompt;
         return $this;
@@ -59,7 +59,7 @@ class Mistral implements AIProviderInterface
             \array_unshift($prompt, new AssistantMessage($this->system));
         }
 
-        $result = $this->client->post('chat/completions', [
+        $result = $this->client->post('v1/chat/completions', [
             RequestOptions::JSON => [
                 'model' => $this->model,
                 'messages' => $prompt,
