@@ -6,25 +6,51 @@ use NeuronAI\RAG\Document;
 
 class FileDataLoader implements DataLoaderInterface
 {
-    public function __construct(
-        protected string $filePath,
-        protected array $extensions = [],
-    ) {}
+    /**
+     * @var array<string, ReaderInterface>
+     */
+    protected array $readers = [];
+
+    public function __construct(protected string $path, array $readers = [])
+    {
+        $this->setReaders($readers);
+    }
+
+    public static function file(...$args): static
+    {
+        return new static(...$args);
+    }
+
+    public function addReader(string $fileExtension, ReaderInterface $reader): self
+    {
+        $this->readers[$fileExtension] = $reader;
+        return $this;
+    }
+
+    /**
+     * @param array $readers
+     * @return FileDataLoader
+     */
+    public function setReaders(array $readers): self
+    {
+        $this->readers = $readers;
+        return $this;
+    }
 
     public function getDocuments(): array
     {
-        if (! file_exists($this->filePath)) {
+        if (! file_exists($this->path)) {
             return [];
         }
 
         // If it's a directory
-        if (is_dir($this->filePath)) {
-            return $this->getDocumentsFromDirectory($this->filePath);
+        if (is_dir($this->path)) {
+            return $this->getDocumentsFromDirectory($this->path);
         }
 
         // If it's a file
         try {
-            return [$this->getDocument($this->getContentFromFile($this->filePath), $this->filePath)];
+            return [$this->getDocument($this->getContentFromFile($this->path), $this->path)];
         } catch (\Throwable $exception) {
             return [];
         }
@@ -67,10 +93,12 @@ class FileDataLoader implements DataLoaderInterface
     {
         $fileExtension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
-        return match ($fileExtension) {
-            'pdf' => PdfParser::getText($path),
-            default => file_get_contents($path)
-        };
+        if (\array_key_exists($fileExtension, $this->readers)) {
+            $reader = $this->readers[$fileExtension];
+            return $reader::getText($path);
+        }
+
+        return TextFileReader::getText($path);
     }
 
 

@@ -12,4 +12,6 @@ interface EmbeddingsProviderInterface
     public function embedText(string $text): array;
 
     public function embedDocument(Document $document): Document;
+
+    public function embedDocuments(array $documents): array;
 }

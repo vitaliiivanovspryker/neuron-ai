@@ -3,6 +3,7 @@
 namespace NeuronAI\RAG\DataLoader;
 
 use Closure;
+use NeuronAI\Exceptions\DataReaderException;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -11,7 +12,7 @@ use Symfony\Component\Process\Process;
  *
  * https://en.wikipedia.org/wiki/Pdftotext
  */
-class PdfParser
+class PdfReader implements ReaderInterface
 {
     protected string $pdf;
 
@@ -26,6 +27,12 @@ class PdfParser
     public function __construct(?string $binPath = null)
     {
         $this->binPath = $binPath ?? $this->findPdfToText();
+    }
+
+    public function setBinPath(string $binPath): self
+    {
+        $this->binPath = $binPath;
+        return $this;
     }
 
     protected function findPdfToText(): string
@@ -44,13 +51,13 @@ class PdfParser
             }
         }
 
-        throw new \LogicException("The pdftotext binary was not found or is not executable.");
+        throw new DataReaderException("The pdftotext binary was not found or is not executable.");
     }
 
     public function setPdf(string $pdf): self
     {
         if (!is_readable($pdf)) {
-            throw new \Exception("Could not read `{$pdf}`");
+            throw new DataReaderException("Could not read `{$pdf}`");
         }
 
         $this->pdf = $pdf;
@@ -97,11 +104,10 @@ class PdfParser
         return $this;
     }
 
-    public function text(?Closure $callback = null): string
+    public function text(): string
     {
         $process = new Process(array_merge([$this->binPath], $this->options, [$this->pdf, '-']));
         $process->setTimeout($this->timeout);
-        $process = $callback ? $callback($process) : $process;
         $process->run();
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
@@ -114,16 +120,23 @@ class PdfParser
      * @throws \Exception
      */
     public static function getText(
-        string $pdf,
-        ?string $binPath = null,
-        array $options = [],
-        $timeout = 60,
-        ?Closure $callback = null
+        string $filePath,
+        array $options = []
     ): string {
-        return (new static($binPath))
-            ->setOptions($options)
-            ->setTimeout($timeout)
-            ->setPdf($pdf)
-            ->text($callback);
+        $instance = new static();
+
+        if (\array_key_exists('binPath', $options)) {
+            $instance->setBinPath($options['binPath']);
+        }
+
+        if (\array_key_exists('options', $options)) {
+            $instance->setOptions($options['options']);
+        }
+
+        if (\array_key_exists('timeout', $options)) {
+            $instance->setTimeout($options['timeout']);
+        }
+
+        return $instance->text();
     }
 }
