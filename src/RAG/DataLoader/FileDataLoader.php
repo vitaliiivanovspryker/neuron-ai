@@ -1,10 +1,10 @@
 <?php
 
-namespace NeuronAI\RAG\DataReader;
+namespace NeuronAI\RAG\DataLoader;
 
 use NeuronAI\RAG\Document;
 
-class FileDataReader implements DataReaderInterface
+class FileDataLoader implements DataLoaderInterface
 {
     public function __construct(
         protected string $filePath,

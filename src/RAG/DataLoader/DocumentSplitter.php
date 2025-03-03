@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\RAG\DataReader;
+namespace NeuronAI\RAG\DataLoader;
 
 use NeuronAI\RAG\Document;
 
