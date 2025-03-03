@@ -28,5 +28,7 @@ interface AgentInterface extends \SplSubject
 
     public function withChatHistory(AbstractChatHistory $chatHistory): self;
 
+    public function observe(\SplObserver $observer, string $event = "*"): self;
+
     public function run(?Message $message = null): Message;
 }

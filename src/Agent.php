@@ -220,7 +220,7 @@ class Agent implements AgentInterface
         return \array_merge($group, $all);
     }
 
-    public function attachListener(\SplObserver $observer, string $event = "*"): self
+    public function observe(\SplObserver $observer, string $event = "*"): self
     {
         $this->attach($observer, $event);
         return $this;
