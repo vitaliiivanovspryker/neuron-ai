@@ -2,6 +2,8 @@
 
 namespace NeuronAI\RAG\VectorStore;
 
+use Elastic\Elasticsearch\Exception\ClientResponseException;
+use Elastic\Elasticsearch\Exception\ServerResponseException;
 use NeuronAI\RAG\Document;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\Response\Elasticsearch;
@@ -15,10 +17,10 @@ class ElasticsearchVectorStore implements VectorStoreInterface
      */
     public function __construct(
         protected Client $client,
-        protected string $indexName
+        protected string $index
     ) {
         /** @var Elasticsearch $existResponse */
-        $existResponse = $client->indices()->exists(['index' => $indexName]);
+        $existResponse = $client->indices()->exists(['index' => $index]);
         $existStatusCode = $existResponse->getStatusCode();
 
         if ($existStatusCode === 200) {
@@ -26,7 +28,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
         }
 
         $mapping = [
-            'index' => $indexName,
+            'index' => $index,
             'body' => [
                 'mappings' => [
                     'properties' => [
@@ -60,20 +62,19 @@ class ElasticsearchVectorStore implements VectorStoreInterface
         if ($document->embedding === null) {
             throw new \Exception('document embedding must be set before adding a document');
         }
-        $this->setVectorDimIfNotSet(\count((array) $document->embedding));
+        $this->mapVectorDimension(\count((array) $document->embedding));
         $this->client->index([
-            'index' => $this->indexName,
+            'index' => $this->index,
             'body' => [
                 'embedding' => $document->embedding,
                 'content' => $document->content,
-                'formattedContent' => $document->formattedContent ?? '',
                 'sourceType' => $document->sourceType,
                 'sourceName' => $document->sourceName,
                 'hash' => $document->hash,
                 'chunkNumber' => $document->chunkNumber,
             ],
         ]);
-        $this->client->indices()->refresh(['index' => $this->indexName]);
+        $this->client->indices()->refresh(['index' => $this->index]);
     }
 
     /**
@@ -89,13 +90,13 @@ class ElasticsearchVectorStore implements VectorStoreInterface
         if ($documents[0]->embedding === null) {
             throw new \Exception('document embedding must be set before adding a document');
         }
-        $this->setVectorDimIfNotSet(count((array) $documents[0]->embedding));
+        $this->mapVectorDimension(count((array) $documents[0]->embedding));
 
         $params = ['body' => []];
         foreach ($documents as $document) {
             $params['body'][] = [
                 'index' => [
-                    '_index' => $this->indexName,
+                    '_index' => $this->index,
                 ],
             ];
             $params['body'][] = [
@@ -109,15 +110,16 @@ class ElasticsearchVectorStore implements VectorStoreInterface
 
         }
         $this->client->bulk($params);
-        $this->client->indices()->refresh(['index' => $this->indexName]);
+        $this->client->indices()->refresh(['index' => $this->index]);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @param  array{filter?: string|array<string, mixed>, num_candidates?: int}  $additionalArguments
-     *
-     * num_candidates is used to tune approximate kNN for speed or accuracy (see : https://www.elastic.co/guide/en/elasticsearch/reference/current/knn-search.html#tune-approximate-knn-for-speed-accuracy)
+     * num_candidates are used to tune approximate kNN for speed or accuracy (see : https://www.elastic.co/guide/en/elasticsearch/reference/current/knn-search.html#tune-approximate-knn-for-speed-accuracy)
+     * @return array
+     * @throws ClientResponseException
+     * @throws ServerResponseException
      */
     public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array
     {
@@ -126,7 +128,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
             $numCandidates = $additionalArguments['num_candidates'];
         }
         $searchParams = [
-            'index' => $this->indexName,
+            'index' => $this->index,
             'body' => [
                 'knn' => [
                     'field' => 'embedding',
@@ -145,49 +147,46 @@ class ElasticsearchVectorStore implements VectorStoreInterface
             $searchParams['body']['knn']['filter'] = $additionalArguments['filter'];
         }
 
-        $rawResponse = $this->client->search($searchParams);
+        $response = $this->client->search($searchParams);
 
-        $documents = [];
-        foreach ($rawResponse['hits']['hits'] as $hit) {
-            $document = new Document($hit['_source']['content']);
-            $document->embedding = $hit['_source']['embedding'];
-            $document->sourceType = $hit['_source']['sourceType'];
-            $document->sourceName = $hit['_source']['sourceName'];
-            $document->hash = $hit['_source']['hash'];
-            $document->chunkNumber = $hit['_source']['chunkNumber'];
-            $documents[] = $document;
-        }
-
-        return $documents;
+        return \array_map(function (array $item) {
+            $document = new Document($item['_source']['content']);
+            $document->embedding = $item['_source']['embedding'];
+            $document->sourceType = $item['_source']['sourceType'];
+            $document->sourceName = $item['_source']['sourceName'];
+            $document->hash = $item['_source']['hash'];
+            $document->chunkNumber = $item['_source']['chunkNumber'];
+            return $document;
+        }, $response['hits']['hits']);
     }
 
-    private function setVectorDimIfNotSet(int $vectorDim): void
+    private function mapVectorDimension(int $dimension): void
     {
         if ($this->vectorDimSet) {
             return;
         }
 
         $response = $this->client->indices()->getFieldMapping([
-            'index' => $this->indexName,
+            'index' => $this->index,
             'fields' => 'embedding',
         ]);
 
-        $mappings = $response[$this->indexName]['mappings'];
+        $mappings = $response[$this->index]['mappings'];
         if (
             \array_key_exists('embedding', $mappings)
-            && $mappings['embedding']['mapping']['embedding']['dims'] === $vectorDim
+            && $mappings['embedding']['mapping']['embedding']['dims'] === $dimension
         ) {
             return;
         }
 
         $this->client->indices()->putMapping([
-            'index' => $this->indexName,
+            'index' => $this->index,
             'body' => [
                 'properties' => [
                     'embedding' => [
                         'type' => 'dense_vector',
                         'element_type' => 'float',
-                        'dims' => $vectorDim,
+                        'dims' => $dimension,
                         'index' => true,
                         'similarity' => 'cosine',
                     ],
