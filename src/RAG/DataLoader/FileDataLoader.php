@@ -17,11 +17,6 @@ class FileDataLoader implements DataLoaderInterface
         $this->setReaders($readers);
     }
 
-    public static function file(...$args): static
-    {
-        return new static(...$args);
-    }
-
     public function addReader(string $fileExtension, ReaderInterface $reader): self
     {
         $this->readers[$fileExtension] = $reader;
