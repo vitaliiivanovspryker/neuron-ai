@@ -35,7 +35,7 @@ class Anthropic implements AIProviderInterface
      *
      * @var array<Tool>
      */
-    protected array $tools;
+    protected array $tools = [];
 
     /**
      * AnthropicClaude constructor.
@@ -94,7 +94,7 @@ class Anthropic implements AIProviderInterface
         }
 
         // https://docs.anthropic.com/claude/reference/messages_post
-        $result = $this->client->post('/messages', compact('json'))
+        $result = $this->client->post('messages', compact('json'))
             ->getBody()->getContents();
 
         $result = \json_decode($result, true);

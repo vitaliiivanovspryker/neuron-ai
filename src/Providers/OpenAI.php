@@ -59,7 +59,7 @@ class OpenAI implements AIProviderInterface
             \array_unshift($prompt, new AssistantMessage($this->system));
         }
 
-        $result = $this->client->post('/chat/completions', [
+        $result = $this->client->post('chat/completions', [
             RequestOptions::JSON => [
                 'model' => $this->model,
                 'messages' => $prompt,

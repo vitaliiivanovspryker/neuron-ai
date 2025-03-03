@@ -2,6 +2,10 @@
 
 namespace NeuronAI;
 
+use NeuronAI\Events\MessageSending;
+use NeuronAI\Events\MessageSent;
+use NeuronAI\Events\ToolCalled;
+use NeuronAI\Events\ToolCalling;
 use NeuronAI\Exceptions\InvalidMessageInstance;
 use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
@@ -90,7 +94,12 @@ class Agent implements AgentInterface
             $this->resolveChatHistory()->addMessage($message);
         }
 
-        $this->notify('message:sending', $this->resolveChatHistory()->getLastMessage());
+        $this->notify(
+            'message:sending',
+            new MessageSending(
+                $this->resolveChatHistory()->getLastMessage()
+            )
+        );
 
         $response = $this->provider()
             ->systemPrompt($this->instructions())
@@ -99,17 +108,19 @@ class Agent implements AgentInterface
                 $this->resolveChatHistory()->toArray()
             );
 
-        $this->notify('message:sent', [
-            'response' => $response,
-            'message' => $this->resolveChatHistory()->getLastMessage()
-        ]);
+        $this->notify(
+            'message:sent',
+            new MessageSent(
+                $this->resolveChatHistory()->getLastMessage(),
+                $response
+            )
+        );
 
         if ($response instanceof ToolCallMessage) {
-            $this->notify('tool:calling', $response);
+            $this->notify('tool:calling', new ToolCalling($response));
             $toolResult = $response->getTool()->execute($response->getInputs());
-            $this->notify('tool:called', $toolResult);
+            $this->notify('tool:called', new ToolCalled($response, $toolResult));
 
-            // Execute the tool and submit the response to the LLM again.
             $this->run(new UserMessage($toolResult));
         }
 
