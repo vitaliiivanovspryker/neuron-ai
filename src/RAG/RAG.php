@@ -5,10 +5,19 @@ namespace NeuronAI\RAG;
 use NeuronAI\Agent;
 use NeuronAI\Messages\Message;
 use NeuronAI\Messages\UserMessage;
+use NeuronAI\Providers\Embeddings\EmbeddingsProviderInterface;
 use NeuronAI\RAG\VectorStore\VectorStoreInterface;
 
 class RAG extends Agent
 {
+
+    /**
+     * The embeddings provider.
+     *
+     * @var EmbeddingsProviderInterface
+     */
+    protected EmbeddingsProviderInterface $embeddingsProvider;
+
     /**
      * Instructions template.
      *
@@ -79,5 +88,16 @@ class RAG extends Agent
         }
 
         return \array_values($retrievedDocs);
+    }
+
+    public function setEmbeddingsProvider(EmbeddingsProviderInterface $provider): self
+    {
+        $this->embeddingsProvider = $provider;
+        return $this;
+    }
+
+    public function embeddings(): EmbeddingsProviderInterface
+    {
+        return $this->embeddingsProvider;
     }
 }

@@ -3,7 +3,6 @@
 namespace NeuronAI;
 
 use NeuronAI\Providers\AIProviderInterface;
-use NeuronAI\Providers\Embeddings\EmbeddingsProviderInterface;
 use NeuronAI\Messages\Message;
 use NeuronAI\Messages\UserMessage;
 use NeuronAI\Tools\Tool;
@@ -18,13 +17,6 @@ class Agent implements \SplSubject
      * @var AIProviderInterface
      */
     protected AIProviderInterface $provider;
-
-    /**
-     * The embeddings provider.
-     *
-     * @var EmbeddingsProviderInterface
-     */
-    protected EmbeddingsProviderInterface $embeddingsProvider;
 
     /**
      * @var AbstractChatHistory
@@ -79,17 +71,6 @@ class Agent implements \SplSubject
     public function provider(): AIProviderInterface
     {
         return $this->provider;
-    }
-
-    public function setEmbeddingsProvider(EmbeddingsProviderInterface $provider): self
-    {
-        $this->embeddingsProvider = $provider;
-        return $this;
-    }
-
-    public function embeddings(): EmbeddingsProviderInterface
-    {
-        return $this->embeddingsProvider;
     }
 
     /**
