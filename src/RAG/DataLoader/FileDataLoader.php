@@ -5,7 +5,7 @@ namespace NeuronAI\RAG\DataLoader;
 use NeuronAI\RAG\Document;
 use NeuronAI\RAG\Splitters\DocumentSplitter;
 
-class FileDataLoader implements DataLoaderInterface
+class FileDataLoader extends AbstractDataLoader
 {
     /**
      * @var array<string, ReaderInterface>
