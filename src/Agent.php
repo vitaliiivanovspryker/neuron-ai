@@ -104,7 +104,7 @@ class Agent implements \SplSubject
             $this->resolveChatHistory()->addMessage($message);
         }
 
-        $this->notify('message:sending', $message);
+        $this->notify('message:sending', $this->resolveChatHistory()->getLastMessage());
 
         $response = $this->provider()
             ->systemPrompt($this->instructions())
@@ -113,7 +113,10 @@ class Agent implements \SplSubject
                 $this->resolveChatHistory()->toArray()
             );
 
-        $this->notify('message:sent', $response);
+        $this->notify('message:sent', [
+            'response' => $response,
+            'message' => $this->resolveChatHistory()->getLastMessage()
+        ]);
 
         if ($response instanceof ToolCallMessage) {
             $this->notify('tool:calling', $response);
