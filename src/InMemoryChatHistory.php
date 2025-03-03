@@ -37,7 +37,7 @@ class InMemoryChatHistory extends AbstractChatHistory
 
     public function truncate(int $count): self
     {
-        $this->history = \array_slice($this->history, $count);
+        $this->history = \array_slice($this->history, 0, $count);
         return $this;
     }
 }

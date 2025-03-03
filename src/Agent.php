@@ -10,7 +10,7 @@ use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolCallMessage;
 use NeuronAI\Tools\ToolInterface;
 
-class NeuronAgent implements \SplSubject
+class Agent implements \SplSubject
 {
     /**
      * The AI provider instance.

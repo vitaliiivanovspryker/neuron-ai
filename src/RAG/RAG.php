@@ -2,12 +2,12 @@
 
 namespace NeuronAI\RAG;
 
-use NeuronAI\NeuronAgent;
+use NeuronAI\Agent;
 use NeuronAI\Messages\Message;
 use NeuronAI\Messages\UserMessage;
 use NeuronAI\RAG\VectorStore\VectorStoreInterface;
 
-class NeuronRAG extends NeuronAgent
+class RAG extends Agent
 {
     /**
      * Instructions template.
