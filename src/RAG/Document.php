@@ -2,7 +2,7 @@
 
 namespace NeuronAI\RAG;
 
-class Document
+class Document implements \JsonSerializable
 {
     public mixed $id;
 
@@ -18,6 +18,17 @@ class Document
     public int $chunkNumber = 0;
 
     public function __construct(
-        public string $content,
+        public string $content = '',
     ) {}
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'sourceType' => $this->sourceType,
+            'sourceName' => $this->sourceName,
+            'hash' => $this->hash,
+            'chunkNumber' => $this->chunkNumber,
+        ];
+    }
 }

@@ -49,9 +49,9 @@ class PineconeVectorStore implements VectorStoreInterface
     public function addDocuments(array $documents): void
     {
         $this->client->post("indexes/{$this->index}/vectors/upsert", [
-            RequestOptions::JSON => array_map(function (Document $document) {
+            RequestOptions::JSON => \array_map(function (Document $document) {
                 return [
-                    'id' => $document->id??uniqid(),
+                    'id' => $document->id??\uniqid(),
                     'values' => $document->embedding,
                 ];
             }, $documents)
@@ -68,8 +68,13 @@ class PineconeVectorStore implements VectorStoreInterface
             ]
         ])->getBody()->getContents();
 
-        $result = json_decode($result, true);
+        $result = \json_decode($result, true);
 
-        return $result['matches'];
+        return \array_map(function (array $item) {
+            $document = new Document();
+            $document->id = $item['id'];
+            $document->embedding = $item['values'];
+            return $document;
+        }, $result['matches']);
     }
 }
