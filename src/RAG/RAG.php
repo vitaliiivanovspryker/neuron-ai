@@ -10,6 +10,10 @@ use NeuronAI\RAG\VectorStore\VectorStoreInterface;
 
 class RAG extends Agent
 {
+    /**
+     * @var VectorStoreInterface
+     */
+    protected VectorStoreInterface $store;
 
     /**
      * The embeddings provider.
@@ -24,10 +28,6 @@ class RAG extends Agent
      * @var string|null
      */
     protected ?string $instructions = "Use the following pieces of context to answer the question of the user. If you don't know the answer, just say that you don't know, don't try to make up an answer.\n\n{context}.";
-
-    public function __construct(protected VectorStoreInterface $store) {
-        parent::__construct();
-    }
 
     public function answerQuestion(string $question, int $k = 4): Message
     {
@@ -78,7 +78,7 @@ class RAG extends Agent
     private function searchDocuments(string $question, int $k): array
     {
         $embedding = $this->embeddings()->embedText($question);
-        $docs = $this->store->similaritySearch($embedding, $k);
+        $docs = $this->vectorStore()->similaritySearch($embedding, $k);
 
         $retrievedDocs = [];
 
@@ -99,5 +99,15 @@ class RAG extends Agent
     public function embeddings(): EmbeddingsProviderInterface
     {
         return $this->embeddingsProvider;
+    }
+
+    public function setVectorStore(VectorStoreInterface $store)
+    {
+        $this->store = $store;
+    }
+
+    public function vectorStore(): VectorStoreInterface
+    {
+        return $this->store;
     }
 }

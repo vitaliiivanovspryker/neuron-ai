@@ -12,7 +12,7 @@ class PineconeVectorStore implements VectorStoreInterface
 
     public function __construct(
         string $key,
-        protected string $indexName,
+        protected string $index,
         array $spec,
         string $version = '2025-01'
     ) {
@@ -26,7 +26,7 @@ class PineconeVectorStore implements VectorStoreInterface
             ]
         ]);
 
-        $response = $this->client->get("indexes/{$this->indexName}");
+        $response = $this->client->get("indexes/{$this->index}");
 
         if ($response->getStatusCode() === 200) {
             return;
@@ -35,7 +35,7 @@ class PineconeVectorStore implements VectorStoreInterface
         // Create the index
         $this->client->post('indexes', [
             RequestOptions::JSON => [
-                'name' => $indexName,
+                'name' => $index,
                 'spec' => $spec,
             ]
         ]);
@@ -48,7 +48,7 @@ class PineconeVectorStore implements VectorStoreInterface
 
     public function addDocuments(array $documents): void
     {
-        $this->client->post("indexes/{$this->indexName}/vectors/upsert", [
+        $this->client->post("indexes/{$this->index}/vectors/upsert", [
             RequestOptions::JSON => array_map(function (Document $document) {
                 return [
                     'id' => $document->id??uniqid(),
@@ -60,7 +60,7 @@ class PineconeVectorStore implements VectorStoreInterface
 
     public function similaritySearch(array $embedding, int $k = 4): iterable
     {
-        $result = $this->client->get("indexes/{$this->indexName}/query", [
+        $result = $this->client->get("indexes/{$this->index}/query", [
             RequestOptions::QUERY => [
                 'namespace' => '',
                 'vector' => $embedding,
