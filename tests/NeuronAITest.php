@@ -3,13 +3,15 @@
 namespace NeuronAI\Tests;
 
 
+use NeuronAI\AbstractChatHistory;
 use NeuronAI\Agent;
 use NeuronAI\InMemoryChatHistory;
 use NeuronAI\Messages\UserMessage;
 use NeuronAI\RAG\VectorStore\MemoryVectorStore;
+use NeuronAI\RAG\VectorStore\VectorStoreInterface;
 use PHPUnit\Framework\TestCase;
 
-class NeuronAgentTest extends TestCase
+class NeuronAITest extends TestCase
 {
     /**
      * Sets up the fixture, for example, open a network connection.
@@ -31,6 +33,8 @@ class NeuronAgentTest extends TestCase
     public function testChatHistory()
     {
         $history = new InMemoryChatHistory();
+        $this->assertInstanceOf(AbstractChatHistory::class, $history);
+
         $history->addMessage(new UserMessage('Hello!'));
         $this->assertCount(1, $history->getMessages());
         $this->assertEquals(1, $history->count());
@@ -50,5 +54,6 @@ class NeuronAgentTest extends TestCase
     public function testVectorStore()
     {
         $store = new MemoryVectorStore();
+        $this->assertInstanceOf(VectorStoreInterface::class, $store);
     }
 }
