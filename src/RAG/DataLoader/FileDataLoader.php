@@ -3,6 +3,7 @@
 namespace NeuronAI\RAG\DataLoader;
 
 use NeuronAI\RAG\Document;
+use NeuronAI\RAG\Splitters\DocumentSplitter;
 
 class FileDataLoader implements DataLoaderInterface
 {
@@ -79,7 +80,7 @@ class FileDataLoader implements DataLoaderInterface
             closedir($handle);
         }
 
-        return $documents;
+        return DocumentSplitter::splitDocuments($documents);
     }
 
     /**
