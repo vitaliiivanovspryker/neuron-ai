@@ -7,8 +7,7 @@ use NeuronAI\Events\InstructionsChanged;
 use NeuronAI\Events\InstructionsChanging;
 use NeuronAI\Events\VectorStoreResult;
 use NeuronAI\Events\VectorStoreSearching;
-use NeuronAI\Messages\Message;
-use NeuronAI\Messages\UserMessage;
+use NeuronAI\Messages\AbstractMessage;
 use NeuronAI\Providers\Embeddings\EmbeddingsProviderInterface;
 use NeuronAI\RAG\VectorStore\VectorStoreInterface;
 
@@ -33,7 +32,7 @@ class RAG extends Agent
      */
     protected ?string $instructions = "Use the following pieces of context to answer the question of the user. If you don't know the answer, just say that you don't know, don't try to make up an answer.\n\n{context}.";
 
-    public function answer(Message $question, int $k = 4): Message
+    public function answer(AbstractMessage $question, int $k = 4): AbstractMessage
     {
         $this->notify('rag-start');
 
