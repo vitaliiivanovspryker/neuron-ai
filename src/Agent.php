@@ -85,13 +85,13 @@ class Agent implements AgentInterface
 
         if (!\is_null($message)) {
             $this->resolveChatHistory()->addMessage($message);
+        } else {
+            $message = $this->resolveChatHistory()->getLastMessage();
         }
 
         $this->notify(
             'message:sending',
-            new MessageSending(
-                $this->resolveChatHistory()->getLastMessage()
-            )
+            new MessageSending($message)
         );
 
         $response = $this->provider()
@@ -101,12 +101,11 @@ class Agent implements AgentInterface
                 $this->resolveChatHistory()->toArray()
             );
 
+        $this->resolveChatHistory()->addMessage($response);
+
         $this->notify(
             'message:sent',
-            new MessageSent(
-                $this->resolveChatHistory()->getLastMessage(),
-                $response
-            )
+            new MessageSent($message, $response)
         );
 
         if ($response instanceof ToolCallMessage) {
