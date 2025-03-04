@@ -33,13 +33,15 @@ class RAG extends Agent
      */
     protected ?string $instructions = "Use the following pieces of context to answer the question of the user. If you don't know the answer, just say that you don't know, don't try to make up an answer.\n\n{context}.";
 
-    public function answerQuestion(string $question, int $k = 4): Message
+    public function answer(Message $question, int $k = 4): Message
     {
+        $this->notify('rag:start');
+
         $this->notify(
             'rag:vectorstore:searching',
             new VectorStoreSearching($question)
         );
-        $documents = $this->searchDocuments($question, $k);
+        $documents = $this->searchDocuments($question->getContent(), $k);
         $this->notify(
             'rag:vectorstore:result',
             new VectorStoreResult($question, $documents)
@@ -55,9 +57,10 @@ class RAG extends Agent
             new InstructionsChanged($this->instructions())
         );
 
-        return $this->run(
-            new UserMessage($question)
-        );
+        $response = $this->run($question);
+
+        $this->notify('rag:stop');
+        return $response;
     }
 
     /**

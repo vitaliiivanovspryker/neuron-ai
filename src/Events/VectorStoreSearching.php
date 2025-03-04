@@ -2,9 +2,11 @@
 
 namespace NeuronAI\Events;
 
+use NeuronAI\Messages\Message;
+
 class VectorStoreSearching
 {
     public function __construct(
-        public string $question
+        public Message $question
     ) {}
 }
