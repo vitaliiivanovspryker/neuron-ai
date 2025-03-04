@@ -35,31 +35,31 @@ class RAG extends Agent
 
     public function answer(Message $question, int $k = 4): Message
     {
-        $this->notify('rag:start');
+        $this->notify('rag-start');
 
         $this->notify(
-            'rag:vectorstore:searching',
+            'rag-vectorstore-searching',
             new VectorStoreSearching($question)
         );
         $documents = $this->searchDocuments($question->getContent(), $k);
         $this->notify(
-            'rag:vectorstore:result',
+            'rag-vectorstore-result',
             new VectorStoreResult($question, $documents)
         );
 
         $this->notify(
-            'rag:instructions:changing',
+            'rag-instructions-changing',
             new InstructionsChanging($this->instructions())
         );
         $this->setSystemMessage($documents, $k);
         $this->notify(
-            'rag:instructions:changed',
+            'rag-instructions-changed',
             new InstructionsChanged($this->instructions())
         );
 
         $response = $this->chat($question);
 
-        $this->notify('rag:stop');
+        $this->notify('rag-stop');
         return $response;
     }
 

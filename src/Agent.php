@@ -81,7 +81,7 @@ class Agent implements AgentInterface
      */
     public function chat(?Message $message = null): Message
     {
-        $this->notify('chat:start');
+        $this->notify('chat-start');
 
         if (!\is_null($message)) {
             $this->resolveChatHistory()->addMessage($message);
@@ -90,7 +90,7 @@ class Agent implements AgentInterface
         }
 
         $this->notify(
-            'message:sending',
+            'message-sending',
             new MessageSending($message)
         );
 
@@ -104,19 +104,19 @@ class Agent implements AgentInterface
         $this->resolveChatHistory()->addMessage($response);
 
         $this->notify(
-            'message:sent',
+            'message-sent',
             new MessageSent($message, $response)
         );
 
         if ($response instanceof ToolCallMessage) {
-            $this->notify('tool:calling', new ToolCalling($response));
+            $this->notify('tool-calling', new ToolCalling($response));
             $toolResult = $response->getTool()->execute($response->getInputs());
-            $this->notify('tool:called', new ToolCalled($response, $toolResult));
+            $this->notify('tool-called', new ToolCalled($response, $toolResult));
 
-            $this->run(new UserMessage($toolResult));
+            $this->chat(new UserMessage($toolResult));
         }
 
-        $this->notify('chat:stop');
+        $this->notify('chat-stop');
         return $response;
     }
 
