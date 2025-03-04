@@ -3,6 +3,10 @@
 namespace NeuronAI\RAG;
 
 use NeuronAI\Agent;
+use NeuronAI\Events\InstructionsChanged;
+use NeuronAI\Events\InstructionsChanging;
+use NeuronAI\Events\VectorStoreResult;
+use NeuronAI\Events\VectorStoreSearching;
 use NeuronAI\Messages\Message;
 use NeuronAI\Messages\UserMessage;
 use NeuronAI\Providers\Embeddings\EmbeddingsProviderInterface;
@@ -31,13 +35,25 @@ class RAG extends Agent
 
     public function answerQuestion(string $question, int $k = 4): Message
     {
-        $this->notify('agent:vectorstore:searching', $question);
+        $this->notify(
+            'rag:vectorstore:searching',
+            new VectorStoreSearching($question)
+        );
         $documents = $this->searchDocuments($question, $k);
-        $this->notify('agent:vectorstore:result', $documents);
+        $this->notify(
+            'rag:vectorstore:result',
+            new VectorStoreResult($documents)
+        );
 
-        $this->notify('agent:instructions:changing', $this->instructions());
+        $this->notify(
+            'rag:instructions:changing',
+            new InstructionsChanging($this->instructions())
+        );
         $this->setSystemMessage($documents, $k);
-        $this->notify('agent:instructions:changed', $this->instructions());
+        $this->notify(
+            'rag:instructions:changed',
+            new InstructionsChanged($this->instructions())
+        );
 
         return $this->run(
             new UserMessage($question)

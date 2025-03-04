@@ -38,13 +38,6 @@ class Agent implements AgentInterface
     protected ?string $instructions = null;
 
     /**
-     * The prompt of the agent.
-     *
-     * @var Message
-     */
-    protected Message $prompt;
-
-    /**
      * Registered tools.
      *
      * @var array<Tool>
