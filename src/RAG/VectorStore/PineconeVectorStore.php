@@ -12,31 +12,16 @@ class PineconeVectorStore implements VectorStoreInterface
 
     public function __construct(
         string $key,
-        protected string $index,
-        array $spec,
+        protected string $indexUrl,
         string $version = '2025-01'
     ) {
         $this->client = new Client([
-            'base_uri' => 'https://api.pinecone.io',
+            'base_uri' => $this->indexUrl,
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
                 'Api-Key' => $key,
                 'X-Pinecone-API-Version' => $version,
-            ]
-        ]);
-
-        $response = $this->client->get("indexes/{$this->index}");
-
-        if ($response->getStatusCode() === 200) {
-            return;
-        }
-
-        // Create the index
-        $this->client->post('indexes', [
-            RequestOptions::JSON => [
-                'name' => $index,
-                'spec' => $spec,
             ]
         ]);
     }
@@ -48,19 +33,21 @@ class PineconeVectorStore implements VectorStoreInterface
 
     public function addDocuments(array $documents): void
     {
-        $this->client->post("indexes/{$this->index}/vectors/upsert", [
-            RequestOptions::JSON => \array_map(function (Document $document) {
-                return [
-                    'id' => $document->id??\uniqid(),
-                    'values' => $document->embedding,
-                ];
-            }, $documents)
+        $this->client->post("vectors/upsert", [
+            RequestOptions::JSON => [
+                'vectors' => \array_map(function (Document $document) {
+                    return [
+                        'id' => $document->id??\uniqid(),
+                        'values' => $document->embedding,
+                    ];
+                }, $documents)
+            ]
         ]);
     }
 
     public function similaritySearch(array $embedding, int $k = 4): iterable
     {
-        $result = $this->client->get("indexes/{$this->index}/query", [
+        $result = $this->client->get("query", [
             RequestOptions::QUERY => [
                 'namespace' => '',
                 'vector' => $embedding,

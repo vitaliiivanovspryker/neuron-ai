@@ -117,9 +117,10 @@ class RAG extends Agent
         return $this->embeddingsProvider;
     }
 
-    public function setVectorStore(VectorStoreInterface $store)
+    public function setVectorStore(VectorStoreInterface $store): self
     {
         $this->store = $store;
+        return $this;
     }
 
     public function vectorStore(): VectorStoreInterface
