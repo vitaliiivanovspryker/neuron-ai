@@ -53,8 +53,6 @@ class Agent implements AgentInterface
     {
         // A special event group for observers that want to listen to all events.
         $this->observers["*"] = [];
-
-        $this->notify('agent:start');
     }
 
     public static function make(...$args): static
@@ -83,6 +81,8 @@ class Agent implements AgentInterface
      */
     public function run(?Message $message = null): Message
     {
+        $this->notify('agent:start');
+
         if (!\is_null($message)) {
             $this->resolveChatHistory()->addMessage($message);
         }
