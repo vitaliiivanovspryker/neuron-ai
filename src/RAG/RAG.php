@@ -57,7 +57,7 @@ class RAG extends Agent
             new InstructionsChanged($this->instructions())
         );
 
-        $response = $this->run($question);
+        $response = $this->chat($question);
 
         $this->notify('rag:stop');
         return $response;

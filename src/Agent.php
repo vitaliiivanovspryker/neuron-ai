@@ -79,9 +79,9 @@ class Agent implements AgentInterface
      * @throws MissingCallbackParameter
      * @throws ToolCallableNotSet
      */
-    public function run(?Message $message = null): Message
+    public function chat(?Message $message = null): Message
     {
-        $this->notify('agent:start');
+        $this->notify('chat:start');
 
         if (!\is_null($message)) {
             $this->resolveChatHistory()->addMessage($message);
@@ -116,7 +116,7 @@ class Agent implements AgentInterface
             $this->run(new UserMessage($toolResult));
         }
 
-        $this->notify('agent:stop');
+        $this->notify('chat:stop');
         return $response;
     }
 

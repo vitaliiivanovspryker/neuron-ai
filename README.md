@@ -25,6 +25,43 @@ composer require inspector-apm/neuron-ai
 
 <a name="contribution"></a>
 
+## Create an Agent
+
+Extend `NeuronAI\Agent` class to create your own agent:
+
+```php
+use NeuronAI\Agent;
+use NeuronAI\Providers\AIProviderInterface;
+use NeuronAI\Providers\Anthropic;
+
+class MyAgent extends Agent
+{
+    public function provider(): AIProviderInterface
+    {
+        return new Anthropic(
+            key: 'ANTHROPIC_API_KEY',
+            model: 'ANTHROPIC_MODEL',
+        );
+    }
+}
+```
+
+
+## Talk to the Agent
+
+Send a prompt to the agent to get a response from the underlying LLM:
+
+```php
+$response = MyAgent::make($user)
+    ->run(
+        new UserMessage("Hi, I'm Valerio")
+    );
+
+echo $response->getContent();
+
+// Nice to meet you Valerio, how can I help you today?
+```
+
 ## Contributing
 
 We encourage you to contribute to the development of the Inspector bundle!
