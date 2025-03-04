@@ -47,11 +47,11 @@ class PineconeVectorStore implements VectorStoreInterface
 
     public function similaritySearch(array $embedding, int $k = 4): iterable
     {
-        $result = $this->client->get("query", [
-            RequestOptions::QUERY => [
+        $result = $this->client->post("query", [
+            RequestOptions::JSON => [
                 'namespace' => '',
                 'vector' => $embedding,
-                'top_k' => $k,
+                'topK' => $k,
             ]
         ])->getBody()->getContents();
 
