@@ -10,7 +10,7 @@ class InMemoryChatHistory extends AbstractChatHistory
 
     public function addMessage(AbstractMessage $message): self
     {
-        \array_unshift($this->history, $message);
+        $this->history[] =$message;
         return $this;
     }
 
@@ -21,7 +21,9 @@ class InMemoryChatHistory extends AbstractChatHistory
 
     public function getLastMessage(): ?AbstractMessage
     {
-        return $this->history[0] ?? null;
+        return $this->history[
+            max(count($this->history) - 1, 0)
+        ] ?? null;
     }
 
     public function clear(): self
@@ -37,7 +39,7 @@ class InMemoryChatHistory extends AbstractChatHistory
 
     public function truncate(int $count): self
     {
-        $this->history = \array_slice($this->history, 0, $count);
+        $this->history = \array_slice($this->history, $count);
         return $this;
     }
 }
