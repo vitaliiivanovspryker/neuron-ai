@@ -42,7 +42,7 @@ class RAG extends Agent
         $documents = $this->searchDocuments($question, $k);
         $this->notify(
             'rag:vectorstore:result',
-            new VectorStoreResult($documents)
+            new VectorStoreResult($question, $documents)
         );
 
         $this->notify(
