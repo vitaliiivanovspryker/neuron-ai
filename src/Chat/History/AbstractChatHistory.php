@@ -7,6 +7,8 @@ use NeuronAI\Chat\Messages\Usage;
 
 abstract class AbstractChatHistory implements ChatHistoryInterface
 {
+    public function __construct(protected int $contextWindow = 50000) {}
+
     abstract public function addMessage(Message $message): self;
 
     abstract public function getMessages(): array;
