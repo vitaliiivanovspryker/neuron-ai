@@ -32,11 +32,6 @@ class InMemoryChatHistory extends AbstractChatHistory
         return $this;
     }
 
-    public function count(): int
-    {
-        return count($this->history);
-    }
-
     public function truncate(): self
     {
         do {

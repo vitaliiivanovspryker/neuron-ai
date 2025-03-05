@@ -12,9 +12,5 @@ interface ChatHistoryInterface extends \JsonSerializable
 
     public function clear(): self;
 
-    public function count(): int;
-
-    public function truncate(): self;
-
     public function calculateTotalUsage(): int;
 }

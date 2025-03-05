@@ -32,7 +32,6 @@ class ChatHistoryTest extends TestCase
         $history = new InMemoryChatHistory();
         $history->addMessage(new UserMessage('Hello!'));
         $this->assertCount(1, $history->getMessages());
-        $this->assertEquals(1, $history->count());
     }
 
     public function testChatHistoryTruncate()
@@ -42,7 +41,7 @@ class ChatHistoryTest extends TestCase
         $history = new InMemoryChatHistory(300);
         $history->addMessage($message);
         $history->addMessage($message);
-        $this->assertEquals(1, $history->count());
+        $this->assertCount(1, $history->getMessages());
     }
 
     public function testChatHistoryClear()
@@ -52,6 +51,5 @@ class ChatHistoryTest extends TestCase
         $history->addMessage(new UserMessage('Hello2!'));
         $history->clear();
         $this->assertCount(0, $history->getMessages());
-        $this->assertEquals(0, $history->count());
     }
 }

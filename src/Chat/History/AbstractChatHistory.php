@@ -15,10 +15,6 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     abstract public function clear(): self;
 
-    abstract public function count(): int;
-
-    abstract public function truncate(): self;
-
     public function calculateTotalUsage(): int
     {
         return \array_reduce($this->getMessages(), function (int $carry, Message $message) {
