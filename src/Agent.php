@@ -21,6 +21,9 @@ use NeuronAI\Tools\ToolInterface;
 
 class Agent implements AgentInterface
 {
+    use ResolveTools;
+    use ResolveChatHistory;
+
     /**
      * The AI provider instance.
      *
@@ -29,23 +32,11 @@ class Agent implements AgentInterface
     protected AIProviderInterface $provider;
 
     /**
-     * @var AbstractChatHistory
-     */
-    protected AbstractChatHistory $chatHistory;
-
-    /**
      * The system message.
      *
      * @var ?string
      */
     protected ?string $instructions = null;
-
-    /**
-     * Registered tools.
-     *
-     * @var array<Tool>
-     */
-    protected array $tools = [];
 
     /**
      * @var array<\SplObserver>
@@ -87,7 +78,7 @@ class Agent implements AgentInterface
         $this->notify('chat-start');
 
         $this->notify('message-saving', new MessageSaving($message));
-        $this->chatHistory()->addMessage($message);
+        $this->resolveChatHistory()->addMessage($message);
         $this->notify('message-saved', new MessageSaved($message));
 
         $this->notify(
@@ -99,11 +90,11 @@ class Agent implements AgentInterface
             ->systemPrompt($this->instructions())
             ->setTools($this->tools())
             ->chat(
-                $this->chatHistory()->toArray()
+                $this->resolveChatHistory()->toArray()
             );
 
         $this->notify('message-saving', new MessageSaving($response));
-        $this->chatHistory()->addMessage($response);
+        $this->resolveChatHistory()->addMessage($response);
         $this->notify('message-saved', new MessageSaved($response));
 
         $this->notify(
@@ -135,43 +126,6 @@ class Agent implements AgentInterface
     {
         $this->instructions = $instructions;
         return $this;
-    }
-
-    /**
-     * Get the list of tools.
-     *
-     * @return array<Tool>
-     */
-    public function tools(): array
-    {
-        return $this->tools;
-    }
-
-    /**
-     * Add a tool.
-     *
-     * @param ToolInterface $tool
-     * @return $this
-     */
-    public function addTool(ToolInterface $tool): self
-    {
-        $this->tools[] = $tool;
-        return $this;
-    }
-
-    public function withChatHistory(AbstractChatHistory $chatHistory): self
-    {
-        $this->chatHistory = $chatHistory;
-        return $this;
-    }
-
-    public function chatHistory(): AbstractChatHistory
-    {
-        if (!isset($this->chatHistory)) {
-            $this->chatHistory = new InMemoryChatHistory();
-        }
-
-        return $this->chatHistory;
     }
 
     private function initEventGroup(string $event = "*"): void
