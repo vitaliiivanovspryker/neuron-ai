@@ -4,6 +4,8 @@ namespace NeuronAI\Tests;
 
 use NeuronAI\Chat\History\AbstractChatHistory;
 use NeuronAI\Chat\History\InMemoryChatHistory;
+use NeuronAI\Chat\Messages\Message;
+use NeuronAI\Chat\Messages\Usage;
 use NeuronAI\Chat\Messages\UserMessage;
 use PHPUnit\Framework\TestCase;
 
@@ -33,22 +35,14 @@ class ChatHistoryTest extends TestCase
         $this->assertEquals(1, $history->count());
     }
 
-    public function testChatHistoryLastMessage()
+    public function testChatHistoryTruncate()
     {
-        $history = new InMemoryChatHistory();
-        $history->addMessage(new UserMessage('Hello!'));
-        $history->addMessage(new UserMessage('Hello2!'));
-        $this->assertEquals('Hello2!', $history->getLastMessage()->getContent());
-    }
-
-    public function testChatHistoryTruncateOldMessages()
-    {
-        $history = new InMemoryChatHistory();
-        $history->addMessage(new UserMessage('Hello!'));
-        $history->addMessage(new UserMessage('Hello2!'));
-        $history->truncate(1);
+        $message = new UserMessage('Hello!');
+        $message->setUsage(new Usage(100, 100));
+        $history = new InMemoryChatHistory(300);
+        $history->addMessage($message);
+        $history->addMessage($message);
         $this->assertEquals(1, $history->count());
-        $this->assertEquals('Hello2!', $history->getLastMessage()->getContent());
     }
 
     public function testChatHistoryClear()

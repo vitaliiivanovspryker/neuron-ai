@@ -43,7 +43,7 @@ class InMemoryChatHistory extends AbstractChatHistory
     {
         do {
             \array_pop($this->history);
-        } while ($this->contextWindow - $this->calculateTotalUsage() > 0);
+        } while ($this->contextWindow - $this->calculateTotalUsage() < 0);
 
         return $this;
     }
