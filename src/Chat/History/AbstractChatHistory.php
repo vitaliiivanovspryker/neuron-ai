@@ -1,23 +1,21 @@
 <?php
 
-namespace NeuronAI;
+namespace NeuronAI\Chat\History;
 
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\Usage;
 
-abstract class AbstractChatHistory implements \JsonSerializable
+abstract class AbstractChatHistory implements ChatHistoryInterface
 {
     abstract public function addMessage(Message $message): self;
 
     abstract public function getMessages(): array;
 
-    abstract public function getLastMessage(): ?Message;
-
     abstract public function clear(): self;
 
     abstract public function count(): int;
 
-    abstract public function truncate(int $count): self;
+    abstract public function truncate(): self;
 
     public function calculateTotalUsage(): int
     {

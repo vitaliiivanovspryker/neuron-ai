@@ -2,7 +2,7 @@
 
 namespace NeuronAI;
 
-use NeuronAI\Chat\InMemoryChatHistory;
+use NeuronAI\Chat\History\InMemoryChatHistory;
 use NeuronAI\Events\MessageSaved;
 use NeuronAI\Events\MessageSaving;
 use NeuronAI\Events\MessageSending;
@@ -90,7 +90,7 @@ class Agent implements AgentInterface
             ->systemPrompt($this->instructions())
             ->setTools($this->tools())
             ->chat(
-                $this->resolveChatHistory()->toArray()
+                $this->resolveChatHistory()->jsonSerialize()
             );
 
         $this->notify('message-saving', new MessageSaving($response));

@@ -1,30 +1,31 @@
 <?php
 
-namespace NeuronAI\Chat;
+namespace NeuronAI\Chat\History;
 
-use NeuronAI\AbstractChatHistory;
 use NeuronAI\Chat\Messages\Message;
 
 class InMemoryChatHistory extends AbstractChatHistory
 {
+    public function __construct(protected int $contextWindow = 50000) {}
+
     protected array $history = [];
 
     public function addMessage(Message $message): self
     {
-        $this->history[] =$message;
+        $this->history[] = $message;
+
+        $freeMemory = $this->contextWindow - $this->calculateTotalUsage();
+
+        if ($freeMemory < 0) {
+            $this->truncate();
+        }
+
         return $this;
     }
 
     public function getMessages(): array
     {
         return $this->history;
-    }
-
-    public function getLastMessage(): ?Message
-    {
-        return $this->history[
-            max(count($this->history) - 1, 0)
-        ] ?? null;
     }
 
     public function clear(): self
@@ -38,9 +39,12 @@ class InMemoryChatHistory extends AbstractChatHistory
         return count($this->history);
     }
 
-    public function truncate(int $count): self
+    public function truncate(): self
     {
-        $this->history = \array_slice($this->history, $count);
+        do {
+            \array_pop($this->history);
+        } while ($this->contextWindow - $this->calculateTotalUsage() > 0);
+
         return $this;
     }
 }

@@ -7,7 +7,7 @@ class Message implements \JsonSerializable
     const ROLE_USER = 'user';
     const ROLE_ASSISTANT = 'assistant';
 
-    protected Usage $usage;
+    protected ?Usage $usage = null;
 
     public function __construct(
         protected string $role,
@@ -30,7 +30,7 @@ class Message implements \JsonSerializable
         return $this;
     }
 
-    public function getUsage(): Usage
+    public function getUsage(): ?Usage
     {
         return $this->usage;
     }

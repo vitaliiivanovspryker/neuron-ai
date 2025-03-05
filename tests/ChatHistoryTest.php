@@ -2,8 +2,8 @@
 
 namespace NeuronAI\Tests;
 
-use NeuronAI\AbstractChatHistory;
-use NeuronAI\Chat\InMemoryChatHistory;
+use NeuronAI\Chat\History\AbstractChatHistory;
+use NeuronAI\Chat\History\InMemoryChatHistory;
 use NeuronAI\Chat\Messages\UserMessage;
 use PHPUnit\Framework\TestCase;
 

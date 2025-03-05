@@ -2,7 +2,8 @@
 
 namespace NeuronAI;
 
-use NeuronAI\Chat\InMemoryChatHistory;
+use NeuronAI\Chat\History\AbstractChatHistory;
+use NeuronAI\Chat\History\InMemoryChatHistory;
 
 trait ResolveChatHistory
 {
