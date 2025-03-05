@@ -16,10 +16,6 @@ interface AgentInterface extends \SplSubject
 
     public function setInstructions(?string $instructions): self;
 
-    public function addMessage(string|Message $message): self;
-
-    public function withMessages(array $messages): self;
-
     public function tools(): array;
 
     public function addTool(ToolInterface $tool): self;
@@ -30,5 +26,5 @@ interface AgentInterface extends \SplSubject
 
     public function observe(\SplObserver $observer, string $event = "*"): self;
 
-    public function chat(?Message $message = null): Message;
+    public function chat(Message $message): Message;
 }

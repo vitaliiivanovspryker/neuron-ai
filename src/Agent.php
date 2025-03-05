@@ -3,6 +3,8 @@
 namespace NeuronAI;
 
 use NeuronAI\Chat\InMemoryChatHistory;
+use NeuronAI\Events\MessageSaved;
+use NeuronAI\Events\MessageSaving;
 use NeuronAI\Events\MessageSending;
 use NeuronAI\Events\MessageSent;
 use NeuronAI\Events\ToolCalled;
@@ -75,20 +77,18 @@ class Agent implements AgentInterface
     /**
      * Execute the chat.
      *
-     * @param Message|null $message
+     * @param Message $message
      * @return Message
      * @throws MissingCallbackParameter
      * @throws ToolCallableNotSet
      */
-    public function chat(?Message $message = null): Message
+    public function chat(Message $message): Message
     {
         $this->notify('chat-start');
 
-        if (!\is_null($message)) {
-            $this->resolveChatHistory()->addMessage($message);
-        } else {
-            $message = $this->resolveChatHistory()->getLastMessage();
-        }
+        $this->notify('message-saving', new MessageSaving($message));
+        $this->resolveChatHistory()->addMessage($message);
+        $this->notify('message-saved', new MessageSaved($message));
 
         $this->notify(
             'message-sending',
@@ -102,7 +102,9 @@ class Agent implements AgentInterface
                 $this->resolveChatHistory()->toArray()
             );
 
+        $this->notify('message-saving', new MessageSaving($response));
         $this->resolveChatHistory()->addMessage($response);
+        $this->notify('message-saved', new MessageSaved($response));
 
         $this->notify(
             'message-sent',
@@ -124,11 +126,6 @@ class Agent implements AgentInterface
         return $response;
     }
 
-    public function calculateTotalUsage(): int
-    {
-        return $this->resolveChatHistory()->calculateTotalUsage();
-    }
-
     public function instructions(): ?string
     {
         return $this->instructions;
@@ -137,29 +134,6 @@ class Agent implements AgentInterface
     public function setInstructions(?string $instructions): self
     {
         $this->instructions = $instructions;
-        return $this;
-    }
-
-    public function addMessage(string|Message $message): self
-    {
-        $this->resolveChatHistory()->addMessage(
-            \is_string($message) ? new UserMessage($message) : $message
-        );
-
-        return $this;
-    }
-
-    public function withMessages(array $messages): self
-    {
-        $this->resolveChatHistory()->clear();
-
-        foreach ($messages as $message) {
-            if (!$message instanceof Message) {
-                throw new InvalidMessageInstance('Messages must be instance of '.Message::class.' class');
-            }
-            $this->resolveChatHistory()->addMessage($message);
-        }
-
         return $this;
     }
 
