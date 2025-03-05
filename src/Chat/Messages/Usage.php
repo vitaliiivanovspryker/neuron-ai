@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\Messages;
+namespace NeuronAI\Chat\Messages;
 
 class Usage
 {

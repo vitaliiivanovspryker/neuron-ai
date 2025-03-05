@@ -2,8 +2,8 @@
 
 namespace NeuronAI\Providers;
 
-use NeuronAI\Messages\AssistantMessage;
-use NeuronAI\Messages\Message;
+use NeuronAI\Chat\Messages\AssistantMessage;
+use NeuronAI\Chat\Messages\Message;
 use Psr\Log\LoggerInterface;
 
 class Log implements AIProviderInterface

@@ -7,7 +7,7 @@ use NeuronAI\Events\InstructionsChanged;
 use NeuronAI\Events\InstructionsChanging;
 use NeuronAI\Events\VectorStoreResult;
 use NeuronAI\Events\VectorStoreSearching;
-use NeuronAI\Messages\AbstractMessage;
+use NeuronAI\Chat\Messages\AbstractMessage;
 use NeuronAI\Providers\Embeddings\EmbeddingsProviderInterface;
 use NeuronAI\RAG\VectorStore\VectorStoreInterface;
 

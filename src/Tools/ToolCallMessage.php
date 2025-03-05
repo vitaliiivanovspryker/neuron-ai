@@ -2,7 +2,7 @@
 
 namespace NeuronAI\Tools;
 
-use NeuronAI\Messages\AssistantMessage;
+use NeuronAI\Chat\Messages\AssistantMessage;
 
 class ToolCallMessage extends AssistantMessage
 {

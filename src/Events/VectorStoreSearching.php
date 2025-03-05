@@ -2,7 +2,7 @@
 
 namespace NeuronAI\Events;
 
-use NeuronAI\Messages\Message;
+use NeuronAI\Chat\Messages\Message;
 
 class VectorStoreSearching
 {

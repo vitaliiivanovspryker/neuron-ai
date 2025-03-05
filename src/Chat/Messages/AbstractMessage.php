@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\Messages;
+namespace NeuronAI\Chat\Messages;
 
 abstract class AbstractMessage implements \JsonSerializable
 {

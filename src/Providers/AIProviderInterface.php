@@ -2,7 +2,7 @@
 
 namespace NeuronAI\Providers;
 
-use NeuronAI\Messages\Message;
+use NeuronAI\Chat\Messages\Message;
 
 interface AIProviderInterface
 {

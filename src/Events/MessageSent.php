@@ -2,7 +2,7 @@
 
 namespace NeuronAI\Events;
 
-use NeuronAI\Messages\AbstractMessage;
+use NeuronAI\Chat\Messages\AbstractMessage;
 
 class MessageSent
 {

@@ -2,6 +2,7 @@
 
 namespace NeuronAI;
 
+use NeuronAI\Chat\InMemoryChatHistory;
 use NeuronAI\Events\MessageSending;
 use NeuronAI\Events\MessageSent;
 use NeuronAI\Events\ToolCalled;
@@ -10,8 +11,8 @@ use NeuronAI\Exceptions\InvalidMessageInstance;
 use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
 use NeuronAI\Providers\AIProviderInterface;
-use NeuronAI\Messages\Message;
-use NeuronAI\Messages\UserMessage;
+use NeuronAI\Chat\Messages\Message;
+use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolCallMessage;
 use NeuronAI\Tools\ToolInterface;

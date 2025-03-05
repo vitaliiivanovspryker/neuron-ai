@@ -3,14 +3,14 @@
 namespace NeuronAI\Providers;
 
 use GuzzleHttp\Exception\GuzzleException;
-use NeuronAI\Messages\AssistantMessage;
-use NeuronAI\Messages\Message;
-use NeuronAI\Messages\UserMessage;
+use NeuronAI\Chat\Messages\AssistantMessage;
+use NeuronAI\Chat\Messages\Message;
+use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\ToolCallMessage;
 use NeuronAI\Tools\ToolProperty;
-use NeuronAI\Messages\Usage;
+use NeuronAI\Chat\Messages\Usage;
 use GuzzleHttp\Client;
 
 class Anthropic implements AIProviderInterface

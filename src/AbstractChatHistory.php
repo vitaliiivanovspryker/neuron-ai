@@ -2,8 +2,8 @@
 
 namespace NeuronAI;
 
-use NeuronAI\Messages\AbstractMessage;
-use NeuronAI\Messages\Usage;
+use NeuronAI\Chat\Messages\AbstractMessage;
+use NeuronAI\Chat\Messages\Usage;
 
 abstract class AbstractChatHistory implements \JsonSerializable
 {

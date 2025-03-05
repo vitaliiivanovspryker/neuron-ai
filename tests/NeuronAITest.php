@@ -4,8 +4,8 @@ namespace NeuronAI\Tests;
 
 
 use NeuronAI\Agent;
+use NeuronAI\AgentInterface;
 use NeuronAI\RAG\RAG;
-use NeuronAI\RAG\VectorStore\MemoryVectorStore;
 use PHPUnit\Framework\TestCase;
 
 class NeuronAITest extends TestCase
@@ -24,8 +24,9 @@ class NeuronAITest extends TestCase
     {
         $neuron = new Agent();
         $this->assertInstanceOf(\SplSubject::class, $neuron);
+        $this->assertInstanceOf(AgentInterface::class, $neuron);
 
-        $neuron = new RAG(new MemoryVectorStore());
+        $neuron = new RAG();
         $this->assertInstanceOf(Agent::class, $neuron);
     }
 }

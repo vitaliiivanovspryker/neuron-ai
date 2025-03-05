@@ -4,10 +4,10 @@ namespace NeuronAI\Providers;
 
 use GuzzleHttp\RequestOptions;
 use NeuronAI\Exceptions\ProviderException;
-use NeuronAI\Messages\AssistantMessage;
-use NeuronAI\Messages\Message;
+use NeuronAI\Chat\Messages\AssistantMessage;
+use NeuronAI\Chat\Messages\Message;
 use GuzzleHttp\Client;
-use NeuronAI\Messages\UserMessage;
+use NeuronAI\Chat\Messages\UserMessage;
 
 class OpenAI implements AIProviderInterface
 {

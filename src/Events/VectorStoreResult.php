@@ -2,7 +2,7 @@
 
 namespace NeuronAI\Events;
 
-use NeuronAI\Messages\Message;
+use NeuronAI\Chat\Messages\Message;
 use NeuronAI\RAG\Document;
 
 class VectorStoreResult
