@@ -23,6 +23,13 @@ class OpenAI implements AIProviderInterface
     protected Client $client;
 
     /**
+     * The main URL of the provider API.
+     *
+     * @var string
+     */
+    protected string $baseUri = 'https://api.openai.com';
+
+    /**
      * System instructions.
      * https://platform.openai.com/docs/api-reference/chat/create
      *
@@ -36,7 +43,7 @@ class OpenAI implements AIProviderInterface
         protected int $max_tokens = 1024,
     ) {
         $this->client = new Client([
-            'base_uri' => 'https://api.openai.com',
+            'base_uri' => $this->baseUri,
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
@@ -78,7 +85,7 @@ class OpenAI implements AIProviderInterface
 
         $json = [
             'model' => $this->model,
-            'messages' => is_array($messages) ? $messages : [$messages],
+            'messages' => \is_array($messages) ? $messages : [$messages],
         ];
 
         // Attach tools

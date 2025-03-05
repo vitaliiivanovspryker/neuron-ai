@@ -86,7 +86,7 @@ class Anthropic implements AIProviderInterface
             'stop_sequences' => $this->stop_sequences,
             'temperature' => $this->temperature,
             'system' => $this->system ?? null,
-            'messages' => is_array($messages) ? $messages : [$messages],
+            'messages' => \is_array($messages) ? $messages : [$messages],
         ]);
 
         if (!empty($this->tools)) {
