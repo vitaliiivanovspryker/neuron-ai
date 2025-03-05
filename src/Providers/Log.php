@@ -26,11 +26,11 @@ class Log implements AIProviderInterface
     }
 
     /**
-     * @param array|string $messages
+     * @param array|Message $messages
      * @return Message
      * @throws \Exception
      */
-    public function chat(array|string $messages): Message
+    public function chat(Message|array $messages): Message
     {
         if ($this->logger) {
             if (is_string($messages)) {

@@ -63,9 +63,10 @@ class Anthropic implements AIProviderInterface
     /**
      * Send a message to the LLM.
      *
+     * @param Message|array<Message> $messages
      * @throws GuzzleException
      */
-    public function chat(Message|string $messages): Message
+    public function chat(Message|array $messages): Message
     {
         if ($messages instanceof ToolCallMessage) {
             $messages = \array_map(function (ToolInterface $tool) {

@@ -61,9 +61,10 @@ class OpenAI implements AIProviderInterface
     /**
      * Send a message to the LLM.
      *
+     * @param Message|array<Message> $messages
      * @throws GuzzleException
      */
-    public function chat(Message|string $messages): Message
+    public function chat(Message|array $messages): Message
     {
         if ($messages instanceof ToolCallMessage) {
             $messages = \array_map(function (ToolInterface $tool) {
@@ -76,6 +77,8 @@ class OpenAI implements AIProviderInterface
                     ]
                 ];
             }, $messages->getTools());
+        } else {
+            $messages = \is_array($messages) ? $messages : [$messages];
         }
 
         // Attach the system prompt
@@ -85,7 +88,7 @@ class OpenAI implements AIProviderInterface
 
         $json = [
             'model' => $this->model,
-            'messages' => \is_array($messages) ? $messages : [$messages],
+            'messages' => $messages,
         ];
 
         // Attach tools
