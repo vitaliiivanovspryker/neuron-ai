@@ -20,7 +20,7 @@ interface AgentInterface extends \SplSubject
 
     public function addTool(ToolInterface $tool): self;
 
-    public function resolveChatHistory(): AbstractChatHistory;
+    public function chatHistory(): AbstractChatHistory;
 
     public function withChatHistory(AbstractChatHistory $chatHistory): self;
 

@@ -87,7 +87,7 @@ class Agent implements AgentInterface
         $this->notify('chat-start');
 
         $this->notify('message-saving', new MessageSaving($message));
-        $this->resolveChatHistory()->addMessage($message);
+        $this->chatHistory()->addMessage($message);
         $this->notify('message-saved', new MessageSaved($message));
 
         $this->notify(
@@ -99,11 +99,11 @@ class Agent implements AgentInterface
             ->systemPrompt($this->instructions())
             ->setTools($this->tools())
             ->chat(
-                $this->resolveChatHistory()->toArray()
+                $this->chatHistory()->toArray()
             );
 
         $this->notify('message-saving', new MessageSaving($response));
-        $this->resolveChatHistory()->addMessage($response);
+        $this->chatHistory()->addMessage($response);
         $this->notify('message-saved', new MessageSaved($response));
 
         $this->notify(
@@ -165,7 +165,7 @@ class Agent implements AgentInterface
         return $this;
     }
 
-    public function resolveChatHistory(): AbstractChatHistory
+    public function chatHistory(): AbstractChatHistory
     {
         if (!isset($this->chatHistory)) {
             $this->chatHistory = new InMemoryChatHistory();
