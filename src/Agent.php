@@ -104,9 +104,9 @@ class Agent implements AgentInterface
 
         if ($response instanceof ToolCallMessage) {
             foreach ($response->getTools() as $tool) {
-                $this->notify('tool-calling', new ToolCalling($response));
+                $this->notify('tool-calling', new ToolCalling($tool));
                 $tool->execute();
-                $this->notify('tool-called', new ToolCalled($response, $tool->getResult()));
+                $this->notify('tool-called', new ToolCalled($tool));
             }
 
             // Resubmit the ToolCallMessage

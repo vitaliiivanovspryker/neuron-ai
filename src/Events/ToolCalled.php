@@ -2,12 +2,9 @@
 
 namespace NeuronAI\Events;
 
-use NeuronAI\Tools\ToolCallMessage;
+use NeuronAI\Tools\ToolInterface;
 
 class ToolCalled
 {
-    public function __construct(
-        public ToolCallMessage $toolCall,
-        public mixed $result
-    ) {}
+    public function __construct(public ToolInterface $tool) {}
 }
