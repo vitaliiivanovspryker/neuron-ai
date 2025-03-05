@@ -2,15 +2,19 @@
 
 namespace NeuronAI\Providers;
 
-use GuzzleHttp\RequestOptions;
-use NeuronAI\Exceptions\ProviderException;
+use GuzzleHttp\Exception\GuzzleException;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use GuzzleHttp\Client;
-use NeuronAI\Chat\Messages\UserMessage;
+use NeuronAI\Chat\Messages\Usage;
+use NeuronAI\Tools\ToolCallMessage;
+use NeuronAI\Tools\ToolInterface;
+use NeuronAI\Tools\ToolProperty;
 
 class OpenAI implements AIProviderInterface
 {
+    use HandleWithTools;
+
     /**
      * The http client.
      *
@@ -22,7 +26,7 @@ class OpenAI implements AIProviderInterface
      * System instructions.
      * https://platform.openai.com/docs/api-reference/chat/create
      *
-     * @var string
+     * @var ?string
      */
     protected ?string $system;
 
@@ -47,36 +51,95 @@ class OpenAI implements AIProviderInterface
         return $this;
     }
 
-    public function chat(array|string $prompt): Message
+    /**
+     * Send a message to the LLM.
+     *
+     * @throws GuzzleException
+     */
+    public function chat(Message|string $messages): Message
     {
-        if (\is_string($prompt)) {
-            $prompt = [
-                new UserMessage($prompt),
-            ];
+        if ($messages instanceof ToolCallMessage) {
+            $messages = \array_map(function (ToolInterface $tool) {
+                return [
+                    'role' => 'tool',
+                    'content' => [
+                        'type' => 'tool_result',
+                        'tool_call_id' => $tool->getCallId(),
+                        'content' => $tool->getResult(),
+                    ]
+                ];
+            }, $messages->getTools());
         }
 
+        // Attach the system prompt
         if (isset($this->system)) {
-            \array_unshift($prompt, new AssistantMessage($this->system));
+            \array_unshift($messages, new AssistantMessage($this->system));
         }
 
-        $result = $this->client->post('v1/chat/completions', [
-            RequestOptions::JSON => [
-                'model' => $this->model,
-                'messages' => $prompt,
-            ]
-        ])->getBody()->getContents();
+        $json = [
+            'model' => $this->model,
+            'messages' => is_array($messages) ? $messages : [$messages],
+        ];
+
+        // Attach tools
+        if (!empty($this->tools)) {
+            $json['tools'] = $this->generateToolsPayload();
+        }
+
+        $result = $this->client->post('v1/chat/completions', compact('json'))
+            ->getBody()->getContents();
 
         $result = \json_decode($result, true);
 
-        // todo: Add usage to the response message
+        if ($result['status'] === 'requires_action') {
+            $response = $this->createToolMessage(
+                $result['required_action']['submit_tool_outputs']['tool_calls']
+            );
+        } else {
+            $response = new AssistantMessage($result['choices'][0]['message']['content']);
+        }
 
-        // todo: Add tool call management
+        if (\array_key_exists('usage', $result)) {
+            $response->setUsage(
+                new Usage($result['usage']['prompt_tokens'], $result['usage']['completion_tokens'])
+            );
+        }
 
-        return new AssistantMessage($result['choices'][0]['message']['content']);
+        return $response;
     }
 
-    public function setTools(array $tools): AIProviderInterface
+    public function generateToolsPayload(): array
     {
-        throw new ProviderException('Not implemented.');
+        return \array_map(function (ToolInterface $tool) {
+            return [
+                'type' => 'function',
+                'function' => [
+                    'name' => $tool->getName(),
+                    'description' => $tool->getDescription(),
+                    'parameters' => [
+                        'type' => 'object',
+                        'properties' => \array_reduce($tool->getProperties(), function (array $carry, ToolProperty $property) {
+                            $carry[$property->getName()] = [
+                                'name' => $property->getName(),
+                                'description' => $property->getDescription(),
+                            ];
+
+                            return $carry;
+                        }, []),
+                        'required' => $tool->getRequiredProperties(),
+                    ]
+                ]
+            ];
+        }, $this->tools);
+    }
+
+    protected function createToolMessage(array $tool_calls): Message
+    {
+        $tools = \array_map(function (array $item) {
+            return $this->findTool($item['function']['name'])
+                ->setInputs(json_decode($item['function']['arguments'], true));
+        }, $tool_calls);
+
+        return new ToolCallMessage($tools);
     }
 }

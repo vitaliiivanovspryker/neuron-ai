@@ -110,11 +110,14 @@ class Agent implements AgentInterface
         );
 
         if ($response instanceof ToolCallMessage) {
-            $this->notify('tool-calling', new ToolCalling($response));
-            $toolResult = $response->getTool()->execute($response->getInputs());
-            $this->notify('tool-called', new ToolCalled($response, $toolResult));
+            foreach ($response->getTools() as $tool) {
+                $this->notify('tool-calling', new ToolCalling($response));
+                $tool->execute();
+                $this->notify('tool-called', new ToolCalled($response, $tool->getResult()));
+            }
 
-            $this->chat(new UserMessage($toolResult));
+            // Resubmit the ToolCallMessage
+            $this->chat($response);
         }
 
         $this->notify('chat-stop');

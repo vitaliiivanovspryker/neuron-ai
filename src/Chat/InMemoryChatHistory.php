@@ -3,13 +3,13 @@
 namespace NeuronAI\Chat;
 
 use NeuronAI\AbstractChatHistory;
-use NeuronAI\Chat\Messages\AbstractMessage;
+use NeuronAI\Chat\Messages\Message;
 
 class InMemoryChatHistory extends AbstractChatHistory
 {
     protected array $history = [];
 
-    public function addMessage(AbstractMessage $message): self
+    public function addMessage(Message $message): self
     {
         $this->history[] =$message;
         return $this;
@@ -20,7 +20,7 @@ class InMemoryChatHistory extends AbstractChatHistory
         return $this->history;
     }
 
-    public function getLastMessage(): ?AbstractMessage
+    public function getLastMessage(): ?Message
     {
         return $this->history[
             max(count($this->history) - 1, 0)

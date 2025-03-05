@@ -47,22 +47,22 @@ class Mistral implements AIProviderInterface
         return $this;
     }
 
-    public function chat(array|string $prompt): Message
+    public function chat(array|string $messages): Message
     {
-        if (\is_string($prompt)) {
-            $prompt = [
-                new UserMessage($prompt),
+        if (\is_string($messages)) {
+            $messages = [
+                new UserMessage($messages),
             ];
         }
 
         if (isset($this->system)) {
-            \array_unshift($prompt, new AssistantMessage($this->system));
+            \array_unshift($messages, new AssistantMessage($this->system));
         }
 
         $result = $this->client->post('v1/chat/completions', [
             RequestOptions::JSON => [
                 'model' => $this->model,
-                'messages' => $prompt,
+                'messages' => $messages,
             ]
         ])->getBody()->getContents();
 

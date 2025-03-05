@@ -5,8 +5,6 @@ namespace NeuronAI\Providers;
 use GuzzleHttp\Exception\GuzzleException;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
-use NeuronAI\Chat\Messages\UserMessage;
-use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\ToolCallMessage;
 use NeuronAI\Tools\ToolProperty;
@@ -15,6 +13,8 @@ use GuzzleHttp\Client;
 
 class Anthropic implements AIProviderInterface
 {
+    use HandleWithTools;
+
     /**
      * The http client.
      *
@@ -29,13 +29,6 @@ class Anthropic implements AIProviderInterface
      * @var ?string
      */
     protected ?string $system;
-
-    /**
-     * https://docs.anthropic.com/en/docs/build-with-claude/tool-use/overview
-     *
-     * @var array<Tool>
-     */
-    protected array $tools = [];
 
     /**
      * AnthropicClaude constructor.
@@ -68,16 +61,23 @@ class Anthropic implements AIProviderInterface
     }
 
     /**
-     * Send a prompt to the AI agent.
+     * Send a message to the LLM.
      *
      * @throws GuzzleException
      */
-    public function chat(array|string $prompt): Message
+    public function chat(Message|string $messages): Message
     {
-        if (\is_string($prompt)) {
-            $prompt = [
-                new UserMessage($prompt)
-            ];
+        if ($messages instanceof ToolCallMessage) {
+            $messages = \array_map(function (ToolInterface $tool) {
+                return [
+                    'role' => Message::ROLE_USER,
+                    'content' => [
+                        'type' => 'tool_result',
+                        'tool_use_id' => $tool->getCallId(),
+                        'content' => $tool->getResult(),
+                    ]
+                ];
+            }, $messages->getTools());
         }
 
         $json = \array_filter([
@@ -86,7 +86,7 @@ class Anthropic implements AIProviderInterface
             'stop_sequences' => $this->stop_sequences,
             'temperature' => $this->temperature,
             'system' => $this->system ?? null,
-            'messages' => $prompt,
+            'messages' => is_array($messages) ? $messages : [$messages],
         ]);
 
         if (!empty($this->tools)) {
@@ -99,16 +99,12 @@ class Anthropic implements AIProviderInterface
 
         $result = \json_decode($result, true);
 
-        $content = \last($result['content']);
+        $content = \end($result['content']);
 
-        // Identify the right message to use
         if ($content['type'] === 'tool_use') {
-            $response = new ToolCallMessage(
-                $this->findTool($content['name']),
-                $content['input']
-            );
+            $response = $this->createToolMessage($content);
         } else {
-            $response = new AssistantMessage(\last($result['content'])['text']);
+            $response = new AssistantMessage($content['text']);
         }
 
         // Attach the usage for the current interaction
@@ -122,23 +118,6 @@ class Anthropic implements AIProviderInterface
         }
 
         return $response;
-    }
-
-    public function setTools(array $tools): self
-    {
-        $this->tools = $tools;
-        return $this;
-    }
-
-    public function findTool($name): ?Tool
-    {
-        foreach ($this->tools as $tool) {
-            if ($tool->getName() === $name) {
-                return $tool;
-            }
-        }
-
-        return null;
     }
 
     public function generateToolsPayload(): array
@@ -161,5 +140,15 @@ class Anthropic implements AIProviderInterface
                 ],
             ];
         }, $this->tools);
+    }
+
+    public function createToolMessage(array $content): Message
+    {
+        // Anthropic call one tool at a time. So we pass an array with one element.
+        return new ToolCallMessage([
+            $this->findTool($content['name'])
+                ->setInputs($content['input'])
+                ->setCallId($content['id'])
+        ]);
     }
 }

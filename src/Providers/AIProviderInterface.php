@@ -25,10 +25,10 @@ interface AIProviderInterface
     /**
      * Send a prompt to the AI agent.
      *
-     * @param array|string $prompt
+     * @param Message|string $messages
      * @return Message
      */
-    public function chat(array|string $prompt): Message;
+    public function chat(Message|string $messages): Message;
 
     //public function structured(array|string $messages): Message;
 

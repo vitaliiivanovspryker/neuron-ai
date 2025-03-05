@@ -7,21 +7,18 @@ use NeuronAI\Chat\Messages\AssistantMessage;
 class ToolCallMessage extends AssistantMessage
 {
     /**
-     * @param Tool $tool
-     * @param array $inputs
+     * @param array<Tool> $tools
      */
-    public function __construct(protected Tool $tool, protected array $inputs = [])
+    public function __construct(protected array $tools)
     {
         parent::__construct('');
     }
 
-    public function getTool(): Tool
+    /**
+     * @return array<Tool>
+     */
+    public function getTools(): array
     {
-        return $this->tool;
-    }
-
-    public function getInputs(): array
-    {
-        return $this->inputs;
+        return $this->tools;
     }
 }

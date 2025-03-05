@@ -2,9 +2,9 @@
 
 namespace NeuronAI\Events;
 
-use NeuronAI\Chat\Messages\AbstractMessage;
+use NeuronAI\Chat\Messages\Message;
 
 class MessageSending
 {
-    public function __construct(public AbstractMessage $message) {}
+    public function __construct(public Message $message) {}
 }

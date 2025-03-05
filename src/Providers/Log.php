@@ -26,17 +26,17 @@ class Log implements AIProviderInterface
     }
 
     /**
-     * @param array|string $prompt
+     * @param array|string $messages
      * @return Message
      * @throws \Exception
      */
-    public function chat(array|string $prompt): Message
+    public function chat(array|string $messages): Message
     {
         if ($this->logger) {
-            if (is_string($prompt)) {
-                $this->logger->debug("Prompting AI with: {$prompt}");
+            if (is_string($messages)) {
+                $this->logger->debug("Prompting AI with: {$messages}");
             } else {
-                $this->logger->debug('Prompting AI with: ', $prompt);
+                $this->logger->debug('Prompting AI with: ', $messages);
             }
         }
 
