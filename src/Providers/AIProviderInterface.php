@@ -3,6 +3,7 @@
 namespace NeuronAI\Providers;
 
 use NeuronAI\Chat\Messages\Message;
+use NeuronAI\Tools\ToolInterface;
 
 interface AIProviderInterface
 {
@@ -12,15 +13,15 @@ interface AIProviderInterface
      * @param ?string $prompt
      * @return AIProviderInterface
      */
-    public function systemPrompt(?string $prompt): self;
+    public function systemPrompt(?string $prompt): AIProviderInterface;
 
     /**
      * Set the tools to be exposed to the LLM.
      *
-     * @param array $tools
+     * @param array<ToolInterface> $tools
      * @return AIProviderInterface
      */
-    public function setTools(array $tools): self;
+    public function setTools(array $tools): AIProviderInterface;
 
     /**
      * Send a prompt to the AI agent.

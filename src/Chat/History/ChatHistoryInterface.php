@@ -6,11 +6,11 @@ use NeuronAI\Chat\Messages\Message;
 
 interface ChatHistoryInterface extends \JsonSerializable
 {
-    public function addMessage(Message $message): self;
+    public function addMessage(Message $message): ChatHistoryInterface;
 
     public function getMessages(): array;
 
-    public function clear(): self;
+    public function clear(): ChatHistoryInterface;
 
     public function calculateTotalUsage(): int;
 }
