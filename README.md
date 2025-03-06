@@ -1,6 +1,8 @@
 [![Latest Stable Version](https://poser.pugx.org/inspector-apm/neuron-ai/v/stable)](https://packagist.org/packages/inspector-apm/neuron-ai)
 [![License](https://poser.pugx.org/inspector-apm/neuron-ai/license)](//packagist.org/packages/inspector-apm/neuron-ai)
 
+![](./docs/img/logo-black-mini.png)
+
 # Neuron AI
 
 Open source framework to integrate AI Agents into your existing PHP application - powered by [Inspector.dev](https://inspector.dev)
