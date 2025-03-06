@@ -46,7 +46,7 @@ class MyAgent extends Agent
 Send a prompt to the agent to get a response from the underlying LLM:
 
 ```php
-$response = MyAgent::make($user)
+$response = MyAgent::make()
     ->run(
         new UserMessage("Hi, I'm Valerio")
     );
