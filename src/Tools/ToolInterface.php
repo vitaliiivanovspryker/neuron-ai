@@ -27,7 +27,7 @@ interface ToolInterface extends \JsonSerializable
     /**
      * Names of the required properties.
      *
-     * @return array
+     * @return array<string>
      */
     public function getRequiredProperties(): array;
 
