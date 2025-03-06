@@ -37,10 +37,19 @@ class Message implements \JsonSerializable
 
     public function toArray(): array
     {
-        return [
+        $data = [
             'role' => $this->getRole(),
             'content' => $this->getContent(),
         ];
+
+        if ($this->usage) {
+            $data['usage'] = [
+                'input_tokens' => $this->usage->inputTokens,
+                'output_tokens' => $this->usage->outputTokens,
+            ];
+        }
+
+        return $data;
     }
 
     public function jsonSerialize(): array

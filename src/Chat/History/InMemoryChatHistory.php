@@ -6,8 +6,6 @@ use NeuronAI\Chat\Messages\Message;
 
 class InMemoryChatHistory extends AbstractChatHistory
 {
-    public function __construct(protected int $contextWindow = 50000) {}
-
     protected array $history = [];
 
     public function addMessage(Message $message): self
@@ -32,11 +30,6 @@ class InMemoryChatHistory extends AbstractChatHistory
     {
         $this->history = [];
         return $this;
-    }
-
-    public function count(): int
-    {
-        return count($this->history);
     }
 
     public function truncate(): self
