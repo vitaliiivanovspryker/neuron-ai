@@ -3,7 +3,7 @@
 
 # Neuron AI
 
-PHP AI Framework with built-in observability - powered by [Inspector.dev](https://inspector.dev)
+Open source framework to integrate AI Agents into your existing PHP application - powered by [Inspector.dev](https://inspector.dev)
 
 > Before moving on, please consider giving us a GitHub star ⭐️. Thank you!
 
@@ -18,12 +18,6 @@ Install the latest version of the bundle:
 ```
 composer require inspector-apm/neuron-ai
 ```
-
-## Official documentation
-
-**[Go to the official documentation](https://neuron.inspector.dev/)**
-
-<a name="contribution"></a>
 
 ## Create an Agent
 
@@ -61,6 +55,10 @@ echo $response->getContent();
 
 // Nice to meet you Valerio, how can I help you today?
 ```
+
+## Official documentation
+
+**[Go to the official documentation](https://neuron.inspector.dev/)**
 
 ## Contributing
 
