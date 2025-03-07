@@ -23,7 +23,6 @@ class NeuronAITest extends TestCase
     public function testAgentInstance()
     {
         $neuron = new Agent();
-        $this->assertInstanceOf(\SplSubject::class, $neuron);
         $this->assertInstanceOf(AgentInterface::class, $neuron);
 
         $neuron = new RAG();
