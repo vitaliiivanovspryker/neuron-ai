@@ -147,26 +147,12 @@ class Agent implements AgentInterface
 
     public function observe(\Inspector\Inspector $inspector): AgentInterface
     {
-        $this->attach(new AgentMonitoring($inspector), '*');
+        $this->initEventGroup('*');
+        $this->observers['*'][] = new AgentMonitoring($inspector); 
         return $this;
     }
 
-    public function attach(\SplObserver $observer, string $event = "*"): void
-    {
-        $this->initEventGroup($event);
-        $this->observers[$event][] = $observer;
-    }
-
-    public function detach(\SplObserver $observer, string $event = "*"): void
-    {
-        foreach ($this->getEventObservers($event) as $key => $s) {
-            if ($s === $observer) {
-                unset($this->observers[$event][$key]);
-            }
-        }
-    }
-
-    public function notify(string $event = "*", $data = null): void
+    protected function notify(string $event = "*", $data = null): void
     {
         // Broadcasting the '$event' event";
         foreach ($this->getEventObservers($event) as $observer) {
