@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\Providers\Anthropic;
+namespace NeuronAI\Providers\OpenAI;
 
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Tools\ToolCallMessage;
@@ -36,10 +36,10 @@ class MessageMapper
     {
         foreach ($message->getTools() as $tool) {
             $this->mapping[] = [
-                'role' => Message::ROLE_USER,
+                'role' => 'tool',
                 'content' => [
                     'type' => 'tool_result',
-                    'tool_use_id' => $tool->getCallId(),
+                    'tool_call_id' => $tool->getCallId(),
                     'content' => $tool->getResult(),
                 ]
             ];

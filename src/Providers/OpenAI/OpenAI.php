@@ -1,12 +1,14 @@
 <?php
 
-namespace NeuronAI\Providers;
+namespace NeuronAI\Providers\OpenAI;
 
 use GuzzleHttp\Exception\GuzzleException;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use GuzzleHttp\Client;
 use NeuronAI\Chat\Messages\Usage;
+use NeuronAI\Providers\AIProviderInterface;
+use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Tools\ToolCallMessage;
 use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\ToolProperty;
@@ -66,29 +68,16 @@ class OpenAI implements AIProviderInterface
      */
     public function chat(array $messages): Message
     {
-        if ($messages instanceof ToolCallMessage) {
-            $messages = \array_map(function (ToolInterface $tool) {
-                return [
-                    'role' => 'tool',
-                    'content' => [
-                        'type' => 'tool_result',
-                        'tool_call_id' => $tool->getCallId(),
-                        'content' => $tool->getResult(),
-                    ]
-                ];
-            }, $messages->getTools());
-        } else {
-            $messages = \is_array($messages) ? $messages : [$messages];
-        }
-
         // Attach the system prompt
         if (isset($this->system)) {
             \array_unshift($messages, new AssistantMessage($this->system));
         }
 
+        $mapper = new MessageMapper($messages);
+
         $json = [
             'model' => $this->model,
-            'messages' => $messages,
+            'messages' => $mapper->map(),
         ];
 
         // Attach tools
@@ -150,7 +139,7 @@ class OpenAI implements AIProviderInterface
                 ->setInputs(json_decode($item['function']['arguments'], true))
                 ->setCallId($item['id']);
         }, $tool_calls);
-        
+
         return new ToolCallMessage($tools);
     }
 }
