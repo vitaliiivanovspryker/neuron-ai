@@ -12,6 +12,7 @@ use NeuronAI\Events\ToolCalling;
 use NeuronAI\Exceptions\InvalidMessageInstance;
 use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
+use NeuronAI\Observability\AgentMonitoring;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\UserMessage;
@@ -43,18 +44,12 @@ class Agent implements AgentInterface
      */
     private array $observers = [];
 
-    public function __construct()
-    {
-        // A special event group for observers that want to listen to all events.
-        $this->observers["*"] = [];
-    }
-
     public static function make(...$args): static
     {
         return new static(...$args);
     }
 
-    public function setProvider(AIProviderInterface $provider): self
+    public function setProvider(AIProviderInterface $provider): AgentInterface
     {
         $this->provider = $provider;
         return $this;
@@ -122,7 +117,7 @@ class Agent implements AgentInterface
         return $this->instructions;
     }
 
-    public function setInstructions(?string $instructions): self
+    public function setInstructions(?string $instructions): AgentInterface
     {
         $this->instructions = $instructions;
         return $this;
@@ -144,9 +139,9 @@ class Agent implements AgentInterface
         return \array_merge($group, $all);
     }
 
-    public function observe(\SplObserver $observer, string $event = "*"): self
+    public function observe(\Inspector\Inspector $inspector): AgentInterface
     {
-        $this->attach($observer, $event);
+        $this->attach(new AgentMonitoring($inspector), '*');
         return $this;
     }
 
