@@ -29,7 +29,7 @@ interface AIProviderInterface
      * @param Message|array<Message> $messages
      * @return Message
      */
-    public function chat(Message|array $messages): Message;
+    public function chat(array $messages): Message;
 
     //public function structured(array|string $messages): Message;
 

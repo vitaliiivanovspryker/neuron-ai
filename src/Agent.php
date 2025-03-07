@@ -85,7 +85,7 @@ class Agent implements AgentInterface
             ->systemPrompt($this->instructions())
             ->setTools($this->tools())
             ->chat(
-                $this->resolveChatHistory()->jsonSerialize()
+                $this->resolveChatHistory()->getMessages()
             );
 
         $this->notify('message-saving', new MessageSaving($response));
@@ -134,6 +134,10 @@ class Agent implements AgentInterface
     {
         $this->initEventGroup($event);
         $group = $this->observers[$event];
+        // initialize
+        if (!\array_key_exists('*', $this->observers)) {
+            $this->observers["*"] = [];
+        }
         $all = $this->observers["*"];
 
         return \array_merge($group, $all);

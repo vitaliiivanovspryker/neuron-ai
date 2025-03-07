@@ -64,7 +64,7 @@ class OpenAI implements AIProviderInterface
      * @param Message|array<Message> $messages
      * @throws GuzzleException
      */
-    public function chat(Message|array $messages): Message
+    public function chat(array $messages): Message
     {
         if ($messages instanceof ToolCallMessage) {
             $messages = \array_map(function (ToolInterface $tool) {
@@ -101,9 +101,9 @@ class OpenAI implements AIProviderInterface
 
         $result = \json_decode($result, true);
 
-        if ($result['status'] === 'requires_action') {
+        if ($result['choices'][0]['finish_reason'] === 'tool_calls') {
             $response = $this->createToolMessage(
-                $result['required_action']['submit_tool_outputs']['tool_calls']
+                $result['choices'][0]['message']['tool_calls']
             );
         } else {
             $response = new AssistantMessage($result['choices'][0]['message']['content']);
@@ -147,9 +147,10 @@ class OpenAI implements AIProviderInterface
     {
         $tools = \array_map(function (array $item) {
             return $this->findTool($item['function']['name'])
-                ->setInputs(json_decode($item['function']['arguments'], true));
+                ->setInputs(json_decode($item['function']['arguments'], true))
+                ->setCallId($item['id']);
         }, $tool_calls);
-
+        
         return new ToolCallMessage($tools);
     }
 }

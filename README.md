@@ -28,7 +28,7 @@ Extend `NeuronAI\Agent` class to create your own agent:
 ```php
 use NeuronAI\Agent;
 use NeuronAI\Providers\AIProviderInterface;
-use NeuronAI\Providers\Anthropic;
+use NeuronAI\Providers\Anthropic\Anthropic;
 
 class MyAgent extends Agent
 {

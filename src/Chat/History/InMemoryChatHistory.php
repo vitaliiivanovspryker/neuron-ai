@@ -3,10 +3,13 @@
 namespace NeuronAI\Chat\History;
 
 use NeuronAI\Chat\Messages\Message;
+use NeuronAI\Chat\Messages\MessageMapperInterface;
 
 class InMemoryChatHistory extends AbstractChatHistory
 {
     protected array $history = [];
+
+    protected MessageMapperInterface $mapper;
 
     public function addMessage(Message $message): self
     {

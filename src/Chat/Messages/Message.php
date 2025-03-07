@@ -10,16 +10,16 @@ class Message implements \JsonSerializable
     protected ?Usage $usage = null;
 
     public function __construct(
-        protected string $role,
-        protected string $content
+        protected ?string $role = null,
+        protected ?string $content = null
     ) {}
 
-    public function getRole(): string
+    public function getRole(): ?string
     {
         return $this->role;
     }
 
-    public function getContent(): string
+    public function getContent(): ?string
     {
         return $this->content;
     }
@@ -35,25 +35,11 @@ class Message implements \JsonSerializable
         return $this->usage;
     }
 
-    public function toArray(): array
+    public function jsonSerialize(): array
     {
-        $data = [
+        return [
             'role' => $this->getRole(),
             'content' => $this->getContent(),
         ];
-
-        if ($this->usage) {
-            $data['usage'] = [
-                'input_tokens' => $this->usage->inputTokens,
-                'output_tokens' => $this->usage->outputTokens,
-            ];
-        }
-
-        return $data;
-    }
-
-    public function jsonSerialize(): array
-    {
-        return $this->toArray();
     }
 }

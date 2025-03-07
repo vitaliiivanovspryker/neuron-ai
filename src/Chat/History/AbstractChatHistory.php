@@ -3,6 +3,7 @@
 namespace NeuronAI\Chat\History;
 
 use NeuronAI\Chat\Messages\Message;
+use NeuronAI\Chat\Messages\MessageMapperInterface;
 use NeuronAI\Chat\Messages\Usage;
 
 abstract class AbstractChatHistory implements ChatHistoryInterface
@@ -26,15 +27,10 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         }, 0);
     }
 
-    public function toArray(): array
-    {
-        return \array_map(function (Message $message) {
-            return $message->toArray();
-        }, $this->getMessages());
-    }
-
     public function jsonSerialize(): array
     {
-        return $this->toArray();
+        return \array_map(function (Message $message) {
+            return $message->jsonSerialize();
+        }, $this->getMessages());
     }
 }

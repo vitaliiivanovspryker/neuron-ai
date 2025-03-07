@@ -1,10 +1,13 @@
 <?php
 
-namespace NeuronAI\Providers;
+namespace NeuronAI\Providers\Anthropic;
 
 use GuzzleHttp\Exception\GuzzleException;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
+use NeuronAI\Chat\Messages\UserMessage;
+use NeuronAI\Providers\AIProviderInterface;
+use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\ToolCallMessage;
 use NeuronAI\Tools\ToolProperty;
@@ -66,20 +69,9 @@ class Anthropic implements AIProviderInterface
      * @param Message|array<Message> $messages
      * @throws GuzzleException
      */
-    public function chat(Message|array $messages): Message
+    public function chat(array $messages): Message
     {
-        if ($messages instanceof ToolCallMessage) {
-            $messages = \array_map(function (ToolInterface $tool) {
-                return [
-                    'role' => Message::ROLE_USER,
-                    'content' => [
-                        'type' => 'tool_result',
-                        'tool_use_id' => $tool->getCallId(),
-                        'content' => $tool->getResult(),
-                    ]
-                ];
-            }, $messages->getTools());
-        }
+        $mapper = new MessageMapper($messages);
 
         $json = \array_filter([
             'model' => $this->model,
@@ -87,7 +79,7 @@ class Anthropic implements AIProviderInterface
             'stop_sequences' => $this->stop_sequences,
             'temperature' => $this->temperature,
             'system' => $this->system ?? null,
-            'messages' => \is_array($messages) ? $messages : [$messages],
+            'messages' => $mapper->map(),
         ]);
 
         if (!empty($this->tools)) {
