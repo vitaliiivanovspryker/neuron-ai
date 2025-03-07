@@ -19,7 +19,7 @@ use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolCallMessage;
 use NeuronAI\Tools\ToolProperty;
 
-class AgentMonitoring implements \SplObserver
+class AgentMonitoring
 {
     const SEGMENT_TYPE = 'neuron';
     const SEGMENT_COLOR = '#506b9b';
@@ -31,7 +31,7 @@ class AgentMonitoring implements \SplObserver
 
     public function __construct(protected Inspector $inspector) {}
 
-    public function update(\SplSubject $subject, string $event = null, $data = null): void
+    public function update(\NeuronAI\AgentInterface $agent, string $event = null, $data = null): void
     {
         $methods = [
             'rag-start' => 'start',
@@ -50,9 +50,9 @@ class AgentMonitoring implements \SplObserver
             'rag-instructions-changed' => "instructionsChanged",
         ];
 
-        if (!\is_null($event) && \array_key_exists($event, $methods) && $subject instanceof \NeuronAI\AgentInterface) {
+        if (!\is_null($event) && \array_key_exists($event, $methods)) {
             $method = $methods[$event];
-            $this->$method($subject, $event, $data);
+            $this->$method($agent, $event, $data);
         }
     }
 
