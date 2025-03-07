@@ -11,7 +11,7 @@ class Message implements \JsonSerializable
 
     public function __construct(
         protected ?string $role = null,
-        protected ?string $content = null
+        protected mixed $content = null
     ) {}
 
     public function getRole(): ?string
@@ -19,7 +19,7 @@ class Message implements \JsonSerializable
         return $this->role;
     }
 
-    public function getContent(): ?string
+    public function getContent(): mixed
     {
         return $this->content;
     }

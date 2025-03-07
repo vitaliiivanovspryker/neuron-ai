@@ -8,8 +8,9 @@ use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\HandleWithTools;
-use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\ToolCallMessage;
+use NeuronAI\Tools\ToolInterface;
+use NeuronAI\Tools\ToolCall;
 use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Chat\Messages\Usage;
 use GuzzleHttp\Client;
@@ -142,6 +143,6 @@ class Anthropic implements AIProviderInterface
             $this->findTool($content['name'])
                 ->setInputs($content['input'])
                 ->setCallId($content['id'])
-        ]);
+        ], new AssistantMessage($content));
     }
 }

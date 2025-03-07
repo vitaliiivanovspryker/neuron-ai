@@ -72,6 +72,7 @@ class Agent implements AgentInterface
     {
         $this->notify('chat-start');
 
+        // Tool message is just an internal representation
         $this->notify('message-saving', new MessageSaving($message));
         $this->resolveChatHistory()->addMessage($message);
         $this->notify('message-saved', new MessageSaved($message));
@@ -88,10 +89,6 @@ class Agent implements AgentInterface
                 $this->resolveChatHistory()->getMessages()
             );
 
-        $this->notify('message-saving', new MessageSaving($response));
-        $this->resolveChatHistory()->addMessage($response);
-        $this->notify('message-saved', new MessageSaved($response));
-
         $this->notify(
             'message-sent',
             new MessageSent($message, $response)
@@ -107,6 +104,10 @@ class Agent implements AgentInterface
             // Resubmit the ToolCallMessage
             $this->chat($response);
         }
+
+        $this->notify('message-saving', new MessageSaving($response));
+        $this->resolveChatHistory()->addMessage($response);
+        $this->notify('message-saved', new MessageSaved($response));
 
         $this->notify('chat-stop');
         return $response;

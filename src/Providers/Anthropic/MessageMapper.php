@@ -24,10 +24,11 @@ class MessageMapper
     {
         foreach ($this->messages as $message) {
             if ($message instanceof ToolCallMessage) {
+                $this->mapping[] = $message->getAssistantMessage()->jsonSerialize();
                 $this->mapToolMessage($message);
+            } else {
+                $this->mapping[] = $message->jsonSerialize();
             }
-
-            $this->mapping[] = $message->jsonSerialize();
         }
 
         return $this->mapping;
