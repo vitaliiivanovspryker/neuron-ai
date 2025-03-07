@@ -7,7 +7,7 @@ use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Tools\ToolInterface;
 
-interface AgentInterface extends \SplSubject
+interface AgentInterface
 {
     public function provider(): AIProviderInterface;
 
