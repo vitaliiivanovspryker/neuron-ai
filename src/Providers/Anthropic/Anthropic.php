@@ -86,7 +86,7 @@ class Anthropic implements AIProviderInterface
         if (!empty($this->tools)) {
             $json['tools'] = $this->generateToolsPayload();
         }
-
+        
         // https://docs.anthropic.com/claude/reference/messages_post
         $result = $this->client->post('v1/messages', compact('json'))
             ->getBody()->getContents();
@@ -138,11 +138,13 @@ class Anthropic implements AIProviderInterface
 
     public function createToolMessage(array $content): Message
     {
-        // Anthropic call one tool at a time. So we pass an array with one element.
-        return new ToolCallMessage([
-            $this->findTool($content['name'])
-                ->setInputs($content['input'])
-                ->setCallId($content['id'])
-        ], new AssistantMessage($content));
+        $tool = $this->findTool($content['name'])
+            ->setInputs($content['input'])
+            ->setCallId($content['id']);
+
+        return new ToolCallMessage(
+            [$content],
+            [$tool] // Anthropic call one tool at a time. So we pass an array with one element.
+        );
     }
 }

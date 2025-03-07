@@ -3,6 +3,7 @@
 namespace NeuronAI;
 
 use NeuronAI\Chat\History\InMemoryChatHistory;
+use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Events\MessageSaved;
 use NeuronAI\Events\MessageSaving;
 use NeuronAI\Events\MessageSending;
@@ -81,7 +82,7 @@ class Agent implements AgentInterface
             'message-sending',
             new MessageSending($message)
         );
-
+        
         $response = $this->provider()
             ->systemPrompt($this->instructions())
             ->setTools($this->tools())
@@ -102,7 +103,7 @@ class Agent implements AgentInterface
             }
 
             // Resubmit the ToolCallMessage
-            $this->chat($response);
+            $response = $this->chat($response);
         }
 
         $this->notify('message-saving', new MessageSaving($response));

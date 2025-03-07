@@ -22,26 +22,23 @@ class MessageMapper
     public function map(): array
     {
         foreach ($this->messages as $message) {
-            if ($message instanceof ToolCallMessage) {
-                $this->mapToolMessage($message);
-            }
-
             $this->mapping[] = $message->jsonSerialize();
+            
+            if ($message instanceof ToolCallMessage) {
+                $this->addToolsResult($message->getTools());
+            }
         }
 
         return $this->mapping;
     }
 
-    public function mapToolMessage(ToolCallMessage $message): void
+    public function addToolsResult(array $tools): void
     {
-        foreach ($message->getTools() as $tool) {
+        foreach ($tools as $tool) {
             $this->mapping[] = [
                 'role' => 'tool',
-                'content' => [
-                    'type' => 'tool_result',
-                    'tool_call_id' => $tool->getCallId(),
-                    'content' => $tool->getResult(),
-                ]
+                'tool_call_id' => $tool->getCallId(),
+                'content' => $tool->getResult()
             ];
         }
     }

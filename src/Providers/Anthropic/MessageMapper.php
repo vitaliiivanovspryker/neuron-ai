@@ -23,18 +23,17 @@ class MessageMapper
     public function map(): array
     {
         foreach ($this->messages as $message) {
+            $this->mapping[] = $message->jsonSerialize();
+            
             if ($message instanceof ToolCallMessage) {
-                $this->mapping[] = $message->getAssistantMessage()->jsonSerialize();
-                $this->mapToolMessage($message);
-            } else {
-                $this->mapping[] = $message->jsonSerialize();
+                $this->addToolsResult($message->getTools());
             }
         }
 
         return $this->mapping;
     }
 
-    public function mapToolMessage(ToolCallMessage $message): void
+    public function addToolsResult(array $tools): void
     {
         $this->mapping[] = [
             'role' => Message::ROLE_USER,
@@ -44,7 +43,7 @@ class MessageMapper
                     'tool_use_id' => $tool->getCallId(),
                     'content' => $tool->getResult(),
                 ];
-            }, $message->getTools())
+            }, $tools)
         ];
     }
 }

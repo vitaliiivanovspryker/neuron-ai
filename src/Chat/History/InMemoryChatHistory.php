@@ -38,7 +38,7 @@ class InMemoryChatHistory extends AbstractChatHistory
     public function truncate(): self
     {
         do {
-            \array_pop($this->history);
+            \array_shift($this->history);
         } while ($this->contextWindow - $this->calculateTotalUsage() < 0);
 
         return $this;

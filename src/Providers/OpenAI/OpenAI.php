@@ -91,9 +91,7 @@ class OpenAI implements AIProviderInterface
         $result = \json_decode($result, true);
 
         if ($result['choices'][0]['finish_reason'] === 'tool_calls') {
-            $response = $this->createToolMessage(
-                $result['choices'][0]['message']['tool_calls']
-            );
+            $response = $this->createToolMessage($result['choices'][0]['message']);
         } else {
             $response = new AssistantMessage($result['choices'][0]['message']['content']);
         }
@@ -132,14 +130,19 @@ class OpenAI implements AIProviderInterface
         }, $this->tools);
     }
 
-    protected function createToolMessage(array $tool_calls): Message
+    protected function createToolMessage(array $message): Message
     {
         $tools = \array_map(function (array $item) {
             return $this->findTool($item['function']['name'])
                 ->setInputs(json_decode($item['function']['arguments'], true))
                 ->setCallId($item['id']);
-        }, $tool_calls);
+        }, $message['tool_calls']);
 
-        return new ToolCallMessage($tools);
+        $result = new ToolCallMessage(
+            $message['content'],
+            $tools
+        );
+        
+        return $result->addMetadata('tool_calls', $message['tool_calls']);
     }
 }

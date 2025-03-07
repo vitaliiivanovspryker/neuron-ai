@@ -8,6 +8,8 @@ class Message implements \JsonSerializable
     const ROLE_ASSISTANT = 'assistant';
 
     protected ?Usage $usage = null;
+    
+    protected array $meta = [];
 
     public function __construct(
         protected ?string $role = null,
@@ -35,11 +37,17 @@ class Message implements \JsonSerializable
         return $this->usage;
     }
 
+    public function addMetadata(string $key, string|array|null $value): Message
+    {
+        $this->meta[$key] = $value;
+        return $this;
+    }
+
     public function jsonSerialize(): array
     {
-        return [
+        return array_merge($this->meta, [
             'role' => $this->getRole(),
             'content' => $this->getContent(),
-        ];
+        ]);
     }
 }

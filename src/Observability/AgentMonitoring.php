@@ -16,6 +16,7 @@ use NeuronAI\Events\ToolCalling;
 use NeuronAI\Events\VectorStoreResult;
 use NeuronAI\Events\VectorStoreSearching;
 use NeuronAI\Tools\Tool;
+use NeuronAI\Tools\ToolCallMessage;
 use NeuronAI\Tools\ToolProperty;
 
 class AgentMonitoring implements \SplObserver
@@ -92,10 +93,12 @@ class AgentMonitoring implements \SplObserver
             return;
         }
 
+        $label = json_encode($data->message->getContent());
+
         $this->segments[
             $this->getMessageId($data->message).'-save'
         ] = $this->inspector
-            ->startSegment(self::SEGMENT_TYPE.'-chathistory', "save( {$data->message->getContent()} )")
+            ->startSegment(self::SEGMENT_TYPE.'-chathistory', "save( {$label} )")
             ->setColor(self::SEGMENT_COLOR);
     }
 
@@ -106,8 +109,10 @@ class AgentMonitoring implements \SplObserver
         if (\array_key_exists($id, $this->segments)) {
             $this->segments[$id]
                 ->addContext('Message', \array_merge($data->message->jsonSerialize(), $data->message->getUsage() ? [
-                    'input_tokens' => $data->message->getUsage()->inputTokens,
-                    'output_tokens' => $data->message->getUsage()->outputTokens,
+                    'usage' => [
+                        'input_tokens' => $data->message->getUsage()->inputTokens,
+                        'output_tokens' => $data->message->getUsage()->outputTokens,
+                    ]
                 ] : []))
                 ->end();
         }
@@ -118,11 +123,13 @@ class AgentMonitoring implements \SplObserver
         if (!$this->inspector->canAddSegments()) {
             return;
         }
+        
+        $label = json_encode($data->message->getContent());
 
         $this->segments[
             $this->getMessageId($data->message).'-send'
         ] = $this->inspector
-            ->startSegment(self::SEGMENT_TYPE.'-chat', "chat( {$data->message->getContent()} )")
+            ->startSegment(self::SEGMENT_TYPE.'-chat', "chat( {$label} )")
             ->setColor(self::SEGMENT_COLOR);
     }
 
@@ -244,6 +251,12 @@ class AgentMonitoring implements \SplObserver
 
     public function getMessageId(Message $message): string
     {
-        return \md5($message->getContent().$message->getRole());
+        $content = $message->getContent();
+        
+        if (!is_string($content)) {
+            $content = json_encode($content, JSON_UNESCAPED_UNICODE);
+        }
+        
+        return \md5($content.$message->getRole());
     }
 }
