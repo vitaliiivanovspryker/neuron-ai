@@ -4,6 +4,7 @@ namespace NeuronAI\Providers\Anthropic;
 
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Tools\ToolCallMessage;
+use NeuronAI\Tools\ToolInterface;
 
 class MessageMapper
 {
@@ -34,15 +35,15 @@ class MessageMapper
 
     public function mapToolMessage(ToolCallMessage $message): void
     {
-        foreach ($message->getTools() as $tool) {
-            $this->mapping[] = [
-                'role' => Message::ROLE_USER,
-                'content' => [
+        $this->mapping[] = [
+            'role' => Message::ROLE_USER,
+            'content' => \array_map(function (ToolInterface $tool) {
+                return [
                     'type' => 'tool_result',
                     'tool_use_id' => $tool->getCallId(),
                     'content' => $tool->getResult(),
-                ]
-            ];
-        }
+                ];
+            }, $message->getTools())
+        ];
     }
 }
