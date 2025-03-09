@@ -41,9 +41,9 @@ class Agent implements AgentInterface
     protected ?string $instructions = null;
 
     /**
-     * @var array<\SplObserver>
+     * @var AgentMonitoring
      */
-    private array $observers = [];
+    private AgentMonitoring $observer;
 
     public static function make(...$args): static
     {
@@ -130,38 +130,14 @@ class Agent implements AgentInterface
         return $this;
     }
 
-    private function initEventGroup(string $event = "*"): void
-    {
-        if (!isset($this->observers[$event])) {
-            $this->observers[$event] = [];
-        }
-    }
-
-    private function getEventObservers(string $event = "*"): array
-    {
-        $this->initEventGroup($event);
-        $group = $this->observers[$event];
-        // initialize
-        if (!\array_key_exists('*', $this->observers)) {
-            $this->observers["*"] = [];
-        }
-        $all = $this->observers["*"];
-
-        return \array_merge($group, $all);
-    }
-
     public function observe(\Inspector\Inspector $inspector): AgentInterface
     {
-        $this->initEventGroup('*');
-        $this->observers['*'][] = new AgentMonitoring($inspector); 
+        $this->observer = new AgentMonitoring($inspector);
         return $this;
     }
 
     protected function notify(string $event = "*", $data = null): void
     {
-        // Broadcasting the '$event' event";
-        foreach ($this->getEventObservers($event) as $observer) {
-            $observer->update($this, $event, $data);
-        }
+        $this->observer->update($this, $event, $data);
     }
 }
