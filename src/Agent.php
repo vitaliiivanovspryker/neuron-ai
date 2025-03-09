@@ -64,7 +64,7 @@ class Agent implements AgentInterface
     /**
      * Execute the chat.
      *
-     * @param Message $message
+     * @param Message|array $messages
      * @return Message
      * @throws MissingCallbackParameter
      * @throws ToolCallableNotSet
