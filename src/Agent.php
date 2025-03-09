@@ -69,20 +69,25 @@ class Agent implements AgentInterface
      * @throws MissingCallbackParameter
      * @throws ToolCallableNotSet
      */
-    public function chat(Message $message): Message
+    public function chat(Message|array $messages): Message
     {
         $this->notify('chat-start');
 
-        // Tool message is just an internal representation
-        $this->notify('message-saving', new MessageSaving($message));
-        $this->resolveChatHistory()->addMessage($message);
-        $this->notify('message-saved', new MessageSaved($message));
+        $messages = is_array($messages) ? $messages : [$messages];
+
+        foreach ($messages as $message) {
+            $this->notify('message-saving', new MessageSaving($message));
+            $this->resolveChatHistory()->addMessage($message);
+            $this->notify('message-saved', new MessageSaved($message));
+        }
+
+        $message = \end($messages);
 
         $this->notify(
             'message-sending',
             new MessageSending($message)
         );
-        
+
         $response = $this->provider()
             ->systemPrompt($this->instructions())
             ->setTools($this->tools())

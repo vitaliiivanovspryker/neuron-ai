@@ -27,5 +27,5 @@ interface AgentInterface
 
     public function observe(\Inspector\Inspector $inspector): AgentInterface;
 
-    public function chat(Message $message): Message;
+    public function chat(Message|array $messages): Message;
 }
