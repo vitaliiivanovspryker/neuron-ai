@@ -8,12 +8,12 @@ class Message implements \JsonSerializable
     const ROLE_ASSISTANT = 'assistant';
 
     protected ?Usage $usage = null;
-    
+
     protected array $meta = [];
 
     public function __construct(
         protected ?string $role = null,
-        protected mixed $content = null
+        protected array|string|int|float|null $content = null
     ) {}
 
     public function getRole(): ?string
