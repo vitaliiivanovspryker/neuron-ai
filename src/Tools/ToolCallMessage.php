@@ -11,7 +11,7 @@ class ToolCallMessage extends AssistantMessage
      * @param array<Tool> $tools
      */
     public function __construct(
-        protected mixed $content,
+        protected array|string|int|float|null $content,
         protected array $tools
     ) {
         parent::__construct($this->content);
