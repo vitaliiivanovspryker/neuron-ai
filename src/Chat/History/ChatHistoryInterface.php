@@ -3,7 +3,6 @@
 namespace NeuronAI\Chat\History;
 
 use NeuronAI\Chat\Messages\Message;
-use NeuronAI\Chat\Messages\MessageMapperInterface;
 
 interface ChatHistoryInterface extends \JsonSerializable
 {
