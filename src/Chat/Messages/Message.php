@@ -13,11 +13,11 @@ class Message implements \JsonSerializable
     protected array $meta = [];
 
     public function __construct(
-        protected ?string $role = null,
+        protected string $role,
         protected array|string|int|float|null $content = null
     ) {}
 
-    public function getRole(): ?string
+    public function getRole(): string
     {
         return $this->role;
     }

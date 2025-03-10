@@ -23,10 +23,10 @@ class MessageMapper
     public function map(): array
     {
         foreach ($this->messages as $message) {
-            $this->mapping[] = $message->jsonSerialize();
-
             if ($message instanceof ToolCallResultMessage) {
                 $this->addToolsResult($message->getTools());
+            } else {
+                $this->mapping[] = $message->jsonSerialize();
             }
         }
 
@@ -37,7 +37,7 @@ class MessageMapper
     {
         foreach ($tools as $tool) {
             $this->mapping[] = [
-                'role' => 'tool',
+                'role' => Message::ROLE_TOOL,
                 'tool_call_id' => $tool->getCallId(),
                 'content' => $tool->getResult()
             ];

@@ -110,7 +110,9 @@ class Agent implements AgentInterface
                 $this->notify('tool-called', new ToolCalled($tool));
             }
 
-            $response = $this->chat($toolCallResult);
+            $response = $this->chat([
+                $response, $toolCallResult
+            ]);
         }
 
         $this->notify('message-saving', new MessageSaving($response));

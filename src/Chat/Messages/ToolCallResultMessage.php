@@ -2,11 +2,11 @@
 
 namespace NeuronAI\Chat\Messages;
 
-class ToolCallResultMessage extends Message
+class ToolCallResultMessage extends UserMessage
 {
     public function __construct(protected array $tools)
     {
-        parent::__construct();
+        parent::__construct(null);
     }
 
     public function getTools(): array
