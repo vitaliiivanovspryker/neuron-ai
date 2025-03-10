@@ -5,12 +5,10 @@ namespace NeuronAI\Providers\Anthropic;
 use GuzzleHttp\Exception\GuzzleException;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
-use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\HandleWithTools;
-use NeuronAI\Tools\ToolCallMessage;
+use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Tools\ToolInterface;
-use NeuronAI\Tools\ToolCall;
 use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Chat\Messages\Usage;
 use GuzzleHttp\Client;
@@ -86,7 +84,7 @@ class Anthropic implements AIProviderInterface
         if (!empty($this->tools)) {
             $json['tools'] = $this->generateToolsPayload();
         }
-        
+
         // https://docs.anthropic.com/claude/reference/messages_post
         $result = $this->client->post('v1/messages', compact('json'))
             ->getBody()->getContents();

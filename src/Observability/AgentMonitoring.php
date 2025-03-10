@@ -16,7 +16,7 @@ use NeuronAI\Events\ToolCalling;
 use NeuronAI\Events\VectorStoreResult;
 use NeuronAI\Events\VectorStoreSearching;
 use NeuronAI\Tools\Tool;
-use NeuronAI\Tools\ToolCallMessage;
+use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Tools\ToolProperty;
 
 class AgentMonitoring
@@ -123,7 +123,7 @@ class AgentMonitoring
         if (!$this->inspector->canAddSegments()) {
             return;
         }
-        
+
         $label = json_encode($data->message->getContent());
 
         $this->segments[
@@ -252,11 +252,11 @@ class AgentMonitoring
     public function getMessageId(Message $message): string
     {
         $content = $message->getContent();
-        
+
         if (!is_string($content)) {
             $content = json_encode($content, JSON_UNESCAPED_UNICODE);
         }
-        
+
         return \md5($content.$message->getRole());
     }
 }

@@ -10,7 +10,7 @@ use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\RAG\RAG;
 use NeuronAI\Tools\Tool;
-use NeuronAI\Tools\ToolCallMessage;
+use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Tools\ToolInterface;
 use PHPUnit\Framework\TestCase;
 

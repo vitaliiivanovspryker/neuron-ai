@@ -9,7 +9,7 @@ use GuzzleHttp\Client;
 use NeuronAI\Chat\Messages\Usage;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\HandleWithTools;
-use NeuronAI\Tools\ToolCallMessage;
+use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\ToolProperty;
 
@@ -142,7 +142,7 @@ class OpenAI implements AIProviderInterface
             $message['content'],
             $tools
         );
-        
+
         return $result->addMetadata('tool_calls', $message['tool_calls']);
     }
 }

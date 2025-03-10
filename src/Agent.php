@@ -4,6 +4,7 @@ namespace NeuronAI;
 
 use NeuronAI\Chat\History\InMemoryChatHistory;
 use NeuronAI\Chat\Messages\AssistantMessage;
+use NeuronAI\Chat\Messages\ToolCallResultMessage;
 use NeuronAI\Events\MessageSaved;
 use NeuronAI\Events\MessageSaving;
 use NeuronAI\Events\MessageSending;
@@ -18,7 +19,7 @@ use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Tools\Tool;
-use NeuronAI\Tools\ToolCallMessage;
+use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Tools\ToolInterface;
 
 class Agent implements AgentInterface
@@ -101,14 +102,15 @@ class Agent implements AgentInterface
         );
 
         if ($response instanceof ToolCallMessage) {
-            foreach ($response->getTools() as $tool) {
+            $toolCallResult = new ToolCallResultMessage($response->getTools());
+
+            foreach ($toolCallResult->getTools() as $tool) {
                 $this->notify('tool-calling', new ToolCalling($tool));
                 $tool->execute();
                 $this->notify('tool-called', new ToolCalled($tool));
             }
 
-            // Resubmit the ToolCallMessage
-            $response = $this->chat($response);
+            $response = $this->chat($toolCallResult);
         }
 
         $this->notify('message-saving', new MessageSaving($response));

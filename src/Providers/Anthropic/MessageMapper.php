@@ -3,7 +3,7 @@
 namespace NeuronAI\Providers\Anthropic;
 
 use NeuronAI\Chat\Messages\Message;
-use NeuronAI\Tools\ToolCallMessage;
+use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Tools\ToolInterface;
 
 class MessageMapper
@@ -24,7 +24,7 @@ class MessageMapper
     {
         foreach ($this->messages as $message) {
             $this->mapping[] = $message->jsonSerialize();
-            
+
             if ($message instanceof ToolCallMessage) {
                 $this->addToolsResult($message->getTools());
             }
