@@ -49,6 +49,7 @@ class Message implements \JsonSerializable
         return array_merge($this->meta, [
             'role' => $this->getRole(),
             'content' => $this->getContent(),
+            'usage' => $this->getUsage()->jsonSerialize()
         ]);
     }
 }

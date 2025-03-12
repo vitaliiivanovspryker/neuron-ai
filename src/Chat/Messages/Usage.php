@@ -2,7 +2,7 @@
 
 namespace NeuronAI\Chat\Messages;
 
-class Usage
+class Usage implements \JsonSerializable
 {
     public function __construct(
         public int $inputTokens,
@@ -12,5 +12,13 @@ class Usage
     public function getTotal(): int
     {
         return $this->inputTokens + $this->outputTokens;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'input_tokens' => $this->inputTokens,
+            'output_tokens' => $this->outputTokens,
+        ];
     }
 }

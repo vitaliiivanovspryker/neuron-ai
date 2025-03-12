@@ -3,20 +3,19 @@
 namespace NeuronAI\Chat\History;
 
 use NeuronAI\Chat\Messages\Message;
+use NeuronAI\Chat\Messages\Usage;
 use NeuronAI\Exceptions\ChatHistoryException;
 
 class FileChatHistory extends AbstractChatHistory
 {
-    protected array $history = [];
-
     public function __construct(
         protected string $directory,
         protected string $key,
-        protected int $contextWindow = 50000,
+        int $contextWindow = 50000,
         protected string $prefix = 'neuron_',
         protected string $ext = '.chat'
     ) {
-        parent::__construct($this->contextWindow);
+        parent::__construct($contextWindow);
 
         if (!\is_dir($this->directory)) {
             throw new ChatHistoryException("Directory '{$this->directory}' does not exist");
@@ -28,7 +27,8 @@ class FileChatHistory extends AbstractChatHistory
     protected function initHistory(): void
     {
         if (\is_file($this->getFilePath())) {
-            $this->history = $this->restoreMessages();
+            $messages = \json_decode(\file_get_contents($this->getFilePath()), true);
+            $this->history = $this->unserializeMessages($messages);
         } else {
             $this->history = [];
         }
@@ -39,26 +39,14 @@ class FileChatHistory extends AbstractChatHistory
         return $this->directory . DIRECTORY_SEPARATOR . $this->prefix.$this->key.$this->ext;
     }
 
-    protected function restoreMessages(): array
-    {
-        $messages = \json_decode(\file_get_contents($this->getFilePath()), true);
-
-        return \array_map(function (array $message) {
-            $item = new Message($message['role'], $message['content']??'');
-            foreach ($message as $key => $value) {
-                if ($key === 'role' || $key === 'content') {
-                    continue;
-                }
-                $item->addMetadata($key, $value);
-            }
-            return $item;
-        }, $messages);
-    }
-
     public function addMessage(Message $message): ChatHistoryInterface
     {
         $this->history[] = $message;
+
+        $this->cutToContextWindow();
+
         \file_put_contents($this->getFilePath(), json_encode($this->jsonSerialize()), LOCK_EX);
+
         return $this;
     }
 
