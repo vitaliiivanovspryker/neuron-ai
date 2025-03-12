@@ -25,16 +25,24 @@ class MessageMapper
     {
         foreach ($this->messages as $message) {
             if ($message instanceof ToolCallResultMessage) {
-                $this->addToolsResult($message->getTools());
+                $this->mapToolsResult($message->getTools());
             } else {
-                $this->mapping[] = $message->jsonSerialize();
+                $this->mapping[] = $this->mapMessage($message);
             }
         }
 
         return $this->mapping;
     }
 
-    public function addToolsResult(array $tools): void
+    public function mapMessage(Message $message)
+    {
+        return [
+            'role' => $message->getRole(),
+            'content' => $message->getContent(),
+        ];
+    }
+
+    public function mapToolsResult(array $tools): void
     {
         $this->mapping[] = [
             'role' => Message::ROLE_USER,
