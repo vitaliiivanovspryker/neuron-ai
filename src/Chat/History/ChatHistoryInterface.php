@@ -8,6 +8,9 @@ interface ChatHistoryInterface extends \JsonSerializable
 {
     public function addMessage(Message $message): ChatHistoryInterface;
 
+    /**
+     * @return array<Message>
+     */
     public function getMessages(): array;
 
     public function clear(): ChatHistoryInterface;

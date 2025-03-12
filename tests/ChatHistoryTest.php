@@ -71,4 +71,15 @@ class ChatHistoryTest extends TestCase
         $this->assertFileDoesNotExist(__DIR__.DIRECTORY_SEPARATOR.'neuron_test.chat');
         $this->assertCount(0, $history->getMessages());
     }
+
+    public function testFileChatHistoryInit()
+    {
+        $history = new FileChatHistory(__DIR__, 'test');
+        $history->addMessage(new UserMessage('Hello!'));
+        $this->assertFileExists(__DIR__.DIRECTORY_SEPARATOR.'neuron_test.chat');
+
+        $history = new FileChatHistory(__DIR__, 'test');
+        $this->assertCount(1, $history->getMessages());
+        $history->clear();
+    }
 }

@@ -28,7 +28,7 @@ class FileChatHistory extends AbstractChatHistory
     protected function initHistory(): void
     {
         if (\is_file($this->getFilePath())) {
-            $this->history = json_decode(file_get_contents($this->getFilePath()), true);
+            $this->history = $this->restoreMessages();
         } else {
             $this->history = [];
         }
@@ -39,10 +39,26 @@ class FileChatHistory extends AbstractChatHistory
         return $this->directory . DIRECTORY_SEPARATOR . $this->prefix.$this->key.$this->ext;
     }
 
+    protected function restoreMessages(): array
+    {
+        $messages = json_decode(file_get_contents($this->getFilePath()), true);
+
+        return \array_map(function (array $message) {
+            $item = new Message($message['role'], $message['content']??'');
+            foreach ($message as $key => $value) {
+                if ($key === 'role' || $key === 'content') {
+                    continue;
+                }
+                $item->addMetadata($key, $value);
+            }
+            return $item;
+        }, $messages);
+    }
+
     public function addMessage(Message $message): ChatHistoryInterface
     {
         $this->history[] = $message;
-        file_put_contents($this->getFilePath(), json_encode($this->history), LOCK_EX);
+        file_put_contents($this->getFilePath(), json_encode($this->jsonSerialize()), LOCK_EX);
         return $this;
     }
 
