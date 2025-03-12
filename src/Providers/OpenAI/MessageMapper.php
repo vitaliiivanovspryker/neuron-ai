@@ -35,10 +35,9 @@ class MessageMapper
 
     public function mapMessage(Message $message): array
     {
-        return [
-            'role' => $message->getRole(),
-            'content' => $message->getContent(),
-        ];
+        $message = $message->jsonSerialize();
+        unset($message['usage']);
+        return $message;
     }
 
     public function mapToolsResult(array $tools): void
