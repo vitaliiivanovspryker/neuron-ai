@@ -18,6 +18,12 @@ use NeuronAI\Events\VectorStoreSearching;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 
+/**
+ * Trace your AI agent implementations to detect errors and performance bottlenecks in real-time.
+ *
+ * Getting started with observability:
+ * https://docs.neuron-ai.dev/advanced/observability
+ */
 class AgentMonitoring implements \SplObserver
 {
     const SEGMENT_TYPE = 'neuron';
