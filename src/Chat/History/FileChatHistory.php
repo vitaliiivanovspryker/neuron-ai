@@ -41,7 +41,7 @@ class FileChatHistory extends AbstractChatHistory
 
     protected function restoreMessages(): array
     {
-        $messages = json_decode(file_get_contents($this->getFilePath()), true);
+        $messages = \json_decode(\file_get_contents($this->getFilePath()), true);
 
         return \array_map(function (array $message) {
             $item = new Message($message['role'], $message['content']??'');
@@ -58,7 +58,7 @@ class FileChatHistory extends AbstractChatHistory
     public function addMessage(Message $message): ChatHistoryInterface
     {
         $this->history[] = $message;
-        file_put_contents($this->getFilePath(), json_encode($this->jsonSerialize()), LOCK_EX);
+        \file_put_contents($this->getFilePath(), json_encode($this->jsonSerialize()), LOCK_EX);
         return $this;
     }
 
