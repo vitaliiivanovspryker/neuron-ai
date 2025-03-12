@@ -33,7 +33,7 @@ class MessageMapper
         return $this->mapping;
     }
 
-    public function mapMessage(Message $message)
+    public function mapMessage(Message $message): array
     {
         return [
             'role' => $message->getRole(),
