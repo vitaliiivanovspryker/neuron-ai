@@ -42,10 +42,16 @@ class Agent implements AgentInterface
     protected ?string $instructions = null;
 
     /**
-     * @var AgentMonitoring
+     * @var array<\SplObserver>
      */
-    private AgentMonitoring $observer;
+    private array $observers = [];
 
+    /**
+     * Static constructor.
+     *
+     * @param ...$args
+     * @return static
+     */
     public static function make(...$args): static
     {
         return new static(...$args);
@@ -134,14 +140,48 @@ class Agent implements AgentInterface
         return $this;
     }
 
-    public function observe(\Inspector\Inspector $inspector): AgentInterface
+    private function initEventGroup(string $event = "*"): void
     {
-        $this->observer = new AgentMonitoring($inspector);
+        if (!isset($this->observers[$event])) {
+            $this->observers[$event] = [];
+        }
+    }
+
+    private function getEventObservers(string $event = "*"): array
+    {
+        $this->initEventGroup($event);
+        $group = $this->observers[$event];
+        $all = $this->observers["*"] ?? [];
+
+        return \array_merge($group, $all);
+    }
+
+    public function observe(\SplObserver $observer, string $event = "*"): self
+    {
+        $this->attach($observer, $event);
         return $this;
     }
 
-    protected function notify(string $event = "*", $data = null): void
+    public function attach(\SplObserver $observer, string $event = "*"): void
     {
-        $this->observer->update($this, $event, $data);
+        $this->initEventGroup($event);
+        $this->observers[$event][] = $observer;
+    }
+
+    public function detach(\SplObserver $observer, string $event = "*"): void
+    {
+        foreach ($this->getEventObservers($event) as $key => $s) {
+            if ($s === $observer) {
+                unset($this->observers[$event][$key]);
+            }
+        }
+    }
+
+    public function notify(string $event = "*", $data = null): void
+    {
+        // Broadcasting the '$event' event";
+        foreach ($this->getEventObservers($event) as $observer) {
+            $observer->update($this, $event, $data);
+        }
     }
 }

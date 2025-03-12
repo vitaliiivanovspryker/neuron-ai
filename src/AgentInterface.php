@@ -7,7 +7,7 @@ use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Tools\ToolInterface;
 
-interface AgentInterface
+interface AgentInterface extends \SplSubject
 {
     public function provider(): AIProviderInterface;
 
@@ -25,7 +25,7 @@ interface AgentInterface
 
     public function withChatHistory(AbstractChatHistory $chatHistory): AgentInterface;
 
-    public function observe(\Inspector\Inspector $inspector): AgentInterface;
+    public function observe(\SplObserver $observer, string $event = "*"): AgentInterface;
 
     public function chat(Message|array $messages): Message;
 }
