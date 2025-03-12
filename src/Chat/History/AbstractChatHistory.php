@@ -10,11 +10,11 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 {
     public function __construct(protected int $contextWindow = 50000) {}
 
-    abstract public function addMessage(Message $message): self;
+    abstract public function addMessage(Message $message): ChatHistoryInterface;
 
     abstract public function getMessages(): array;
 
-    abstract public function clear(): self;
+    abstract public function clear(): ChatHistoryInterface;
 
     public function calculateTotalUsage(): int
     {

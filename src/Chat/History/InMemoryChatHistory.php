@@ -3,15 +3,12 @@
 namespace NeuronAI\Chat\History;
 
 use NeuronAI\Chat\Messages\Message;
-use NeuronAI\Chat\Messages\MessageMapperInterface;
 
 class InMemoryChatHistory extends AbstractChatHistory
 {
     protected array $history = [];
 
-    protected MessageMapperInterface $mapper;
-
-    public function addMessage(Message $message): self
+    public function addMessage(Message $message): ChatHistoryInterface
     {
         $this->history[] = $message;
 
@@ -29,13 +26,13 @@ class InMemoryChatHistory extends AbstractChatHistory
         return $this->history;
     }
 
-    public function clear(): self
+    public function clear(): ChatHistoryInterface
     {
         $this->history = [];
         return $this;
     }
 
-    public function truncate(): self
+    public function truncate(): ChatHistoryInterface
     {
         do {
             \array_shift($this->history);
