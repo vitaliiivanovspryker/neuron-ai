@@ -54,20 +54,27 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
     protected function unserializeMessages(array $messages): array
     {
         return \array_map(function (array $message) {
-            $item = new Message($message['role'], $message['content']??'');
-            foreach ($message as $key => $value) {
-                if ($key === 'role' || $key === 'content') {
-                    continue;
-                }
-                if ($key === 'usage') {
-                    $item->setUsage(
-                        new Usage($message['usage']['input_tokens'], $message['usage']['output_tokens'])
-                    );
-                    continue;
-                }
-                $item->addMetadata($key, $value);
-            }
-            return $item;
+            return $this->unserializeMessage($message);
         }, $messages);
+    }
+
+    protected function unserializeMessage(array $message): Message
+    {
+        $item = new Message($message['role'], $message['content']??'');
+
+        foreach ($message as $key => $value) {
+            if ($key === 'role' || $key === 'content') {
+                continue;
+            }
+            if ($key === 'usage') {
+                $item->setUsage(
+                    new Usage($message['usage']['input_tokens'], $message['usage']['output_tokens'])
+                );
+                continue;
+            }
+            $item->addMetadata($key, $value);
+        }
+
+        return $item;
     }
 }
