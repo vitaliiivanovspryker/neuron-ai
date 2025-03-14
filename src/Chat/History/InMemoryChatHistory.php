@@ -22,7 +22,7 @@ class InMemoryChatHistory extends AbstractChatHistory
 
     public function removeOldestMessage(): ChatHistoryInterface
     {
-        \array_unshift($this->history);
+        \array_shift($this->history);
         return $this;
     }
 
