@@ -15,6 +15,8 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     abstract public function getMessages(): array;
 
+    abstract public function removeOldestMessage(): ChatHistoryInterface;
+
     abstract public function clear(): ChatHistoryInterface;
 
     public function calculateTotalUsage(): int
@@ -28,7 +30,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         }, 0);
     }
 
-    public function cutToContextWindow(): ChatHistoryInterface
+    public function cutHistoryToContextWindow(): ChatHistoryInterface
     {
         $freeMemory = $this->contextWindow - $this->calculateTotalUsage();
 
@@ -38,7 +40,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
         // Cut old messages
         do {
-            \array_shift($this->history);
+            $this->removeOldestMessage();
         } while ($this->contextWindow - $this->calculateTotalUsage() < 0);
 
         return $this;

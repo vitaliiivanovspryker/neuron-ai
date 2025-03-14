@@ -10,7 +10,7 @@ class InMemoryChatHistory extends AbstractChatHistory
     {
         $this->history[] = $message;
 
-        $this->cutToContextWindow();
+        $this->cutHistoryToContextWindow();
 
         return $this;
     }
@@ -18,6 +18,12 @@ class InMemoryChatHistory extends AbstractChatHistory
     public function getMessages(): array
     {
         return $this->history;
+    }
+
+    public function removeOldestMessage(): ChatHistoryInterface
+    {
+        \array_unshift($this->history);
+        return $this;
     }
 
     public function clear(): ChatHistoryInterface

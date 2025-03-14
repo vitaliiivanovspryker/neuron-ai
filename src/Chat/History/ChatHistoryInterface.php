@@ -13,6 +13,8 @@ interface ChatHistoryInterface extends \JsonSerializable
      */
     public function getMessages(): array;
 
+    public function removeOldestMessage(): ChatHistoryInterface;
+
     public function clear(): ChatHistoryInterface;
 
     public function calculateTotalUsage(): int;

@@ -43,7 +43,7 @@ class FileChatHistory extends AbstractChatHistory
     {
         $this->history[] = $message;
 
-        $this->cutToContextWindow();
+        $this->cutHistoryToContextWindow();
 
         \file_put_contents($this->getFilePath(), json_encode($this->jsonSerialize()), LOCK_EX);
 
@@ -53,6 +53,12 @@ class FileChatHistory extends AbstractChatHistory
     public function getMessages(): array
     {
         return $this->history;
+    }
+
+    public function removeOldestMessage(): ChatHistoryInterface
+    {
+        \array_unshift($this->history);
+        return $this;
     }
 
     public function clear(): ChatHistoryInterface
