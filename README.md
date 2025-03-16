@@ -23,14 +23,17 @@ composer require inspector-apm/neuron-ai
 
 ## Create an Agent
 
-Extend `NeuronAI\Agent` class to create your own agent:
+Neuron provides you with the Agent class you can extend to inherit the main features of the framework,
+and create fully functional agents. This class automatically manages some advanced mechanisms for you such as memory,
+tools and function calls, up to the RAG systems. You can go deeper into these aspects in the [documentation](https://docs.neuron-ai.dev).
+In the meantime, let's create the first agent, extending the `NeuronAI\Agent` class:
 
 ```php
 use NeuronAI\Agent;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\Anthropic\Anthropic;
 
-class MyAgent extends Agent
+class SEOAgent extends Agent
 {
     public function provider(): AIProviderInterface
     {
@@ -38,6 +41,13 @@ class MyAgent extends Agent
             key: 'ANTHROPIC_API_KEY',
             model: 'ANTHROPIC_MODEL',
         );
+    }
+
+    public function instructions()
+    {
+        return "Act as an expert of SEO (Search Engine Optimization). ".
+            "Your role is to analyze a text of an article and provide suggestions ".
+            "on how the content can be improved to get a better rank on Google search.";
     }
 }
 ```
@@ -50,12 +60,12 @@ Send a prompt to the agent to get a response from the underlying LLM:
 ```php
 $response = MyAgent::make()
     ->run(
-        new UserMessage("Hi, I'm Valerio")
+        new UserMessage("Who are you?")
     );
 
 echo $response->getContent();
 
-// Nice to meet you Valerio, how can I help you today?
+// I'm a SEO expert, how can I help you today?
 ```
 
 ## Official documentation
@@ -64,7 +74,7 @@ echo $response->getContent();
 
 ## Contributing
 
-We encourage you to contribute to the development of the Inspector bundle!
+We encourage you to contribute to the development of Neuron AI Framework!
 Please check out the [Contribution Guidelines](CONTRIBUTING.md) about how to proceed. Join us!
 
 ## LICENSE

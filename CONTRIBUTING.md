@@ -1,8 +1,8 @@
-# Contributing to Inspector for Laravel
+# Contributing to Neuron AI Framework
 
 👍🎉 First off, thanks for taking the time to contribute! 🎉👍
 
-The following is a set of guidelines for contributing to the Inspector Laravel package. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
+The following is a set of guidelines for contributing to the Neuron AI Framework. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
 
 ## I don't want to read this whole thing I just have a question!!!
 
@@ -15,10 +15,10 @@ The following is a set of guidelines for contributing to the Inspector Laravel p
 
 ### Reporting Bugs
 
-When you are creating a bug report, please include as many details as possible. 
+When you are creating a bug report, please include as many details as possible.
 Fill out the required template, the information it asks for helps us resolve issues faster.
 
-> Note: If you find a Closed issue that seems like it is the same thing that you're experiencing, 
+> Note: If you find a Closed issue that seems like it is the same thing that you're experiencing,
 > open a new issue and include a link to the original issue in the body of your new one.
 
 #### Before Submitting A Bug Report
@@ -35,7 +35,7 @@ Fill out the required template, the information it asks for helps us resolve iss
 
 #### Do you intend to add a new feature or change an existing one?
 
-- Suggest your change to the repository's maintainer, or send an email at [support@inspector.dev](support@inspector.dev) 
+- Suggest your change to the repository's maintainer, or send an email at [support@inspector.dev](support@inspector.dev)
 - Do not open an issue on GitHub until you have collected positive feedback about the change. GitHub issues are primarily intended for bug reports and fixes.
 
 Thanks! ❤️ ❤️ ❤️
