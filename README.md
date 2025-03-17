@@ -61,7 +61,6 @@ Send a prompt to the agent to get a response from the underlying LLM:
 $agent = MyAgent::make();
 
 $response = $agent->run(new UserMessage("Who are you?"));
-
 echo $response->getContent();
 // I'm a SEO expert, how can I help you today?
 
@@ -69,7 +68,6 @@ echo $response->getContent();
 $response = $agent->run(
     new UserMessage("What do you think about the following article? --- ".file_get_contents('./README.md'))
 );
-
 echo $response->getContent();
 // It's well done! Anyway, let me give you some advice to get a better rank on Google...
 ```
