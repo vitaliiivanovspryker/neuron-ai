@@ -4,7 +4,7 @@
 ![](./docs/img/neuron-ai-php-framework.png)
 
 
-> Before moving on, please consider giving us a GitHub star ⭐️. Thank you!
+> Before moving on, support the community giving a GitHub star ⭐️. Thank you!
 
 ## Requirements
 
