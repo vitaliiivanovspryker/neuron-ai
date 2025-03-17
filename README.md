@@ -3,9 +3,6 @@
 
 ![](./docs/img/neuron-ai-php-framework.png)
 
-# Neuron AI
-
-Open source framework to integrate AI Agents into your existing PHP application - powered by [Inspector.dev](https://inspector.dev)
 
 > Before moving on, please consider giving us a GitHub star ⭐️. Thank you!
 
