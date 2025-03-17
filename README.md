@@ -12,7 +12,7 @@
 
 ## Install
 
-Install the latest version of the bundle:
+Install the latest version of the package:
 
 ```
 composer require inspector-apm/neuron-ai
