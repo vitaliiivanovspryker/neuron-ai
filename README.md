@@ -55,14 +55,14 @@ class SEOAgent extends Agent
 Send a prompt to the agent to get a response from the underlying LLM:
 
 ```php
-$agent = MyAgent::make();
+$seoAgent = SEOAgent::make();
 
-$response = $agent->run(new UserMessage("Who are you?"));
+$response = $seoAgent->run(new UserMessage("Who are you?"));
 echo $response->getContent();
 // I'm a SEO expert, how can I help you today?
 
 
-$response = $agent->run(
+$response = $seoAgent->run(
     new UserMessage("What do you think about the following article? --- ".file_get_contents('./README.md'))
 );
 echo $response->getContent();
