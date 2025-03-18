@@ -7,15 +7,19 @@ use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use GuzzleHttp\Client;
 use NeuronAI\Chat\Messages\Usage;
+use NeuronAI\Exceptions\ProviderException;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\ToolProperty;
+use Psr\Http\Message\StreamInterface;
 
 class OpenAI implements AIProviderInterface
 {
     use HandleWithTools;
+    use HandleChat;
+    use HandleStream;
 
     /**
      * The http client.
@@ -60,51 +64,6 @@ class OpenAI implements AIProviderInterface
         return $this;
     }
 
-    /**
-     * Send a message to the LLM.
-     *
-     * @param Message|array<Message> $messages
-     * @throws GuzzleException
-     */
-    public function chat(array $messages): Message
-    {
-        // Attach the system prompt
-        if (isset($this->system)) {
-            \array_unshift($messages, new AssistantMessage($this->system));
-        }
-
-        $mapper = new MessageMapper($messages);
-
-        $json = [
-            'model' => $this->model,
-            'messages' => $mapper->map(),
-        ];
-
-        // Attach tools
-        if (!empty($this->tools)) {
-            $json['tools'] = $this->generateToolsPayload();
-        }
-
-        $result = $this->client->post('v1/chat/completions', compact('json'))
-            ->getBody()->getContents();
-
-        $result = \json_decode($result, true);
-
-        if ($result['choices'][0]['finish_reason'] === 'tool_calls') {
-            $response = $this->createToolMessage($result['choices'][0]['message']);
-        } else {
-            $response = new AssistantMessage($result['choices'][0]['message']['content']);
-        }
-
-        if (\array_key_exists('usage', $result)) {
-            $response->setUsage(
-                new Usage($result['usage']['prompt_tokens'], $result['usage']['completion_tokens'])
-            );
-        }
-
-        return $response;
-    }
-
     public function generateToolsPayload(): array
     {
         return \array_map(function (ToolInterface $tool) {
@@ -119,6 +78,7 @@ class OpenAI implements AIProviderInterface
                             $carry[$property->getName()] = [
                                 'name' => $property->getName(),
                                 'description' => $property->getDescription(),
+                                'type' => $property->getType(),
                             ];
 
                             return $carry;

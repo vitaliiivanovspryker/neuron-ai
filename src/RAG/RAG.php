@@ -8,6 +8,8 @@ use NeuronAI\Events\InstructionsChanged;
 use NeuronAI\Events\InstructionsChanging;
 use NeuronAI\Events\VectorStoreResult;
 use NeuronAI\Events\VectorStoreSearching;
+use NeuronAI\Exceptions\MissingCallbackParameter;
+use NeuronAI\Exceptions\ToolCallableNotSet;
 use NeuronAI\Providers\Embeddings\EmbeddingsProviderInterface;
 use NeuronAI\RAG\VectorStore\VectorStoreInterface;
 
@@ -32,10 +34,35 @@ class RAG extends Agent
      */
     protected ?string $instructions = "Use the following pieces of context to answer the question of the user. If you don't know the answer, just say that you don't know, don't try to make up an answer.\n\n{context}.";
 
+    /**
+     * @throws MissingCallbackParameter
+     * @throws ToolCallableNotSet
+     */
     public function answer(Message $question, int $k = 4): Message
     {
         $this->notify('rag-start');
 
+        $this->retrieval($question, $k);
+
+        $response = $this->chat($question);
+
+        $this->notify('rag-stop');
+        return $response;
+    }
+
+    public function streamAnswer(Message $question, int $k = 4): \Generator
+    {
+        $this->notify('rag-start');
+
+        $this->retrieval($question, $k);
+
+        yield from $this->stream($question);
+
+        $this->notify('rag-stop');
+    }
+
+    protected function retrieval(Message $question, int $k = 4): void
+    {
         $this->notify(
             'rag-vectorstore-searching',
             new VectorStoreSearching($question)
@@ -56,11 +83,6 @@ class RAG extends Agent
             'rag-instructions-changed',
             new InstructionsChanged($defaultInstructions, $this->instructions())
         );
-
-        $response = $this->chat($question);
-
-        $this->notify('rag-stop');
-        return $response;
     }
 
     /**
@@ -68,9 +90,9 @@ class RAG extends Agent
      *
      * @param array<Document> $documents
      * @param int $k
-     * @return self
+     * @return RAG
      */
-    public function setSystemMessage(array $documents, int $k): self
+    public function setSystemMessage(array $documents, int $k): RAG
     {
         $context = '';
         $i = 0;

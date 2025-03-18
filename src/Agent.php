@@ -108,17 +108,8 @@ class Agent implements AgentInterface
         );
 
         if ($response instanceof ToolCallMessage) {
-            $toolCallResult = new ToolCallResultMessage($response->getTools());
-
-            foreach ($toolCallResult->getTools() as $tool) {
-                $this->notify('tool-calling', new ToolCalling($tool));
-                $tool->execute();
-                $this->notify('tool-called', new ToolCalled($tool));
-            }
-
-            $response = $this->chat([
-                $response, $toolCallResult
-            ]);
+            $toolCallResult = $this->executeTools($response);
+            $response = $this->chat([$response, $toolCallResult]);
         }
 
         $this->notify('message-saving', new MessageSaving($response));
@@ -127,6 +118,45 @@ class Agent implements AgentInterface
 
         $this->notify('chat-stop');
         return $response;
+    }
+
+    public function stream(Message|array $messages): \Generator
+    {
+        $this->notify('stream-start');
+
+        $messages = is_array($messages) ? $messages : [$messages];
+
+        foreach ($messages as $message) {
+            $this->notify('message-saving', new MessageSaving($message));
+            $this->resolveChatHistory()->addMessage($message);
+            $this->notify('message-saved', new MessageSaved($message));
+        }
+
+        yield from $this->provider()
+            ->systemPrompt($this->instructions())
+            ->setTools($this->tools())
+            ->stream(
+                $this->resolveChatHistory()->getMessages(),
+                function (ToolCallMessage $toolCallMessage) {
+                    $toolCallResult = $this->executeTools($toolCallMessage);
+                    yield from $this->stream([$toolCallMessage, $toolCallResult]);
+                }
+            );
+
+        $this->notify('stream-stop');
+    }
+
+    protected function executeTools(ToolCallMessage $toolCallMessage): ToolCallResultMessage
+    {
+        $toolCallResult = new ToolCallResultMessage($toolCallMessage->getTools());
+
+        foreach ($toolCallResult->getTools() as $tool) {
+            $this->notify('tool-calling', new ToolCalling($tool));
+            $tool->execute();
+            $this->notify('tool-called', new ToolCalled($tool));
+        }
+
+        return $toolCallResult;
     }
 
     public function instructions(): ?string

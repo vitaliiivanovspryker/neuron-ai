@@ -33,7 +33,7 @@ interface AIProviderInterface
 
     //public function structured(array|string $messages): Message;
 
-    //public function stream(array|string $messages): Message;
+    public function stream(array|string $messages, callable $executeToolsCallback): \Generator;
 
     /**
      * The context window limitation of the LLM.
