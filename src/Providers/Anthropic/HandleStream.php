@@ -43,22 +43,28 @@ trait HandleStream
 
             // Tool calls detection (https://docs.anthropic.com/en/api/messages-streaming#streaming-request-with-tool-use)
             if (
-                (\array_key_exists('content_block', $line) && $line['content_block']['type'] === 'tool_use') ||
-                (\array_key_exists('content_block_delta', $line) && $line['delta']['type'] === 'input_json_delta')
+                (isset($line['content_block']['type']) && $line['content_block']['type'] === 'tool_use') ||
+                (isset($line['delta']['type']) && $line['delta']['type'] === 'input_json_delta')
             ) {
                 $toolCalls = $this->composeToolCalls($line, $toolCalls);
                 continue;
             }
 
             // Handle tool call
-            if ($line['type'] === 'message_stop' && !empty($toolCalls)) {
+            if ($line['type'] === 'content_block_stop' && !empty($toolCalls)) {
+                // Restore the input field as an array
+                $toolCalls = \array_map(function (array $call) {
+                    $call['input'] = json_decode($call['input'], true);
+                    return $call;
+                }, $toolCalls);
+
                 yield from $executeToolsCallback(
-                    $this->createToolMessage($toolCalls)
+                    $this->createToolMessage(\end($toolCalls))
                 );
             }
 
             // Process regular content
-            $content = $line['completion'];
+            $content = $line['delta']['text']??'';
 
             yield $content;
         }
@@ -75,9 +81,10 @@ trait HandleStream
     {
         if (!\array_key_exists($line['index'], $toolCalls)) {
             $toolCalls[$line['index']] = [
+                'type' => 'tool_use',
                 'id' => $line['content_block']['id'],
                 'name' => $line['content_block']['name'],
-                'input' => $line['content_block']['input']??[],
+                'input' => '',
             ];
         } else {
             if ($input = $line['delta']['partial_json']??null) {

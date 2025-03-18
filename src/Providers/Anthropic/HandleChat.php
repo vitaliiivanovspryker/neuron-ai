@@ -20,13 +20,13 @@ trait HandleChat
         $mapper = new MessageMapper($messages);
 
         $json = \array_filter([
-                                  'model' => $this->model,
-                                  'max_tokens' => $this->max_tokens,
-                                  'stop_sequences' => $this->stop_sequences,
-                                  'temperature' => $this->temperature,
-                                  'system' => $this->system ?? null,
-                                  'messages' => $mapper->map(),
-                              ]);
+            'model' => $this->model,
+            'max_tokens' => $this->max_tokens,
+            'stop_sequences' => $this->stop_sequences,
+            'temperature' => $this->temperature,
+            'system' => $this->system ?? null,
+            'messages' => $mapper->map(),
+        ]);
 
         if (!empty($this->tools)) {
             $json['tools'] = $this->generateToolsPayload();
