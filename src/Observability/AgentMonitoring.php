@@ -39,6 +39,8 @@ class AgentMonitoring implements \SplObserver
     public function update(\SplSubject $subject, string $event = null, $data = null): void
     {
         $methods = [
+            'stream-start' => 'start',
+            'stream-stop' => 'stop',
             'rag-start' => 'start',
             'rag-stop' => 'stop',
             'chat-start' => "start",

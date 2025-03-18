@@ -28,4 +28,6 @@ interface AgentInterface extends \SplSubject
     public function observe(\SplObserver $observer, string $event = "*"): AgentInterface;
 
     public function chat(Message|array $messages): Message;
+
+    public function stream(Message|array $messages): \Generator;
 }
