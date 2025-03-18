@@ -24,7 +24,6 @@ trait HandleStream
 
         $json = [
             'stream' => true,
-            'stream_options' => ['include_usage' => true],
             'model' => $this->model,
             'messages' => $mapper->map(),
         ];
@@ -45,7 +44,7 @@ trait HandleStream
             if (!$line = $this->parseNextDataLine($stream)) {
                 continue;
             }
-            
+
             if (empty($line['choices'])) {
                 continue;
             }
