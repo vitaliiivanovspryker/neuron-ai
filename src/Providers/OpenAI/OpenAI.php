@@ -78,6 +78,7 @@ class OpenAI implements AIProviderInterface
                             $carry[$property->getName()] = [
                                 'name' => $property->getName(),
                                 'description' => $property->getDescription(),
+                                'type' => $property->getType(),
                             ];
 
                             return $carry;

@@ -45,6 +45,10 @@ trait HandleStream
             if (!$line = $this->parseNextDataLine($stream)) {
                 continue;
             }
+            
+            if (empty($line['choices'])) {
+                continue;
+            }
 
             // Process tool calls
             if (\array_key_exists('tool_calls', $line['choices'][0]['delta'])) {
@@ -56,14 +60,17 @@ trait HandleStream
             // Handle tool call
             if ($line['choices'][0]['finish_reason'] === 'tool_calls') {
                 yield from $executeToolsCallback(
-                    $this->createToolMessage($toolCalls)
+                    $this->createToolMessage([
+                        'content' => $text,
+                        'tool_calls' => $toolCalls
+                    ])
                 );
 
                 return;
             }
 
             // Process regular content
-            $content = $line['choices'][0]['delta']['content'];
+            $content = $line['choices'][0]['delta']['content']??'';
             $text .= $content; // todo: What I should do with "text" after the stream ends?
 
             yield $content;
@@ -77,15 +84,15 @@ trait HandleStream
      */
     protected function composeToolCalls(array $line, array $toolCalls): array
     {
-        foreach ($line['choices'][0]['delta']['tool_calls'] as $index => $toolCall) {
-            if ($name = $toolCall['function']['name']??null) {
-                $toolCalls[$index]['name'] = $name;
-                $toolCalls[$index]['arguments'] = '';
-                $toolCalls[$index]['id'] = $toolCall['id'];
+        foreach ($line['choices'][0]['delta']['tool_calls'] as $index => $call) {
+            if ($name = $call['function']['name']??null) {
+                $toolCalls[$index]['function'] = ['name' => $name, 'arguments' => ''];
+                $toolCalls[$index]['id'] = $call['id'];
+                $toolCalls[$index]['type'] = 'function';
             }
 
-            if ($arguments = $toolCall['function']['arguments']) {
-                $toolCalls[$index]['arguments'] .= $arguments;
+            if ($arguments = $call['function']['arguments']??null) {
+                $toolCalls[$index]['function']['arguments'] .= $arguments;
             }
         }
 
