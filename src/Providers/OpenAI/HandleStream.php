@@ -34,7 +34,7 @@ trait HandleStream
         }
 
         $stream = $this->client->post(
-            'v1/chat/completions', compact('json')
+            'v1/chat/completions', \compact('json')
         )->getBody();
 
         $text = '';
@@ -52,7 +52,6 @@ trait HandleStream
             // Process tool calls
             if (\array_key_exists('tool_calls', $line['choices'][0]['delta'])) {
                 $toolCalls = $this->composeToolCalls($line, $toolCalls);
-
                 continue;
             }
 
@@ -77,6 +76,8 @@ trait HandleStream
     }
 
     /**
+     * Recreate the tool_calls format of openai API from streaming.
+     *
      * @param  array<string, mixed>  $line
      * @param  array<int, array<string, mixed>>  $toolCalls
      * @return array<int, array<string, mixed>>
@@ -113,7 +114,7 @@ trait HandleStream
         }
 
         try {
-            return json_decode($line, true, flags: JSON_THROW_ON_ERROR);
+            return \json_decode($line, true, flags: JSON_THROW_ON_ERROR);
         } catch (\Throwable $exception) {
             throw new ProviderException('OpenAI streaming error - '.$exception->getMessage());
         }

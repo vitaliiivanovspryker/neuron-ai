@@ -13,7 +13,7 @@ trait HandleStream
      * @throws ProviderException
      * @throws GuzzleException
      */
-    public function stream(array|string $messages): \Generator
+    public function stream(array|string $messages, callable $executeToolsCallback): \Generator
     {
         $mapper = new MessageMapper($messages);
 
@@ -32,31 +32,62 @@ trait HandleStream
         }
 
         // https://docs.anthropic.com/claude/reference/messages_post
-        $response = $this->client->post('v1/messages', compact('json'));
+        $stream = $this->client->post('v1/messages', compact('json'))->getBody();
 
-        while (! $response->getBody()->eof()) {
-            $line = $this->parseNextDataLine($response->getBody());
+        $toolCalls = [];
 
-            // Skip empty data or DONE markers
-            if ($line === null) {
+        while (! $stream->eof()) {
+            if (!$line = $this->parseNextDataLine($stream)) {
                 continue;
             }
 
-            // todo: Tool calls detection here (https://docs.anthropic.com/en/api/messages-streaming#streaming-request-with-tool-use)
+            // Tool calls detection (https://docs.anthropic.com/en/api/messages-streaming#streaming-request-with-tool-use)
+            if (
+                (\array_key_exists('content_block', $line) && $line['content_block']['type'] === 'tool_use') ||
+                (\array_key_exists('content_block_delta', $line) && $line['delta']['type'] === 'input_json_delta')
+            ) {
+                $toolCalls = $this->composeToolCalls($line, $toolCalls);
+                continue;
+            }
+
+            // Handle tool call
+            if ($line['type'] === 'message_stop' && !empty($toolCalls)) {
+                yield from $executeToolsCallback(
+                    $this->createToolMessage($toolCalls)
+                );
+            }
 
             // Process regular content
             $content = $line['completion'];
-            $text .= $content;
-
-            $finishReason = $this->mapFinishReason($line);
 
             yield $content;
         }
     }
 
     /**
-     * @return array<string, mixed>|null Parsed JSON data or null if line should be skipped
+     * Recreate the tool_call format of anthropic API from streaming.
+     *
+     * @param  array<string, mixed>  $line
+     * @param  array<int, array<string, mixed>>  $toolCalls
+     * @return array<int, array<string, mixed>>
      */
+    protected function composeToolCalls(array $line, array $toolCalls): array
+    {
+        if (!\array_key_exists($line['index'], $toolCalls)) {
+            $toolCalls[$line['index']] = [
+                'id' => $line['content_block']['id'],
+                'name' => $line['content_block']['name'],
+                'input' => $line['content_block']['input']??[],
+            ];
+        } else {
+            if ($input = $line['delta']['partial_json']??null) {
+                $toolCalls[$line['index']]['input'] .= $input;
+            }
+        }
+
+        return $toolCalls;
+    }
+
     protected function parseNextDataLine(StreamInterface $stream): ?array
     {
         $line = $this->readLine($stream);
@@ -68,7 +99,7 @@ trait HandleStream
         $line = \trim(\substr($line, \strlen('data: ')));
 
         try {
-            return json_decode($line, true, flags: JSON_THROW_ON_ERROR);
+            return \json_decode($line, true, flags: JSON_THROW_ON_ERROR);
         } catch (\Throwable $exception) {
             throw new ProviderException('Anthropic streaming error - '.$exception->getMessage());
         }
