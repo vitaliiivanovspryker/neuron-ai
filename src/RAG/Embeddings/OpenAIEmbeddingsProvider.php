@@ -3,7 +3,6 @@
 namespace NeuronAI\RAG\Embeddings;
 
 use GuzzleHttp\Client;
-use NeuronAI\RAG\Document;
 
 class OpenAIEmbeddingsProvider extends AbstractEmbeddingsProvider
 {
