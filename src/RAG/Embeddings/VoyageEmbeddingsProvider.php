@@ -5,7 +5,7 @@ namespace NeuronAI\RAG\Embeddings;
 use NeuronAI\RAG\Document;
 use GuzzleHttp\Client;
 
-class VoyageEmbeddingProvider extends AbstractEmbeddingProvider
+class VoyageEmbeddingsProvider extends AbstractEmbeddingsProvider
 {
     protected Client $client;
 

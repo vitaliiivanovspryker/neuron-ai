@@ -4,7 +4,7 @@ namespace NeuronAI\RAG\Embeddings;
 
 use NeuronAI\RAG\Document;
 
-abstract class AbstractEmbeddingProvider implements EmbeddingsProviderInterface
+abstract class AbstractEmbeddingsProvider implements EmbeddingsProviderInterface
 {
     public function embedDocuments(array $documents): array
     {
