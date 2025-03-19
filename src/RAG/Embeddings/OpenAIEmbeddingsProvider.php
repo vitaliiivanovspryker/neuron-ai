@@ -39,12 +39,4 @@ class OpenAIEmbeddingsProvider extends AbstractEmbeddingProvider
 
         return $response['data'][0]['embedding'];
     }
-
-    public function embedDocument(Document $document): Document
-    {
-        $text = $document->formattedContent ?? $document->content;
-        $document->embedding = $this->embedText($text);
-
-        return $document;
-    }
 }
