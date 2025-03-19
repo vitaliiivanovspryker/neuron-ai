@@ -168,7 +168,7 @@ class AgentMonitoring implements \SplObserver
         $this->segments[
         $data->tool->getName()
         ] = $this->inspector
-            ->startSegment(self::SEGMENT_TYPE.'-tools', "tool:{$data->tool->getName()}")
+            ->startSegment(self::SEGMENT_TYPE.'-tool-call', "toolCall({$data->tool->getName()})")
             ->setColor(self::SEGMENT_COLOR);
     }
 
@@ -260,6 +260,7 @@ class AgentMonitoring implements \SplObserver
                     }, $tool->getProperties()),
                 ];
             }, $agent->tools()??[]),
+            //'Messages' => $agent->resolveChatHistory()->getMessages(),
         ];
     }
 
