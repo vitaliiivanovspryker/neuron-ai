@@ -8,7 +8,7 @@ class VoyageEmbeddingsProvider extends AbstractEmbeddingsProvider
 {
     protected Client $client;
 
-    protected string $baseUri = 'https://api.voyageai.com/v1/embedding';
+    protected string $baseUri = 'https://api.voyageai.com/v1/embeddings';
 
     public function __construct(
         string $key,
