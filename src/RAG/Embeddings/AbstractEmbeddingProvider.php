@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\Providers\Embeddings;
+namespace NeuronAI\RAG\Embeddings;
 
 use NeuronAI\RAG\Document;
 

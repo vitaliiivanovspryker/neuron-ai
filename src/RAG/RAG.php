@@ -10,7 +10,7 @@ use NeuronAI\Events\VectorStoreResult;
 use NeuronAI\Events\VectorStoreSearching;
 use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
-use NeuronAI\Providers\Embeddings\EmbeddingsProviderInterface;
+use NeuronAI\RAG\Embeddings\EmbeddingsProviderInterface;
 use NeuronAI\RAG\VectorStore\VectorStoreInterface;
 
 class RAG extends Agent

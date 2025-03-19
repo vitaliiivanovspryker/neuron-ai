@@ -1,25 +1,27 @@
 <?php
 
-namespace NeuronAI\Providers\Embeddings;
+namespace NeuronAI\RAG\Embeddings;
 
-use NeuronAI\RAG\Document;
 use GuzzleHttp\Client;
+use NeuronAI\RAG\Document;
 
-class VoyageEmbeddingProvider extends AbstractEmbeddingProvider
+class OpenAIEmbeddingsProvider extends AbstractEmbeddingProvider
 {
     protected Client $client;
 
+    protected string $baseUri = 'https://api.openai.com/v1/embeddings';
+
     public function __construct(
-        string $key,
+        protected string $key,
         protected string $model
     ) {
         $this->client = new Client([
-            'base_uri' => 'https://api.voyageai.com/v1/embeddings',
+            'base_uri' => $this->baseUri,
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer ' . $key,
-            ],
+                'Authorization' => 'Bearer ' . $this->key,
+            ]
         ]);
     }
 
@@ -29,6 +31,7 @@ class VoyageEmbeddingProvider extends AbstractEmbeddingProvider
             'json' => [
                 'model' => $this->model,
                 'input' => $text,
+                'encoding_format' => 'float',
             ]
         ]);
 
