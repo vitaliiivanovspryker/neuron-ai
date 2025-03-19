@@ -2,7 +2,6 @@
 
 namespace NeuronAI\RAG\Embeddings;
 
-use NeuronAI\RAG\Document;
 use GuzzleHttp\Client;
 
 class VoyageEmbeddingsProvider extends AbstractEmbeddingsProvider
