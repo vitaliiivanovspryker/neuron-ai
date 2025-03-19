@@ -132,7 +132,7 @@ class Agent implements AgentInterface
             $this->notify('message-saved', new MessageSaved($message));
         }
 
-        yield from $this->provider()
+        $stream = $this->provider()
             ->systemPrompt($this->instructions())
             ->setTools($this->tools())
             ->stream(
@@ -142,6 +142,23 @@ class Agent implements AgentInterface
                     yield from $this->stream([$toolCallMessage, $toolCallResult]);
                 }
             );
+
+        $content = '';
+        foreach ($stream as $text) {
+            $content .= $text;
+            yield $text;
+        }
+
+        $response = new AssistantMessage($content);
+
+        // Avoid double saving due to the recursive call.
+        $history = $this->resolveChatHistory()->getMessages();
+        $last = \end($history);
+        if ($response->getRole() !== $last->getRole()) {
+            $this->notify('message-saving', new MessageSaving($response));
+            $this->resolveChatHistory()->addMessage($response);
+            $this->notify('message-saved', new MessageSaved($response));
+        }
 
         $this->notify('stream-stop');
     }

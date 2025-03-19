@@ -13,4 +13,14 @@ class ToolCallResultMessage extends UserMessage
     {
         return $this->tools;
     }
+
+    public function jsonSerialize(): array
+    {
+        return \array_merge(
+            parent::jsonSerialize(),
+            [
+                'tools' => \array_map(fn ($tool) => $tool->jsonSerialize(), $this->tools)
+            ]
+        );
+    }
 }
