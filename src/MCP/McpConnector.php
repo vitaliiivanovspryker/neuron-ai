@@ -16,6 +16,12 @@ class McpConnector
         $this->client = new McpClient($config);
     }
 
+    /**
+     * Get the list of available Tools from the server.
+     *
+     * @return ToolInterface[]
+     * @throws \Exception
+     */
     public function tools()
     {
         $tools = $this->client->listTools();
@@ -25,6 +31,9 @@ class McpConnector
         }, $tools);
     }
 
+    /**
+     * Convert the list of tools from the MCP server in Neuron compatible objects.
+     */
     protected function createTool(array $item): ToolInterface
     {
         $tool = \NeuronAI\Tools\Tool::make(
@@ -51,7 +60,7 @@ class McpConnector
                     $name,
                     $input['type'],
                     $input['description'],
-                    \in_array($name, $item['inputSchema']['required'])
+                    \in_array($name, $item['inputSchema']['required']??[])
                 )
             );
         }
