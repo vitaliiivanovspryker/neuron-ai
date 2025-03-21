@@ -22,16 +22,6 @@ class McpClient
         }
     }
 
-    /*public function connect(): void
-    {
-        $this->transport->connect();
-    }
-
-    public function disconnect(): void
-    {
-        $this->transport->disconnect();
-    }*/
-
     /**
      * List all available tools from the MCP server
      *
