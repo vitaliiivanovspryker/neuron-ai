@@ -16,9 +16,9 @@ class McpClient
         if (\array_key_exists('command', $config)) {
             $this->transport = new StdioTransport($config);
             $this->transport->connect();
+        } else {
+            throw new \Exception('Transport not supported!');
         }
-
-        throw new \Exception('Transport not supported!');
     }
 
     /*public function connect(): void
@@ -38,17 +38,27 @@ class McpClient
      */
     public function listTools($cursor = null): array
     {
-        $request = [
-            "jsonrpc" => "2.0",
-            "id" => ++$this->requestId,
-            "method" => "tools/list",
-            "params" => [
-                "cursor" => $cursor
-            ]
-        ];
+        $tools = [];
 
-        $this->transport->send($request);
-        return $this->transport->receive();
+        do {
+            $request = [
+                "jsonrpc" => "2.0",
+                "id" => ++$this->requestId,
+                "method" => "tools/list",
+            ];
+
+            // Eventually add pagination
+            if (isset($response) && \array_key_exists('nextCursor', $response['result'])) {
+                $request['params'] = ['cursor' => $response['nextCursor']];
+            }
+
+            $this->transport->send($request);
+            $response = $this->transport->receive();
+
+            $tools = \array_merge($tools, $response['result']['tools']);
+        } while (\array_key_exists('nextCursor', $response['result']));
+
+        return $tools;
     }
 
     /**
