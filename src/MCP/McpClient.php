@@ -56,7 +56,7 @@ class McpClient
      *
      * @throws \Exception
      */
-    public function callTool($toolName, $parameters = []): array
+    public function callTool($toolName, $arguments = []): array
     {
         $request = [
             "jsonrpc" => "2.0",
@@ -64,7 +64,7 @@ class McpClient
             "method" => "tools/call",
             "params" => [
                 "name" => $toolName,
-                "parameters" => $parameters
+                "arguments" => $arguments
             ]
         ];
 
