@@ -10,6 +10,10 @@
 
 - PHP: ^8.0
 
+## Official documentation
+
+**[Go to the official documentation](https://neuron.inspector.dev/)**
+
 ## Install
 
 Install the latest version of the package:
