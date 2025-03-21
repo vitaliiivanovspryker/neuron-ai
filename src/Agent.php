@@ -24,6 +24,7 @@ use NeuronAI\Tools\ToolInterface;
 
 class Agent implements AgentInterface
 {
+    use StaticConstructor;
     use ResolveTools;
     use ResolveChatHistory;
 
@@ -45,17 +46,6 @@ class Agent implements AgentInterface
      * @var array<\SplObserver>
      */
     private array $observers = [];
-
-    /**
-     * Static constructor.
-     *
-     * @param ...$args
-     * @return static
-     */
-    public static function make(...$args): static
-    {
-        return new static(...$args);
-    }
 
     public function setProvider(AIProviderInterface $provider): AgentInterface
     {

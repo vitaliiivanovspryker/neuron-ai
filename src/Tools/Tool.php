@@ -4,9 +4,12 @@ namespace NeuronAI\Tools;
 
 use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
+use NeuronAI\StaticConstructor;
 
 class Tool implements ToolInterface
 {
+    use StaticConstructor;
+
     /**
      * The list of callback function arguments.
      *
@@ -50,11 +53,6 @@ class Tool implements ToolInterface
         protected string $name,
         protected string $description,
     ) {}
-
-    public static function make(...$args): static
-    {
-        return new static(...$args);
-    }
 
     public function getName(): string
     {

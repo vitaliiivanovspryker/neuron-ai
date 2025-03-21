@@ -17,6 +17,7 @@ class McpClient
             $this->transport = new StdioTransport($config);
             $this->transport->connect();
         } else {
+            // todo: implement support for SSE server with URL config property
             throw new \Exception('Transport not supported!');
         }
     }
