@@ -67,6 +67,14 @@ class OpenAI implements AIProviderInterface
     public function generateToolsPayload(): array
     {
         return \array_map(function (ToolInterface $tool) {
+            $payload = [
+                'type' => 'function',
+                'function' => [
+                    'name' => $tool->getName(),
+                    'description' => $tool->getDescription(),
+                ]
+            ];
+
             $properties = \array_reduce($tool->getProperties(), function (array $carry, ToolProperty $property) {
                 $carry[$property->getName()] = [
                     'name' => $property->getName(),
@@ -77,18 +85,15 @@ class OpenAI implements AIProviderInterface
                 return $carry;
             }, []);
 
-            return [
-                'type' => 'function',
-                'function' => [
-                    'name' => $tool->getName(),
-                    'description' => $tool->getDescription(),
-                    'parameters' => [
-                        'type' => 'object',
-                        'properties' => !empty($properties) ? $properties : null,
-                        'required' => $tool->getRequiredProperties(),
-                    ]
-                ]
-            ];
+            if (!empty($properties)) {
+                $payload['function']['parameters'] = [
+                    'type' => 'object',
+                    'properties' => $properties,
+                    'required' => $tool->getRequiredProperties(),
+                ];
+            }
+
+            return $payload;
         }, $this->tools);
     }
 
