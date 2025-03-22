@@ -24,6 +24,7 @@ class DocumentSplitter
         }
 
         if (\strlen($text) <= $maxLength) {
+            if (empty($document->hash)) $document->hash = \hash('sha256', $text);
             return [$document];
         }
 
