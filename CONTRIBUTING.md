@@ -24,7 +24,7 @@ Fill out the required template, the information it asks for helps us resolve iss
 #### Before Submitting A Bug Report
 
 - **Update to the Latest Version**. You might be running into an issue which was already fixed in a more recent version of the package than the one you're using.
-- **Perform a [cursory search](https://github.com/search?q=is%3Aissue+user%3Ainspector-apm)** to see if the problem has already been reported. If it has and the issue is still open, add a comment to the existing issue instead of opening a new one.
+- **Perform a [cursory search](https://github.com/search?q=is%3Aissue+user%3Aneuro-ai)** to see if the problem has already been reported. If it has and the issue is still open, add a comment to the existing issue instead of opening a new one.
 
 ### Open a Pull Request
 
