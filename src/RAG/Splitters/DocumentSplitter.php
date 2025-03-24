@@ -12,14 +12,8 @@ class DocumentSplitter
     public static function splitDocument(Document $document, int $maxLength = 1000, string $separator = ' ', int $wordOverlap = 0): array
     {
         $text = $document->content;
-        if (empty($text)) {
-            return [];
-        }
-        if ($maxLength <= 0) {
-            return [];
-        }
 
-        if ($separator === '') {
+        if (empty($text)) {
             return [];
         }
 
@@ -31,17 +25,10 @@ class DocumentSplitter
         }
 
         $words = \explode($separator, $text);
-        if ($wordOverlap > 0) {
-            $chunks = self::createChunksWithOverlap($words, $maxLength, $separator, $wordOverlap);
-        } else {
-            // This method is not really necessary anymore.
-            // The new `createChunksWithOverlap` method handles this too.
-            // But to prevent possible bugs when introducing the new method,
-            // We will handle this case with the old method for now.
-            $chunks = self::createChunksWithoutOverlap($words, $maxLength, $separator);
-        }
 
-        $splitted = [];
+        $chunks = self::createChunksWithOverlap($words, $maxLength, $separator, $wordOverlap);
+
+        $split = [];
         $chunkNumber = 0;
         foreach ($chunks as $chunk) {
             $newDocument = new Document($chunk);
@@ -50,10 +37,10 @@ class DocumentSplitter
             $newDocument->sourceName = $document->sourceName;
             $newDocument->chunkNumber = $chunkNumber;
             $chunkNumber++;
-            $splitted[] = $newDocument;
+            $split[] = $newDocument;
         }
 
-        return $splitted;
+        return $split;
     }
 
     /**
@@ -62,40 +49,13 @@ class DocumentSplitter
      */
     public static function splitDocuments(array $documents, int $maxLength = 1000, string $separator = '.', int $wordOverlap = 0): array
     {
-        $splitted = [];
+        $split = [];
+
         foreach ($documents as $document) {
-            $splitted = \array_merge($splitted, static::splitDocument($document, $maxLength, $separator, $wordOverlap));
+            $split = \array_merge($split, static::splitDocument($document, $maxLength, $separator, $wordOverlap));
         }
 
-        return $splitted;
-    }
-
-    /**
-     * @param  array<string>  $words
-     * @return array<string>
-     */
-    private static function createChunksWithoutOverlap(array $words, int $maxLength, string $separator): array
-    {
-        $chunks = [];
-        $currentChunk = '';
-        foreach ($words as $word) {
-            if (\strlen($currentChunk.$separator.$word) <= $maxLength || empty($currentChunk)) {
-                if (empty($currentChunk)) {
-                    $currentChunk = $word;
-                } else {
-                    $currentChunk .= $separator.$word;
-                }
-            } else {
-                $chunks[] = \trim($currentChunk);
-                $currentChunk = $word;
-            }
-        }
-
-        if (! empty($currentChunk)) {
-            $chunks[] = \trim($currentChunk);
-        }
-
-        return $chunks;
+        return $split;
     }
 
     /**
