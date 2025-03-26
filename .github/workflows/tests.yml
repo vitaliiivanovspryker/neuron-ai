@@ -44,5 +44,8 @@ jobs:
               with: 
                   typesense-port: 8108
 
+            - name: Curl Typesense
+              run: sleep 10 && curl http://localhost:8108/health
+
             - name: Unit Tests
               run: vendor/bin/phpunit --colors=always
