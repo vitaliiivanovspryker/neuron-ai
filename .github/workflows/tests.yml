@@ -41,6 +41,8 @@ jobs:
 
             - name: Install Typesense Database
               uses: jirevwe/typesense-github-action@v1.0.1
+              with: 
+                  typesense-port: 8108
 
             - name: Unit Tests
               run: vendor/bin/phpunit --colors=always
