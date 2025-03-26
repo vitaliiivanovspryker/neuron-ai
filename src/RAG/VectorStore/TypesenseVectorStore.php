@@ -189,6 +189,6 @@ class TypesenseVectorStore implements VectorStoreInterface
             return;
         }
 
-        throw new \Exception('embedding dimension (' . $dimension . ') must be the same as the initial setup (' .  $embeddingField['num_dim'] . ')');
+        throw new \Exception('embedding dimension (' . $dimension . ') must be the same as the initial setup (' .  $this->vectorDimension. ')');
     }
 }
