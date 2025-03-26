@@ -2,18 +2,13 @@
 
 namespace NeuronAI\Providers\Anthropic;
 
-use GuzzleHttp\Exception\GuzzleException;
-use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
-use NeuronAI\Exceptions\ProviderException;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\ToolProperty;
-use NeuronAI\Chat\Messages\Usage;
 use GuzzleHttp\Client;
-use Psr\Http\Message\StreamInterface;
 
 class Anthropic implements AIProviderInterface
 {
@@ -32,7 +27,7 @@ class Anthropic implements AIProviderInterface
      * System instructions.
      * https://docs.anthropic.com/claude/docs/system-prompts#how-to-use-system-prompts
      *
-     * @var ?string
+     * @var string|null
      */
     protected ?string $system;
 

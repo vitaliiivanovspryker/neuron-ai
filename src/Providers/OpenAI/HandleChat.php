@@ -20,7 +20,7 @@ trait HandleChat
      */
     public function chat(array $messages): Message
     {
-        // Attach the system prompt
+        // Include the system prompt
         if (isset($this->system)) {
             \array_unshift($messages, new AssistantMessage($this->system));
         }
