@@ -16,6 +16,7 @@ class Ollama implements AIProviderInterface
 {
     use HandleWithTools;
     use HandleChat;
+    use HandleStream;
 
     /**
      * The http client.
@@ -43,11 +44,6 @@ class Ollama implements AIProviderInterface
     {
         $this->system = $prompt;
         return $this;
-    }
-
-    public function stream(array|string $messages, callable $executeToolsCallback): \Generator
-    {
-        throw new ProviderException("Ollama provider does not support stream response yet.");
     }
 
     public function generateToolsPayload(): array
