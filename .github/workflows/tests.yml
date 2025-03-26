@@ -42,6 +42,7 @@ jobs:
             - name: Install Typesense Database
               uses: jirevwe/typesense-github-action@v1.0.1
               with: 
+                  typesense-version: 28.0
                   typesense-port: 8108
                   typesense-api-key: "xyz"
 
