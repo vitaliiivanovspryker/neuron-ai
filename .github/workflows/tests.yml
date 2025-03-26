@@ -51,7 +51,7 @@ jobs:
                   --enable-cors
 
             - name: Curl Typesense
-              run: sleep 10 && curl http://localhost:8108/health
+              run: sleep 1 && curl http://localhost:8108/health
 
             - name: Unit Tests
               run: vendor/bin/phpunit --colors=always
