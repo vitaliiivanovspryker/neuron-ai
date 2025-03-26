@@ -16,7 +16,6 @@ class TypesenseVectorStore implements VectorStoreInterface
         protected string $collection,
         protected int $vectorDimension
     ) {
-
         try {
 
             $this->client->collections[$collection]->retrieve();
