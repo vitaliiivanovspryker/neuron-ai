@@ -20,12 +20,11 @@ class TypesenseVectorStore implements VectorStoreInterface
         try {
 
             $this->client->collections[$collection]->retrieve();
-            $this->checkVectorDimension($vectorDimension);
+            $this->checkVectorDimension($this->vectorDimension);
             return;
 
         } catch (ObjectNotFound $e) {
-
-            $mapping = [
+            $this->client->collections->create([
                 'name' => $collection,
                 'fields' => [
                     [
@@ -54,12 +53,10 @@ class TypesenseVectorStore implements VectorStoreInterface
                     [
                         'name' => 'embedding',
                         'type' => 'float[]',
-                        'num_dim' => $vectorDimension,
+                        'num_dim' => $this->vectorDimension,
                     ]
                 ]
-            ];
-
-            $this->client->collections->create($mapping);
+            ]);
         }
     }
 
@@ -71,6 +68,7 @@ class TypesenseVectorStore implements VectorStoreInterface
         if ($document->embedding === null) {
             throw new \Exception('document embedding must be set before adding a document');
         }
+
         $this->checkVectorDimension(count((array) $document->embedding));
 
         $this->client->collections[$this->collection]->documents->create([
@@ -98,9 +96,8 @@ class TypesenseVectorStore implements VectorStoreInterface
         if ($documents[0]->embedding === null) {
             throw new \Exception('document embedding must be set before adding a document');
         }
+
         $this->checkVectorDimension(count((array) $documents[0]->embedding));
-
-
 
         $lines = [];
         foreach ($documents as $document) {
@@ -175,6 +172,7 @@ class TypesenseVectorStore implements VectorStoreInterface
         $schema = $this->client->collections[$this->collection]->retrieve();
 
         $embeddingField = null;
+
         foreach ($schema['fields'] as $field) {
             if ($field['name'] === 'embedding') {
                 $embeddingField = $field;
@@ -189,6 +187,9 @@ class TypesenseVectorStore implements VectorStoreInterface
             return;
         }
 
-        throw new \Exception('embedding dimension (' . $dimension . ') must be the same as the initial setup (' .  $this->vectorDimension. ')');
+        throw new \Exception(
+            "Vector embeddings dimension {$dimension} must be the same as the initial setup {$this->vectorDimension} - ".
+            json_encode($embeddingField)
+        );
     }
 }
