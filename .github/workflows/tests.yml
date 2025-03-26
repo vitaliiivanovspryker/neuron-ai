@@ -36,5 +36,11 @@ jobs:
             - name: Install PHP dependencies
               run: composer update --${{ matrix.dependency-version }} --no-interaction --no-progress --ansi
 
+            - name: Install Elasticsearch
+              uses: ankane/setup-elasticsearch@v1
+
+            - name: Install Typesense Database
+              uses: jirevwe/typesense-github-action@v1.0.1
+
             - name: Unit Tests
               run: vendor/bin/phpunit --colors=always
