@@ -40,10 +40,15 @@ jobs:
               uses: ankane/setup-elasticsearch@v1
 
             - name: Install Typesense Database
-              uses: jirevwe/typesense-github-action@v1.0.1
-              with: 
-                  typesense-port: 8108
-                  typesense-api-key: "xyz"
+              run: |
+                  docker run -d \
+                  -p 8108 \
+                  --name typesense \
+                  -v /tmp/typesense:/data \
+                  typesense/typesense:28.0 \
+                  --api-key=xyz \
+                  --data-dir /data \
+                  --enable-cors
 
             - name: Curl Typesense
               run: sleep 10 && curl http://localhost:8108/health
