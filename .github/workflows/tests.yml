@@ -40,11 +40,21 @@ jobs:
             - name: Install PHP dependencies
               run: composer update --${{ matrix.dependency-version }} --no-interaction --no-progress --ansi
 
-            - name: Install Elasticsearch
-              uses: ankane/setup-elasticsearch@v1
+            - name: Configure sysctl limits
+              run: |
+                  sudo swapoff -a
+                  sudo sysctl -w vm.swappiness=1
+                  sudo sysctl -w fs.file-max=262144
+                  sudo sysctl -w vm.max_map_count=262144
+
+            - name: Runs Elasticsearch
+              uses: elastic/elastic-github-actions/elasticsearch@master
+              with:
+                  stack-version: 8.2.0
+                  security-enabled: false
 
             - name: Wait for Elasticsearch to be healthy
-              run: sleep 5 && curl http://localhost:9300
+              run: sleep 5 && curl http://localhost:9200
 
             - name: Install Typesense Database
               run: |

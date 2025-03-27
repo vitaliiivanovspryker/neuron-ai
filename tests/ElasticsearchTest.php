@@ -17,7 +17,7 @@ class ElasticsearchTest extends TestCase
 
     protected function setUp(): void
     {
-        if (!$this->isPortOpen('127.0.0.1', 9300)) {
+        if (!$this->isPortOpen('127.0.0.1', 9200)) {
             $this->markTestSkipped('Port 9300 is not open. Skipping test.');
         }
 
