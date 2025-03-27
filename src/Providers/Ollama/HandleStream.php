@@ -41,22 +41,8 @@ trait HandleStream
             }
 
             // Process tool calls
-            if (\array_key_exists('tool_calls', $line)) {
-                $toolCalls = $this->composeToolCalls($line, $toolCalls);
-                continue;
-            }
-
-            // Handle tool call
-            if ($line['finish_reason'] === 'tool_calls') {
-                yield from $executeToolsCallback(
-                    $this->createToolMessage([
-                        'content' => $text,
-                        'tool_calls' => $toolCalls
-                    ])
-                );
-
-                return;
-            }
+            // Ollama doesn't support tool calls for stream response
+            // https://github.com/ollama/ollama/blob/main/docs/api.md
 
             // Process regular content
             $content = $line['message']['content']??'';
@@ -102,17 +88,5 @@ trait HandleStream
         }
 
         return $buffer;
-    }
-
-    /**
-     * Recreate the tool_calls format of openai API from streaming.
-     *
-     * @param  array<string, mixed>  $line
-     * @param  array<int, array<string, mixed>>  $toolCalls
-     * @return array<int, array<string, mixed>>
-     */
-    protected function composeToolCalls(array $line, array $toolCalls): array
-    {
-        //
     }
 }
