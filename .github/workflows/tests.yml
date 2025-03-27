@@ -43,6 +43,9 @@ jobs:
             - name: Install Elasticsearch
               uses: ankane/setup-elasticsearch@v1
 
+            - name: Wait for Typesense to be healthy
+              run: sleep 5 && curl http://localhost:9300
+
             - name: Install Typesense Database
               run: |
                   docker run -id \
@@ -77,9 +80,6 @@ jobs:
                   end_time=$(date +%s)
                   elapsed=$((end_time - start_time))
                   echo "Typesense healthcheck elapsed: ${elapsed}s"
-
-            - name: Curl Typesense
-              run: sleep 1 && curl http://localhost:8108/health
 
             - name: Unit Tests
               run: vendor/bin/phpunit --colors=always
