@@ -133,31 +133,33 @@ class ElasticsearchVectorStore implements VectorStoreInterface
      */
     public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array
     {
-        $numCandidates = \max(50, $k * 4);
-
         if (\array_key_exists('num_candidates', $additionalArguments)) {
             $numCandidates = $additionalArguments['num_candidates'];
+        } else {
+            $numCandidates = \max(50, $k * 4);
         }
 
         $searchParams = [
             'index' => $this->index,
             'body' => [
-                'knn' => [
-                    'field' => 'embedding',
-                    'query_vector' => $embedding,
-                    'k' => $k,
-                    'num_candidates' => $numCandidates,
-                ],
-                'sort' => [
-                    '_score' => [
-                        'order' => 'desc',
+                'query' => [
+                    'knn' => [
+                        'field' => 'embedding',
+                        'query_vector' => $embedding,
+                        'k' => $k,
+                        'num_candidates' => $numCandidates,
                     ],
-                ],
+                    'sort' => [
+                        '_score' => [
+                            'order' => 'desc',
+                        ],
+                    ],
+                ]
             ],
         ];
 
         if (\array_key_exists('filter', $additionalArguments)) {
-            $searchParams['body']['knn']['filter'] = $additionalArguments['filter'];
+            $searchParams['body']['query']['knn']['filter'] = $additionalArguments['filter'];
         }
 
         $response = $this->client->search($searchParams);

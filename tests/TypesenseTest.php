@@ -12,7 +12,7 @@ class TypesenseTest extends TestCase
 {
     protected Client $client;
 
-    protected int $vectorDimension = 1536;
+    protected int $vectorDimension = 1024;
 
     protected array $embedding;
 
@@ -25,18 +25,16 @@ class TypesenseTest extends TestCase
         // see getting started
         // https://typesense.org/docs/guide/install-typesense.html#option-2-local-machine-self-hosting
 
-        $this->client = new Client(
-            [
-                'api_key' => 'xyz',
-                'nodes' => [
-                    [
-                        'host' => '127.0.0.1',
-                        'port' => '8108',
-                        'protocol' => 'http'
-                    ],
-                ]
+        $this->client = new Client([
+            'api_key' => 'xyz',
+            'nodes' => [
+                [
+                    'host' => '127.0.0.1',
+                    'port' => '8108',
+                    'protocol' => 'http'
+                ],
             ]
-        );
+        ]);
 
         // embedding "Hello World!"
         $this->embedding = json_decode(file_get_contents(__DIR__ . '/stubs/hello-world.embeddings'), true);
