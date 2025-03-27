@@ -5,10 +5,7 @@ namespace NeuronAI\Providers\OpenAI;
 use GuzzleHttp\Exception\GuzzleException;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
-use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Chat\Messages\Usage;
-use NeuronAI\Tools\ToolInterface;
-use NeuronAI\Tools\ToolProperty;
 
 trait HandleChat
 {
