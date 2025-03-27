@@ -29,7 +29,7 @@ trait HandleChat
             $json['tools'] = $this->generateToolsPayload();
         }
 
-        $response = $this->client->post('generate', compact('json'));
+        $response = $this->client->post('chat', compact('json'));
 
         if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
             throw new ProviderException("Ollama chat error: {$response->getBody()->getContents()}");

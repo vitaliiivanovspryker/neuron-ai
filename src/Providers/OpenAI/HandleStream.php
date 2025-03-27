@@ -69,7 +69,7 @@ trait HandleStream
 
             // Process regular content
             $content = $line['choices'][0]['delta']['content']??'';
-            $text .= $content; // todo: What I should do with "text" after the stream ends?
+            $text .= $content;
 
             yield $content;
         }
