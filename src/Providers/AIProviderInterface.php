@@ -31,21 +31,5 @@ interface AIProviderInterface
      */
     public function chat(array $messages): Message;
 
-    //public function structured(array|string $messages): Message;
-
     public function stream(array|string $messages, callable $executeToolsCallback): \Generator;
-
-    /**
-     * The context window limitation of the LLM.
-     *
-     * @return ?int
-     */
-    //public function contextWindow(): ?int;
-
-    /**
-     * The maximum number of tokens to generate before stopping.
-     *
-     * @return ?int
-     */
-    //public function maxCompletionTokens(): ?int;
 }
