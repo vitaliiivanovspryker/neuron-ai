@@ -157,7 +157,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
         ];
 
         if (\array_key_exists('filter', $additionalArguments)) {
-            $searchParams['body']['query']['knn']['filter'] = $additionalArguments['filter'];
+            $searchParams['body']['knn']['filter'] = $additionalArguments['filter'];
         }
 
         $response = $this->client->search($searchParams);

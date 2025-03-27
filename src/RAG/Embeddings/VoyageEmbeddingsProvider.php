@@ -12,7 +12,8 @@ class VoyageEmbeddingsProvider extends AbstractEmbeddingsProvider
 
     public function __construct(
         string $key,
-        protected string $model
+        protected string $model,
+        protected ?int $dimensions = null
     ) {
         $this->client = new Client([
             'base_uri' => $this->baseUri,
@@ -30,6 +31,7 @@ class VoyageEmbeddingsProvider extends AbstractEmbeddingsProvider
             'json' => [
                 'model' => $this->model,
                 'input' => $text,
+                'output_dimension' => $this->dimensions,
             ]
         ]);
 
