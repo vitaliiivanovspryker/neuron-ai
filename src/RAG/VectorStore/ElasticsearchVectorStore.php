@@ -142,19 +142,17 @@ class ElasticsearchVectorStore implements VectorStoreInterface
         $searchParams = [
             'index' => $this->index,
             'body' => [
-                'query' => [
-                    'knn' => [
-                        'field' => 'embedding',
-                        'query_vector' => $embedding,
-                        'k' => $k,
-                        'num_candidates' => $numCandidates,
+                'knn' => [
+                    'field' => 'embedding',
+                    'query_vector' => $embedding,
+                    'k' => $k,
+                    'num_candidates' => $numCandidates,
+                ],
+                'sort' => [
+                    '_score' => [
+                        'order' => 'desc',
                     ],
-                    'sort' => [
-                        '_score' => [
-                            'order' => 'desc',
-                        ],
-                    ],
-                ]
+                ],
             ],
         ];
 
