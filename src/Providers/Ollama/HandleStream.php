@@ -3,7 +3,6 @@
 namespace NeuronAI\Providers\Ollama;
 
 use NeuronAI\Chat\Messages\Message;
-use NeuronAI\Exceptions\ProviderException;
 use Psr\Http\Message\StreamInterface;
 
 trait HandleStream
