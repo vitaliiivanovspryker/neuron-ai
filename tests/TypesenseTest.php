@@ -12,7 +12,7 @@ class TypesenseTest extends TestCase
 {
     protected Client $client;
 
-    protected int $vectorDimension;
+    protected int $vectorDimension = 1536;
 
     protected array $embedding;
 
@@ -37,9 +37,6 @@ class TypesenseTest extends TestCase
                 ]
             ]
         );
-
-        // used bge-multilingual-gemma2 to generate the embedding
-        $this->vectorDimension = 3584;
 
         // embedding "Hello World!"
         $this->embedding = json_decode(file_get_contents(__DIR__ . '/stubs/hello-world.embeddings'), true);
