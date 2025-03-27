@@ -21,9 +21,7 @@ class ElasticsearchTest extends TestCase
             $this->markTestSkipped('Port 9300 is not open. Skipping test.');
         }
 
-        $this->client = ClientBuilder::create()
-            ->setHosts(['http://127.0.0.1:9300'])
-            ->build();
+        $this->client = ClientBuilder::create()->build();
 
         // embedding "Hello World!"
         $this->embedding = json_decode(file_get_contents(__DIR__ . '/stubs/hello-world.embeddings'), true);

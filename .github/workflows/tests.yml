@@ -40,7 +40,7 @@ jobs:
             - name: Install PHP dependencies
               run: composer update --${{ matrix.dependency-version }} --no-interaction --no-progress --ansi
 
-            - name: Configure sysctl limits
+            - name: Configure sysctl limits (for elastic to boot)
               run: |
                   sudo swapoff -a
                   sudo sysctl -w vm.swappiness=1
