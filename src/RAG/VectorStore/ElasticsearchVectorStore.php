@@ -27,7 +27,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
             return;
         }
 
-        $mapping = [
+        $client->indices()->create([
             'index' => $index,
             'body' => [
                 'mappings' => [
@@ -50,8 +50,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
                     ],
                 ],
             ],
-        ];
-        $client->indices()->create($mapping);
+        ]);
     }
 
     /**
@@ -62,7 +61,9 @@ class ElasticsearchVectorStore implements VectorStoreInterface
         if ($document->embedding === null) {
             throw new \Exception('document embedding must be set before adding a document');
         }
-        $this->mapVectorDimension(\count((array) $document->embedding));
+
+        $this->mapVectorDimension(\count($document->embedding));
+
         $this->client->index([
             'index' => $this->index,
             'body' => [
@@ -74,6 +75,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
                 'chunkNumber' => $document->chunkNumber,
             ],
         ]);
+
         $this->client->indices()->refresh(['index' => $this->index]);
     }
 
@@ -87,11 +89,19 @@ class ElasticsearchVectorStore implements VectorStoreInterface
         if ($documents === []) {
             return;
         }
+
         if ($documents[0]->embedding === null) {
             throw new \Exception('document embedding must be set before adding a document');
         }
-        $this->mapVectorDimension(count((array) $documents[0]->embedding));
 
+        /*
+         * Map vector embeddings dimension on the fly adding a document.
+         */
+        $this->mapVectorDimension(count($documents[0]->embedding));
+
+        /*
+         * Generate a bulk payload
+         */
         $params = ['body' => []];
         foreach ($documents as $document) {
             $params['body'][] = [
@@ -124,9 +134,11 @@ class ElasticsearchVectorStore implements VectorStoreInterface
     public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array
     {
         $numCandidates = \max(50, $k * 4);
+
         if (\array_key_exists('num_candidates', $additionalArguments)) {
             $numCandidates = $additionalArguments['num_candidates'];
         }
+
         $searchParams = [
             'index' => $this->index,
             'body' => [
@@ -143,6 +155,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
                 ],
             ],
         ];
+
         if (\array_key_exists('filter', $additionalArguments)) {
             $searchParams['body']['knn']['filter'] = $additionalArguments['filter'];
         }
@@ -185,7 +198,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
                 'properties' => [
                     'embedding' => [
                         'type' => 'dense_vector',
-                        'element_type' => 'float',
+                        //'element_type' => 'float', // it's float by default
                         'dims' => $dimension,
                         'index' => true,
                         'similarity' => 'cosine',
@@ -193,6 +206,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
                 ],
             ],
         ]);
+
         $this->vectorDimSet = true;
     }
 }
