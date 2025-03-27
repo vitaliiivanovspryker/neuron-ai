@@ -43,7 +43,7 @@ jobs:
             - name: Install Elasticsearch
               uses: ankane/setup-elasticsearch@v1
 
-            - name: Wait for Typesense to be healthy
+            - name: Wait for Elasticsearch to be healthy
               run: sleep 5 && curl http://localhost:9300
 
             - name: Install Typesense Database
