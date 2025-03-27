@@ -10,9 +10,11 @@ use Typesense\Client;
 
 class TypesenseTest extends TestCase
 {
-    private Client $typesense;
-    private int $vectorDimension;
-    private array $embedding;
+    protected Client $client;
+
+    protected int $vectorDimension;
+
+    protected array $embedding;
 
     protected function setUp(): void
     {
@@ -23,7 +25,7 @@ class TypesenseTest extends TestCase
         // see getting started
         // https://typesense.org/docs/guide/install-typesense.html#option-2-local-machine-self-hosting
 
-        $this->typesense = new Client(
+        $this->client = new Client(
             [
                 'api_key' => 'xyz',
                 'nodes' => [
@@ -40,7 +42,7 @@ class TypesenseTest extends TestCase
         $this->vectorDimension = 3584;
 
         // embedding "Hello World!"
-        $this->embedding = json_decode(file_get_contents(__DIR__.'/stubs/hello-world.ambeddings'), true);
+        $this->embedding = json_decode(file_get_contents(__DIR__ . '/stubs/hello-world.embeddings'), true);
     }
 
     private function isPortOpen(string $host, int $port, int $timeout = 1): bool
@@ -53,9 +55,9 @@ class TypesenseTest extends TestCase
         return false;
     }
 
-    public function testVectorStoreInstance()
+    public function testTypesenseInstance()
     {
-        $store = new TypesenseVectorStore($this->typesense, 'test', $this->vectorDimension);
+        $store = new TypesenseVectorStore($this->client, 'test', $this->vectorDimension);
         $this->assertInstanceOf(VectorStoreInterface::class, $store);
     }
 
@@ -67,14 +69,14 @@ class TypesenseTest extends TestCase
         $document->embedding = $this->embedding;
         $document->hash = \hash('sha256', 'Hello World!' . time()); // added time() to avoid exception 'A document with id x already exists'
 
-        $store = new TypesenseVectorStore($this->typesense, 'test', $this->vectorDimension);
+        $store = new TypesenseVectorStore($this->client, 'test', $this->vectorDimension);
 
         $store->addDocument($document);
     }
 
     public function testSearch()
     {
-        $store = new TypesenseVectorStore($this->typesense, 'test', $this->vectorDimension);
+        $store = new TypesenseVectorStore($this->client, 'test', $this->vectorDimension);
 
         $results = $store->similaritySearch($this->embedding);
         $this->assertIsArray($results);
