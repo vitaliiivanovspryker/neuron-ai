@@ -43,22 +43,15 @@ class ElasticsearchTest extends TestCase
         $this->assertInstanceOf(VectorStoreInterface::class, $store);
     }
 
-    public function testAddDocument()
+    public function testAddDocumentAndSearch()
     {
-        $this->expectNotToPerformAssertions();
+        $store = new ElasticsearchVectorStore($this->client, 'test');
 
         $document = new Document('Hello World!');
         $document->embedding = $this->embedding;
         $document->hash = \hash('sha256', 'Hello World!' . time());
 
-        $store = new ElasticsearchVectorStore($this->client, 'test');
-
         $store->addDocument($document);
-    }
-
-    public function testSearch()
-    {
-        $store = new ElasticsearchVectorStore($this->client, 'test');
 
         $results = $store->similaritySearch($this->embedding);
         $this->assertIsArray($results);

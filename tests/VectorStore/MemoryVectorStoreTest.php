@@ -9,8 +9,12 @@ use PHPUnit\Framework\TestCase;
 
 class MemoryVectorStoreTest extends TestCase
 {
+    protected array $embedding;
+
     protected function setUp(): void
     {
+        // embedding "Hello World!"
+        $this->embedding = json_decode(file_get_contents(__DIR__ . '/../stubs/hello-world.embeddings'), true);
     }
 
     public function testVectorStoreInstance()
@@ -19,11 +23,16 @@ class MemoryVectorStoreTest extends TestCase
         $this->assertInstanceOf(VectorStoreInterface::class, $store);
     }
 
-    public function testAddDocument()
+    public function testAddDocumentAndSearch()
     {
-        $this->expectNotToPerformAssertions();
+        $document = new Document('Hello World!');
+        $document->embedding = $this->embedding;
+        $document->hash = \hash('sha256', 'Hello World!' . time());
 
         $store = new MemoryVectorStore();
-        $store->addDocument(new Document('Hello'));
+        $store->addDocument($document);
+
+        $results = $store->similaritySearch($this->embedding);
+        $this->assertIsArray($results);
     }
 }
