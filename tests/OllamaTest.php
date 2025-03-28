@@ -30,11 +30,10 @@ class OllamaTest extends TestCase
             'handler' => $stack,
         ]);
 
-        $ollama = new Ollama(
+        $ollama = (new Ollama(
             url: '',
-            client: $client,
             model: 'llama3.2',
-        );
+        ))->setClient($client);
 
         $response = $ollama->chat([new UserMessage('Hi')]);
 

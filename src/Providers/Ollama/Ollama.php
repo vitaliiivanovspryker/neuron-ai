@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Providers\AIProviderInterface;
+use NeuronAI\Providers\HandleSetClient;
 use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\ToolProperty;
@@ -13,6 +14,7 @@ use NeuronAI\Tools\ToolProperty;
 class Ollama implements AIProviderInterface
 {
     use HandleChat;
+    use HandleSetClient;
     use HandleStream;
     use HandleWithTools;
 
@@ -27,9 +29,8 @@ class Ollama implements AIProviderInterface
         protected string $url, // http://localhost:11434/api
         protected string $model,
         protected int $temperature = 0,
-        ?Client $client = null,
     ) {
-        $this->client = $client ?? new Client([
+        $this->client = new Client([
             'base_uri' => $this->url,
         ]);
     }
