@@ -19,8 +19,8 @@ trait HandleStream
         $json = [
             'stream' => true,
             'model' => $this->model,
-            'temperature' => $this->temperature,
             'messages' => $mapper->map(),
+            ...$this->parameters,
         ];
 
         if (!empty($this->tools)) {

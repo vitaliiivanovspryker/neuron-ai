@@ -28,7 +28,7 @@ class Ollama implements AIProviderInterface
     public function __construct(
         protected string $url, // http://localhost:11434/api
         protected string $model,
-        protected int $temperature = 0,
+        protected array $parameters = [],
     ) {
         $this->client = new Client([
             'base_uri' => $this->url,

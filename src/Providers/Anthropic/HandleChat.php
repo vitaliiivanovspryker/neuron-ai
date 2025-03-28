@@ -19,21 +19,23 @@ trait HandleChat
     {
         $mapper = new MessageMapper($messages);
 
-        $json = \array_filter([
+        $json = [
             'model' => $this->model,
             'max_tokens' => $this->max_tokens,
-            'stop_sequences' => $this->stop_sequences,
-            'temperature' => $this->temperature,
-            'system' => $this->system ?? null,
             'messages' => $mapper->map(),
-        ]);
+            ...$this->parameters,
+        ];
+
+        if (isset($this->system)) {
+            $json['system'] = $this->system;
+        }
 
         if (!empty($this->tools)) {
             $json['tools'] = $this->generateToolsPayload();
         }
 
         // https://docs.anthropic.com/claude/reference/messages_post
-        $result = $this->client->post('v1/messages', compact('json'))
+        $result = $this->client->post('messages', compact('json'))
             ->getBody()->getContents();
 
         $result = \json_decode($result, true);

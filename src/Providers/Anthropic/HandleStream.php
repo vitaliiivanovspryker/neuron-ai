@@ -8,8 +8,9 @@ use Psr\Http\Message\StreamInterface;
 
 trait HandleStream
 {
-
     /**
+     * Stream response from the LLM.
+     *
      * @throws ProviderException
      * @throws GuzzleException
      */
@@ -17,22 +18,21 @@ trait HandleStream
     {
         $mapper = new MessageMapper($messages);
 
-        $json = \array_filter([
+        $json = [
             'stream' => true,
             'model' => $this->model,
             'max_tokens' => $this->max_tokens,
-            'stop_sequences' => $this->stop_sequences,
-            'temperature' => $this->temperature,
             'system' => $this->system ?? null,
             'messages' => $mapper->map(),
-        ]);
+            ...$this->parameters,
+        ];
 
         if (!empty($this->tools)) {
             $json['tools'] = $this->generateToolsPayload();
         }
 
         // https://docs.anthropic.com/claude/reference/messages_post
-        $stream = $this->client->post('v1/messages', compact('json'))->getBody();
+        $stream = $this->client->post('messages', compact('json'))->getBody();
 
         $toolCalls = [];
 

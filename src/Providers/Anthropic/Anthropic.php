@@ -4,6 +4,7 @@ namespace NeuronAI\Providers\Anthropic;
 
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Providers\AIProviderInterface;
+use NeuronAI\Providers\HandleClient;
 use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Tools\ToolInterface;
@@ -15,6 +16,7 @@ class Anthropic implements AIProviderInterface
     use HandleWithTools;
     use HandleChat;
     use HandleStream;
+    use HandleClient;
 
     /**
      * The http client.
@@ -39,11 +41,10 @@ class Anthropic implements AIProviderInterface
         protected string $model,
         protected string $version = '2023-06-01',
         protected int $max_tokens = 8192,
-        protected ?float $temperature = null,
-        protected ?array $stop_sequences = null,
+        protected array $parameters = [],
     ) {
         $this->client = new Client([
-            'base_uri' => 'https://api.anthropic.com',
+            'base_uri' => 'https://api.anthropic.com/v1',
             'headers' => [
                 'Content-Type' => 'application/json',
                 'x-api-key' => $this->key,

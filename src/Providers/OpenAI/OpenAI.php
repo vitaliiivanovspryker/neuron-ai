@@ -9,6 +9,7 @@ use GuzzleHttp\Client;
 use NeuronAI\Chat\Messages\Usage;
 use NeuronAI\Exceptions\ProviderException;
 use NeuronAI\Providers\AIProviderInterface;
+use NeuronAI\Providers\HandleClient;
 use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Tools\ToolInterface;
@@ -20,6 +21,7 @@ class OpenAI implements AIProviderInterface
     use HandleWithTools;
     use HandleChat;
     use HandleStream;
+    use HandleClient;
 
     /**
      * The http client.
