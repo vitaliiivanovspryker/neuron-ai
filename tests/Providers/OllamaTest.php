@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\Tests;
+namespace NeuronAI\Tests\Providers;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
@@ -45,6 +45,7 @@ class OllamaTest extends TestCase
         $expectedResponse = [
             'stream' => false,
             'model' => 'llama3.2',
+            'temperature' => 0,
             'messages' => [
                 [
                     'role' => 'user',

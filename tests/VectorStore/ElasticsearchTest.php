@@ -37,13 +37,13 @@ class ElasticsearchTest extends TestCase
         return false;
     }
 
-    public function testElasticsearchInstance()
+    public function test_elasticsearch_instance()
     {
         $store = new ElasticsearchVectorStore($this->client, 'test');
         $this->assertInstanceOf(VectorStoreInterface::class, $store);
     }
 
-    public function testAddDocumentAndSearch()
+    public function test_add_document_and_search()
     {
         $store = new ElasticsearchVectorStore($this->client, 'test');
 

@@ -5,7 +5,6 @@ namespace NeuronAI\Tests;
 use NeuronAI\Chat\History\AbstractChatHistory;
 use NeuronAI\Chat\History\FileChatHistory;
 use NeuronAI\Chat\History\InMemoryChatHistory;
-use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\Usage;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Exceptions\ChatHistoryException;
@@ -23,20 +22,20 @@ class ChatHistoryTest extends TestCase
     {
     }
 
-    public function testChatHistoryInstance()
+    public function test_chat_history_instance()
     {
         $history = new InMemoryChatHistory();
         $this->assertInstanceOf(AbstractChatHistory::class, $history);
     }
 
-    public function testChatHistoryAddMessage()
+    public function test_chat_history_add_message()
     {
         $history = new InMemoryChatHistory();
         $history->addMessage(new UserMessage('Hello!'));
         $this->assertCount(1, $history->getMessages());
     }
 
-    public function testChatHistoryTruncate()
+    public function test_chat_history_truncate()
     {
         $message = new UserMessage('Hello!');
         $message->setUsage(new Usage(100, 100));
@@ -46,7 +45,7 @@ class ChatHistoryTest extends TestCase
         $this->assertCount(1, $history->getMessages());
     }
 
-    public function testChatHistoryClear()
+    public function test_chat_history_clear()
     {
         $history = new InMemoryChatHistory();
         $history->addMessage(new UserMessage('Hello!'));
@@ -58,7 +57,7 @@ class ChatHistoryTest extends TestCase
     /**
      * @throws ChatHistoryException
      */
-    public function testFileChatHistory()
+    public function test_file_chat_history()
     {
         $history = new FileChatHistory(__DIR__, 'test');
         $this->assertFileDoesNotExist(__DIR__.DIRECTORY_SEPARATOR.'neuron_test.chat');
@@ -72,7 +71,7 @@ class ChatHistoryTest extends TestCase
         $this->assertCount(0, $history->getMessages());
     }
 
-    public function testFileChatHistoryInit()
+    public function test_file_chat_history_init()
     {
         $history = new FileChatHistory(__DIR__, 'test');
         $history->addMessage(new UserMessage('Hello!'));

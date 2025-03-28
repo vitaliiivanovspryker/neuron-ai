@@ -16,12 +16,12 @@ trait HandleStream
 
         $mapper = new MessageMapper($messages);
 
-        $json = \array_filter([
+        $json = [
             'stream' => true,
             'model' => $this->model,
             'temperature' => $this->temperature,
             'messages' => $mapper->map(),
-        ]);
+        ];
 
         if (!empty($this->tools)) {
             $json['tools'] = $this->generateToolsPayload();
@@ -30,9 +30,6 @@ trait HandleStream
         $stream = $this->client->post(
             'chat', compact('json')
         )->getBody();
-
-        $text = '';
-        $toolCalls = [];
 
         while (! $stream->eof()) {
             if (!$line = $this->parseNextJson($stream)) {
@@ -45,7 +42,6 @@ trait HandleStream
 
             // Process regular content
             $content = $line['message']['content']??'';
-            $text .= $content;
 
             yield $content;
         }

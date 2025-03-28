@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Providers\AIProviderInterface;
-use NeuronAI\Providers\HandleSetClient;
+use NeuronAI\Providers\HandleClient;
 use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\ToolProperty;
@@ -14,7 +14,7 @@ use NeuronAI\Tools\ToolProperty;
 class Ollama implements AIProviderInterface
 {
     use HandleChat;
-    use HandleSetClient;
+    use HandleClient;
     use HandleStream;
     use HandleWithTools;
 

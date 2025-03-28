@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class DataLoaderTest extends TestCase
 {
-    public function testStringDataLoader()
+    public function test_string_data_loader()
     {
         $documents = StringDataLoader::for('test')->getDocuments();
         $this->assertCount(1, $documents);
@@ -17,7 +17,7 @@ class DataLoaderTest extends TestCase
         $this->assertEquals(\hash('sha256', 'test'), $documents[0]->hash);
     }
 
-    public function testSplitLongText()
+    public function test_split_long_text()
     {
         $doc = new Document(file_get_contents(__DIR__.'/stubs/long-text.txt'));
 

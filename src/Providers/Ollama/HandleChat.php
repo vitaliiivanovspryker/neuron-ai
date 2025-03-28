@@ -21,12 +21,9 @@ trait HandleChat
         $json = [
             'stream' => false,
             'model' => $this->model,
+            'temperature' => $this->temperature,
             'messages' => $mapper->map(),
         ];
-
-        if ($this->temperature) {
-            $json['temperature'] = $this->temperature;
-        }
 
         if (! empty($this->tools)) {
             $json['tools'] = $this->generateToolsPayload();

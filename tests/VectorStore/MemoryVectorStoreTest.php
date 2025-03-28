@@ -17,13 +17,13 @@ class MemoryVectorStoreTest extends TestCase
         $this->embedding = json_decode(file_get_contents(__DIR__ . '/../stubs/hello-world.embeddings'), true);
     }
 
-    public function testVectorStoreInstance()
+    public function test_memory_store_instance()
     {
         $store = new MemoryVectorStore();
         $this->assertInstanceOf(VectorStoreInterface::class, $store);
     }
 
-    public function testAddDocumentAndSearch()
+    public function test_add_document_and_search()
     {
         $document = new Document('Hello World!');
         $document->embedding = $this->embedding;

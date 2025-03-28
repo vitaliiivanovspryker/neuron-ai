@@ -26,7 +26,7 @@ class NeuronAITest extends TestCase
     {
     }
 
-    public function testAgentInstance()
+    public function test_agent_instance()
     {
         $neuron = new Agent();
         $this->assertInstanceOf(AgentInterface::class, $neuron);
@@ -35,7 +35,7 @@ class NeuronAITest extends TestCase
         $this->assertInstanceOf(Agent::class, $neuron);
     }
 
-    public function testMessageInstance()
+    public function test_message_instance()
     {
         $tools = [
             new Tool('example', 'example')
@@ -46,7 +46,7 @@ class NeuronAITest extends TestCase
         $this->assertInstanceOf(Message::class, new ToolCallMessage('', $tools));
     }
 
-    public function testToolInstance()
+    public function test_tool_instance()
     {
         $tool = new Tool('example', 'example');
         $this->assertInstanceOf(ToolInterface::class, $tool);
