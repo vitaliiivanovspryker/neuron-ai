@@ -45,7 +45,6 @@ class OllamaTest extends TestCase
         $expectedResponse = [
             'stream' => false,
             'model' => 'llama3.2',
-            'temperature' => 0,
             'messages' => [
                 [
                     'role' => 'user',
