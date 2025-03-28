@@ -27,6 +27,7 @@ trait HandleChat
         $json = [
             'model' => $this->model,
             'messages' => $mapper->map(),
+            ...$this->parameters
         ];
 
         // Attach tools
