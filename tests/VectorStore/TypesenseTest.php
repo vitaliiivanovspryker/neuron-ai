@@ -37,7 +37,7 @@ class TypesenseTest extends TestCase
         ]);
 
         // embedding "Hello World!"
-        $this->embedding = json_decode(file_get_contents(__DIR__ . '/stubs/hello-world.embeddings'), true);
+        $this->embedding = json_decode(file_get_contents(__DIR__ . '/../stubs/hello-world.embeddings'), true);
     }
 
     private function isPortOpen(string $host, int $port, int $timeout = 1): bool
