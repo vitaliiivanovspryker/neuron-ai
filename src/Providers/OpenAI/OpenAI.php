@@ -77,10 +77,13 @@ class OpenAI implements AIProviderInterface
 
             $properties = \array_reduce($tool->getProperties(), function (array $carry, ToolProperty $property) {
                 $carry[$property->getName()] = [
-                    'name' => $property->getName(),
                     'description' => $property->getDescription(),
                     'type' => $property->getType(),
                 ];
+
+                if (!empty($property->getEnum())) {
+                    $carry[$property->getName()]['enum'] = $property->getEnum();
+                }
 
                 return $carry;
             }, []);

@@ -9,6 +9,7 @@ class ToolProperty implements \JsonSerializable
         protected string|array $type,
         protected string $description,
         protected bool $required = false,
+        protected array $enum = [],
     ) {}
 
     /**
@@ -18,8 +19,9 @@ class ToolProperty implements \JsonSerializable
     {
         return [
             'name' => $this->name,
-            'type' => $this->type,
             'description' => $this->description,
+            'type' => $this->type,
+            'enum' => $this->enum,
             'required' => $this->required,
         ];
     }
@@ -42,5 +44,10 @@ class ToolProperty implements \JsonSerializable
     public function getDescription(): string
     {
         return $this->description;
+    }
+
+    public function getEnum(): array
+    {
+        return $this->enum;
     }
 }

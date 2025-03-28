@@ -70,6 +70,10 @@ class Anthropic implements AIProviderInterface
                     'description' => $property->getDescription(),
                 ];
 
+                if (!empty($property->getEnum())) {
+                    $carry[$property->getName()]['enum'] = $property->getEnum();
+                }
+
                 return $carry;
             }, []);
 
