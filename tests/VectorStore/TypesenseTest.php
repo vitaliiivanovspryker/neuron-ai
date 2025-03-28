@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\Tests;
+namespace NeuronAI\Tests\VectorStore;
 
 use NeuronAI\RAG\Document;
 use NeuronAI\RAG\VectorStore\TypesenseVectorStore;
@@ -37,7 +37,7 @@ class TypesenseTest extends TestCase
         ]);
 
         // embedding "Hello World!"
-        $this->embedding = json_decode(file_get_contents(__DIR__ . '/stubs/hello-world.embeddings'), true);
+        $this->embedding = json_decode(file_get_contents(__DIR__ . '/../stubs/hello-world.embeddings'), true);
     }
 
     private function isPortOpen(string $host, int $port, int $timeout = 1): bool
@@ -56,22 +56,15 @@ class TypesenseTest extends TestCase
         $this->assertInstanceOf(VectorStoreInterface::class, $store);
     }
 
-    public function testAddDocument()
+    public function testAddDocumentAndSearch()
     {
-        $this->expectNotToPerformAssertions();
+        $store = new TypesenseVectorStore($this->client, 'test', $this->vectorDimension);
 
         $document = new Document('Hello World!');
         $document->embedding = $this->embedding;
         $document->hash = \hash('sha256', 'Hello World!' . time()); // added time() to avoid exception 'A document with id x already exists'
 
-        $store = new TypesenseVectorStore($this->client, 'test', $this->vectorDimension);
-
         $store->addDocument($document);
-    }
-
-    public function testSearch()
-    {
-        $store = new TypesenseVectorStore($this->client, 'test', $this->vectorDimension);
 
         $results = $store->similaritySearch($this->embedding);
         $this->assertIsArray($results);

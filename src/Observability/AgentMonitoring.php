@@ -256,7 +256,7 @@ class AgentMonitoring implements \SplObserver
                     'name' => $tool->getName(),
                     'description' => $tool->getDescription(),
                     'properties' => \array_map(function (ToolProperty $property) {
-                        return $property->toArray();
+                        return $property->jsonSerialize();
                     }, $tool->getProperties()),
                 ];
             }, $agent->tools()??[]),
