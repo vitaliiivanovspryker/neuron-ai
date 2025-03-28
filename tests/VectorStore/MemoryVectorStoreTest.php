@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\Tests;
+namespace NeuronAI\Tests\VectorStore;
 
 use NeuronAI\RAG\Document;
 use NeuronAI\RAG\VectorStore\MemoryVectorStore;

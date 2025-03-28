@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\Tests;
+namespace NeuronAI\Tests\VectorStore;
 
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\ClientBuilder;

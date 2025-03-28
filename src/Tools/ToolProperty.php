@@ -2,11 +2,11 @@
 
 namespace NeuronAI\Tools;
 
-class ToolProperty
+class ToolProperty implements \JsonSerializable
 {
     public function __construct(
         protected string $name,
-        protected string $type,
+        protected string|array $type,
         protected string $description,
         protected bool $required = false,
     ) {}
@@ -14,7 +14,7 @@ class ToolProperty
     /**
      * @return array
      */
-    public function toArray(): array
+    public function jsonSerialize(): array
     {
         return [
             'name' => $this->name,
@@ -34,7 +34,7 @@ class ToolProperty
         return $this->name;
     }
 
-    public function getType(): string
+    public function getType(): string|array
     {
         return $this->type;
     }
