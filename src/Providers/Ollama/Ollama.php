@@ -3,10 +3,8 @@
 namespace NeuronAI\Providers\Ollama;
 
 use GuzzleHttp\Client;
-use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
-use NeuronAI\Exceptions\ProviderException;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Tools\ToolInterface;
@@ -14,28 +12,24 @@ use NeuronAI\Tools\ToolProperty;
 
 class Ollama implements AIProviderInterface
 {
-    use HandleWithTools;
     use HandleChat;
     use HandleStream;
+    use HandleWithTools;
 
     /**
      * The http client.
-     *
-     * @var Client
      */
     protected Client $client;
 
-    /**
-     * @var string|null
-     */
     protected ?string $system;
 
     public function __construct(
         protected string $url, // http://localhost:11434/api
         protected string $model,
-        protected int $temperature = 0
+        protected int $temperature = 0,
+        ?Client $client = null,
     ) {
-        $this->client = new Client([
+        $this->client = $client ?? new Client([
             'base_uri' => $this->url,
         ]);
     }
@@ -43,6 +37,7 @@ class Ollama implements AIProviderInterface
     public function systemPrompt(?string $prompt): AIProviderInterface
     {
         $this->system = $prompt;
+
         return $this;
     }
 
@@ -54,7 +49,7 @@ class Ollama implements AIProviderInterface
                 'function' => [
                     'name' => $tool->getName(),
                     'description' => $tool->getDescription(),
-                ]
+                ],
             ];
 
             $properties = \array_reduce($tool->getProperties(), function (array $carry, ToolProperty $property) {
@@ -66,7 +61,7 @@ class Ollama implements AIProviderInterface
                 return $carry;
             }, []);
 
-            if (!empty($properties)) {
+            if (! empty($properties)) {
                 $payload['function']['parameters'] = [
                     'type' => 'object',
                     'properties' => $properties,
