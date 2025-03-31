@@ -1,10 +1,9 @@
 [![Latest Stable Version](https://poser.pugx.org/inspector-apm/neuron-ai/v/stable)](https://packagist.org/packages/inspector-apm/neuron-ai)
 [![License](https://poser.pugx.org/inspector-apm/neuron-ai/license)](//packagist.org/packages/inspector-apm/neuron-ai)
 
-![](./docs/img/neuron-ai-php-framework.png)
-
-
 > Before moving on, support the community giving a GitHub star ⭐️. Thank you!
+
+![](./docs/img/neuron-ai-php-framework.png)
 
 ## Requirements
 
