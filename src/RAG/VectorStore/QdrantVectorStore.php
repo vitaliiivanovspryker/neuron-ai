@@ -12,11 +12,11 @@ class QdrantVectorStore implements VectorStoreInterface
     public function __construct(
         protected string $key,
         protected int $vectorDimension,
-        protected string $collectionUrl = 'http://localhost:6333/collections/neuron-ai'
+        protected string $collectionUrl // like http://localhost:6333/collections/neuron-ai
     )
     {
         $this->client = new Client([
-            'base_uri' => $this->url,
+            'base_uri' => $this->collectionUrl,
             'headers' => [
                 'Content-Type' => 'application/json',
                 'api-key' => $this->key,
