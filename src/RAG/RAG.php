@@ -90,9 +90,9 @@ class RAG extends Agent
      *
      * @param array<Document> $documents
      * @param int $k
-     * @return RAG
+     * @return \NeuronAI\AgentInterface|RAG
      */
-    public function setSystemMessage(array $documents, int $k): RAG
+    public function setSystemMessage(array $documents, int $k)
     {
         $context = '';
         $i = 0;
