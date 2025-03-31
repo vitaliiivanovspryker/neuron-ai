@@ -144,11 +144,7 @@ class TypesenseVectorStore implements VectorStoreInterface
             $params['filter_by'] = $additionalArguments['filter'];
         }
 
-        $searchRequests = [
-            'searches' => [
-                $params
-            ]
-        ];
+        $searchRequests = ['searches' => [$params]];
 
         // Search parameters that are common to all searches go here
         $commonSearchParams =  [];
