@@ -8,10 +8,10 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use NeuronAI\Chat\Messages\UserMessage;
-use NeuronAI\Providers\Ollama\Ollama;
+use NeuronAI\Providers\Anthropic\Anthropic;
 use PHPUnit\Framework\TestCase;
 
-class OllamaTest extends TestCase
+class AnthropicTest extends TestCase
 {
     public function test_chat_request(): void
     {
@@ -20,7 +20,7 @@ class OllamaTest extends TestCase
         $mockHandler = new MockHandler([
             new Response(
                 status: 200,
-                body: '{"model":"llama3.2","created_at":"2025-03-28T11:00:23.692962Z","message":{"role":"assistant","content":"How can I assist you today?"},"done_reason":"stop","done":true,"total_duration":497173583,"load_duration":33707083,"prompt_eval_count":32,"prompt_eval_duration":321682834,"eval_count":8,"eval_duration":140963041}',
+                body: '{"model": "claude-3-7-sonnet-latest","role": "assistant","stop_reason": "end_turn","content":[{"type": "text","text": "How can I assist you today?"}],"usage": {"input_tokens": 19,"output_tokens": 29}}',
             ),
         ]);
         $stack = HandlerStack::create($mockHandler);
@@ -28,12 +28,9 @@ class OllamaTest extends TestCase
 
         $client = new Client(['handler' => $stack]);
 
-        $ollama = (new Ollama(
-            url: '',
-            model: 'llama3.2',
-        ))->setClient($client);
+        $openai = (new Anthropic('', 'claude-3-7-sonnet-latest'))->setClient($client);
 
-        $response = $ollama->chat([new UserMessage('Hi')]);
+        $response = $openai->chat([new UserMessage('Hi')]);
 
         // Ensure we sent one request
         $this->assertCount(1, $sentRequests);
@@ -41,8 +38,8 @@ class OllamaTest extends TestCase
 
         // Ensure we have sent the expected request payload.
         $expectedResponse = [
-            'stream' => false,
-            'model' => 'llama3.2',
+            'model' => 'claude-3-7-sonnet-latest',
+            'max_tokens' => 8192,
             'messages' => [
                 [
                     'role' => 'user',
