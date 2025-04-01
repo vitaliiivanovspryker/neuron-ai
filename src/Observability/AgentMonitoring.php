@@ -219,15 +219,15 @@ class AgentMonitoring implements \SplObserver
         $id = \md5($data->instructions);
 
         $this->segments[
-        $id
+            'instructions-'.$id
         ] = $this->inspector
-            ->startSegment(self::SEGMENT_TYPE.'-instructions', "instructions( {$data->instructions} )")
+            ->startSegment(self::SEGMENT_TYPE.'-instructions')
             ->setColor(self::SEGMENT_COLOR);
     }
 
     public function instructionsChanged(\NeuronAI\AgentInterface $agent, string $event, InstructionsChanged $data)
     {
-        $id = \md5($data->previous);
+        $id = 'instructions-'.\md5($data->previous);
 
         if (\array_key_exists($id, $this->segments)) {
             $this->segments[$id]

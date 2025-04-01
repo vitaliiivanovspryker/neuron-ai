@@ -67,15 +67,15 @@ class RAG extends Agent
             new VectorStoreResult($question, $documents)
         );
 
-        $defaultInstructions = $this->instructions();
+        $originalInstructions = $this->instructions();
         $this->notify(
             'rag-instructions-changing',
-            new InstructionsChanging($defaultInstructions)
+            new InstructionsChanging($originalInstructions)
         );
         $this->setSystemMessage($documents, $k);
         $this->notify(
             'rag-instructions-changed',
-            new InstructionsChanged($defaultInstructions, $this->instructions())
+            new InstructionsChanged($originalInstructions, $this->instructions())
         );
     }
 
