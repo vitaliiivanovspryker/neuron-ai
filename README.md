@@ -105,7 +105,7 @@ class SEOAgent extends Agent
 
     public function instructions()
     {
-        return return new SystemPrompt(
+        return new SystemPrompt(
             background: ["Act as an expert of SEO (Search Engine Optimization)."]
             steps: [
                 "Analyze a text of an article.",
@@ -167,7 +167,7 @@ class SEOAgent extends Agent
 
     public function instructions()
     {
-        return return new SystemPrompt(
+        return new SystemPrompt(
             background: ["Act as an expert of SEO (Search Engine Optimization)."]
             steps: [
                 "Analyze a text of an article.",
