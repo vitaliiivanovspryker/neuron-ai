@@ -27,9 +27,9 @@ trait ResolveTools
      * Add a tool.
      *
      * @param ToolInterface $tool
-     * @return $this
+     * @return AgentInterface
      */
-    public function addTool(ToolInterface $tool): self
+    public function addTool(ToolInterface $tool): AgentInterface
     {
         $this->tools[] = $tool;
         return $this;
