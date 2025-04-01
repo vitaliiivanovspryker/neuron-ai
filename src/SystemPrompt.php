@@ -13,7 +13,7 @@ class SystemPrompt implements \Stringable
 
     public function __toString()
     {
-        $prompt = "# IDENTITY and PURPOSE".PHP_EOL.implode("\n", $this->background);
+        $prompt = "# IDENTITY and PURPOSE".PHP_EOL.implode(PHP_EOL, $this->background);
 
         if (!empty($this->steps)) {
             $prompt .= PHP_EOL.PHP_EOL."# INTERNAL ASSISTANT STEPS".PHP_EOL.implode(PHP_EOL, $this->steps);
