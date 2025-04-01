@@ -47,10 +47,13 @@ class SEOAgent extends Agent
 
     public function instructions()
     {
-        return new SystemPrompt(
-            background: ["Act as an expert of SEO (Search Engine Optimization)."],
-            steps: ["Analyze a text of an article and provide suggestions ".
-                "on how the content can be improved to get a better rank on Google search."]
+        return return new SystemPrompt(
+            background: ["Act as an expert of SEO (Search Engine Optimization)."]
+            steps: [
+                "Analyze a text of an article.",
+                "Provide suggestions on how the content can be improved to get a better rank on Google search."
+            ],
+            output: ["Structure your analysis in sections. One for each suggestion."]
         );
     }
 }
@@ -80,10 +83,11 @@ echo $response->getContent();
 
 ## Tools & Function Calls
 
-You can easily add the ability to perform concrete tasks to your Agent with an array of `Tool`:
+You can add the ability to perform concrete tasks to your Agent with an array of `Tool`:
 
 ```php
 use NeuronAI\Agent;
+use NeuronAI\SystemPrompt;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\Anthropic\Anthropic;
 use NeuronAI\Tools\Tool;
@@ -101,9 +105,14 @@ class SEOAgent extends Agent
 
     public function instructions()
     {
-        return "Act as an expert of SEO (Search Engine Optimization). ".
-            "Your role is to analyze a text of an article and provide suggestions ".
-            "on how the content can be improved to get a better rank on Google search.";
+        return return new SystemPrompt(
+            background: ["Act as an expert of SEO (Search Engine Optimization)."]
+            steps: [
+                "Analyze a text of an article.",
+                "Provide suggestions on how the content can be improved to get a better rank on Google search."
+            ],
+            output: ["Structure your analysis in sections. One for each suggestion."]
+        );
     }
 
     public function tools(): array
@@ -158,9 +167,14 @@ class SEOAgent extends Agent
 
     public function instructions()
     {
-        return "Act as an expert of SEO (Search Engine Optimization). ".
-            "Your role is to analyze a text of an article and provide suggestions ".
-            "on how the content can be improved to get a better rank on Google search.";
+        return return new SystemPrompt(
+            background: ["Act as an expert of SEO (Search Engine Optimization)."]
+            steps: [
+                "Analyze a text of an article.",
+                "Provide suggestions on how the content can be improved to get a better rank on Google search."
+            ],
+            output: ["Structure your analysis in sections. One for each suggestion."]
+        );
     }
 
     public function tools(): array
