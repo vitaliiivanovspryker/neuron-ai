@@ -40,7 +40,7 @@ class Agent implements AgentInterface
      *
      * @var string
      */
-    protected string $instructions = '';
+    protected string $instructions = 'Your are a helpful and friendly AI assistant built with Neuron AI PHP framework.';
 
     /**
      * @var array<\SplObserver>
