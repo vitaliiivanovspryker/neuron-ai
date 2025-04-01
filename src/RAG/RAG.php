@@ -12,6 +12,7 @@ use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
 use NeuronAI\RAG\Embeddings\EmbeddingsProviderInterface;
 use NeuronAI\RAG\VectorStore\VectorStoreInterface;
+use NeuronAI\SystemPrompt;
 
 class RAG extends Agent
 {
@@ -26,13 +27,6 @@ class RAG extends Agent
      * @var EmbeddingsProviderInterface
      */
     protected EmbeddingsProviderInterface $embeddingsProvider;
-
-    /**
-     * Instructions template.
-     *
-     * @var string|null
-     */
-    protected ?string $instructions = "Use the following pieces of context to answer the question of the user. If you don't know the answer, just say that you don't know, don't try to make up an answer.\n\n{context}.";
 
     /**
      * @throws MissingCallbackParameter
@@ -105,7 +99,12 @@ class RAG extends Agent
         }
 
         return $this->setInstructions(
-            \str_replace('{context}', $context, $this->instructions())
+            new SystemPrompt(
+                background: ["You are an AI Agent used for Retrieval Augmented Generation."],
+                steps: ["Use the following pieces of context to answer the user question. "],
+                output: ["If you don't know the answer, just say that you don't know, don't try to make up an answer."],
+                context: [$context]
+            )
         );
     }
 
