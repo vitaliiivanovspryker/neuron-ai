@@ -20,9 +20,10 @@ class SystemPrompt implements \Stringable
         }
 
         if (!empty($this->output)) {
-            $prompt .= PHP_EOL.PHP_EOL."# OUTPUT INSTRUCTIONS".PHP_EOL.implode(PHP_EOL, $this->output) . PHP_EOL.PHP_EOL
-                . "Always respond using the proper JSON schema.".PHP_EOL
-                . "Always use the available additional information and context to enhance the response.";
+            $prompt .= PHP_EOL.PHP_EOL."# OUTPUT INSTRUCTIONS".PHP_EOL
+                . implode(PHP_EOL.' - ', $this->output) . PHP_EOL
+                . " - Always respond using the proper JSON schema.".PHP_EOL
+                . " - Always use the available additional information and context to enhance the response.";
         }
 
         if (!empty($this->context)) {
