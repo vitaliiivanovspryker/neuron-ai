@@ -13,9 +13,9 @@ interface AgentInterface extends \SplSubject
 
     public function setProvider(AIProviderInterface $provider): AgentInterface;
 
-    public function instructions(): ?string;
+    public function instructions(): string;
 
-    public function setInstructions(?string $instructions): AgentInterface;
+    public function setInstructions(string $instructions): AgentInterface;
 
     public function tools(): array;
 

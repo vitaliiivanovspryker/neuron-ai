@@ -38,9 +38,9 @@ class Agent implements AgentInterface
     /**
      * The system message.
      *
-     * @var ?string
+     * @var string
      */
-    protected ?string $instructions = null;
+    protected string $instructions = '';
 
     /**
      * @var array<\SplObserver>
@@ -166,12 +166,12 @@ class Agent implements AgentInterface
         return $toolCallResult;
     }
 
-    public function instructions(): ?string
+    public function instructions(): string
     {
         return $this->instructions;
     }
 
-    public function setInstructions(?string $instructions): AgentInterface
+    public function setInstructions(string $instructions): AgentInterface
     {
         $this->instructions = $instructions;
         return $this;
