@@ -31,6 +31,7 @@ In the meantime, let's create the first agent, extending the `NeuronAI\Agent` cl
 
 ```php
 use NeuronAI\Agent;
+use NeuronAI\SystemPrompt;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\Anthropic\Anthropic;
 
@@ -46,13 +47,17 @@ class SEOAgent extends Agent
 
     public function instructions()
     {
-        return "Act as an expert of SEO (Search Engine Optimization). ".
-            "Your role is to analyze a text of an article and provide suggestions ".
-            "on how the content can be improved to get a better rank on Google search.";
+        return new SystemPrompt(
+            background: ["Act as an expert of SEO (Search Engine Optimization)."],
+            steps: ["Analyze a text of an article and provide suggestions ".
+                "on how the content can be improved to get a better rank on Google search."]
+        );
     }
 }
 ```
 
+The `SystemPrompt` class is designed to take your base instructions and build a consistent prompt for the underlying model
+reducing the effort for prompt engineering.
 
 ## Talk to the Agent
 
