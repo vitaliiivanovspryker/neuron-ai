@@ -32,7 +32,10 @@ trait HandleStream
         }
 
         // https://docs.anthropic.com/claude/reference/messages_post
-        $stream = $this->client->post('messages', compact('json'))->getBody();
+        $stream = $this->client->post('messages', [
+            'stream' => true,
+            ...\compact('json')
+        ])->getBody();
 
         $toolCalls = [];
 

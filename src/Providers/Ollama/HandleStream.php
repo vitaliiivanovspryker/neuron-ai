@@ -27,9 +27,10 @@ trait HandleStream
             $json['tools'] = $this->generateToolsPayload();
         }
 
-        $stream = $this->client->post(
-            'chat', compact('json')
-        )->getBody();
+        $stream = $this->client->post('chat', [
+            'stream' => true,
+            ...\compact('json')
+        ])->getBody();
 
         while (! $stream->eof()) {
             if (!$line = $this->parseNextJson($stream)) {
