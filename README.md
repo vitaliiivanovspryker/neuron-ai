@@ -45,7 +45,7 @@ class SEOAgent extends Agent
         );
     }
 
-    public function instructions()
+    public function instructions(): string
     {
         return new SystemPrompt(
             background: ["Act as an expert of SEO (Search Engine Optimization)."]
@@ -103,7 +103,7 @@ class SEOAgent extends Agent
         );
     }
 
-    public function instructions()
+    public function instructions(): string
     {
         return new SystemPrompt(
             background: ["Act as an expert of SEO (Search Engine Optimization)."]
@@ -165,7 +165,7 @@ class SEOAgent extends Agent
         );
     }
 
-    public function instructions()
+    public function instructions(): string
     {
         return new SystemPrompt(
             background: ["Act as an expert of SEO (Search Engine Optimization)."]
