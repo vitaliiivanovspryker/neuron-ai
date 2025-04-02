@@ -14,7 +14,7 @@ class QdrantVectorStore implements VectorStoreInterface
     public function __construct(
         protected string $key,
         protected int $vectorDimension,
-        protected string $collectionUrl // like http://localhost:6333/collections/neuron-ai
+        protected string $collectionUrl // like http://localhost:6333/collections/neuron-ai/
     )
     {
         $this->client = new Client([
