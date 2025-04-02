@@ -3,6 +3,8 @@
 namespace NeuronAI\RAG\VectorStore;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\RequestOptions;
 use NeuronAI\RAG\Document;
 
 class QdrantVectorStore implements VectorStoreInterface
@@ -24,18 +26,65 @@ class QdrantVectorStore implements VectorStoreInterface
         ]);
     }
 
+    /**
+     * Store a single document.
+     *
+     * @param Document $document
+     * @return void
+     * @throws GuzzleException
+     */
     public function addDocument(Document $document): void
     {
-        // TODO: Implement addDocument() method.
+        $this->client->put('points', [
+            RequestOptions::JSON => [
+                'id' => $document->id,
+                'payload' => [
+                    'content' => $document->content,
+                ],
+                'vector' => $document->embedding,
+            ]
+        ]);
     }
 
+    /**
+     * Bulk save documents.
+     *
+     * @param array<Document> $documents
+     * @return void
+     * @throws GuzzleException
+     */
     public function addDocuments(array $documents): void
     {
-        // TODO: Implement addDocuments() method.
+        $points = \array_map(function ($document) {
+            return [
+                'id' => $document->id,
+                'payload' => [
+                    'content' => $document->content,
+                ],
+                'vector' => $document->embedding,
+            ];
+        }, $documents);
+
+        $this->client->put('points', [RequestOptions::JSON => $points]);
     }
 
     public function similaritySearch(array $embedding, int $k = 4): iterable
     {
-        // TODO: Implement similaritySearch() method.
+        $response = $this->client->post('points/search', [
+            RequestOptions::JSON => [
+                'vector' => $embedding,
+                'limit' => $k,
+            ]
+        ])->getBody()->getContents();
+
+        $response = \json_decode($response, true);
+
+        return \array_map(function (array $item) {
+            $document = new Document();
+            $document->id = $item['id'];
+            $document->embedding = $item['vector'];
+            $document->content = $item['payload']['content'];
+            return $document;
+        }, $response['result']);
     }
 }
