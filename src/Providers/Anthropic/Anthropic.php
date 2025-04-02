@@ -44,7 +44,7 @@ class Anthropic implements AIProviderInterface
         protected array $parameters = [],
     ) {
         $this->client = new Client([
-            'base_uri' => 'https://api.anthropic.com/v1',
+            'base_uri' => 'https://api.anthropic.com/v1/',
             'headers' => [
                 'Content-Type' => 'application/json',
                 'x-api-key' => $this->key,

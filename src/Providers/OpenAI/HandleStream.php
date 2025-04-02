@@ -34,9 +34,10 @@ trait HandleStream
             $json['tools'] = $this->generateToolsPayload();
         }
 
-        $stream = $this->client->post(
-            'v1/chat/completions', \compact('json')
-        )->getBody();
+        $stream = $this->client->post('v1/chat/completions', [
+            'stream' => true,
+            ...\compact('json')
+        ])->getBody();
 
         $text = '';
         $toolCalls = [];
