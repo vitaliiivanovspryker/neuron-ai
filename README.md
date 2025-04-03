@@ -88,7 +88,7 @@ With Neuron you can switch between LLM providers with just one line of code, wit
 Supported providers:
 
 - Anthropic
-- Ollama (also available as [embeddings provider](https://docs.neuron-ai.dev/components/embeddings-provider#ollama))
+- Ollama (also available as an [embeddings provider](https://docs.neuron-ai.dev/components/embeddings-provider#ollama))
 - OpenAI
 - Mistral
 - Deepseek
