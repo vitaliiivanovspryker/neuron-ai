@@ -80,6 +80,8 @@ echo $response->getContent();
 // It's well done! Anyway, let me give you some advice to get a better rank on Google...
 ```
 
+As you can see in the example above, the Agent automatically has memory of the ongoing conversation. Lear more about memory in the [documentation](https://docs.neuron-ai.dev/chat-history-and-memory). 
+
 ## Tools & Function Calls
 
 You can add the ability to perform concrete tasks to your Agent with an array of `Tool`:
