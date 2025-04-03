@@ -26,6 +26,13 @@ class Anthropic implements AIProviderInterface
     protected Client $client;
 
     /**
+     * The main URL of the provider API.
+     *
+     * @var string
+     */
+    protected string $baseUri = 'https://api.anthropic.com/v1/';
+
+    /**
      * System instructions.
      * https://docs.anthropic.com/claude/docs/system-prompts#how-to-use-system-prompts
      *
@@ -44,7 +51,7 @@ class Anthropic implements AIProviderInterface
         protected array $parameters = [],
     ) {
         $this->client = new Client([
-            'base_uri' => 'https://api.anthropic.com/v1/',
+            'base_uri' => trim($this->baseUri, '/').'/',
             'headers' => [
                 'Content-Type' => 'application/json',
                 'x-api-key' => $this->key,

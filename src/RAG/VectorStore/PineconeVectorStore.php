@@ -16,7 +16,7 @@ class PineconeVectorStore implements VectorStoreInterface
         string $version = '2025-01'
     ) {
         $this->client = new Client([
-            'base_uri' => $this->indexUrl,
+            'base_uri' => trim($this->indexUrl, '/').'/',
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
