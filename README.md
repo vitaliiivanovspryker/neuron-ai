@@ -68,7 +68,7 @@ Send a prompt to the agent to get a response from the underlying LLM:
 ```php
 $seoAgent = SEOAgent::make();
 
-$response = $seoAgent->run(new UserMessage("Who are you?"));
+$response = $seoAgent->run(new UserMessage("Hi, I'm Valerio. Who are you?"));
 echo $response->getContent();
 // I'm a SEO expert, how can I help you today?
 
@@ -77,10 +77,10 @@ $response = $seoAgent->run(
     new UserMessage("What do you think about the following article? --- ".file_get_contents('./README.md'))
 );
 echo $response->getContent();
-// It's well done! Anyway, let me give you some advice to get a better rank on Google...
+// It's well done Valerio! Anyway, let me give you some advice to get a better rank on Google...
 ```
 
-As you can see in the example above, the Agent automatically has memory of the ongoing conversation. Lear more about memory in the [documentation](https://docs.neuron-ai.dev/chat-history-and-memory). 
+As you can see in the example above, the Agent automatically has memory of the ongoing conversation. Learn more about memory in the [documentation](https://docs.neuron-ai.dev/chat-history-and-memory). 
 
 ## Tools & Function Calls
 
