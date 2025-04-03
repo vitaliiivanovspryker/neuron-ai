@@ -12,6 +12,7 @@ class OllamaEmbeddingsProvider extends AbstractEmbeddingsProvider
     public function __construct(
         protected string $model,
         protected string $url = 'http://localhost:11434/api',
+        protected array $parameters = [],
     ) {
         $this->client = new Client(['base_uri' => trim($this->url, '/').'/']);
     }
@@ -22,6 +23,7 @@ class OllamaEmbeddingsProvider extends AbstractEmbeddingsProvider
             RequestOptions::JSON => [
                 'model' => $this->model,
                 'input' => $text,
+                ...$this->parameters,
             ]
         ])->getBody()->getContents();
 
