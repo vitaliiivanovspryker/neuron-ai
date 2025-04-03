@@ -80,7 +80,18 @@ echo $response->getContent();
 // It's well done Valerio! Anyway, let me give you some advice to get a better rank on Google...
 ```
 
-As you can see in the example above, the Agent automatically has memory of the ongoing conversation. Learn more about memory in the [documentation](https://docs.neuron-ai.dev/chat-history-and-memory). 
+As you can see in the example above, the Agent automatically has memory of the ongoing conversation. Learn more about memory in the [documentation](https://docs.neuron-ai.dev/chat-history-and-memory).
+
+## Supported Providers
+
+With Neuron you can switch between LLM providers with just one line of code, without any impact on your agent implementation.
+Supported providers:
+
+- Anthropic
+- Ollama (also available as [embeddings provider](https://docs.neuron-ai.dev/components/embeddings-provider#ollama))
+- OpenAI
+- Mistral
+- Deepseek
 
 ## Tools & Function Calls
 
