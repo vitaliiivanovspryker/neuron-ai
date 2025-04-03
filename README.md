@@ -82,7 +82,7 @@ echo $response->getContent();
 
 As you can see in the example above, the Agent automatically has memory of the ongoing conversation. Learn more about memory in the [documentation](https://docs.neuron-ai.dev/chat-history-and-memory).
 
-## Supported Providers
+## Supported LLM Providers
 
 With Neuron you can switch between LLM providers with just one line of code, without any impact on your agent implementation.
 Supported providers:
