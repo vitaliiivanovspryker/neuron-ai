@@ -5,10 +5,10 @@ namespace NeuronAI;
 class SystemPrompt implements \Stringable
 {
     public function __construct(
-        protected array $background,
-        protected array $steps = [],
-        protected array $output = [],
-        protected array $context = [],
+        public array $background,
+        public array $steps = [],
+        public array $output = [],
+        public array $context = [],
     ) {}
 
     public function __toString()
