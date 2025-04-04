@@ -34,7 +34,7 @@ use NeuronAI\SystemPrompt;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\Anthropic\Anthropic;
 
-class SEOAgent extends Agent
+class YouTubeAgent extends Agent
 {
     public function provider(): AIProviderInterface
     {
@@ -47,12 +47,16 @@ class SEOAgent extends Agent
     public function instructions(): string
     {
         return new SystemPrompt(
-            background: ["Act as an expert of SEO (Search Engine Optimization)."]
+            background: ["You are an AI Agent specialized in writing YouTube video summaries."],
             steps: [
-                "Analyze a text of an article.",
-                "Provide suggestions on how the content can be improved to get a better rank on Google search."
+                "Get the url of a YouTube video, or ask the user to provide one.",
+                "Use the tools you have available to retrieve the transcription of the video.",
+                "Write the summary.",
             ],
-            output: ["Structure your analysis in sections. One for each suggestion."]
+            output: [
+                "Write a summary in a paragraph without using lists. Use just fluent text.",
+                "After the summary add a list of three sentences as the three most important take away from the video.",
+            ]
         );
     }
 }
@@ -66,18 +70,18 @@ reducing the effort for prompt engineering.
 Send a prompt to the agent to get a response from the underlying LLM:
 
 ```php
-$seoAgent = SEOAgent::make();
+$agent = YouTubeAgent::make();
 
-$response = $seoAgent->run(new UserMessage("Hi, I'm Valerio. Who are you?"));
+$response = $agent->run(new UserMessage("Hi, I'm Valerio. Who are you?"));
 echo $response->getContent();
-// I'm a SEO expert, how can I help you today?
+// I'm a friendly YouTube assistant to help you summarize videos.
 
 
-$response = $seoAgent->run(
-    new UserMessage("What do you think about the following article? --- ".file_get_contents('./README.md'))
+$response = $agent->run(
+    new UserMessage("Do you know my name?")
 );
 echo $response->getContent();
-// It's well done Valerio! Anyway, let me give you some advice to get a better rank on Google...
+// Your name is Valerio, as you said in your introduction.
 ```
 
 As you can see in the example above, the Agent automatically has memory of the ongoing conversation. Learn more about memory in the [documentation](https://docs.neuron-ai.dev/chat-history-and-memory).
@@ -105,7 +109,7 @@ use NeuronAI\Providers\Anthropic\Anthropic;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 
-class SEOAgent extends Agent
+class YouTubeAgent extends Agent
 {
     public function provider(): AIProviderInterface
     {
@@ -118,12 +122,16 @@ class SEOAgent extends Agent
     public function instructions(): string
     {
         return new SystemPrompt(
-            background: ["Act as an expert of SEO (Search Engine Optimization)."]
+            background: ["You are an AI Agent specialized in writing YouTube video summaries."],
             steps: [
-                "Analyze a text of an article.",
-                "Provide suggestions on how the content can be improved to get a better rank on Google search."
+                "Get the url of a YouTube video, or ask the user to provide one.",
+                "Use the tools you have available to retrieve the transcription of the video.",
+                "Write the summary.",
             ],
-            output: ["Structure your analysis in sections. One for each suggestion."]
+            output: [
+                "Write a summary in a paragraph without using lists. Use just fluent text.",
+                "After the summary add a list of three sentences as the three most important take away from the video.",
+            ]
         );
     }
 
@@ -131,22 +139,17 @@ class SEOAgent extends Agent
     {
         return [
             Tool::make(
-                "get_article_content",
-                "Use the ID of the article to get its content."
+                'get_transcription',
+                'Retrieve the transcription of a youtube video.',
             )->addProperty(
                 new ToolProperty(
-                    name: 'article_id',
-                    type: 'integer',
-                    description: 'The ID  of the article you want to analyze.',
+                    name: 'video_url',
+                    type: 'string',
+                    description: 'The URL of the YouTube video.',
                     required: true
                 )
-            )->setCallable(function (string $article_id) {
-                // You should use your DB layer here...
-                $stm = $pdo->prepare("SELECT * FROM articles WHERE id=? LIMIT 1");
-                $stm->execute([$article_id]);
-                return json_encode(
-                    $stmt->fetch(PDO::FETCH_ASSOC)
-                );
+            )->setCallable(function (string $video_url) {
+                // ... retrieve the video transcription
             })
         ];
     }
@@ -200,22 +203,17 @@ class SEOAgent extends Agent
 
             // Implement your custom tools
             Tool::make(
-                "get_article_content",
-                "Use the ID of the article to get its content."
+                'get_transcription',
+                'Retrieve the transcription of a youtube video.',
             )->addProperty(
                 new ToolProperty(
-                    name: 'article_id',
-                    type: 'integer',
-                    description: 'The ID  of the article you want to analyze.',
+                    name: 'video_url',
+                    type: 'string',
+                    description: 'The URL of the YouTube video.',
                     required: true
                 )
-            )->setCallable(function (string $article_id) {
-                // You should use your DB layer here...
-                $stm = $pdo->prepare("SELECT * FROM articles WHERE id=? LIMIT 1");
-                $stm->execute([$article_id]);
-                return json_encode(
-                    $stmt->fetch(PDO::FETCH_ASSOC)
-                );
+            )->setCallable(function (string $video_url) {
+                // ... retrieve the video transcription
             })
         ];
     }
