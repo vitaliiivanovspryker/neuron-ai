@@ -100,7 +100,7 @@ class Anthropic implements AIProviderInterface
     public function createToolMessage(array $content): Message
     {
         $tool = $this->findTool($content['name'])
-            ->setInputs($content['input'])
+            ->setInputs($content['input']??[])
             ->setCallId($content['id']);
 
         return new ToolCallMessage(
