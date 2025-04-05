@@ -35,7 +35,7 @@ class OpenAI implements AIProviderInterface
      *
      * @var string
      */
-    protected string $baseUri = 'https://api.openai.com';
+    protected string $baseUri = 'https://api.openai.com/v1';
 
     /**
      * System instructions.

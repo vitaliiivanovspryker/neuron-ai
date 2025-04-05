@@ -35,7 +35,7 @@ trait HandleChat
             $json['tools'] = $this->generateToolsPayload();
         }
 
-        $result = $this->client->post('v1/chat/completions', compact('json'))
+        $result = $this->client->post('chat/completions', compact('json'))
             ->getBody()->getContents();
 
         $result = \json_decode($result, true);
