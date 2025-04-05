@@ -89,12 +89,12 @@ class Tool implements ToolInterface
 
     public function getInputs(): array
     {
-        return $this->inputs;
+        return $this->inputs ?? [];
     }
 
-    public function setInputs(array $inputs): self
+    public function setInputs(?array $inputs): self
     {
-        $this->inputs = $inputs;
+        $this->inputs = $inputs??[];
         return $this;
     }
 

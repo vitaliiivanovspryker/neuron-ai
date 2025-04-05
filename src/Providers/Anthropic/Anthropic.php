@@ -72,7 +72,7 @@ class Anthropic implements AIProviderInterface
     public function generateToolsPayload(): array
     {
         return \array_map(function (ToolInterface $tool) {
-            \array_reduce($tool->getProperties(), function ($carry, ToolProperty $property) {
+            $properties = \array_reduce($tool->getProperties(), function ($carry, ToolProperty $property) {
                 $carry[$property->getName()] = [
                     'type' => $property->getType(),
                     'description' => $property->getDescription(),
@@ -100,8 +100,12 @@ class Anthropic implements AIProviderInterface
     public function createToolMessage(array $content): Message
     {
         $tool = $this->findTool($content['name'])
-            ->setInputs($content['input']??[])
+            ->setInputs($content['input'])
             ->setCallId($content['id']);
+
+        // During serialization and deserialization PHP convert the original empty object {} to empty array []
+        // causing an error on the Anthropic API. If there are no inputs, we need to restore the empty JSON object.
+        $content['input'] ??= (object)[];
 
         return new ToolCallMessage(
             [$content],
