@@ -25,6 +25,7 @@
     },
     "require-dev": {
         "elasticsearch/elasticsearch": "^8.0",
+        "inspector-apm/inspector-php": "^3.9",
         "phpunit/phpunit": "^9.0",
         "symfony/process": "^5.0|^6.0|^7.0",
         "symfony/property-info": "^6.4 || ^7.0",

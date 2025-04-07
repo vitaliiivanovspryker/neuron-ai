@@ -37,6 +37,15 @@ trait HandleStream
                 continue;
             }
 
+            // Last chunk will contains the usage information.
+            if ($line['done'] === true) {
+                yield \json_encode(['usage' => [
+                    'input_tokens' => $line['prompt_eval_count'],
+                    'output_tokens' => $line['eval_count'],
+                ]]);
+                continue;
+            }
+
             // Process tool calls
             // Ollama doesn't support tool calls for stream response
             // https://github.com/ollama/ollama/blob/main/docs/api.md

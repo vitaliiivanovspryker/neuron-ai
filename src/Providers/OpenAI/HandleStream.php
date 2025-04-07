@@ -26,6 +26,7 @@ trait HandleStream
             'stream' => true,
             'model' => $this->model,
             'messages' => $mapper->map(),
+            'stream_options' => ['include_usage' => true],
             ...$this->parameters
         ];
 
@@ -44,6 +45,15 @@ trait HandleStream
 
         while (! $stream->eof()) {
             if (!$line = $this->parseNextDataLine($stream)) {
+                continue;
+            }
+
+            // Inform the agent about usage when stream
+            if (empty($line['choices']) && !empty($line['usage'])) {
+                yield \json_encode(['usage' => [
+                    'input_tokens' => $line['usage']['prompt_tokens'],
+                    'output_tokens' => $line['usage']['completion_tokens'],
+                ]]);
                 continue;
             }
 

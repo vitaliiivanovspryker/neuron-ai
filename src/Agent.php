@@ -5,6 +5,7 @@ namespace NeuronAI;
 use NeuronAI\Chat\History\InMemoryChatHistory;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\ToolCallResultMessage;
+use NeuronAI\Chat\Messages\Usage;
 use NeuronAI\Events\MessageSaved;
 use NeuronAI\Events\MessageSaving;
 use NeuronAI\Events\MessageSending;
@@ -134,12 +135,22 @@ class Agent implements AgentInterface
             );
 
         $content = '';
+        $usage = new Usage(0, 0);
         foreach ($stream as $text) {
+            // Catch usage when streaming
+            $decoded = \json_decode($text, true);
+            if (\is_array($decoded) && \array_key_exists('usage', $decoded)) {
+                $usage->inputTokens += $decoded['usage']['input_tokens']??0;
+                $usage->outputTokens += $decoded['usage']['output_tokens']??0;
+                continue;
+            }
+
             $content .= $text;
             yield $text;
         }
 
         $response = new AssistantMessage($content);
+        $response->setUsage($usage);
 
         // Avoid double saving due to the recursive call.
         $history = $this->resolveChatHistory()->getMessages();

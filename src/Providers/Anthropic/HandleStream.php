@@ -44,6 +44,17 @@ trait HandleStream
                 continue;
             }
 
+            // https://docs.anthropic.com/en/api/messages-streaming
+            if ($line['type'] === 'message_start') {
+                yield \json_encode(['usage' => $line['message']['usage']]);
+                continue;
+            }
+
+            if ($line['type'] === 'message_delta') {
+                yield \json_encode(['usage' => $line['usage']]);
+                continue;
+            }
+
             // Tool calls detection (https://docs.anthropic.com/en/api/messages-streaming#streaming-request-with-tool-use)
             if (
                 (isset($line['content_block']['type']) && $line['content_block']['type'] === 'tool_use') ||
@@ -57,7 +68,7 @@ trait HandleStream
             if ($line['type'] === 'content_block_stop' && !empty($toolCalls)) {
                 // Restore the input field as an array
                 $toolCalls = \array_map(function (array $call) {
-                    $call['input'] = json_decode($call['input'], true);
+                    $call['input'] = \json_decode($call['input'], true);
                     return $call;
                 }, $toolCalls);
 

@@ -78,7 +78,7 @@ class AgentMonitoring implements \SplObserver
             $this->inspector->startTransaction($class);
         } elseif ($this->inspector->canAddSegments() && $entity !== 'chat') {
             $this->segments[
-            $entity.$class
+                $entity.$class
             ] = $this->inspector->startSegment(self::SEGMENT_TYPE.'-'.$entity, $entity.':'.$class)
                 ->setColor(self::SEGMENT_COLOR);
         }
@@ -93,6 +93,8 @@ class AgentMonitoring implements \SplObserver
             $this->segments[$entity.$class]
                 ->setContext($this->getContext($agent))
                 ->end();
+        } elseif ($this->inspector->canAddSegments()) {
+            $this->inspector->transaction()->setContext($this->getContext($agent));
         }
     }
 
