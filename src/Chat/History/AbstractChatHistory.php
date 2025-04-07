@@ -11,7 +11,34 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     public function __construct(protected int $contextWindow = 50000) {}
 
-    abstract public function addMessage(Message $message): ChatHistoryInterface;
+    protected function updateUsedTokens(Message $message): void
+    {
+        if ($message->getUsage() && $message->getRole() === Message::ROLE_ASSISTANT) {
+            // For every new message, we store only the marginal contribution of input tokens
+            // of the latest interactions.
+            $currentInputConsumption = \array_reduce($this->getMessages(), function ($carry, Message $message) {
+                if ($message->getUsage() && $message->getRole() === Message::ROLE_ASSISTANT) {
+                    $carry += $message->getUsage()->inputTokens;
+                }
+                return $carry;
+            }, 0);
+
+            $message->getUsage()->inputTokens = $message->getUsage()->inputTokens - $currentInputConsumption;
+        }
+    }
+
+    public function addMessage(Message $message): ChatHistoryInterface
+    {
+        $this->updateUsedTokens($message);
+
+        $this->storeMessage($message);
+
+        $this->cutHistoryToContextWindow();
+
+        return $this;
+    }
+
+    abstract protected function storeMessage(Message $message): void;
 
     abstract public function getMessages(): array;
 
@@ -30,20 +57,18 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         }, 0);
     }
 
-    public function cutHistoryToContextWindow(): ChatHistoryInterface
+    protected function cutHistoryToContextWindow(): void
     {
         $freeMemory = $this->contextWindow - $this->calculateTotalUsage();
 
         if ($freeMemory > 0) {
-            return $this;
+            return;
         }
 
         // Cut old messages
         do {
             $this->removeOldestMessage();
         } while ($this->contextWindow - $this->calculateTotalUsage() < 0);
-
-        return $this;
     }
 
     public function jsonSerialize(): array
