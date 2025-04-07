@@ -39,15 +39,10 @@ class FileChatHistory extends AbstractChatHistory
         return $this->directory . DIRECTORY_SEPARATOR . $this->prefix.$this->key.$this->ext;
     }
 
-    public function addMessage(Message $message): ChatHistoryInterface
+    protected function storeMessage(Message $message): void
     {
         $this->history[] = $message;
-
-        $this->cutHistoryToContextWindow();
-
-        \file_put_contents($this->getFilePath(), json_encode($this->jsonSerialize()), LOCK_EX);
-
-        return $this;
+        $this->updateFile();
     }
 
     public function getMessages(): array
@@ -58,6 +53,7 @@ class FileChatHistory extends AbstractChatHistory
     public function removeOldestMessage(): ChatHistoryInterface
     {
         \array_unshift($this->history);
+        $this->updateFile();
         return $this;
     }
 
@@ -68,5 +64,10 @@ class FileChatHistory extends AbstractChatHistory
         }
         $this->history = [];
         return $this;
+    }
+
+    protected function updateFile(): void
+    {
+        \file_put_contents($this->getFilePath(), json_encode($this->jsonSerialize()), LOCK_EX);
     }
 }

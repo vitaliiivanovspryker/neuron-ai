@@ -6,13 +6,9 @@ use NeuronAI\Chat\Messages\Message;
 
 class InMemoryChatHistory extends AbstractChatHistory
 {
-    public function addMessage(Message $message): ChatHistoryInterface
+    protected function storeMessage(Message $message): void
     {
         $this->history[] = $message;
-
-        $this->cutHistoryToContextWindow();
-
-        return $this;
     }
 
     public function getMessages(): array
