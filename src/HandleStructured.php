@@ -4,6 +4,10 @@ namespace NeuronAI;
 
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\UserMessage;
+use NeuronAI\Events\InferenceStart;
+use NeuronAI\Events\InferenceStop;
+use NeuronAI\Events\MessageSaved;
+use NeuronAI\Events\MessageSaving;
 use NeuronAI\Exceptions\AgentException;
 use NeuronAI\StructuredOutput\Deserializer;
 use NeuronAI\StructuredOutput\JsonExtractor;
@@ -26,6 +30,14 @@ trait HandleStructured
     {
         $this->notify('structured-start');
 
+        $messages = is_array($messages) ? $messages : [$messages];
+
+        foreach ($messages as $lastMessage) {
+            $this->notify('message-saving', new MessageSaving($lastMessage));
+            $this->resolveChatHistory()->addMessage($lastMessage);
+            $this->notify('message-saved', new MessageSaved($lastMessage));
+        }
+
         // Get the JSON schema from the response model
         // https://github.com/spiral/json-schema-generator
         $schema = [
@@ -38,24 +50,38 @@ trait HandleStructured
         do {
             // Eventually add the error message from previous calls
             if (!empty(trim($error))) {
-                $this->resolveChatHistory()->addMessage(
-                    new UserMessage(
-                        "There was a problem in your previous response that generated the following errors".
-                        PHP_EOL.PHP_EOL.'- '.$error.PHP_EOL.PHP_EOL.
-                        "Try to generate the correct JSON structure based on the provided schema."
-                    )
+                $correctionMessage = new UserMessage(
+                    "There was a problem in your previous response that generated the following errors".
+                    PHP_EOL.PHP_EOL.'- '.$error.PHP_EOL.PHP_EOL.
+                    "Try to generate the correct JSON structure based on the provided schema."
                 );
+                $this->notify('message-saving', new MessageSaving($correctionMessage));
+                $this->resolveChatHistory()->addMessage($correctionMessage);
+                $this->notify('message-saved', new MessageSaved($correctionMessage));
             }
+
+            $messages = $this->resolveChatHistory()->getMessages();
+            $lastMessage = \end($messages);
+
+            $this->notify(
+                'inference-start',
+                new InferenceStart($lastMessage)
+            );
 
             // Call the LLM structured interface
             $response = $this->provider()
                 ->systemPrompt($this->instructions())
                 ->setTools($this->tools())
                 ->structured(
-                    $this->resolveChatHistory()->getMessages(),
+                    $messages,
                     $class,
                     $schema
                 );
+
+            $this->notify(
+                'inference-stop',
+                new InferenceStop($lastMessage, $response)
+            );
 
             try {
                 // Try to extract a valid JSON object from the LLM response

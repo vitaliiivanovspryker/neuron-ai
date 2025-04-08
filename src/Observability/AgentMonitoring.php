@@ -11,8 +11,8 @@ use NeuronAI\Events\InstructionsChanged;
 use NeuronAI\Events\InstructionsChanging;
 use NeuronAI\Events\MessageSaved;
 use NeuronAI\Events\MessageSaving;
-use NeuronAI\Events\MessageSending;
-use NeuronAI\Events\MessageSent;
+use NeuronAI\Events\InferenceStart;
+use NeuronAI\Events\InferenceStop;
 use NeuronAI\Events\ToolCalled;
 use NeuronAI\Events\ToolCalling;
 use NeuronAI\Events\VectorStoreResult;
@@ -51,8 +51,8 @@ class AgentMonitoring implements \SplObserver
             'structured-stop' => 'stop',
             'message-saving' => 'messageSaving',
             'message-saved' => 'messageSaved',
-            'message-sending' => "messageSending",
-            'message-sent' => "messageSent",
+            'inference-start' => "inferenceStop",
+            'inference-stop' => "inferenceStart",
             'tool-calling' => "toolCalling",
             'tool-called' => "toolCalled",
             'rag-vectorstore-searching' => "vectorStoreSearching",
@@ -137,7 +137,7 @@ class AgentMonitoring implements \SplObserver
             ->end();
     }
 
-    public function messageSending(\NeuronAI\AgentInterface $agent, string $event, MessageSending $data)
+    public function inferenceStart(\NeuronAI\AgentInterface $agent, string $event, InferenceStart $data)
     {
         if (!$this->inspector->canAddSegments()) {
             return;
@@ -146,15 +146,15 @@ class AgentMonitoring implements \SplObserver
         $label = json_encode($data->message->getContent());
 
         $this->segments[
-        $this->getMessageId($data->message).'-send'
+            $this->getMessageId($data->message).'-inference'
         ] = $this->inspector
-            ->startSegment(self::SEGMENT_TYPE.'-chat', "chat( {$label} )")
+            ->startSegment(self::SEGMENT_TYPE.'-inference', $label)
             ->setColor(self::SEGMENT_COLOR);
     }
 
-    public function messageSent(\NeuronAI\AgentInterface $agent, string $event, MessageSent $data)
+    public function inferenceStop(\NeuronAI\AgentInterface $agent, string $event, InferenceStop $data)
     {
-        $id = $this->getMessageId($data->message).'-send';
+        $id = $this->getMessageId($data->message).'-inference';
 
         if (\array_key_exists($id, $this->segments)) {
             $this->segments[$id]

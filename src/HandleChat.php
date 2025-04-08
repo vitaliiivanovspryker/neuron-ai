@@ -6,8 +6,8 @@ use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Events\MessageSaved;
 use NeuronAI\Events\MessageSaving;
-use NeuronAI\Events\MessageSending;
-use NeuronAI\Events\MessageSent;
+use NeuronAI\Events\InferenceStart;
+use NeuronAI\Events\InferenceStop;
 use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
 
@@ -36,8 +36,8 @@ trait HandleChat
         $message = \end($messages);
 
         $this->notify(
-            'message-sending',
-            new MessageSending($message)
+            'inference-start',
+            new InferenceStart($message)
         );
 
         $response = $this->provider()
@@ -48,8 +48,8 @@ trait HandleChat
             );
 
         $this->notify(
-            'message-sent',
-            new MessageSent($message, $response)
+            'inference-stop',
+            new InferenceStop($message, $response)
         );
 
         if ($response instanceof ToolCallMessage) {

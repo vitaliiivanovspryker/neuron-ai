@@ -4,7 +4,7 @@ namespace NeuronAI\Events;
 
 use NeuronAI\Chat\Messages\Message;
 
-class MessageSent
+class InferenceStop
 {
     public function __construct(
         public Message $message,
