@@ -29,7 +29,7 @@ trait HandleStructured
     ): mixed {
         // Get the JSON schema from the response model
         // https://github.com/spiral/json-schema-generator
-        $schema = (new Generator())->generate($responseModel);
+        $schema = (new Generator())->generate($responseModel)->jsonSerialize();
 
         $error = '';
         do {
