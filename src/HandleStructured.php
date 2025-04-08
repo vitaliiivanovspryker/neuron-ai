@@ -8,6 +8,7 @@ use NeuronAI\Exceptions\AgentException;
 use NeuronAI\Schema\Deserializer;
 use NeuronAI\Schema\JsonExtractor;
 use NeuronAI\Schema\JsonSchemaGenerator;
+use Spiral\JsonSchemaGenerator\Generator;
 use Symfony\Component\Validator\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Validator\Validation;
 
@@ -27,8 +28,9 @@ trait HandleStructured
         string $responseModel,
         int $maxRetry = 1
     ): mixed {
-        // Transform the input object into a JSON schema
-        $schema = JsonSchemaGenerator::generate($responseModel);
+        // Get the JSON schema from the response model
+        // https://github.com/spiral/json-schema-generator
+        $schema = (new Generator())->generate($responseModel);
 
         $error = '';
         do {
@@ -84,7 +86,7 @@ trait HandleStructured
                 $error = $exception->getMessage();
             }
 
-            // If something goes wrong, retry informing the model of the errors
+            // If something goes wrong, retry informing the model of the error
             $maxRetry--;
         } while ($maxRetry>=0);
 
