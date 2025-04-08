@@ -27,6 +27,8 @@ trait HandleStructured
         string $responseModel,
         int $maxRetry = 1
     ): mixed {
+        $this->notify('structured-start');
+
         // Get the JSON schema from the response model
         // https://github.com/spiral/json-schema-generator
         $schema = (new Generator())->generate($responseModel)->jsonSerialize();
@@ -72,6 +74,7 @@ trait HandleStructured
 
                 // Return a hydrated instance of the response model
                 if ($obj instanceof $responseModel) {
+                    $this->notify('structured-stop');
                     return $obj;
                 }
 
