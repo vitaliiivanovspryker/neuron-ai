@@ -37,31 +37,26 @@ trait HandleStructured
             if (!\empty(\trim($error))) {
                 $this->resolveChatHistory()->addMessage(
                     new UserMessage(
-                        "There was a problem in your previous response that generated the following errors".PHP_EOL.PHP_EOL.
-                        '- '.$error.PHP_EOL.PHP_EOL.
+                        "There was a problem in your previous response that generated the following errors".
+                        PHP_EOL.PHP_EOL.'- '.$error.PHP_EOL.PHP_EOL.
                         "Try to generate the correct JSON structure based on the provided schema."
                     )
                 );
             }
 
-            // Call the LLM asking to respect the JSON schema
+            // Call the LLM structured interface
             $response = $this->provider()
-                ->systemPrompt(
-                    $this->instructions().PHP_EOL.
-                    "# OUTPUT CONSTRAINTS".PHP_EOL.
-                    "Your output must be a valid json object respecting the following JSON schema:".PHP_EOL.
-                    \json_encode($schema)
-                )
+                ->systemPrompt($this->instructions())
                 ->setTools($this->tools())
-                ->chat(
-                    $this->resolveChatHistory()->getMessages()
+                ->structured(
+                    $this->resolveChatHistory()->getMessages(), $schema
                 );
 
             try {
                 // Try to extract a valid JSON object from the LLM response
                 $extractor = new JsonExtractor();
                 if (!$json = $extractor->getJson($response->getContent())) {
-                    throw new AgentException("The model didn't return a valid structured message for {$responseModel}.");
+                    throw new AgentException("The response does not contains a valid JSON Object.");
                 }
 
                 // Deserialize the JSON response from the LLM into an instance of the response model
@@ -80,7 +75,7 @@ trait HandleStructured
                     return $obj;
                 }
 
-                $error = "It was impossible to create an instance of the object from the response format.";
+                $error = "It was impossible to create an instance of the original class because of a wrong response format.";
             } catch (\Exception $exception) {
                 $error = $exception->getMessage();
             }

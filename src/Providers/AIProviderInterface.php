@@ -32,4 +32,6 @@ interface AIProviderInterface
     public function chat(array $messages): Message;
 
     public function stream(array|string $messages, callable $executeToolsCallback): \Generator;
+
+    public function structured(array $messages, array $response_schema): Message;
 }

@@ -1,0 +1,23 @@
+<?php
+
+namespace NeuronAI\Providers\Anthropic;
+
+use NeuronAI\Chat\Messages\Message;
+
+trait HandleStructured
+{
+    /**
+     * @param array<Message> $messages
+     * @param array $response_format
+     * @return Message
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function structured(array $messages, array $response_format): Message
+    {
+        $this->system .= PHP_EOL."# OUTPUT CONSTRAINTS".PHP_EOL.
+            "Your response should be a JSON string following this schema: ".PHP_EOL.
+            \json_encode($response_format);
+
+        return $this->chat($messages);
+    }
+}

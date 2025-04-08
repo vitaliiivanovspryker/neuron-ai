@@ -22,6 +22,7 @@ class OpenAI implements AIProviderInterface
     use HandleChat;
     use HandleStream;
     use HandleClient;
+    use HandleStructured;
 
     /**
      * The http client.
