@@ -2,6 +2,7 @@
 
 namespace NeuronAI\Providers\Anthropic;
 
+use GuzzleHttp\Exception\GuzzleException;
 use NeuronAI\Chat\Messages\Message;
 
 trait HandleStructured
@@ -10,7 +11,7 @@ trait HandleStructured
      * @param array<Message> $messages
      * @param array $response_format
      * @return Message
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function structured(array $messages, array $response_format): Message
     {

@@ -18,10 +18,10 @@ use Psr\Http\Message\StreamInterface;
 
 class OpenAI implements AIProviderInterface
 {
+    use HandleClient;
     use HandleWithTools;
     use HandleChat;
     use HandleStream;
-    use HandleClient;
     use HandleStructured;
 
     /**

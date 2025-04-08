@@ -13,10 +13,11 @@ use NeuronAI\Tools\ToolProperty;
 
 class Ollama implements AIProviderInterface
 {
-    use HandleChat;
     use HandleClient;
-    use HandleStream;
     use HandleWithTools;
+    use HandleChat;
+    use HandleStream;
+    use HandleStructured;
 
     /**
      * The http client.

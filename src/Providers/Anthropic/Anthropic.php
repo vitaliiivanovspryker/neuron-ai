@@ -13,10 +13,10 @@ use GuzzleHttp\Client;
 
 class Anthropic implements AIProviderInterface
 {
+    use HandleClient;
     use HandleWithTools;
     use HandleChat;
     use HandleStream;
-    use HandleClient;
     use HandleStructured;
 
     /**
