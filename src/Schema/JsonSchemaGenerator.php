@@ -7,7 +7,7 @@ namespace NeuronAI\Schema;
  */
 class JsonSchemaGenerator
 {
-    public function generate(string $class): array
+    static public function generate(string $class): array
     {
 
     }

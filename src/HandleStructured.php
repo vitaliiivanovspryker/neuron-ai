@@ -7,6 +7,7 @@ use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Exceptions\AgentException;
 use NeuronAI\Schema\Deserializer;
 use NeuronAI\Schema\JsonExtractor;
+use NeuronAI\Schema\JsonSchemaGenerator;
 use Symfony\Component\Validator\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Validator\Validation;
 
@@ -27,24 +28,22 @@ trait HandleStructured
         int $maxRetry = 1
     ): mixed {
         // Transform the input object into a JSON schema
-        $schema = [];
-
-        // instruct the model to follow the output JSON schema
+        $schema = JsonSchemaGenerator::generate($responseModel);
 
         $error = '';
         do {
-            // Eventually add error messages from previous calls
+            // Eventually add the error message from previous calls
             if (!\empty(\trim($error))) {
                 $this->resolveChatHistory()->addMessage(
                     new UserMessage(
-                        "There was a problem in your previous response that generated the following errors".PHP_EOL.
-                        $error.PHP_EOL.
-                        "Generate a correct JSON structure based on the provided schema."
+                        "There was a problem in your previous response that generated the following errors".PHP_EOL.PHP_EOL.
+                        '- '.$error.PHP_EOL.PHP_EOL.
+                        "Try to generate the correct JSON structure based on the provided schema."
                     )
                 );
             }
 
-            // Call the LLM
+            // Call the LLM asking to respect the JSON schema
             $response = $this->provider()
                 ->systemPrompt(
                     $this->instructions().PHP_EOL.
