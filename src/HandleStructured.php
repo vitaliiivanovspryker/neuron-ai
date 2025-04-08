@@ -30,7 +30,8 @@ trait HandleStructured
         // https://github.com/spiral/json-schema-generator
         $schema = [
             'type' => 'object',
-            ...(new Generator())->generate($class)->jsonSerialize()
+            ...(new Generator())->generate($class)->jsonSerialize(),
+            'additionalProperties' => false,
         ];
 
         $error = '';
