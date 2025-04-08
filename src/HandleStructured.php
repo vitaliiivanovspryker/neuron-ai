@@ -7,7 +7,6 @@ use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Exceptions\AgentException;
 use NeuronAI\Schema\Deserializer;
 use NeuronAI\Schema\JsonExtractor;
-use NeuronAI\Schema\JsonSchemaGenerator;
 use Spiral\JsonSchemaGenerator\Generator;
 use Symfony\Component\Validator\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Validator\Validation;
