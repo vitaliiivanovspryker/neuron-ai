@@ -9,16 +9,24 @@ trait HandleStructured
 {
     /**
      * @param array<Message> $messages
+     * @param string $class
      * @param array $response_format
      * @return Message
      * @throws GuzzleException
      */
-    public function structured(array $messages, array $response_format): Message
-    {
+    public function structured(
+        array $messages,
+        string $class,
+        array $response_format
+    ): Message {
         $this->parameters = \array_merge($this->parameters, [
             'response_format' => [
                 'type' => 'json_schema',
-                'json_schema' => $response_format,
+                'json_schema' => [
+                    "name" => $class,
+                    "strict" => true,
+                    "schema" => $response_format,
+                ],
             ]
         ]);
 

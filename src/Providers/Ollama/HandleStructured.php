@@ -13,8 +13,11 @@ trait HandleStructured
      * @return Message
      * @throws ProviderException
      */
-    public function structured(array $messages, array $response_format): Message
-    {
+    public function structured(
+        array $messages,
+        string $class,
+        array $response_format
+    ): Message {
         $this->parameters = \array_merge($this->parameters, [
             'format' => $response_format,
         ]);

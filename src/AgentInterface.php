@@ -30,4 +30,6 @@ interface AgentInterface extends \SplSubject
     public function chat(Message|array $messages): Message;
 
     public function stream(Message|array $messages): \Generator;
+
+    public function structured(Message|array $messages, string $class, int $maxRetry): mixed;
 }

@@ -17,26 +17,23 @@ trait HandleStructured
      * Enforce a structured response.
      *
      * @param Message|array $messages
-     * @param string $responseModel
+     * @param string $class
      * @param int $maxRetry
      * @return mixed
      * @throws AgentException
      */
-    public function structured(
-        Message|array $messages,
-        string $responseModel,
-        int $maxRetry = 1
-    ): mixed {
+    public function structured(Message|array $messages, string $class, int $maxRetry = 1): mixed
+    {
         $this->notify('structured-start');
 
         // Get the JSON schema from the response model
         // https://github.com/spiral/json-schema-generator
-        $schema = (new Generator())->generate($responseModel)->jsonSerialize();
+        $schema = (new Generator())->generate($class)->jsonSerialize();
 
         $error = '';
         do {
             // Eventually add the error message from previous calls
-            if (!\empty(\trim($error))) {
+            if (!empty(trim($error))) {
                 $this->resolveChatHistory()->addMessage(
                     new UserMessage(
                         "There was a problem in your previous response that generated the following errors".
@@ -63,7 +60,7 @@ trait HandleStructured
 
                 // Deserialize the JSON response from the LLM into an instance of the response model
                 $deserializer = new Deserializer();
-                $obj = $deserializer->fromJson($json, $responseModel);
+                $obj = $deserializer->fromJson($json, $class);
 
                 // Validate if the object fields respect the validation attributes
                 // https://symfony.com/doc/current/validation.html#constraints
@@ -73,7 +70,7 @@ trait HandleStructured
                 $validator->validate($obj);
 
                 // Return a hydrated instance of the response model
-                if ($obj instanceof $responseModel) {
+                if ($obj instanceof $class) {
                     $this->notify('structured-stop');
                     return $obj;
                 }
@@ -87,6 +84,6 @@ trait HandleStructured
             $maxRetry--;
         } while ($maxRetry>=0);
 
-        throw new AgentException("The model didn't return a valid structured message for {$responseModel}.");
+        throw new AgentException("The model didn't return a valid structured message for {$class}.");
     }
 }
