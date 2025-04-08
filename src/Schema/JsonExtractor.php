@@ -2,15 +2,6 @@
 
 namespace NeuronAI\Schema;
 
-use Exception;
-
-/**
- * Class JsonParser
- *
- * Provides methods to extract and parse JSON data from input text, including complete,
- * partial, and malformed JSON strings. Supports multiple extraction techniques such
- * as scanning for fenced JSON blocks, matching curly braces, and handling JSON-like strings.
- */
 class JsonExtractor
 {
     /**
