@@ -33,5 +33,5 @@ interface AIProviderInterface
 
     public function stream(array|string $messages, callable $executeToolsCallback): \Generator;
 
-    public function structured(array $messages, array $response_schema): Message;
+    public function structured(array $messages, string $class, array $response_schema): Message;
 }
