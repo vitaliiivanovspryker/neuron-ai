@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\Schema;
+namespace NeuronAI\StructuredOutput;
 
 class JsonExtractor
 {

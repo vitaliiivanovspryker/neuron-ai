@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\Schema;
+namespace NeuronAI\StructuredOutput;
 
 use NeuronAI\Exceptions\SchemaException;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
