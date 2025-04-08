@@ -28,7 +28,10 @@ trait HandleStructured
 
         // Get the JSON schema from the response model
         // https://github.com/spiral/json-schema-generator
-        $schema = (new Generator())->generate($class)->jsonSerialize();
+        $schema = [
+            'type' => 'object',
+            ...(new Generator())->generate($class)->jsonSerialize()
+        ];
 
         $error = '';
         do {
