@@ -7,6 +7,8 @@ class JsonExtractor
     /**
      * Attempt to find and parse a complete valid JSON string in the input.
      * Returns a JSON-encoded string on success or an empty string on failure.
+     *
+     * @throws \JsonException
      */
     public function getJson(string $input): string {
         $extractors = [
@@ -46,6 +48,8 @@ class JsonExtractor
 
     /**
      * Returns an associative array on success, or null if the parsing fails.
+     *
+     * @throws \JsonException
      */
     private function tryParse(string $maybeJson): ?array
     {
