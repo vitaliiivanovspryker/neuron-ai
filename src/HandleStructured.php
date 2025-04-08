@@ -48,7 +48,9 @@ trait HandleStructured
                 ->systemPrompt($this->instructions())
                 ->setTools($this->tools())
                 ->structured(
-                    $this->resolveChatHistory()->getMessages(), $schema
+                    $this->resolveChatHistory()->getMessages(),
+                    $class,
+                    $schema
                 );
 
             try {
