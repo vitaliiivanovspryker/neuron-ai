@@ -148,7 +148,7 @@ class AgentMonitoring implements \SplObserver
         $this->segments[
             $this->getMessageId($data->message).'-inference'
         ] = $this->inspector
-            ->startSegment(self::SEGMENT_TYPE.'-inference', $label)
+            ->startSegment(self::SEGMENT_TYPE.'-inference', "inference( {$label} )")
             ->setColor(self::SEGMENT_COLOR);
     }
 
