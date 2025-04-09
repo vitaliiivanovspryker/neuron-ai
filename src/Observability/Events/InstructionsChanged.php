@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\Events;
+namespace NeuronAI\Observability\Events;
 
 class InstructionsChanged
 {

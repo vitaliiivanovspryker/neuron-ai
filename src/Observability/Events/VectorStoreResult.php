@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\Events;
+namespace NeuronAI\Observability\Events;
 
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\RAG\Document;

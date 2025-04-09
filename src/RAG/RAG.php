@@ -4,10 +4,10 @@ namespace NeuronAI\RAG;
 
 use NeuronAI\Agent;
 use NeuronAI\Chat\Messages\Message;
-use NeuronAI\Events\InstructionsChanged;
-use NeuronAI\Events\InstructionsChanging;
-use NeuronAI\Events\VectorStoreResult;
-use NeuronAI\Events\VectorStoreSearching;
+use NeuronAI\Observability\Events\InstructionsChanged;
+use NeuronAI\Observability\Events\InstructionsChanging;
+use NeuronAI\Observability\Events\VectorStoreResult;
+use NeuronAI\Observability\Events\VectorStoreSearching;
 use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
 use NeuronAI\RAG\Embeddings\EmbeddingsProviderInterface;

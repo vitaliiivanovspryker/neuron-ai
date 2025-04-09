@@ -1,10 +1,10 @@
 <?php
 
-namespace NeuronAI\Events;
+namespace NeuronAI\Observability\Events;
 
 use NeuronAI\Chat\Messages\Message;
 
-class InferenceStart
+class MessageSaved
 {
     public function __construct(public Message $message) {}
 }

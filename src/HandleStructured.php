@@ -4,10 +4,14 @@ namespace NeuronAI;
 
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\UserMessage;
-use NeuronAI\Events\InferenceStart;
-use NeuronAI\Events\InferenceStop;
-use NeuronAI\Events\MessageSaved;
-use NeuronAI\Events\MessageSaving;
+use NeuronAI\Observability\Events\Deserialized;
+use NeuronAI\Observability\Events\Deserializing;
+use NeuronAI\Observability\Events\Extracted;
+use NeuronAI\Observability\Events\Extracting;
+use NeuronAI\Observability\Events\InferenceStart;
+use NeuronAI\Observability\Events\InferenceStop;
+use NeuronAI\Observability\Events\MessageSaved;
+use NeuronAI\Observability\Events\MessageSaving;
 use NeuronAI\Exceptions\AgentException;
 use NeuronAI\StructuredOutput\Deserializer;
 use NeuronAI\StructuredOutput\JsonExtractor;
@@ -85,14 +89,19 @@ trait HandleStructured
 
             try {
                 // Try to extract a valid JSON object from the LLM response
+                $this->notify('extracting', new Extracting($response));
                 $extractor = new JsonExtractor();
-                if (!$json = $extractor->getJson($response->getContent())) {
+                $json = $extractor->getJson($response->getContent());
+                $this->notify('extracted', new Extracted($response, $json));
+                if (!$json) {
                     throw new AgentException("The response does not contains a valid JSON Object.");
                 }
 
                 // Deserialize the JSON response from the LLM into an instance of the response model
+                $this->notify('deserializing', new Deserializing($class));
                 $deserializer = new Deserializer();
                 $obj = $deserializer->fromJson($json, $class);
+                $this->notify('deserialized', new Deserialized($class));
 
                 // Validate if the object fields respect the validation attributes
                 // https://symfony.com/doc/current/validation.html#constraints

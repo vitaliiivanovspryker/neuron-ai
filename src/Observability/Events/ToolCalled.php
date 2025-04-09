@@ -1,10 +1,10 @@
 <?php
 
-namespace NeuronAI\Events;
+namespace NeuronAI\Observability\Events;
 
 use NeuronAI\Tools\ToolInterface;
 
-class ToolCalling
+class ToolCalled
 {
     public function __construct(public ToolInterface $tool) {}
 }
