@@ -28,6 +28,11 @@ use NeuronAI\Tools\ToolProperty;
  */
 class AgentMonitoring implements \SplObserver
 {
+    use HandleToolEvents;
+    use HandleRagEvents;
+    use HandleInferenceEvents;
+    use HandleStructuredEvents;
+
     const SEGMENT_TYPE = 'neuron';
     const SEGMENT_COLOR = '#506b9b';
 
@@ -41,8 +46,8 @@ class AgentMonitoring implements \SplObserver
     public function update(\SplSubject $subject, string $event = null, $data = null): void
     {
         $methods = [
-            'chat-start' => "start",
-            'chat-stop' => "stop",
+            'chat-start' => 'start',
+            'chat-stop' => 'stop',
             'stream-start' => 'start',
             'stream-stop' => 'stop',
             'rag-start' => 'start',
@@ -51,14 +56,20 @@ class AgentMonitoring implements \SplObserver
             'structured-stop' => 'stop',
             'message-saving' => 'messageSaving',
             'message-saved' => 'messageSaved',
-            'inference-start' => "inferenceStart",
-            'inference-stop' => "inferenceStop",
-            'tool-calling' => "toolCalling",
-            'tool-called' => "toolCalled",
-            'rag-vectorstore-searching' => "vectorStoreSearching",
-            'rag-vectorstore-result' => "vectorStoreResult",
-            'rag-instructions-changing' => "instructionsChanging",
-            'rag-instructions-changed' => "instructionsChanged",
+            'inference-start' => 'inferenceStart',
+            'inference-stop' => 'inferenceStop',
+            'tool-calling' => 'toolCalling',
+            'tool-called' => 'toolCalled',
+            'structured-extracting' => 'extracting',
+            'structured-extracted' => 'extracted',
+            'structured-deserializing' => 'deserializing',
+            'structured-deserialized' => 'deserialized',
+            'validating' => 'validating',
+            'validated' => 'validated',
+            'rag-vectorstore-searching' => 'vectorStoreSearching',
+            'rag-vectorstore-result' => 'vectorStoreResult',
+            'rag-instructions-changing' => 'instructionsChanging',
+            'rag-instructions-changed' => 'instructionsChanged',
         ];
 
         if (!\is_null($event) && \array_key_exists($event, $methods)) {
@@ -97,151 +108,6 @@ class AgentMonitoring implements \SplObserver
                 ->end();
         } elseif ($this->inspector->canAddSegments()) {
             $this->inspector->transaction()->setContext($this->getContext($agent));
-        }
-    }
-
-    public function messageSaving(\NeuronAI\AgentInterface $agent, string $event, MessageSaving $data)
-    {
-        if (!$this->inspector->canAddSegments()) {
-            return;
-        }
-
-        if ($data->message instanceof ToolCallMessage || $data->message instanceof ToolCallResultMessage) {
-            $label = substr(strrchr(get_class($data->message), '\\'), 1);
-        } else {
-            $label = $data->message->getContent();
-        }
-
-        $this->segments[
-        $this->getMessageId($data->message).'-save'
-        ] = $this->inspector
-            ->startSegment(self::SEGMENT_TYPE.'-chathistory', "save( {$label} )")
-            ->setColor(self::SEGMENT_COLOR);
-    }
-
-    public function messageSaved(\NeuronAI\AgentInterface $agent, string $event, MessageSaved $data)
-    {
-        $id = $this->getMessageId($data->message).'-save';
-
-        if (!\array_key_exists($id, $this->segments)) {
-            return;
-        }
-
-        $this->segments[$id]
-            ->addContext('Message', \array_merge($data->message->jsonSerialize(), $data->message->getUsage() ? [
-                'usage' => [
-                    'input_tokens' => $data->message->getUsage()->inputTokens,
-                    'output_tokens' => $data->message->getUsage()->outputTokens,
-                ]
-            ] : []))
-            ->end();
-    }
-
-    public function inferenceStart(\NeuronAI\AgentInterface $agent, string $event, InferenceStart $data)
-    {
-        if (!$this->inspector->canAddSegments()) {
-            return;
-        }
-
-        $label = json_encode($data->message->getContent());
-
-        $this->segments[
-            $this->getMessageId($data->message).'-inference'
-        ] = $this->inspector
-            ->startSegment(self::SEGMENT_TYPE.'-inference', "inference( {$label} )")
-            ->setColor(self::SEGMENT_COLOR);
-    }
-
-    public function inferenceStop(\NeuronAI\AgentInterface $agent, string $event, InferenceStop $data)
-    {
-        $id = $this->getMessageId($data->message).'-inference';
-
-        if (\array_key_exists($id, $this->segments)) {
-            $this->segments[$id]
-                ->setContext($this->getContext($agent))
-                ->addContext('Message', $data->message)
-                ->addContext('Response', $data->response)
-                ->end();
-        }
-    }
-
-    public function toolCalling(\NeuronAI\AgentInterface $agent, string $event, ToolCalling $data)
-    {
-        if (!$this->inspector->canAddSegments()) {
-            return;
-        }
-
-        $this->segments[
-        $data->tool->getName()
-        ] = $this->inspector
-            ->startSegment(self::SEGMENT_TYPE.'-tool-call', "toolCall({$data->tool->getName()})")
-            ->setColor(self::SEGMENT_COLOR);
-    }
-
-    public function toolCalled(\NeuronAI\AgentInterface $agent, string $event, ToolCalled $data)
-    {
-        if (\array_key_exists($data->tool->getName(), $this->segments)) {
-            $this->segments[$data->tool->getName()]
-                ->addContext('Tool', $data->tool->jsonSerialize())
-                ->end();
-        }
-    }
-
-    public function vectorStoreSearching(\NeuronAI\AgentInterface $agent, string $event, VectorStoreSearching $data)
-    {
-        if (!$this->inspector->canAddSegments()) {
-            return;
-        }
-
-        $id = \md5($data->question->getContent());
-
-        $this->segments[
-        $id
-        ] = $this->inspector
-            ->startSegment(self::SEGMENT_TYPE.'-vector-search', "vectorSearch( {$data->question->getContent()} )")
-            ->setColor(self::SEGMENT_COLOR);
-    }
-
-    public function vectorStoreResult(\NeuronAI\AgentInterface $agent, string $event, VectorStoreResult $data)
-    {
-        $id = \md5($data->question->getContent());
-
-        if (\array_key_exists($id, $this->segments)) {
-            $this->segments[$id]
-                ->addContext('Data', [
-                    'question' => $data->question->getContent(),
-                    'documents' => \count($data->documents)
-                ])
-                ->end();
-        }
-    }
-
-    public function instructionsChanging(\NeuronAI\AgentInterface $agent, string $event, InstructionsChanging $data)
-    {
-        if (!$this->inspector->canAddSegments()) {
-            return;
-        }
-
-        $id = \md5($data->instructions);
-
-        $this->segments[
-            'instructions-'.$id
-        ] = $this->inspector
-            ->startSegment(self::SEGMENT_TYPE.'-instructions')
-            ->setColor(self::SEGMENT_COLOR);
-    }
-
-    public function instructionsChanged(\NeuronAI\AgentInterface $agent, string $event, InstructionsChanged $data)
-    {
-        $id = 'instructions-'.\md5($data->previous);
-
-        if (\array_key_exists($id, $this->segments)) {
-            $this->segments[$id]
-                ->addContext('Instructions', [
-                    'previous' => $data->previous,
-                    'current' => $data->current
-                ])
-                ->end();
         }
     }
 

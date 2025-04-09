@@ -13,6 +13,8 @@ use NeuronAI\Observability\Events\InferenceStop;
 use NeuronAI\Observability\Events\MessageSaved;
 use NeuronAI\Observability\Events\MessageSaving;
 use NeuronAI\Exceptions\AgentException;
+use NeuronAI\Observability\Events\Validated;
+use NeuronAI\Observability\Events\Validating;
 use NeuronAI\StructuredOutput\Deserializer;
 use NeuronAI\StructuredOutput\JsonExtractor;
 use Spiral\JsonSchemaGenerator\Generator;
@@ -89,26 +91,26 @@ trait HandleStructured
 
             try {
                 // Try to extract a valid JSON object from the LLM response
-                $this->notify('extracting', new Extracting($response));
-                $extractor = new JsonExtractor();
-                $json = $extractor->getJson($response->getContent());
-                $this->notify('extracted', new Extracted($response, $json));
+                $this->notify('structured-extracting', new Extracting($response));
+                $json = (new JsonExtractor())->getJson($response->getContent());
+                $this->notify('structured-extracted', new Extracted($response, $json));
                 if (!$json) {
                     throw new AgentException("The response does not contains a valid JSON Object.");
                 }
 
                 // Deserialize the JSON response from the LLM into an instance of the response model
-                $this->notify('deserializing', new Deserializing($class));
-                $deserializer = new Deserializer();
-                $obj = $deserializer->fromJson($json, $class);
-                $this->notify('deserialized', new Deserialized($class));
+                $this->notify('structured-deserializing', new Deserializing($class));
+                $obj = (new Deserializer())->fromJson($json, $class);
+                $this->notify('structured-deserialized', new Deserialized($class));
 
                 // Validate if the object fields respect the validation attributes
                 // https://symfony.com/doc/current/validation.html#constraints
-                $validator = Validation::createValidatorBuilder()
+                $this->notify('structured-validating', new Validating($class, $json));
+                Validation::createValidatorBuilder()
                     ->addLoader(new AttributeLoader())
-                    ->getValidator();
-                $validator->validate($obj);
+                    ->getValidator()
+                    ->validate($obj);
+                $this->notify('structured-validated', new Validated($class, $json));
 
                 // Return a hydrated instance of the response model
                 if ($obj instanceof $class) {
