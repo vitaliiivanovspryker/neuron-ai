@@ -118,10 +118,12 @@ trait HandleStructured
                     ->validate($obj);
 
                 if ($violations->count() > 0) {
+                    $info = '';
                     /** @var array<ConstraintViolation> $violation */
                     foreach ($violations as $violation) {
-                        $error .= PHP_EOL.'- '.$violation->getPropertyPath().': '.$violation->getMessage();
+                        $info .= PHP_EOL.'- '.$violation->getPropertyPath().': '.$violation->getMessage();
                     }
+                    throw new AgentException($info);
                 }
                 $this->notify('structured-validated', new Validated($class, $json));
 
