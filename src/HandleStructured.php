@@ -18,6 +18,7 @@ use NeuronAI\Observability\Events\Validating;
 use NeuronAI\StructuredOutput\Deserializer;
 use NeuronAI\StructuredOutput\JsonExtractor;
 use NeuronAI\StructuredOutput\JsonSchema;
+use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Validator\Validation;
 
@@ -103,22 +104,28 @@ trait HandleStructured
                 $obj = (new Deserializer())->fromJson($json, $class);
                 $this->notify('structured-deserialized', new Deserialized($class));
 
+                // Return a hydrated instance of the response model
+                if (!($obj instanceof $class)) {
+                    throw new AgentException("The response does not contain a valid JSON Object.");
+                }
+
                 // Validate if the object fields respect the validation attributes
                 // https://symfony.com/doc/current/validation.html#constraints
                 $this->notify('structured-validating', new Validating($class, $json));
-                Validation::createValidatorBuilder()
+                $violations = Validation::createValidatorBuilder()
                     ->addLoader(new AttributeLoader())
                     ->getValidator()
                     ->validate($obj);
+
+                if ($violations->count() > 0) {
+                    /** @var array<ConstraintViolation> $violation */
+                    foreach ($violations as $violation) {
+                        $error .= PHP_EOL.'- '.$violation->getPropertyPath().': '.$violation->getMessage();
+                    }
+                }
                 $this->notify('structured-validated', new Validated($class, $json));
 
-                // Return a hydrated instance of the response model
-                if ($obj instanceof $class) {
-                    $this->notify('structured-stop');
-                    return $obj;
-                }
-
-                $error = "It was impossible to create an instance of the original class because of a wrong response format.";
+                return $obj;
             } catch (\Exception $exception) {
                 $error = $exception->getMessage();
             }
