@@ -99,12 +99,7 @@ class RAG extends Agent
         }
 
         return $this->setInstructions(
-            new SystemPrompt(
-                background: ["You are an AI Agent used for Retrieval Augmented Generation."],
-                steps: ["Use the following pieces of context to answer the user question. "],
-                output: ["If you don't know the answer, just say that you don't know, don't try to make up an answer."],
-                context: [$context]
-            )
+            $this->instructions().PHP_EOL.PHP_EOL."# EXTRA INFORMATION AND CONTEXT".PHP_EOL.$context
         );
     }
 
