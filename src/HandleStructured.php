@@ -17,7 +17,7 @@ use NeuronAI\Observability\Events\Validated;
 use NeuronAI\Observability\Events\Validating;
 use NeuronAI\StructuredOutput\Deserializer;
 use NeuronAI\StructuredOutput\JsonExtractor;
-use Spiral\JsonSchemaGenerator\Generator;
+use NeuronAI\StructuredOutput\JsonSchema;
 use Symfony\Component\Validator\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Validator\Validation;
 
@@ -31,6 +31,7 @@ trait HandleStructured
      * @param int $maxRetry
      * @return mixed
      * @throws AgentException
+     * @throws \ReflectionException
      */
     public function structured(Message|array $messages, string $class, int $maxRetry = 1): mixed
     {
@@ -47,8 +48,7 @@ trait HandleStructured
         // Get the JSON schema from the response model
         // https://github.com/spiral/json-schema-generator
         $schema = [
-            'type' => 'object',
-            ...(new Generator())->generate($class)->jsonSerialize(),
+            ...(new JsonSchema())->generate($class),
             'additionalProperties' => false,
         ];
 
