@@ -47,7 +47,6 @@ trait HandleStructured
         }
 
         // Get the JSON schema from the response model
-        // https://github.com/spiral/json-schema-generator
         $schema = [
             ...(new JsonSchema())->generate($class),
             'additionalProperties' => false,
@@ -55,7 +54,7 @@ trait HandleStructured
 
         $error = '';
         do {
-            // Eventually add the error message from previous calls
+            // Eventually add the error message from the previous attempt
             if (!empty(trim($error))) {
                 $correctionMessage = new UserMessage(
                     "There was a problem in your previous response that generated the following errors".
@@ -94,7 +93,7 @@ trait HandleStructured
                 // Try to extract a valid JSON object from the LLM response
                 $this->notify('structured-extracting', new Extracting($response));
                 $json = (new JsonExtractor())->getJson($response->getContent());
-                $this->notify('structured-extracted', new Extracted($response, $json));
+                $this->notify('structured-extracted', new Extracted($response, $schema, $json));
                 if (!$json) {
                     throw new AgentException("The response does not contains a valid JSON Object.");
                 }
@@ -122,6 +121,7 @@ trait HandleStructured
                 }
                 $this->notify('structured-validated', new Validated($class, $json));
 
+                $this->notify('structured-stop');
                 return $obj;
             } catch (\Exception $exception) {
                 $error = $exception->getMessage();
@@ -131,6 +131,6 @@ trait HandleStructured
             $maxRetry--;
         } while ($maxRetry>=0);
 
-        throw new AgentException("The model didn't return a valid json response for {$class}.");
+        throw new AgentException("The LLM wasn't able to generate a structured response for the class {$class}.");
     }
 }
