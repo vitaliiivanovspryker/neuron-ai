@@ -16,14 +16,14 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         if ($message->getUsage() && $message->getRole() === Message::ROLE_ASSISTANT) {
             // For every new message, we store only the marginal contribution of input tokens
             // of the latest interactions.
-            $currentInputConsumption = \array_reduce($this->getMessages(), function ($carry, Message $message) {
+            $previousInputConsumption = \array_reduce($this->getMessages(), function ($carry, Message $message) {
                 if ($message->getUsage() && $message->getRole() === Message::ROLE_ASSISTANT) {
                     $carry += $message->getUsage()->inputTokens;
                 }
                 return $carry;
             }, 0);
 
-            $message->getUsage()->inputTokens = $message->getUsage()->inputTokens - $currentInputConsumption;
+            $message->getUsage()->inputTokens = $message->getUsage()->inputTokens - $previousInputConsumption;
         }
     }
 
@@ -31,8 +31,8 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
     {
         $this->updateUsedTokens($message);
 
-        $this->storeMessage($message);
         $this->history[] = $message;
+        $this->storeMessage($message);
 
         $this->cutHistoryToContextWindow();
 
@@ -54,7 +54,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
     {
         return \array_reduce($this->getMessages(), function (int $carry, Message $message) {
             if ($message->getUsage() instanceof Usage) {
-                $carry = $carry + $message->getUsage()->getTotal();
+                $carry += $message->getUsage()->getTotal();
             }
 
             return $carry;
@@ -63,17 +63,22 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     protected function cutHistoryToContextWindow(): void
     {
-        $freeMemory = $this->contextWindow - $this->calculateTotalUsage();
-
-        if ($freeMemory > 0) {
+        if ($this->getFreeMemory() >= 0) {
             return;
         }
 
         // Cut old messages
         do {
             $this->removeOldestMessage();
-            \array_unshift($this->history);
-        } while ($this->contextWindow - $this->calculateTotalUsage() < 0);
+            if (\array_shift($this->history) === null) {
+                break;
+            }
+        } while ($this->getFreeMemory() < 0);
+    }
+
+    public function getFreeMemory(): int
+    {
+        return $this->contextWindow - $this->calculateTotalUsage();
     }
 
     public function jsonSerialize(): array

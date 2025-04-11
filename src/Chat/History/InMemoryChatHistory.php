@@ -6,6 +6,11 @@ use NeuronAI\Chat\Messages\Message;
 
 class InMemoryChatHistory extends AbstractChatHistory
 {
+    public function __construct(int $contextWindow = 50000)
+    {
+        parent::__construct($contextWindow);
+    }
+
     public function removeOldestMessage(): ChatHistoryInterface
     {
         return $this;
@@ -19,7 +24,6 @@ class InMemoryChatHistory extends AbstractChatHistory
 
     protected function storeMessage(Message $message): ChatHistoryInterface
     {
-        // nothing to do for in-memory
-        return  $this;
+        return $this;
     }
 }

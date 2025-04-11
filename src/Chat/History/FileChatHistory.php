@@ -29,7 +29,6 @@ class FileChatHistory extends AbstractChatHistory
         if (\is_file($this->getFilePath())) {
             $messages = \json_decode(\file_get_contents($this->getFilePath()), true);
             $this->history = $this->unserializeMessages($messages);
-            var_dump($this->history);
         }
     }
 
