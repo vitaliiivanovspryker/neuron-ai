@@ -104,11 +104,6 @@ trait HandleStructured
                 $obj = (new Deserializer())->fromJson($json, $class);
                 $this->notify('structured-deserialized', new Deserialized($class));
 
-                // Return a hydrated instance of the response model
-                if (!($obj instanceof $class)) {
-                    throw new AgentException("The response does not contain a valid JSON Object.");
-                }
-
                 // Validate if the object fields respect the validation attributes
                 // https://symfony.com/doc/current/validation.html#constraints
                 $this->notify('structured-validating', new Validating($class, $json));
