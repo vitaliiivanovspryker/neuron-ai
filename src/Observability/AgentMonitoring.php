@@ -7,6 +7,7 @@ use Inspector\Models\Segment;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Chat\Messages\ToolCallResultMessage;
+use NeuronAI\Observability\Events\AgentError;
 use NeuronAI\Observability\Events\InstructionsChanged;
 use NeuronAI\Observability\Events\InstructionsChanging;
 use NeuronAI\Observability\Events\MessageSaved;
@@ -21,7 +22,7 @@ use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 
 /**
- * Trace your AI agent implementations to detect errors and performance bottlenecks in real-time.
+ * Trace your AI agent execution flow to detect errors and performance bottlenecks in real-time.
  *
  * Getting started with observability:
  * https://docs.neuron-ai.dev/advanced/observability
@@ -41,11 +42,16 @@ class AgentMonitoring implements \SplObserver
      */
     protected $segments = [];
 
-    public function __construct(protected Inspector $inspector) {}
+    /**
+     * @param Inspector $inspector The monitoring instance
+     * @param bool $catch Report internal agent errors
+     */
+    public function __construct(protected Inspector $inspector, protected bool $catch = true) {}
 
     public function update(\SplSubject $subject, string $event = null, $data = null): void
     {
         $methods = [
+            'error' => 'reportError',
             'chat-start' => 'start',
             'chat-stop' => 'stop',
             'stream-start' => 'start',
@@ -75,6 +81,13 @@ class AgentMonitoring implements \SplObserver
         if (!\is_null($event) && \array_key_exists($event, $methods)) {
             $method = $methods[$event];
             $this->$method($subject, $event, $data);
+        }
+    }
+
+    public function reportError(\NeuronAI\AgentInterface $agent, string $event, AgentError $data)
+    {
+        if ($this->catch) {
+            $this->inspector->reportException($data->exception);
         }
     }
 

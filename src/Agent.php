@@ -6,6 +6,7 @@ use NeuronAI\Chat\History\InMemoryChatHistory;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\ToolCallResultMessage;
 use NeuronAI\Chat\Messages\Usage;
+use NeuronAI\Observability\Events\AgentError;
 use NeuronAI\Observability\Events\MessageSaved;
 use NeuronAI\Observability\Events\MessageSaving;
 use NeuronAI\Observability\Events\InferenceStart;
@@ -40,7 +41,7 @@ class Agent implements AgentInterface
     protected AIProviderInterface $provider;
 
     /**
-     * The system message.
+     * The system instructions.
      *
      * @var string
      */
@@ -68,7 +69,12 @@ class Agent implements AgentInterface
 
         foreach ($toolCallResult->getTools() as $tool) {
             $this->notify('tool-calling', new ToolCalling($tool));
-            $tool->execute();
+            try {
+                $tool->execute();
+            } catch (\Throwable $exception) {
+                $this->notify('error', new AgentError($exception));
+                throw $exception;
+            }
             $this->notify('tool-called', new ToolCalled($tool));
         }
 

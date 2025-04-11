@@ -4,6 +4,7 @@ namespace NeuronAI;
 
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\UserMessage;
+use NeuronAI\Observability\Events\AgentError;
 use NeuronAI\Observability\Events\Deserialized;
 use NeuronAI\Observability\Events\Deserializing;
 use NeuronAI\Observability\Events\Extracted;
@@ -124,6 +125,7 @@ trait HandleStructured
                 $this->notify('structured-stop');
                 return $obj;
             } catch (\Exception $exception) {
+                $this->notify('error', new AgentError($exception));
                 $error = $exception->getMessage();
             }
 
@@ -131,6 +133,8 @@ trait HandleStructured
             $maxRetry--;
         } while ($maxRetry>=0);
 
-        throw new AgentException("The LLM wasn't able to generate a structured response for the class {$class}.");
+        $exception = new AgentException("The LLM wasn't able to generate a structured response for the class {$class}.");
+        $this->notify('error', new AgentError($exception));
+        throw $exception;
     }
 }

@@ -39,21 +39,31 @@ trait HandleStructuredEvents
 
     protected function deserializing(\NeuronAI\AgentInterface $agent, string $event, Deserializing $data)
     {
-
+        $this->segments[$data->class.'-deserialize'] = $this->inspector->startSegment('structured-deserialize', "deserialize( {$data->class} )")
+            ->setColor(self::SEGMENT_COLOR);
     }
 
     protected function deserialized(\NeuronAI\AgentInterface $agent, string $event, Deserialized $data)
     {
+        $id = $data->class.'-deserialize';
 
+        if (\array_key_exists($id, $this->segments)) {
+            $this->segments[$id]->end();
+        }
     }
 
     protected function validating(\NeuronAI\AgentInterface $agent, string $event, Validating $data)
     {
-
+        $this->segments[$data->class.'-validate'] = $this->inspector->startSegment('structured-validate', "validate( {$data->class} )")
+        ->setColor(self::SEGMENT_COLOR)->setColor(self::SEGMENT_COLOR);
     }
 
     protected function validated(\NeuronAI\AgentInterface $agent, string $event, Validated $data)
     {
+        $id = $data->class.'-validate';
 
+        if (\array_key_exists($id, $this->segments)) {
+            $this->segments[$id]->addContext('Json', \json_decode($data->json))->end();
+        }
     }
 }
