@@ -32,15 +32,19 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         $this->updateUsedTokens($message);
 
         $this->storeMessage($message);
+        $this->history[] = $message;
 
         $this->cutHistoryToContextWindow();
 
         return $this;
     }
 
-    abstract protected function storeMessage(Message $message): void;
+    abstract protected function storeMessage(Message $message): ChatHistoryInterface;
 
-    abstract public function getMessages(): array;
+    public function getMessages(): array
+    {
+        return $this->history;
+    }
 
     abstract public function removeOldestMessage(): ChatHistoryInterface;
 
@@ -68,6 +72,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         // Cut old messages
         do {
             $this->removeOldestMessage();
+            \array_unshift($this->history);
         } while ($this->contextWindow - $this->calculateTotalUsage() < 0);
     }
 
