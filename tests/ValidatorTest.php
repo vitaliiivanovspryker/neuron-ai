@@ -22,4 +22,18 @@ class ValidatorTest extends TestCase
 
         $this->assertEquals(0, $violations->count());
     }
+
+    public function test_not_valid()
+    {
+        $obj = new Person();
+        $obj->lastName = 'Doe';
+
+        $violations = Validation::createValidatorBuilder()
+            ->addLoader(new AttributeLoader())
+            ->getValidator()
+            ->validate($obj);
+
+        $this->assertEquals(1, $violations->count());
+        $this->assertEquals('firstName', $violations->get(0)->getPropertyPath());
+    }
 }
