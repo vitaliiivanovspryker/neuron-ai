@@ -131,6 +131,6 @@ trait HandleStructured
             $maxRetry--;
         } while ($maxRetry>=0);
 
-        throw new AgentException("The model didn't return a valid structured message for {$class}.");
+        throw new AgentException("The model didn't return a valid json response for {$class}.");
     }
 }
