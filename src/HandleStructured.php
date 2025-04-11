@@ -125,7 +125,7 @@ trait HandleStructured
                 $this->notify('structured-stop');
                 return $obj;
             } catch (\Exception $exception) {
-                $this->notify('error', new AgentError($exception));
+                $this->notify('error', new AgentError($exception, false));
                 $error = $exception->getMessage();
             }
 
