@@ -2,27 +2,12 @@
 
 namespace NeuronAI;
 
-use NeuronAI\Chat\History\InMemoryChatHistory;
-use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\ToolCallResultMessage;
-use NeuronAI\Chat\Messages\Usage;
 use NeuronAI\Observability\Events\AgentError;
-use NeuronAI\Observability\Events\MessageSaved;
-use NeuronAI\Observability\Events\MessageSaving;
-use NeuronAI\Observability\Events\InferenceStart;
-use NeuronAI\Observability\Events\InferenceStop;
 use NeuronAI\Observability\Events\ToolCalled;
 use NeuronAI\Observability\Events\ToolCalling;
-use NeuronAI\Exceptions\InvalidMessageInstance;
-use NeuronAI\Exceptions\MissingCallbackParameter;
-use NeuronAI\Exceptions\ToolCallableNotSet;
-use NeuronAI\Observability\AgentMonitoring;
 use NeuronAI\Providers\AIProviderInterface;
-use NeuronAI\Chat\Messages\Message;
-use NeuronAI\Chat\Messages\UserMessage;
-use NeuronAI\Tools\Tool;
 use NeuronAI\Chat\Messages\ToolCallMessage;
-use NeuronAI\Tools\ToolInterface;
 
 class Agent implements AgentInterface
 {
@@ -58,7 +43,7 @@ class Agent implements AgentInterface
         return $this;
     }
 
-    public function provider(): AIProviderInterface
+    protected function provider(): AIProviderInterface
     {
         return $this->provider;
     }
@@ -81,7 +66,7 @@ class Agent implements AgentInterface
         return $toolCallResult;
     }
 
-    public function instructions(): string
+    protected function instructions(): string
     {
         return $this->instructions;
     }

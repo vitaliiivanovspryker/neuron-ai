@@ -18,7 +18,7 @@ trait ResolveTools
      *
      * @return array<ToolInterface>
      */
-    public function tools(): array
+    protected function tools(): array
     {
         return $this->tools;
     }
