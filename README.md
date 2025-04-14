@@ -274,6 +274,9 @@ Learn more about RAG on the [documentation](https://docs.neuron-ai.dev/rag).
 For many applications, such as chatbots, Agents need to respond to users directly in natural language.
 However, there are scenarios where we need Agents to understand natural language, but output in a structured format.
 
+One common use-case is extracting data from text to insert into a database or use with some other downstream system.
+This guide covers a few strategies for getting structured outputs from the agent.
+
 ```php
 // Define the output structure with a PHP class, including validation constraints.
 class Person
