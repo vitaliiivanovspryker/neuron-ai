@@ -85,26 +85,26 @@ class JsonExtractor
         $offset = 0;
         $fenceTag = '```json';
 
-        while (($startFence = strpos($text, $fenceTag, $offset)) !== false) {
+        while (($startFence = \strpos($text, $fenceTag, $offset)) !== false) {
             // Find the next triple-backtick fence AFTER the "```json"
-            $closeFence = strpos($text, '```', $startFence + strlen($fenceTag));
+            $closeFence = \strpos($text, '```', $startFence + \strlen($fenceTag));
             if ($closeFence === false) {
                 // No closing fence found, stop scanning
                 break;
             }
 
             // Substring that represents the code block between "```json" and "```"
-            $codeBlock = substr(
+            $codeBlock = \substr(
                 $text,
-                $startFence + strlen($fenceTag),
-                $closeFence - ($startFence + strlen($fenceTag))
+                $startFence + \strlen($fenceTag),
+                $closeFence - ($startFence + \strlen($fenceTag))
             );
 
             // Now find the first '{' and last '}' within this code block
-            $firstBrace = strpos($codeBlock, '{');
-            $lastBrace = strrpos($codeBlock, '}');
+            $firstBrace = \strpos($codeBlock, '{');
+            $lastBrace = \strrpos($codeBlock, '}');
             if ($firstBrace !== false && $lastBrace !== false && $firstBrace < $lastBrace) {
-                $jsonCandidate = substr($codeBlock, $firstBrace, $lastBrace - $firstBrace + 1);
+                $jsonCandidate = \substr($codeBlock, $firstBrace, $lastBrace - $firstBrace + 1);
                 $candidates[] = $jsonCandidate;
             }
 
@@ -125,16 +125,16 @@ class JsonExtractor
             return null;
         }
 
-        if (!$firstOpen = strpos($trimmed, '{')) {
+        if (!$firstOpen = \strpos($trimmed, '{')) {
             return null;
         }
 
-        $lastClose = strrpos($trimmed, '}');
+        $lastClose = \strrpos($trimmed, '}');
         if ($lastClose === false || $lastClose < $firstOpen) {
             return null;
         }
 
-        return substr($trimmed, $firstOpen, $lastClose - $firstOpen + 1);
+        return \substr($trimmed, $firstOpen, $lastClose - $firstOpen + 1);
     }
 
     /**
@@ -154,7 +154,7 @@ class JsonExtractor
         $bracketCount = 0;
         $inString = false;
         $escape = false;
-        $len = strlen($text);
+        $len = \strlen($text);
 
         for ($i = 0; $i < $len; $i++) {
             $char = $text[$i];
