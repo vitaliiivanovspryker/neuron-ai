@@ -4,6 +4,18 @@ namespace NeuronAI\StructuredOutput;
 
 class JsonExtractor
 {
+    protected array $extractors;
+
+    public function __construct()
+    {
+        $this->extractors = [
+            fn($text) => [$text],                   // Try as it is
+            fn($text) => $this->findByMarkdown($text),
+            fn($text) => $this->findByBrackets($text),
+            fn($text) => $this->findJSONLikeStrings($text),
+        ];
+    }
+
     /**
      * Attempt to find and parse a complete valid JSON string in the input.
      * Returns a JSON-encoded string on success or an empty string on failure.
@@ -11,31 +23,29 @@ class JsonExtractor
      * @throws \JsonException
      */
     public function getJson(string $input): string {
-        $extractors = [
-            fn($text) => [$text],                   // Try as it is
-            fn($text) => $this->findByMarkdown($text),
-            fn($text) => [$this->findByBrackets($text)],
-            fn($text) => $this->findJSONLikeStrings($text),
-        ];
-
-        foreach ($extractors as $extractor) {
+        foreach ($this->extractors as $extractor) {
             $candidates = $extractor($input);
             if (empty($candidates)) {
                 continue;
             }
-            if (is_string($candidates)) {
+            if (\is_string($candidates)) {
                 $candidates = [$candidates];
             }
 
             foreach ($candidates as $candidate) {
-                if (!is_string($candidate) || trim($candidate) === '') {
+                if (!\is_string($candidate) || empty(trim($candidate))) {
                     continue;
                 }
 
-                $data = $this->tryParse($candidate);
+                try {
+                    $data = $this->tryParse($candidate);
+                } catch (\Throwable $exception) {
+                    continue;
+                }
+
                 if ($data !== null) {
                     // Re-encode in canonical JSON form
-                    $result = json_encode($data);
+                    $result = \json_encode($data);
                     if ($result !== false) {
                         return $result;
                     }
@@ -88,7 +98,7 @@ class JsonExtractor
                 break;
             }
 
-            // Substring that represents the code block between ```json and next ```
+            // Substring that represents the code block between "```json" and "```"
             $codeBlock = substr(
                 $text,
                 $startFence + strlen($fenceTag),
