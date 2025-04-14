@@ -284,12 +284,19 @@ class Person
     public string $preference;
 }
 
+// Inform the agent
+class MyAgent extends Agent
+{
+    ...
+
+    public function getOutputClass(): string
+    {
+        return Person::class;
+    }
+}
 
 // Talk to the agent requiring the structured output
-$person = MyAgent::make()->structured(
-    Person::class,
-    new UserMessage("I'm John and I like pizza!")
-);
+$person = MyAgent::make()->structured(new UserMessage("I'm John and I like pizza!"));
 
 echo $perso->name ' like '.$person->preference;
 // John like pizza

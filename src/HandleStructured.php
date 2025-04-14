@@ -35,9 +35,11 @@ trait HandleStructured
      * @throws AgentException
      * @throws \ReflectionException
      */
-    public function structured(string $class, Message|array $messages, int $maxRetry = 1): mixed
+    public function structured(Message|array $messages, ?string $class = null, int $maxRetry = 1): mixed
     {
         $this->notify('structured-start');
+
+        $class = $class ?? $this->getOutputClass();
 
         $this->fillChatHistory($messages);
 
@@ -127,5 +129,10 @@ trait HandleStructured
         );
         $this->notify('error', new AgentError($exception));
         throw $exception;
+    }
+
+    public function getOutputClass(): string
+    {
+        throw new AgentException('You need to specify an output class.');
     }
 }
