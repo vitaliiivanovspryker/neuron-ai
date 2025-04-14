@@ -295,7 +295,7 @@ echo $perso->name ' like '.$person->preference;
 // John like pizza
 ```
 
-Learn more about Structured Response on the [documentation](https://docs.neuron-ai.dev/structured-response).
+Learn more about Structured Response on the [documentation](https://docs.neuron-ai.dev/structured-output).
 
 ## Official documentation
 
