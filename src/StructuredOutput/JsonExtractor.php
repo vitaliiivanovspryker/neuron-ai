@@ -19,10 +19,9 @@ class JsonExtractor
     /**
      * Attempt to find and parse a complete valid JSON string in the input.
      * Returns a JSON-encoded string on success or an empty string on failure.
-     *
-     * @throws \JsonException
      */
-    public function getJson(string $input): string {
+    public function getJson(string $input): ?string
+    {
         foreach ($this->extractors as $extractor) {
             $candidates = $extractor($input);
             if (empty($candidates)) {
@@ -53,7 +52,7 @@ class JsonExtractor
             }
         }
 
-        return '';
+        return null;
     }
 
     /**
