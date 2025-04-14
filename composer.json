@@ -17,8 +17,7 @@
         "symfony/property-info": "^6.4 || ^7.0",
         "symfony/serializer": "^6.4 || ^7.0",
         "symfony/validator": "^6.4 || ^7.0",
-        "symfony/property-access": "^7.2",
-        "phpdocumentor/reflection-docblock": "^5.6"
+        "symfony/property-access": "^7.2"
     },
     "suggest": {
         "elasticsearch/elasticsearch": "^7.0|^8.0",
