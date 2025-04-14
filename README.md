@@ -13,6 +13,20 @@
 
 **[Go to the official documentation](https://neuron.inspector.dev/)**
 
+## Examples
+
+- [Install](#install)
+- [Create an Agent](#create)
+- [Talk to the Agent](#talk)
+- [Supported LLM Providers](#providers)
+- [Tools & Function Calls](#tools)
+- [MCP server connector](#mcp)
+- [Implement RAG systems](#rag)
+- [Structured Output](#structured)
+- [Official Documentation](#documentation)
+
+<a name="install">
+
 ## Install
 
 Install the latest version of the package:
@@ -20,6 +34,8 @@ Install the latest version of the package:
 ```
 composer require inspector-apm/neuron-ai
 ```
+
+<a name="create">
 
 ## Create an Agent
 
@@ -65,6 +81,8 @@ class YouTubeAgent extends Agent
 The `SystemPrompt` class is designed to take your base instructions and build a consistent prompt for the underlying model
 reducing the effort for prompt engineering.
 
+<a name="talk">
+
 ## Talk to the Agent
 
 Send a prompt to the agent to get a response from the underlying LLM:
@@ -86,6 +104,8 @@ echo $response->getContent();
 
 As you can see in the example above, the Agent automatically has memory of the ongoing conversation. Learn more about memory in the [documentation](https://docs.neuron-ai.dev/chat-history-and-memory).
 
+<a name="providers">
+
 ## Supported LLM Providers
 
 With Neuron you can switch between LLM providers with just one line of code, without any impact on your agent implementation.
@@ -96,6 +116,8 @@ Supported providers:
 - OpenAI
 - Mistral
 - Deepseek
+
+<a name="tools">
 
 ## Tools & Function Calls
 
@@ -157,6 +179,8 @@ class YouTubeAgent extends Agent
 ```
 
 Learn more about Tools on the [documentation](https://docs.neuron-ai.dev/tools-and-function-calls).
+
+<a name="mcp">
 
 ## MCP server connector
 
@@ -222,6 +246,8 @@ class SEOAgent extends Agent
 
 Learn more about MCP connector on the [documentation](https://docs.neuron-ai.dev/advanced/mcp-servers-connection).
 
+<a name="rag">
+
 ## Implement RAG systems
 
 For RAG use case, you must extend the `NeuronAI\RAG\RAG` class instead of the default Agent class.
@@ -270,6 +296,8 @@ class MyChatBot extends RAG
 
 Learn more about RAG on the [documentation](https://docs.neuron-ai.dev/rag).
 
+<a name="structured">
+
 ## Structured Output
 For many applications, such as chatbots, Agents need to respond to users directly in natural language.
 However, there are scenarios where we need Agents to understand natural language, but output in a structured format.
@@ -302,6 +330,8 @@ echo $person->name ' like '.$person->preference;
 ```
 
 Learn more about Structured Output on the [documentation](https://docs.neuron-ai.dev/advanced/structured-output).
+
+<a name="documentation">
 
 ## Official documentation
 
