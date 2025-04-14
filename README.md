@@ -270,6 +270,33 @@ class MyChatBot extends RAG
 
 Learn more about RAG on the [documentation](https://docs.neuron-ai.dev/rag).
 
+## Structured Output
+For many applications, such as chatbots, Agents need to respond to users directly in natural language.
+However, there are scenarios where we need Agents to understand natural language, but output in a structured format.
+
+```php
+// Define the output structure with a PHP class, including validation constraints.
+class Person
+{
+    #[Assert\NotBlank()]
+    public string $name;
+
+    public string $preference;
+}
+
+
+// Talk to the agent requiring the structured output
+$person = MyAgent::make()->structured(
+    Person::class,
+    new UserMessage("I'm John and I like pizza!")
+);
+
+echo $perso->name ' like '.$person->preference;
+// John like pizza
+```
+
+Learn more about Structured Response on the [documentation](https://docs.neuron-ai.dev/structured-response).
+
 ## Official documentation
 
 **[Go to the official documentation](https://neuron.inspector.dev/)**

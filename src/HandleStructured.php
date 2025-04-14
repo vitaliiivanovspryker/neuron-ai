@@ -35,7 +35,7 @@ trait HandleStructured
      * @throws AgentException
      * @throws \ReflectionException
      */
-    public function structured(Message|array $messages, string $class, int $maxRetry = 1): mixed
+    public function structured(string $class, Message|array $messages, int $maxRetry = 1): mixed
     {
         $this->notify('structured-start');
 
