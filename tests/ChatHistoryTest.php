@@ -11,16 +11,6 @@ use PHPUnit\Framework\TestCase;
 
 class ChatHistoryTest extends TestCase
 {
-    /**
-     * Sets up the fixture, for example, open a network connection.
-     * This method is called before a test is executed.
-     *
-     * @throws \Exception
-     */
-    public function setUp(): void
-    {
-    }
-
     public function test_chat_history_instance()
     {
         $history = new InMemoryChatHistory();
