@@ -291,7 +291,7 @@ $person = MyAgent::make()->structured(
     Person::class
 );
 
-echo $perso->name ' like '.$person->preference;
+echo $person->name ' like '.$person->preference;
 // John like pizza
 ```
 
