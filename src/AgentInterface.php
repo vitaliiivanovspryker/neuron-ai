@@ -25,5 +25,5 @@ interface AgentInterface extends \SplSubject
 
     public function stream(Message|array $messages): \Generator;
 
-    public function structured(Message|array $messages, ?string $class = null, int $maxRetries): mixed;
+    public function structured(Message|array $messages, ?string $class = null, int $maxRetries = 1): mixed;
 }
