@@ -7,7 +7,6 @@ use NeuronAI\Chat\History\FileChatHistory;
 use NeuronAI\Chat\History\InMemoryChatHistory;
 use NeuronAI\Chat\Messages\Usage;
 use NeuronAI\Chat\Messages\UserMessage;
-use NeuronAI\Exceptions\ChatHistoryException;
 use PHPUnit\Framework\TestCase;
 
 class ChatHistoryTest extends TestCase
@@ -55,9 +54,6 @@ class ChatHistoryTest extends TestCase
         $this->assertCount(0, $history->getMessages());
     }
 
-    /**
-     * @throws ChatHistoryException
-     */
     public function test_file_chat_history()
     {
         $history = new FileChatHistory(__DIR__, 'test');
@@ -72,9 +68,6 @@ class ChatHistoryTest extends TestCase
         $this->assertCount(0, $history->getMessages());
     }
 
-    /**
-     * @throws ChatHistoryException
-     */
     public function test_file_chat_history_init()
     {
         $history = new FileChatHistory(__DIR__, 'test');
@@ -84,5 +77,20 @@ class ChatHistoryTest extends TestCase
         $history = new FileChatHistory(__DIR__, 'test');
         $this->assertCount(1, $history->getMessages());
         $history->flushAll();
+    }
+
+    public function test_tokens_calculation()
+    {
+        $message = new UserMessage('Hello!');
+        $message->setUsage(new Usage(100, 100));
+
+        $history = new InMemoryChatHistory(300);
+        $history->addMessage($message);
+        $this->assertEquals(200, $history->calculateTotalUsage());
+        $this->assertEquals(100, $history->getFreeMemory());
+
+        $history->addMessage($message);
+        $this->assertEquals(100, $history->getFreeMemory());
+        $this->assertEquals(200, $history->calculateTotalUsage());
     }
 }
