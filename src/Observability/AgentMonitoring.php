@@ -137,7 +137,7 @@ class AgentMonitoring implements \SplObserver
         return [
             'Agent' => [
                 'instructions' => $agent->instructions(),
-                'provider' => get_class($agent->provider()),
+                'provider' => get_class($agent->resolveProvider()),
             ],
             'Tools' => \array_map(function (Tool $tool) {
                 return [

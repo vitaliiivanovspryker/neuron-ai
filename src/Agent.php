@@ -6,24 +6,17 @@ use NeuronAI\Chat\Messages\ToolCallResultMessage;
 use NeuronAI\Observability\Events\AgentError;
 use NeuronAI\Observability\Events\ToolCalled;
 use NeuronAI\Observability\Events\ToolCalling;
-use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 
 class Agent implements AgentInterface
 {
     use StaticConstructor;
+    use ResolveProvider;
     use ResolveTools;
     use ResolveChatHistory;
     use HandleChat;
     use HandleStream;
     use HandleStructured;
-
-    /**
-     * The AI provider instance.
-     *
-     * @var AIProviderInterface
-     */
-    protected AIProviderInterface $provider;
 
     /**
      * The system instructions.
@@ -36,17 +29,6 @@ class Agent implements AgentInterface
      * @var array<\SplObserver>
      */
     private array $observers = [];
-
-    public function setProvider(AIProviderInterface $provider): AgentInterface
-    {
-        $this->provider = $provider;
-        return $this;
-    }
-
-    protected function provider(): AIProviderInterface
-    {
-        return $this->provider;
-    }
 
     protected function executeTools(ToolCallMessage $toolCallMessage): ToolCallResultMessage
     {
@@ -66,12 +48,12 @@ class Agent implements AgentInterface
         return $toolCallResult;
     }
 
-    protected function instructions(): string
+    public function instructions(): string
     {
         return $this->instructions;
     }
 
-    public function setInstructions(string $instructions): AgentInterface
+    public function withInstructions(string $instructions): AgentInterface
     {
         $this->instructions = $instructions;
         return $this;

@@ -9,9 +9,9 @@ use NeuronAI\Tools\ToolInterface;
 
 interface AgentInterface extends \SplSubject
 {
-    public function setProvider(AIProviderInterface $provider): AgentInterface;
+    public function withProvider(AIProviderInterface $provider): AgentInterface;
 
-    public function setInstructions(string $instructions): AgentInterface;
+    public function withInstructions(string $instructions): AgentInterface;
 
     public function addTool(ToolInterface $tool): AgentInterface;
 
