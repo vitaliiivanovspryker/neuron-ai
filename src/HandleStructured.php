@@ -29,13 +29,13 @@ trait HandleStructured
      * Enforce a structured response.
      *
      * @param Message|array $messages
-     * @param string $class
-     * @param int $maxRetry
+     * @param string|null $class
+     * @param int $maxRetries
      * @return mixed
      * @throws AgentException
      * @throws \ReflectionException
      */
-    public function structured(Message|array $messages, ?string $class = null, int $maxRetry = 1): mixed
+    public function structured(Message|array $messages, ?string $class = null, int $maxRetries = 1): mixed
     {
         $this->notify('structured-start');
 
