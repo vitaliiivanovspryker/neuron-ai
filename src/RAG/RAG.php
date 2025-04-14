@@ -98,7 +98,7 @@ class RAG extends Agent
             $context .= $document->content.' ';
         }
 
-        return $this->setInstructions(
+        return $this->withInstructions(
             $this->instructions().PHP_EOL.PHP_EOL."# EXTRA INFORMATION AND CONTEXT".PHP_EOL.$context
         );
     }
