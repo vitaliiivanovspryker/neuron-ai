@@ -39,6 +39,7 @@ class ChatHistoryTest extends TestCase
     {
         $message = new UserMessage('Hello!');
         $message->setUsage(new Usage(100, 100));
+
         $history = new InMemoryChatHistory(300);
         $history->addMessage($message);
         $history->addMessage($message);
@@ -71,6 +72,9 @@ class ChatHistoryTest extends TestCase
         $this->assertCount(0, $history->getMessages());
     }
 
+    /**
+     * @throws ChatHistoryException
+     */
     public function test_file_chat_history_init()
     {
         $history = new FileChatHistory(__DIR__, 'test');

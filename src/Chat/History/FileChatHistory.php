@@ -21,16 +21,14 @@ class FileChatHistory extends AbstractChatHistory
             throw new ChatHistoryException("Directory '{$this->directory}' does not exist");
         }
 
-        $this->initHistory();
+        $this->init();
     }
 
-    protected function initHistory(): void
+    protected function init(): void
     {
         if (\is_file($this->getFilePath())) {
             $messages = \json_decode(\file_get_contents($this->getFilePath()), true);
             $this->history = $this->unserializeMessages($messages);
-        } else {
-            $this->history = [];
         }
     }
 
@@ -39,20 +37,14 @@ class FileChatHistory extends AbstractChatHistory
         return $this->directory . DIRECTORY_SEPARATOR . $this->prefix.$this->key.$this->ext;
     }
 
-    protected function storeMessage(Message $message): void
+    protected function storeMessage(Message $message): ChatHistoryInterface
     {
-        $this->history[] = $message;
         $this->updateFile();
-    }
-
-    public function getMessages(): array
-    {
-        return $this->history;
+        return $this;
     }
 
     public function removeOldestMessage(): ChatHistoryInterface
     {
-        \array_unshift($this->history);
         $this->updateFile();
         return $this;
     }
