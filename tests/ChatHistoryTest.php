@@ -51,7 +51,7 @@ class ChatHistoryTest extends TestCase
         $history = new InMemoryChatHistory();
         $history->addMessage(new UserMessage('Hello!'));
         $history->addMessage(new UserMessage('Hello2!'));
-        $history->clear();
+        $history->flushAll();
         $this->assertCount(0, $history->getMessages());
     }
 
@@ -67,7 +67,7 @@ class ChatHistoryTest extends TestCase
         $this->assertFileExists(__DIR__.DIRECTORY_SEPARATOR.'neuron_test.chat');
         $this->assertCount(1, $history->getMessages());
 
-        $history->clear();
+        $history->flushAll();
         $this->assertFileDoesNotExist(__DIR__.DIRECTORY_SEPARATOR.'neuron_test.chat');
         $this->assertCount(0, $history->getMessages());
     }
@@ -83,6 +83,6 @@ class ChatHistoryTest extends TestCase
 
         $history = new FileChatHistory(__DIR__, 'test');
         $this->assertCount(1, $history->getMessages());
-        $history->clear();
+        $history->flushAll();
     }
 }

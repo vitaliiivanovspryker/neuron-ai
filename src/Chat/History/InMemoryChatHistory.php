@@ -16,9 +16,8 @@ class InMemoryChatHistory extends AbstractChatHistory
         return $this;
     }
 
-    public function clear(): ChatHistoryInterface
+    protected function clear(): ChatHistoryInterface
     {
-        $this->history = [];
         return $this;
     }
 

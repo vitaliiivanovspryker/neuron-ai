@@ -15,13 +15,7 @@ trait HandleStream
     {
         $this->notify('stream-start');
 
-        $messages = is_array($messages) ? $messages : [$messages];
-
-        foreach ($messages as $message) {
-            $this->notify('message-saving', new MessageSaving($message));
-            $this->resolveChatHistory()->addMessage($message);
-            $this->notify('message-saved', new MessageSaved($message));
-        }
+        $this->fillChatHistory($messages);
 
         $stream = $this->provider()
             ->systemPrompt($this->instructions())
@@ -53,8 +47,7 @@ trait HandleStream
         $response->setUsage($usage);
 
         // Avoid double saving due to the recursive call.
-        $history = $this->resolveChatHistory()->getMessages();
-        $last = \end($history);
+        $last = $this->resolveChatHistory()->getLastMessage();
         if ($response->getRole() !== $last->getRole()) {
             $this->notify('message-saving', new MessageSaving($response));
             $this->resolveChatHistory()->addMessage($response);

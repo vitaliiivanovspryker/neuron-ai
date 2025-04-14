@@ -39,13 +39,7 @@ trait HandleStructured
     {
         $this->notify('structured-start');
 
-        $messages = is_array($messages) ? $messages : [$messages];
-
-        foreach ($messages as $lastMessage) {
-            $this->notify('message-saving', new MessageSaving($lastMessage));
-            $this->resolveChatHistory()->addMessage($lastMessage);
-            $this->notify('message-saved', new MessageSaved($lastMessage));
-        }
+        $this->fillChatHistory($messages);
 
         // Get the JSON schema from the response model
         $schema = [
@@ -68,26 +62,21 @@ trait HandleStructured
             }
 
             $messages = $this->resolveChatHistory()->getMessages();
-            $lastMessage = \end($messages);
 
             $this->notify(
                 'inference-start',
-                new InferenceStart($lastMessage)
+                new InferenceStart($this->resolveChatHistory()->getLastMessage())
             );
 
             // Call the LLM structured interface
             $response = $this->provider()
                 ->systemPrompt($this->instructions())
                 ->setTools($this->tools())
-                ->structured(
-                    $messages,
-                    $class,
-                    $schema
-                );
+                ->structured($messages, $class, $schema);
 
             $this->notify(
                 'inference-stop',
-                new InferenceStop($lastMessage, $response)
+                new InferenceStop($this->resolveChatHistory()->getLastMessage(), $response)
             );
 
             try {
@@ -133,7 +122,9 @@ trait HandleStructured
             $maxRetry--;
         } while ($maxRetry>=0);
 
-        $exception = new AgentException("The LLM wasn't able to generate a structured response for the class {$class}.");
+        $exception = new AgentException(
+            "The LLM wasn't able to generate a structured response for the class {$class}."
+        );
         $this->notify('error', new AgentError($exception));
         throw $exception;
     }

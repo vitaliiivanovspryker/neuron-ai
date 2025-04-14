@@ -49,7 +49,7 @@ class FileChatHistory extends AbstractChatHistory
         return $this;
     }
 
-    public function clear(): ChatHistoryInterface
+    protected function clear(): ChatHistoryInterface
     {
         if (!\unlink($this->getFilePath())) {
             throw new ChatHistoryException("Unable to delete file '{$this->getFilePath()}'");

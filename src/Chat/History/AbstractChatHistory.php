@@ -46,9 +46,21 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         return $this->history;
     }
 
+    public function getLastMessage(): Message
+    {
+        return \end($this->history);
+    }
+
     abstract public function removeOldestMessage(): ChatHistoryInterface;
 
-    abstract public function clear(): ChatHistoryInterface;
+    abstract protected function clear(): ChatHistoryInterface;
+
+    public function flushAll(): ChatHistoryInterface
+    {
+        $this->clear();
+        $this->history = [];
+        return $this;
+    }
 
     public function calculateTotalUsage(): int
     {

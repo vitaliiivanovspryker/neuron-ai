@@ -27,19 +27,11 @@ trait HandleChat
         try {
             $this->notify('chat-start');
 
-            $messages = is_array($messages) ? $messages : [$messages];
-
-            foreach ($messages as $message) {
-                $this->notify('message-saving', new MessageSaving($message));
-                $this->resolveChatHistory()->addMessage($message);
-                $this->notify('message-saved', new MessageSaved($message));
-            }
-
-            $message = \end($messages);
+            $this->fillChatHistory($messages);
 
             $this->notify(
                 'inference-start',
-                new InferenceStart($message)
+                new InferenceStart($this->resolveChatHistory()->getLastMessage())
             );
 
             $response = $this->provider()
@@ -51,7 +43,7 @@ trait HandleChat
 
             $this->notify(
                 'inference-stop',
-                new InferenceStop($message, $response)
+                new InferenceStop($this->resolveChatHistory()->getLastMessage(), $response)
             );
 
             if ($response instanceof ToolCallMessage) {
