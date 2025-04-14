@@ -121,8 +121,8 @@ trait HandleStructured
             }
 
             // If something goes wrong, retry informing the model of the error
-            $maxRetry--;
-        } while ($maxRetry>=0);
+            $maxRetries--;
+        } while ($maxRetries>=0);
 
         $exception = new AgentException(
             "The LLM wasn't able to generate a structured response for the class {$class}."
