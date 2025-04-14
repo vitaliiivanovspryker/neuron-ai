@@ -71,7 +71,7 @@ trait HandleStructured
             );
 
             // Call the LLM structured interface
-            $response = $this->provider()
+            $response = $this->resolveProvider()
                 ->systemPrompt($this->instructions())
                 ->setTools($this->tools())
                 ->structured($messages, $class, $schema);

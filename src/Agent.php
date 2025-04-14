@@ -48,15 +48,15 @@ class Agent implements AgentInterface
         return $toolCallResult;
     }
 
-    public function instructions(): string
-    {
-        return $this->instructions;
-    }
-
     public function withInstructions(string $instructions): AgentInterface
     {
         $this->instructions = $instructions;
         return $this;
+    }
+
+    public function instructions(): string
+    {
+        return $this->instructions;
     }
 
     private function initEventGroup(string $event = "*"): void

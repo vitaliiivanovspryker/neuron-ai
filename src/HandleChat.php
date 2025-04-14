@@ -34,7 +34,7 @@ trait HandleChat
                 new InferenceStart($this->resolveChatHistory()->getLastMessage())
             );
 
-            $response = $this->provider()
+            $response = $this->resolveProvider()
                 ->systemPrompt($this->instructions())
                 ->setTools($this->tools())
                 ->chat(

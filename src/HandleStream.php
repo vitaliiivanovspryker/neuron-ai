@@ -17,7 +17,7 @@ trait HandleStream
 
         $this->fillChatHistory($messages);
 
-        $stream = $this->provider()
+        $stream = $this->resolveProvider()
             ->systemPrompt($this->instructions())
             ->setTools($this->tools())
             ->stream(

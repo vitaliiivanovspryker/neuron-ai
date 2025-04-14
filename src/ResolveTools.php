@@ -24,6 +24,16 @@ trait ResolveTools
     }
 
     /**
+     * @return array<ToolInterface>
+     */
+    public function getTools(): array
+    {
+        return empty($this->tools)
+            ? $this->tools()
+            : $this->tools;
+    }
+
+    /**
      * Add a tool.
      *
      * @param ToolInterface $tool

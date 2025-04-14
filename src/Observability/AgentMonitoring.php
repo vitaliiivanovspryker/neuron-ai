@@ -147,7 +147,7 @@ class AgentMonitoring implements \SplObserver
                         return $property->jsonSerialize();
                     }, $tool->getProperties()),
                 ];
-            }, $agent->tools()??[]),
+            }, $agent->getTools()??[]),
             //'Messages' => $agent->resolveChatHistory()->getMessages(),
         ];
     }

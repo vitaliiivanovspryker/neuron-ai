@@ -11,13 +11,19 @@ interface AgentInterface extends \SplSubject
 {
     public function withProvider(AIProviderInterface $provider): AgentInterface;
 
+    public function resolveProvider(): AIProviderInterface;
+
     public function withInstructions(string $instructions): AgentInterface;
+
+    public function instructions(): string;
 
     public function addTool(ToolInterface $tool): AgentInterface;
 
-    public function resolveChatHistory(): AbstractChatHistory;
+    public function getTools(): array;
 
     public function withChatHistory(AbstractChatHistory $chatHistory): AgentInterface;
+
+    public function resolveChatHistory(): AbstractChatHistory;
 
     public function observe(\SplObserver $observer, string $event = "*"): AgentInterface;
 
