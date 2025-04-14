@@ -32,7 +32,7 @@ trait ResolveChatHistory
      *
      * @return AbstractChatHistory
      */
-    public function chatHistory(): AbstractChatHistory
+    protected function chatHistory(): AbstractChatHistory
     {
         return new InMemoryChatHistory();
     }
