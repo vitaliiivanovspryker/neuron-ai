@@ -2,7 +2,7 @@
 
 namespace NeuronAI\StructuredOutput;
 
-use NeuronAI\Exceptions\SchemaException;
+use NeuronAI\Exceptions\NeuronException;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -38,7 +38,7 @@ class Deserializer
         try {
             return $this->serializer->deserialize($jsonData, $responseModel, 'json');
         } catch (\Throwable $exception) {
-            throw new SchemaException($exception->getMessage() . " - Data: {$jsonData} - Class: {$responseModel}");
+            throw new NeuronException($exception->getMessage() . " - Data: {$jsonData} - Class: {$responseModel}");
         }
     }
 
