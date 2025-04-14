@@ -131,7 +131,7 @@ trait HandleStructured
         throw $exception;
     }
 
-    public function getOutputClass(): string
+    protected function getOutputClass(): string
     {
         throw new AgentException('You need to specify an output class.');
     }

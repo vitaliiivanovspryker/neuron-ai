@@ -86,7 +86,7 @@ class RAG extends Agent
      * @param int $k
      * @return \NeuronAI\AgentInterface|RAG
      */
-    public function setSystemMessage(array $documents, int $k)
+    protected function setSystemMessage(array $documents, int $k)
     {
         $context = '';
         $i = 0;
@@ -131,7 +131,7 @@ class RAG extends Agent
         return $this;
     }
 
-    public function embeddings(): EmbeddingsProviderInterface
+    protected function embeddings(): EmbeddingsProviderInterface
     {
         return $this->embeddingsProvider;
     }
@@ -142,7 +142,7 @@ class RAG extends Agent
         return $this;
     }
 
-    public function vectorStore(): VectorStoreInterface
+    protected function vectorStore(): VectorStoreInterface
     {
         return $this->store;
     }
