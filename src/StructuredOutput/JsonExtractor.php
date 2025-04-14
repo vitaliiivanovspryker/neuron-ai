@@ -71,10 +71,6 @@ class JsonExtractor
         return $data;
     }
 
-    // ------------------------------------------------------------------------
-    // MARKDOWN EXTRACTORS
-    // ------------------------------------------------------------------------
-
     /**
      * Find ALL fenced code blocks that start with ```json, and extract
      * the portion between the first '{' and the matching last '}' inside
@@ -120,78 +116,36 @@ class JsonExtractor
     }
 
     /**
-     * A "partial" version of findByMarkdown. Here we assume we might only
-     * have partial fences or partial JSON. We’ll try to extract the first
-     * valid-looking portion we find. For simplicity, this can be similar
-     * to findByMarkdown but returning the first match or an array of partials.
-     */
-    private function findPartialByMarkdown(string $text): array {
-        // We’ll just reuse the same logic but allow partial extraction
-        // from each code fence. In practice, “partial” might imply more
-        // lenient or partial bracket matching, but here's a simplified approach.
-
-        return $this->findByMarkdown($text);
-    }
-
-    // ------------------------------------------------------------------------
-    // CURLY BRACKET EXTRACTORS
-    // ------------------------------------------------------------------------
-
-    /**
      * Find a substring from the first '{' to the last '}'.
      */
-    private function findByBrackets(string $text): string {
+    private function findByBrackets(string $text): ?string
+    {
         $trimmed = trim($text);
-        if ($trimmed === '') {
-            return '';
+        if (empty($trimmed)) {
+            return null;
         }
 
-        $firstOpen = strpos($trimmed, '{');
-        if ($firstOpen === false) {
-            return '';
+        if (!$firstOpen = strpos($trimmed, '{')) {
+            return null;
         }
+
         $lastClose = strrpos($trimmed, '}');
         if ($lastClose === false || $lastClose < $firstOpen) {
-            return '';
+            return null;
         }
 
         return substr($trimmed, $firstOpen, $lastClose - $firstOpen + 1);
     }
-
-    /**
-     * A "partial" version that tries the same approach, but might allow
-     * any trailing text after '}'.
-     */
-    private function findPartialByBrackets(string $text): string {
-        $trimmed = trim($text);
-        if ($trimmed === '') {
-            return '';
-        }
-
-        $firstOpen = strpos($trimmed, '{');
-        if ($firstOpen === false) {
-            return '';
-        }
-        $lastClose = strrpos($trimmed, '}');
-        if ($lastClose === false || $lastClose < $firstOpen) {
-            return '';
-        }
-
-        return substr($trimmed, $firstOpen, $lastClose - $firstOpen + 1);
-    }
-
-    // ------------------------------------------------------------------------
-    // FALLBACK EXTRACTOR FOR ANY JSON-LIKE BRACES
-    // ------------------------------------------------------------------------
 
     /**
      * Scan through the text, capturing any substring that begins at '{'
      * and ends at its matching '}'—accounting for nested braces and strings.
      * Returns an array of all such candidates found.
      */
-    private function findJSONLikeStrings(string $text): array {
+    private function findJSONLikeStrings(string $text): array
+    {
         $text = trim($text);
-        if ($text === '') {
+        if (empty($text)) {
             return [];
         }
 
