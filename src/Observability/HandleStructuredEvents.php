@@ -63,7 +63,11 @@ trait HandleStructuredEvents
         $id = $data->class.'-validate';
 
         if (\array_key_exists($id, $this->segments)) {
-            $this->segments[$id]->addContext('Json', \json_decode($data->json))->end();
+            $segment = $this->segments[$id]->addContext('Json', \json_decode($data->json));
+            if (!empty($data->violations)) {
+                $segment->addContext('Violations', $data->violations);
+            }
+            $segment->end();
         }
     }
 }

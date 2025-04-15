@@ -9,6 +9,6 @@ class Property
 {
     public function __construct(
         public ?string $title = null,
-        public ?string $description = null
+        public ?string $description = null,
     ) {}
 }

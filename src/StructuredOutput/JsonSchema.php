@@ -76,10 +76,6 @@ class JsonSchema
             'properties' => [],
         ];
 
-        if (!$isRoot) {
-            $schema['title'] = $className;
-        }
-
         $requiredProperties = [];
 
         // Process all public properties
@@ -239,7 +235,6 @@ class JsonSchema
 
         // Create enum schema
         $schema = [
-            'title' => $enumName,
             'type' => 'string',
             'enum' => [],
         ];

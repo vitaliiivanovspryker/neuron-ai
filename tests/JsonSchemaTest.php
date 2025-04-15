@@ -4,6 +4,7 @@ namespace NeuronAI\Tests;
 
 use NeuronAI\StructuredOutput\JsonSchema;
 use NeuronAI\StructuredOutput\Property;
+use NeuronAI\Tests\Utils\PersonWithAddress;
 use PHPUnit\Framework\TestCase;
 
 class JsonSchemaTest extends TestCase
@@ -117,6 +118,46 @@ class JsonSchemaTest extends TestCase
                     'type' => ['string', 'null'],
                 ]
             ]
+        ], $schema);
+    }
+
+    public function test_nested_object()
+    {
+        $schema = (new JsonSchema())->generate(PersonWithAddress::class);
+
+        $this->assertEquals([
+            'type' => 'object',
+            'properties' => [
+                'firstName' => [
+                    'type' => 'string',
+                ],
+                'lastName' => [
+                    'type' => 'string',
+                ],
+                'address' => [
+                    '$ref' => '#/definitions/Address'
+                ]
+            ],
+            'definitions' => [
+                'Address' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'street' => [
+                            'description' => 'The name of the street',
+                            'type' => 'string',
+                        ],
+                        'city' => [
+                            'type' => 'string',
+                        ],
+                        'zip' => [
+                            'description' => 'The zip code of the address',
+                            'type' => 'string',
+                        ]
+                    ],
+                    'required' => ['street', 'city', 'zip'],
+                ]
+            ],
+            'required' => ['firstName', 'lastName', 'address']
         ], $schema);
     }
 }
