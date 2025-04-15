@@ -56,7 +56,7 @@ class JsonSchema
         $reflection = new ReflectionClass($class);
         $className = $reflection->getShortName();
 
-        // If we've already processed this class and it's not the root, return a reference
+        // If we've already processed this class, and it's not the root, return a reference
         if (!$isRoot && in_array($class, $this->processedClasses)) {
             return [
                 '$ref' => '#/definitions/' . $className,

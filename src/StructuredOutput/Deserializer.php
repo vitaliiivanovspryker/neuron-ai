@@ -3,6 +3,8 @@
 namespace NeuronAI\StructuredOutput;
 
 use NeuronAI\Exceptions\NeuronException;
+use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
+use Symfony\Component\PropertyInfo\Extractor\PhpStanExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -46,10 +48,12 @@ class Deserializer
     }
 
     protected function defaultTypeExtractor() : PropertyInfoExtractor {
+        $phpDocExtractor = new PhpDocExtractor();
         $reflectionExtractor = new ReflectionExtractor();
         return new PropertyInfoExtractor(
             listExtractors: [$reflectionExtractor],
-            typeExtractors: [$reflectionExtractor],
+            typeExtractors: [$phpDocExtractor, $reflectionExtractor],
+            descriptionExtractors: [$phpDocExtractor],
             accessExtractors: [$reflectionExtractor],
             initializableExtractors: [$reflectionExtractor],
         );
