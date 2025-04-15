@@ -7,7 +7,7 @@
 
 ## Requirements
 
-- PHP: ^8.0
+- PHP: ^8.1
 
 ## Official documentation
 
