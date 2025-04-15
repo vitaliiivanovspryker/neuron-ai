@@ -11,7 +11,6 @@ class PersonWithAddress
     public string $firstName;
     public string $lastName;
 
-    #[NotBlank]
     #[Valid]
     public Address $address;
 }
