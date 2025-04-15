@@ -53,6 +53,7 @@ class ValidatorTest extends TestCase
             ->validate($obj);
 
         $this->assertEquals(2, $violations->count());
-        //$this->assertEquals('firstName', $violations->get(0)->getPropertyPath());
+        $this->assertEquals('address.street', $violations->get(0)->getPropertyPath());
+        $this->assertEquals('address.zip', $violations->get(1)->getPropertyPath());
     }
 }
