@@ -13,6 +13,9 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\PropertyNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
+/**
+ * Inspired by: https://github.com/cognesy/instructor-php
+ */
 class Deserializer
 {
     protected Serializer $serializer;

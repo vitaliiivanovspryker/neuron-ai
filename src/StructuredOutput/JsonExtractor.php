@@ -2,6 +2,9 @@
 
 namespace NeuronAI\StructuredOutput;
 
+/**
+ * Inspired by: https://github.com/cognesy/instructor-php
+ */
 class JsonExtractor
 {
     protected array $extractors;
@@ -76,7 +79,8 @@ class JsonExtractor
      * the portion between the first '{' and the matching last '}' inside
      * that block. Return an array of candidates.
      */
-    private function findByMarkdown(string $text): array {
+    private function findByMarkdown(string $text): array
+    {
         if (empty(trim($text))) {
             return [];
         }
