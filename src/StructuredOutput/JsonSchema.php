@@ -84,17 +84,22 @@ class JsonSchema
         // Process each property
         foreach ($properties as $property) {
             $propertyName = $property->getName();
-            $propertySchema = $this->processProperty($property);
 
-            $schema['properties'][$propertyName] = $propertySchema;
+            $schema['properties'][$propertyName] = $this->processProperty($property);
 
-            // Check if property is required
-            $type = $property->getType();
-
-            $isNullable = $type ? $type->allowsNull() : true;
-
-            if (!$isNullable && !$property->hasDefaultValue()) {
+            $attribute = $this->getPropertyAttribute($property);
+            if (!empty($attribute) && $attribute->required) {
                 $requiredProperties[] = $propertyName;
+            } else {
+                // If the attribute is not available,
+                // use the default logic for required properties
+                $type = $property->getType();
+
+                $isNullable = $type ? $type->allowsNull() : true;
+
+                if (!$isNullable && !$property->hasDefaultValue()) {
+                    $requiredProperties[] = $propertyName;
+                }
             }
         }
 
@@ -126,7 +131,7 @@ class JsonSchema
         $schema = [];
 
         // Process Property attribute if present
-        $attributes = $property->getAttributes(Property::class);
+        $attributes = $this->getPropertyAttribute($property);
         if (!empty($attributes)) {
             $propertyAttr = $attributes[0]->newInstance();
 
@@ -259,6 +264,21 @@ class JsonSchema
         }
 
         return $schema;
+    }
+
+    /**
+     * Get the Property attribute if it exists on a property
+     *
+     * @param ReflectionProperty $property
+     * @return Property|null
+     */
+    private function getPropertyAttribute(ReflectionProperty $property): ?Property
+    {
+        $attributes = $property->getAttributes(Property::class);
+        if (!empty($attributes)) {
+            return $attributes[0]->newInstance();
+        }
+        return null;
     }
 
     /**
