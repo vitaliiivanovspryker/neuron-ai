@@ -3,7 +3,7 @@
 namespace NeuronAI\Tests;
 
 use NeuronAI\StructuredOutput\JsonSchema;
-use NeuronAI\StructuredOutput\Property;
+use NeuronAI\StructuredOutput\SchemaProperty;
 use NeuronAI\Tests\Utils\PersonWithAddress;
 use NeuronAI\Tests\Utils\PersonWithTags;
 use PHPUnit\Framework\TestCase;
@@ -82,7 +82,7 @@ class JsonSchemaTest extends TestCase
     public function test_with_attribute()
     {
         $class = new class {
-            #[Property(title: "The user first name", description: "The user first name")]
+            #[SchemaProperty(title: "The user first name", description: "The user first name")]
             public string $firstName;
         };
 
@@ -104,8 +104,8 @@ class JsonSchemaTest extends TestCase
     public function test_nullable_property_with_attribute()
     {
         $class = new class {
-            #[Property(title: "The user first name", description: "The user first name")]
-            public ?string $firstName;
+            #[SchemaProperty(title: "The user first name", description: "The user first name", required: false)]
+            public string $firstName;
         };
 
         $schema = (new JsonSchema())->generate($class::class);
@@ -116,7 +116,7 @@ class JsonSchemaTest extends TestCase
                 'firstName' => [
                     'title' => 'The user first name',
                     'description' => 'The user first name',
-                    'type' => ['string', 'null'],
+                    'type' => 'string',
                 ]
             ]
         ], $schema);

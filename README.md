@@ -306,15 +306,15 @@ One common use-case is extracting data from text to insert into a database or us
 This guide covers a few strategies for getting structured outputs from the agent.
 
 ```php
-use NeuronAI\StructuredOutput\Property;
+use NeuronAI\StructuredOutput\SchemaProperty;
 
 // Define the output structure with a PHP class, including validation constraints.
 class Person
 {
-    #[Property(description: 'The user name')]
+    #[SchemaProperty(description: 'The user name')]
     public string $name;
 
-    #[Property(description: 'What the user love to eat')]
+    #[SchemaProperty(description: 'What the user love to eat')]
     public string $preference;
 }
 

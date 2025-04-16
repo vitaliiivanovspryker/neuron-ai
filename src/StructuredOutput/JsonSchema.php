@@ -88,8 +88,10 @@ class JsonSchema
             $schema['properties'][$propertyName] = $this->processProperty($property);
 
             $attribute = $this->getPropertyAttribute($property);
-            if (!empty($attribute) && $attribute->required) {
-                $requiredProperties[] = $propertyName;
+            if (!empty($attribute) && $attribute->required !== null) {
+                if ($attribute->required === true) {
+                    $requiredProperties[] = $propertyName;
+                }
             } else {
                 // If the attribute is not available,
                 // use the default logic for required properties
@@ -131,16 +133,14 @@ class JsonSchema
         $schema = [];
 
         // Process Property attribute if present
-        $attributes = $this->getPropertyAttribute($property);
-        if (!empty($attributes)) {
-            $propertyAttr = $attributes[0]->newInstance();
-
-            if ($propertyAttr->title !== null) {
-                $schema['title'] = $propertyAttr->title;
+        $attribute = $this->getPropertyAttribute($property);
+        if (!empty($attribute)) {
+            if ($attribute->title !== null) {
+                $schema['title'] = $attribute->title;
             }
 
-            if ($propertyAttr->description !== null) {
-                $schema['description'] = $propertyAttr->description;
+            if ($attribute->description !== null) {
+                $schema['description'] = $attribute->description;
             }
         }
 
@@ -270,11 +270,11 @@ class JsonSchema
      * Get the Property attribute if it exists on a property
      *
      * @param ReflectionProperty $property
-     * @return Property|null
+     * @return SchemaProperty|null
      */
-    private function getPropertyAttribute(ReflectionProperty $property): ?Property
+    private function getPropertyAttribute(ReflectionProperty $property): ?SchemaProperty
     {
-        $attributes = $property->getAttributes(Property::class);
+        $attributes = $property->getAttributes(SchemaProperty::class);
         if (!empty($attributes)) {
             return $attributes[0]->newInstance();
         }
