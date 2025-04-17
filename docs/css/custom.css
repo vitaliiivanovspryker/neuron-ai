@@ -44,6 +44,16 @@ button {
     background: #00e69c;
 }
 
+.cta-grey {
+    background: #cdcdcd;
+    color: #1e1e1e;
+}
+
+.cta-grey:hover {
+    color: #1e1e1e;
+    background: #a9a9a9;
+}
+
 .cta-blue {
     background: #192440;
     color: #ffffff;
