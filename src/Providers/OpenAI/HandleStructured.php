@@ -19,11 +19,13 @@ trait HandleStructured
         string $class,
         array $response_format
     ): Message {
+        $tk = explode('\\', $class);
+
         $this->parameters = \array_merge($this->parameters, [
             'response_format' => [
                 'type' => 'json_schema',
                 'json_schema' => [
-                    "name" => $class,
+                    "name" => end($tk),
                     "strict" => true,
                     "schema" => $response_format,
                 ],
