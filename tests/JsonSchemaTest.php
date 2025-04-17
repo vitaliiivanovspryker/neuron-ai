@@ -4,6 +4,7 @@ namespace NeuronAI\Tests;
 
 use NeuronAI\StructuredOutput\JsonSchema;
 use NeuronAI\StructuredOutput\SchemaProperty;
+use NeuronAI\Tests\Utils\Person;
 use NeuronAI\Tests\Utils\PersonWithAddress;
 use NeuronAI\Tests\Utils\PersonWithTags;
 use PHPUnit\Framework\TestCase;
