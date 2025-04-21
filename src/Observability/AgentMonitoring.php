@@ -162,4 +162,9 @@ class AgentMonitoring implements \SplObserver
 
         return \md5($content.$message->getRole());
     }
+
+    protected function getBaseClassName(string $class): string
+    {
+        return substr(strrchr($class, '\\'), 1);
+    }
 }

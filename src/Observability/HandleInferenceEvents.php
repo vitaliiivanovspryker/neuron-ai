@@ -17,11 +17,7 @@ trait HandleInferenceEvents
             return;
         }
 
-        if ($data->message instanceof ToolCallMessage || $data->message instanceof ToolCallResultMessage) {
-            $label = substr(strrchr(get_class($data->message), '\\'), 1);
-        } else {
-            $label = $data->message->getContent();
-        }
+        $label = $this->getBaseClassName(get_class($data->message));
 
         $this->segments[$this->getMessageId($data->message).'-save'] = $this->inspector
             ->startSegment(self::SEGMENT_TYPE.'-chathistory', "save( {$label} )")
@@ -52,7 +48,7 @@ trait HandleInferenceEvents
             return;
         }
 
-        $label = json_encode($data->message->getContent());
+        $label = $this->getBaseClassName(get_class($data->message));
 
         $this->segments[$this->getMessageId($data->message).'-inference'] = $this->inspector
             ->startSegment(self::SEGMENT_TYPE.'-inference', "inference( {$label} )")
