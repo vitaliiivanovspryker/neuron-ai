@@ -13,7 +13,7 @@ trait HandleWithTools
      */
     protected array $tools = [];
 
-    public function setTools(array $tools): self
+    public function setTools(array $tools): AIProviderInterface
     {
         $this->tools = $tools;
         return $this;
