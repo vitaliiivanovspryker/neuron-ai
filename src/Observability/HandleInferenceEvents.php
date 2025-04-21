@@ -52,7 +52,11 @@ trait HandleInferenceEvents
             return;
         }
 
-        $label = json_encode($data->message->getContent());
+        if ($data->message instanceof ToolCallResultMessage) {
+            $label = substr(strrchr(get_class($data->message), '\\'), 1);
+        } else {
+            $label = json_encode($data->message->getContent());
+        }
 
         $this->segments[$this->getMessageId($data->message).'-inference'] = $this->inspector
             ->startSegment(self::SEGMENT_TYPE.'-inference', "inference( {$label} )")
