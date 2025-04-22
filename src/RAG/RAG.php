@@ -195,4 +195,14 @@ class RAG extends Agent
     {
         return $this->postProcessors;
     }
+
+    /**
+     * Get the retrieved documents from the vector store.
+     *
+     * @return array<Document>
+     */
+    public function getRetrievedDocuments(): array
+    {
+        return $this->retrievedDocuments;
+    }
 }
