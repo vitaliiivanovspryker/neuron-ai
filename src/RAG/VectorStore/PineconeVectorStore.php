@@ -39,7 +39,11 @@ class PineconeVectorStore implements VectorStoreInterface
                     return [
                         'id' => $document->id??\uniqid(),
                         'values' => $document->embedding,
-                        'metadata' => ['content' => $document->content],
+                        'metadata' => [
+                            'content' => $document->content,
+                            'sourceType' => $document->sourceType,
+                            'sourceName' => $document->sourceName,
+                        ],
                     ];
                 }, $documents)
             ]
@@ -64,6 +68,8 @@ class PineconeVectorStore implements VectorStoreInterface
             $document->id = $item['id'];
             $document->embedding = $item['values'];
             $document->content = $item['metadata']['content'];
+            $document->sourceType = $item['metadata']['sourceType'];
+            $document->sourceName = $item['metadata']['sourceName'];
             return $document;
         }, $result['matches']);
     }
