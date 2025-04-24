@@ -22,11 +22,9 @@ trait HandleChat
             \array_unshift($messages, new AssistantMessage($this->system));
         }
 
-        $mapper = new MessageMapper($messages);
-
         $json = [
             'model' => $this->model,
-            'messages' => $mapper->map(),
+            'messages' => $this->messageMapper()->map($messages),
             ...$this->parameters
         ];
 

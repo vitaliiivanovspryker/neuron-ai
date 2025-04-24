@@ -2,19 +2,15 @@
 
 namespace NeuronAI\Providers\OpenAI;
 
-use GuzzleHttp\Exception\GuzzleException;
-use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use GuzzleHttp\Client;
-use NeuronAI\Chat\Messages\Usage;
-use NeuronAI\Exceptions\ProviderException;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\HandleClient;
 use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Chat\Messages\ToolCallMessage;
+use NeuronAI\Providers\MessageMapperInterface;
 use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\ToolProperty;
-use Psr\Http\Message\StreamInterface;
 
 class OpenAI implements AIProviderInterface
 {
@@ -46,6 +42,13 @@ class OpenAI implements AIProviderInterface
      */
     protected ?string $system;
 
+    /**
+     * The component responsible for mapping the NeuronAI Message to the AI provider format.
+     *
+     * @var MessageMapperInterface
+     */
+    protected MessageMapperInterface $messageMapper;
+
     public function __construct(
         protected string $key,
         protected string $model,
@@ -65,6 +68,14 @@ class OpenAI implements AIProviderInterface
     {
         $this->system = $prompt;
         return $this;
+    }
+
+    public function messageMapper(): MessageMapperInterface
+    {
+        if (!isset($this->messageMapper)) {
+            $this->messageMapper = new MessageMapper();
+        }
+        return $this->messageMapper;
     }
 
     public function generateToolsPayload(): array

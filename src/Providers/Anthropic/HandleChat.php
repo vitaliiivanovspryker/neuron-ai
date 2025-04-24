@@ -12,17 +12,15 @@ trait HandleChat
     /**
      * Send a message to the LLM.
      *
-     * @param Message|array<Message> $messages
+     * @param array<Message> $messages
      * @throws GuzzleException
      */
     public function chat(array $messages): Message
     {
-        $mapper = new MessageMapper($messages);
-
         $json = [
             'model' => $this->model,
             'max_tokens' => $this->max_tokens,
-            'messages' => $mapper->map(),
+            'messages' => $this->messageMapper()->map($messages),
             ...$this->parameters,
         ];
 

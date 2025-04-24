@@ -2,46 +2,61 @@
 
 namespace NeuronAI\Providers\Anthropic;
 
+use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Chat\Messages\ToolCallResultMessage;
+use NeuronAI\Chat\Messages\UserMessage;
+use NeuronAI\Exceptions\AgentException;
+use NeuronAI\Providers\MessageMapperInterface;
 use NeuronAI\Tools\ToolInterface;
 
-class MessageMapper
+class MessageMapper implements MessageMapperInterface
 {
-    /**
-     * Mapped messages.
-     *
-     * @var array
-     */
     protected array $mapping = [];
 
-    /**
-     * @param array<Message> $messages
-     */
-    public function __construct(protected array $messages) {}
-
-    public function map(): array
+    public function map(array $messages): array
     {
-        foreach ($this->messages as $message) {
-            if ($message instanceof ToolCallResultMessage) {
-                $this->mapToolsResult($message->getTools());
-            } else {
-                $this->mapping[] = $this->mapMessage($message);
-            }
+        foreach ($messages as $message) {
+            match ($message::class) {
+                Message::class,
+                UserMessage::class,
+                AssistantMessage::class => $this->mapMessage($message),
+                ToolCallMessage::class => $this->mapToolCall($message),
+                ToolCallResultMessage::class => $this->mapToolsResult($message),
+                default => throw new AgentException('Could not map message type '.$message::class),
+            };
         }
 
         return $this->mapping;
     }
 
-    public function mapMessage(Message $message): array
+    protected function mapMessage(Message $message): void
     {
         $message = $message->jsonSerialize();
-        unset($message['usage']);
-        return $message;
+
+        if (\array_key_exists('usage', $message)) {
+            unset($message['usage']);
+        }
+
+        $this->mapping[] = $message;
     }
 
-    public function mapToolsResult(array $tools): void
+    protected function mapToolCall(ToolCallMessage $message): void
+    {
+        $message = $message->jsonSerialize();
+
+        if (\array_key_exists('usage', $message)) {
+            unset($message['usage']);
+        }
+
+        unset($message['type']);
+        unset($message['tools']);
+
+        $this->mapping[] = $message;
+    }
+
+    protected function mapToolsResult(ToolCallResultMessage $message): void
     {
         $this->mapping[] = [
             'role' => Message::ROLE_USER,
@@ -51,7 +66,7 @@ class MessageMapper
                     'tool_use_id' => $tool->getCallId(),
                     'content' => $tool->getResult(),
                 ];
-            }, $tools)
+            }, $message->getTools())
         ];
     }
 }
