@@ -21,7 +21,7 @@ class InMemoryChatHistory extends AbstractChatHistory
         return $this;
     }
 
-    protected function storeMessage(Message $message): ChatHistoryInterface
+    protected function storeMessage(array $message): ChatHistoryInterface
     {
         return $this;
     }

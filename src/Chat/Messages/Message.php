@@ -7,7 +7,6 @@ class Message implements \JsonSerializable
     const ROLE_USER = 'user';
     const ROLE_ASSISTANT = 'assistant';
     const ROLE_TOOL = 'tool';
-
     const ROLE_SYSTEM = 'system';
 
     protected ?Usage $usage = null;

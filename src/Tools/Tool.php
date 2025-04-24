@@ -114,6 +114,12 @@ class Tool implements ToolInterface
         return $this->result;
     }
 
+    public function setResult($result): self
+    {
+        $this->result = $result;
+        return $this;
+    }
+
     /**
      * Execute the client side function.
      *

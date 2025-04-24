@@ -12,7 +12,7 @@ trait HandleChat
     /**
      * Send a message to the LLM.
      *
-     * @param Message|array<Message> $messages
+     * @param array<Message> $messages
      * @throws GuzzleException
      */
     public function chat(array $messages): Message
@@ -20,7 +20,7 @@ trait HandleChat
         $json = [
             'model' => $this->model,
             'max_tokens' => $this->max_tokens,
-            'messages' => $messages,
+            'messages' => \array_map(fn(Message $message) => $this->messageMapper()->map($message), $messages),
             ...$this->parameters,
         ];
 

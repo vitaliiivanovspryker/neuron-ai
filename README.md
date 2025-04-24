@@ -13,6 +13,10 @@
 
 **[Go to the official documentation](https://neuron.inspector.dev/)**
 
+## Forum
+
+You can post questions and feedback on the [Inspector Forum](https://github.com/inspector-apm/neuron-ai/discussions).
+
 ## Examples
 
 - [Install](#install)
@@ -194,7 +198,7 @@ use NeuronAI\Providers\Anthropic\Anthropic;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 
-class SEOAgent extends Agent
+class YouTubeAgent extends Agent
 {
     public function provider(): AIProviderInterface
     {

@@ -3,6 +3,7 @@
 namespace NeuronAI\Providers\Anthropic;
 
 use GuzzleHttp\Exception\GuzzleException;
+use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Exceptions\ProviderException;
 use Psr\Http\Message\StreamInterface;
 
@@ -16,14 +17,12 @@ trait HandleStream
      */
     public function stream(array|string $messages, callable $executeToolsCallback): \Generator
     {
-        $mapper = new MessageMapper($messages);
-
         $json = [
             'stream' => true,
             'model' => $this->model,
             'max_tokens' => $this->max_tokens,
             'system' => $this->system ?? null,
-            'messages' => $mapper->map(),
+            'messages' => \array_map(fn(Message $message) => $this->messageMapper()->map($message), $messages),
             ...$this->parameters,
         ];
 
