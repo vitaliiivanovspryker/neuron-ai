@@ -22,7 +22,7 @@ trait HandleStream
             'model' => $this->model,
             'max_tokens' => $this->max_tokens,
             'system' => $this->system ?? null,
-            'messages' => \array_map(fn(Message $message) => $this->messageMapper()->map($message), $messages),
+            'messages' => $this->messageMapper()->map($messages),
             ...$this->parameters,
         ];
 

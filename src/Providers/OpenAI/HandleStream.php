@@ -4,6 +4,7 @@ namespace NeuronAI\Providers\OpenAI;
 
 use GuzzleHttp\Exception\GuzzleException;
 use NeuronAI\Chat\Messages\AssistantMessage;
+use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Exceptions\ProviderException;
 use Psr\Http\Message\StreamInterface;
 
@@ -20,12 +21,10 @@ trait HandleStream
             \array_unshift($messages, new AssistantMessage($this->system));
         }
 
-        $mapper = new MessageMapper($messages);
-
         $json = [
             'stream' => true,
             'model' => $this->model,
-            'messages' => $mapper->map(),
+            'messages' => $this->messageMapper()->map($messages),
             'stream_options' => ['include_usage' => true],
             ...$this->parameters
         ];

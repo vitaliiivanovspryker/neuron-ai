@@ -6,5 +6,9 @@ use NeuronAI\Chat\Messages\Message;
 
 interface MessageMapperInterface
 {
-    public function map(Message $message): array;
+    /**
+     * @param array<Message> $messages
+     * @return array
+     */
+    public function map(array $messages): array;
 }

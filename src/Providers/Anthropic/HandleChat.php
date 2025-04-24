@@ -20,7 +20,7 @@ trait HandleChat
         $json = [
             'model' => $this->model,
             'max_tokens' => $this->max_tokens,
-            'messages' => \array_map(fn(Message $message) => $this->messageMapper()->map($message), $messages),
+            'messages' => $this->messageMapper()->map($messages),
             ...$this->parameters,
         ];
 
