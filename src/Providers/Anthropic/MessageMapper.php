@@ -17,8 +17,8 @@ class MessageMapper implements MessageMapperInterface
     {
         return match ($message::class) {
             UserMessage::class,
-            AssistantMessage::class,
-            ToolCallMessage::class => $this->mapMessage($message),
+            AssistantMessage::class => $this->mapMessage($message),
+            ToolCallMessage::class => $this->mapToolCall($message),
             ToolCallResultMessage::class => $this->mapToolsResult($message),
             default => throw new AgentException('Could not map message type '.$message::class),
         };
@@ -32,9 +32,19 @@ class MessageMapper implements MessageMapperInterface
             unset($message['usage']);
         }
 
-        if (\array_key_exists('type', $message)) {
-            unset($message['type']);
+        return $message;
+    }
+
+    public function mapToolCall(ToolCallMessage $message): array
+    {
+        $message = $message->jsonSerialize();
+
+        if (\array_key_exists('usage', $message)) {
+            unset($message['usage']);
         }
+
+        unset($message['type']);
+        unset($message['tools']);
 
         return $message;
     }
