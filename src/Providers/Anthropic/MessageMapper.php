@@ -27,8 +27,15 @@ class MessageMapper implements MessageMapperInterface
     public function mapMessage(Message $message): array
     {
         $message = $message->jsonSerialize();
-        unset($message['usage']);
-        unset($message['type']);
+
+        if (\array_key_exists('usage', $message)) {
+            unset($message['usage']);
+        }
+
+        if (\array_key_exists('type', $message)) {
+            unset($message['type']);
+        }
+
         return $message;
     }
 
