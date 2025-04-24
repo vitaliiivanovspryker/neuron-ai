@@ -105,7 +105,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
     protected function unserializeMessages(array $messages): array
     {
         return \array_map(function (array $message) {
-            return match ($message['type']) {
+            return match ($message['type']??null) {
                 'tool_call' => $this->unserializeToolCall($message),
                 'tool_call_result' => $this->unserializeToolCallResult($message),
                 default => $this->unserializeMessage($message),
