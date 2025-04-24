@@ -16,12 +16,10 @@ trait HandleChat
             \array_unshift($messages, new Message(Message::ROLE_SYSTEM, $this->system));
         }
 
-        $mapper = new MessageMapper($messages);
-
         $json = [
             'stream' => false,
             'model' => $this->model,
-            'messages' => $mapper->map(),
+            'messages' => $this->messageMapper()->map($messages),
             ...$this->parameters,
         ];
 
