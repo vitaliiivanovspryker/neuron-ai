@@ -2,10 +2,12 @@
 
 namespace NeuronAI\Chat\History;
 
+use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Chat\Messages\ToolCallResultMessage;
 use NeuronAI\Chat\Messages\Usage;
+use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Tools\Tool;
 
 abstract class AbstractChatHistory implements ChatHistoryInterface
@@ -115,7 +117,11 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     protected function unserializeMessage(array $message): Message
     {
-        $item = new Message($message['role'], $message['content']??'');
+        $item = match ($message['role']){
+            Message::ROLE_ASSISTANT => new AssistantMessage($message['content']??''),
+            Message::ROLE_USER => new UserMessage($message['content']??''),
+            default => new Message($message['role'], $message['content']??'')
+        };
 
         $this->extractUsage($message, $item);
 

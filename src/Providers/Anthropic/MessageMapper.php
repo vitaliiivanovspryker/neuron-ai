@@ -16,6 +16,7 @@ class MessageMapper implements MessageMapperInterface
     public function map(Message $message): array
     {
         return match ($message::class) {
+            Message::class,
             UserMessage::class,
             AssistantMessage::class => $this->mapMessage($message),
             ToolCallMessage::class => $this->mapToolCall($message),
