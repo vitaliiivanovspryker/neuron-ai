@@ -28,6 +28,7 @@ class MessageMapper implements MessageMapperInterface
     {
         $message = $message->jsonSerialize();
         unset($message['usage']);
+        unset($message['type']);
         return $message;
     }
 
