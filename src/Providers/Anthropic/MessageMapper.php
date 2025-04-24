@@ -3,35 +3,19 @@
 namespace NeuronAI\Providers\Anthropic;
 
 use NeuronAI\Chat\Messages\Message;
-use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Chat\Messages\ToolCallResultMessage;
+use NeuronAI\Providers\MessageMapperInterface;
 use NeuronAI\Tools\ToolInterface;
 
-class MessageMapper
+class MessageMapper implements MessageMapperInterface
 {
-    /**
-     * Mapped messages.
-     *
-     * @var array
-     */
-    protected array $mapping = [];
-
-    /**
-     * @param array<Message> $messages
-     */
-    public function __construct(protected array $messages) {}
-
-    public function map(): array
+    public function map(Message $message): array
     {
-        foreach ($this->messages as $message) {
-            if ($message instanceof ToolCallResultMessage) {
-                $this->mapToolsResult($message->getTools());
-            } else {
-                $this->mapping[] = $this->mapMessage($message);
-            }
+        if ($message instanceof ToolCallResultMessage) {
+            return $this->mapToolsResult($message->getTools());
+        } else {
+            return $this->mapMessage($message);
         }
-
-        return $this->mapping;
     }
 
     public function mapMessage(Message $message): array
@@ -41,9 +25,9 @@ class MessageMapper
         return $message;
     }
 
-    public function mapToolsResult(array $tools): void
+    public function mapToolsResult(array $tools): array
     {
-        $this->mapping[] = [
+        return [
             'role' => Message::ROLE_USER,
             'content' => \array_map(function (ToolInterface $tool) {
                 return [

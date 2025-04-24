@@ -17,12 +17,10 @@ trait HandleChat
      */
     public function chat(array $messages): Message
     {
-        $mapper = new MessageMapper($messages);
-
         $json = [
             'model' => $this->model,
             'max_tokens' => $this->max_tokens,
-            'messages' => $mapper->map(),
+            'messages' => $messages,
             ...$this->parameters,
         ];
 
