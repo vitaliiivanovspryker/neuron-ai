@@ -30,7 +30,8 @@ class JsonSchemaTest extends TestCase
                     'type' => 'string',
                 ]
             ],
-            'required' => ['firstName', 'lastName']
+            'required' => ['firstName', 'lastName'],
+            'additionalProperties' => false,
         ], $schema);
     }
     public function test_with_nullable_properties()
@@ -52,7 +53,8 @@ class JsonSchemaTest extends TestCase
                     'type' => ['string', 'null'],
                 ]
             ],
-            'required' => ['firstName']
+            'required' => ['firstName'],
+            'additionalProperties' => false,
         ], $schema);
     }
 
@@ -76,7 +78,8 @@ class JsonSchemaTest extends TestCase
                     'type' => ['string', 'null'],
                 ]
             ],
-            'required' => ['firstName']
+            'required' => ['firstName'],
+            'additionalProperties' => false,
         ], $schema);
     }
 
@@ -98,7 +101,8 @@ class JsonSchemaTest extends TestCase
                     'type' => 'string',
                 ]
             ],
-            'required' => ['firstName']
+            'required' => ['firstName'],
+            'additionalProperties' => false,
         ], $schema);
     }
 
@@ -119,7 +123,8 @@ class JsonSchemaTest extends TestCase
                     'description' => 'The user first name',
                     'type' => 'string',
                 ]
-            ]
+            ],
+            'additionalProperties' => false,
         ], $schema);
     }
 
@@ -157,9 +162,11 @@ class JsonSchemaTest extends TestCase
                         ]
                     ],
                     'required' => ['street', 'city', 'zip'],
+                    'additionalProperties' => false,
                 ]
             ],
-            'required' => ['firstName', 'lastName', 'address']
+            'required' => ['firstName', 'lastName', 'address'],
+            'additionalProperties' => false,
         ], $schema);
     }
 
@@ -192,10 +199,12 @@ class JsonSchemaTest extends TestCase
                             'type' => 'string',
                         ]
                     ],
-                    'required' => ['name']
+                    'required' => ['name'],
+                    'additionalProperties' => false,
                 ]
             ],
-            'required' => ['firstName', 'lastName', 'tags']
+            'required' => ['firstName', 'lastName', 'tags'],
+            'additionalProperties' => false,
         ], $schema);
     }
 }

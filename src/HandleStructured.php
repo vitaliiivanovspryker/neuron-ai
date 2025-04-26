@@ -44,10 +44,7 @@ trait HandleStructured
         $this->fillChatHistory($messages);
 
         // Get the JSON schema from the response model
-        $schema = [
-            ...(new JsonSchema())->generate($class),
-            'additionalProperties' => false,
-        ];
+        $schema = (new JsonSchema())->generate($class);
 
         $error = '';
         do {
