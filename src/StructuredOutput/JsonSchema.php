@@ -33,11 +33,16 @@ class JsonSchema
         $this->processedClasses = [];
 
         // Generate the main schema
-        $schema = $this->generateClassSchema($class);
+        $schema = [
+            ...$this->generateClassSchema($class),
+            'additionalProperties' => false,
+        ];
 
         // Add definitions if any exist
         if (!empty($this->definitions)) {
-            $schema['definitions'] = $this->definitions;
+            $schema['definitions'] = \array_map(function (array $definition) {
+                return [...$definition, 'additionalProperties' => false];
+            }, $this->definitions);
         }
 
         return $schema;
@@ -70,7 +75,7 @@ class JsonSchema
             return $this->processEnum($reflection, $isRoot);
         }
 
-        // Create basic object schema
+        // Create a basic object schema
         $schema = [
             'type' => 'object',
             'properties' => [],
