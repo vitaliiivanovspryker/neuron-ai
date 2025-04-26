@@ -3,6 +3,7 @@
 namespace NeuronAI;
 
 use NeuronAI\Chat\Messages\Message;
+use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Observability\Events\AgentError;
 use NeuronAI\Observability\Events\Deserialized;
@@ -78,39 +79,19 @@ trait HandleStructured
                 new InferenceStop($this->resolveChatHistory()->getLastMessage(), $response)
             );
 
+            if ($response instanceof ToolCallMessage) {
+                $toolCallResult = $this->executeTools($response);
+                $response = $this->structured([$response, $toolCallResult]);
+            } else {
+                $this->notify('message-saving', new MessageSaving($response));
+                $this->resolveChatHistory()->addMessage($response);
+                $this->notify('message-saved', new MessageSaved($response));
+            }
+
             try {
-                // Try to extract a valid JSON object from the LLM response
-                $this->notify('structured-extracting', new Extracting($response));
-                $json = (new JsonExtractor())->getJson($response->getContent());
-                $this->notify('structured-extracted', new Extracted($response, $schema, $json));
-                if (!$json) {
-                    throw new AgentException("The response does not contains a valid JSON Object.");
-                }
-
-                // Deserialize the JSON response from the LLM into an instance of the response model
-                $this->notify('structured-deserializing', new Deserializing($class));
-                $obj = (new Deserializer())->fromJson($json, $class);
-                $this->notify('structured-deserialized', new Deserialized($class));
-
-                // Validate if the object fields respect the validation attributes
-                // https://symfony.com/doc/current/validation.html#constraints
-                $this->notify('structured-validating', new Validating($class, $json));
-                $violations = Validation::createValidatorBuilder()
-                    ->addLoader(new AttributeLoader())
-                    ->getValidator()
-                    ->validate($obj);
-
-                if ($violations->count() > 0) {
-                    $violations = \array_map(function (ConstraintViolation $violation) {
-                        return $violation->getPropertyPath().': '.$violation->getMessage();
-                    }, (array)$violations);
-                    $this->notify('structured-validated', new Validated($class, $json, $violations));
-                    throw new AgentException(PHP_EOL.'- '.implode(PHP_EOL.'- ', $violations));
-                }
-                $this->notify('structured-validated', new Validated($class, $json));
-
+                $output = $this->processResponse($response, $schema, $class);
                 $this->notify('structured-stop');
-                return $obj;
+                return $output;
             } catch (\Exception $exception) {
                 $this->notify('error', new AgentError($exception, false));
                 $error = $exception->getMessage();
@@ -125,6 +106,44 @@ trait HandleStructured
         );
         $this->notify('error', new AgentError($exception));
         throw $exception;
+    }
+
+    protected function processResponse(
+        Message $response,
+        array $schema,
+        string $class,
+    ): mixed {
+        // Try to extract a valid JSON object from the LLM response
+        $this->notify('structured-extracting', new Extracting($response));
+        $json = (new JsonExtractor())->getJson($response->getContent());
+        $this->notify('structured-extracted', new Extracted($response, $schema, $json));
+        if (!$json) {
+            throw new AgentException("The response does not contains a valid JSON Object.");
+        }
+
+        // Deserialize the JSON response from the LLM into an instance of the response model
+        $this->notify('structured-deserializing', new Deserializing($class));
+        $obj = (new Deserializer())->fromJson($json, $class);
+        $this->notify('structured-deserialized', new Deserialized($class));
+
+        // Validate if the object fields respect the validation attributes
+        // https://symfony.com/doc/current/validation.html#constraints
+        $this->notify('structured-validating', new Validating($class, $json));
+        $violations = Validation::createValidatorBuilder()
+            ->addLoader(new AttributeLoader())
+            ->getValidator()
+            ->validate($obj);
+
+        if ($violations->count() > 0) {
+            $violations = \array_map(function (ConstraintViolation $violation) {
+                return $violation->getPropertyPath().': '.$violation->getMessage();
+            }, (array)$violations);
+            $this->notify('structured-validated', new Validated($class, $json, $violations));
+            throw new AgentException(PHP_EOL.'- '.implode(PHP_EOL.'- ', $violations));
+        }
+        $this->notify('structured-validated', new Validated($class, $json));
+
+        return $obj;
     }
 
     protected function getOutputClass(): string
