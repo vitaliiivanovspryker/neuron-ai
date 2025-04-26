@@ -4,6 +4,7 @@ namespace NeuronAI\Providers\Gemini;
 
 use GuzzleHttp\Client;
 use NeuronAI\Providers\AIProviderInterface;
+use NeuronAI\Providers\MessageMapperInterface;
 
 class Gemini implements AIProviderInterface
 {
@@ -48,5 +49,13 @@ class Gemini implements AIProviderInterface
     {
         $this->system = $prompt;
         return $this;
+    }
+
+    public function messageMapper(): MessageMapperInterface
+    {
+        if (!isset($this->messageMapper)) {
+            $this->messageMapper = new MessageMapper();
+        }
+        return $this->messageMapper;
     }
 }
