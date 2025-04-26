@@ -94,7 +94,7 @@ class Tool implements ToolInterface
 
     public function setInputs(?array $inputs): self
     {
-        $this->inputs = $inputs??[];
+        $this->inputs = $inputs??new \stdClass();
         return $this;
     }
 
