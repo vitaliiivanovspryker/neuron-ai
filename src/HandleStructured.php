@@ -35,6 +35,7 @@ trait HandleStructured
      * @return mixed
      * @throws AgentException
      * @throws \ReflectionException
+     * @throws \Throwable
      */
     public function structured(Message|array $messages, ?string $class = null, int $maxRetries = 1): mixed
     {
