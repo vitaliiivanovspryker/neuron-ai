@@ -82,7 +82,7 @@ trait HandleStructured
 
             if ($response instanceof ToolCallMessage) {
                 $toolCallResult = $this->executeTools($response);
-                $response = $this->structured([$response, $toolCallResult]);
+                return $this->structured([$response, $toolCallResult], $class, $maxRetries);
             } else {
                 $this->notify('message-saving', new MessageSaving($response));
                 $this->resolveChatHistory()->addMessage($response);
