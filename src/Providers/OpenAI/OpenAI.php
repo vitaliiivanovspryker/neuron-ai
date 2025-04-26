@@ -119,7 +119,7 @@ class OpenAI implements AIProviderInterface
         }, $this->tools);
     }
 
-    protected function createToolMessage(array $message): Message
+    protected function createToolCallMessage(array $message): Message
     {
         $tools = \array_map(function (array $item) {
             return $this->findTool($item['function']['name'])

@@ -39,7 +39,7 @@ trait HandleChat
         $result = \json_decode($result, true);
 
         if ($result['choices'][0]['finish_reason'] === 'tool_calls') {
-            $response = $this->createToolMessage($result['choices'][0]['message']);
+            $response = $this->createToolCallMessage($result['choices'][0]['message']);
         } else {
             $response = new AssistantMessage($result['choices'][0]['message']['content']);
         }

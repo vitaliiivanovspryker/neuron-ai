@@ -69,7 +69,7 @@ trait HandleStream
             // Handle tool call
             if ($line['choices'][0]['finish_reason'] === 'tool_calls') {
                 yield from $executeToolsCallback(
-                    $this->createToolMessage([
+                    $this->createToolCallMessage([
                         'content' => $text,
                         'tool_calls' => $toolCalls
                     ])

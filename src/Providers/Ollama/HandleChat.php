@@ -37,7 +37,7 @@ trait HandleChat
         $message = $response['message'];
 
         if (\array_key_exists('tool_calls', $message)) {
-            $message = $this->createToolMessage($message);
+            $message = $this->createToolCallMessage($message);
         } else {
             $message = new AssistantMessage($message['content']);
         }
