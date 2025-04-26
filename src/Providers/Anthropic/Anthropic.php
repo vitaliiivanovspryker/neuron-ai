@@ -114,7 +114,7 @@ class Anthropic implements AIProviderInterface
         }, $this->tools);
     }
 
-    public function createToolMessage(array $content): Message
+    public function createToolCallMessage(array $content): Message
     {
         $tool = $this->findTool($content['name'])
             ->setInputs($content['input'])
@@ -122,7 +122,9 @@ class Anthropic implements AIProviderInterface
 
         // During serialization and deserialization PHP convert the original empty object {} to empty array []
         // causing an error on the Anthropic API. If there are no inputs, we need to restore the empty JSON object.
-        $content['input'] ??= new \stdClass();
+        if (empty($content['input'])) {
+            $content['input'] = new \stdClass();
+        }
 
         return new ToolCallMessage(
             [$content],

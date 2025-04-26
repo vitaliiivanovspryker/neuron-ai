@@ -41,7 +41,7 @@ trait HandleChat
         $content = \end($result['content']);
 
         if ($content['type'] === 'tool_use') {
-            $response = $this->createToolMessage($content);
+            $response = $this->createToolCallMessage($content);
         } else {
             $response = new AssistantMessage($content['text']);
         }
