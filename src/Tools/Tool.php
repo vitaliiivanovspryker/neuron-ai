@@ -147,7 +147,7 @@ class Tool implements ToolInterface
         return [
             'name' => $this->name,
             'description' => $this->description,
-            'inputs' => $this->inputs,
+            'inputs' => !empty($this->inputs) ? $this->inputs : new \stdClass(),
             'callId' => $this->callId,
             'result' => $this->result,
         ];

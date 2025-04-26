@@ -68,6 +68,11 @@ class Ollama implements AIProviderInterface
                 'function' => [
                     'name' => $tool->getName(),
                     'description' => $tool->getDescription(),
+                    'parameters' => [
+                        'type' => 'object',
+                        'properties' => new \stdClass(),
+                        'required' => [],
+                    ]
                 ],
             ];
 
@@ -92,7 +97,7 @@ class Ollama implements AIProviderInterface
         }, $this->tools);
     }
 
-    protected function createToolMessage(array $message): Message
+    protected function createToolCallMessage(array $message): Message
     {
         $tools = \array_map(function (array $item) {
             return $this->findTool($item['function']['name'])

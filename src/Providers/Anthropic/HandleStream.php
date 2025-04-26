@@ -72,7 +72,7 @@ trait HandleStream
                 }, $toolCalls);
 
                 yield from $executeToolsCallback(
-                    $this->createToolMessage(\end($toolCalls))
+                    $this->createToolCallMessage(\end($toolCalls))
                 );
             }
 
