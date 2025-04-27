@@ -23,7 +23,8 @@ trait HandleWithTools
     {
         foreach ($this->tools as $tool) {
             if ($tool->getName() === $name) {
-                return $tool;
+                // We return a copy to avoid multiple reference to the same tool.
+                return clone $tool;
             }
         }
 
