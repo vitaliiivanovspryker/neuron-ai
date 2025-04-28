@@ -44,7 +44,7 @@ class MessageMapper implements MessageMapperInterface
     protected function mapToolCall(ToolCallMessage $message): void
     {
         $this->mapping[] = [
-            'role' => Message::ROLE_MODEL,
+            'role' => $message->getRole(),
             'parts' => $message->getContent(),
         ];
     }
