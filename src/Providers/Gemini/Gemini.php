@@ -39,6 +39,13 @@ class Gemini implements AIProviderInterface
      */
     protected ?string $system;
 
+    /**
+     * The component responsible for mapping the NeuronAI Message to the AI provider format.
+     *
+     * @var MessageMapperInterface
+     */
+    protected MessageMapperInterface $messageMapper;
+
     public function __construct(
         protected string $key,
         protected string $model,
