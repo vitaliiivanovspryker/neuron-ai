@@ -20,7 +20,11 @@ trait HandleStream
         ];
 
         if (isset($this->system)) {
-            $json['system_instruction'] = $this->system;
+            $json['system_instruction'] = [
+                'parts' => [
+                    ['text' => $this->system]
+                ]
+            ];
         }
 
         if (!empty($this->tools)) {
