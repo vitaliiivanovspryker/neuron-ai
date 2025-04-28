@@ -136,11 +136,13 @@ trait HandleStructured
             ->validate($obj);
 
         if ($violations->count() > 0) {
-            $violations = \array_map(function (ConstraintViolation $violation) {
-                return $violation->getPropertyPath().': '.$violation->getMessage();
-            }, (array)$violations);
-            $this->notify('structured-validated', new Validated($class, $json, $violations));
-            throw new AgentException(PHP_EOL.'- '.implode(PHP_EOL.'- ', $violations));
+            $errorMessages = [];
+            /** @var ConstraintViolation $violation */
+            foreach ($violations as $violation) {
+                $errorMessages[] = $violation->getPropertyPath().': '.$violation->getMessage();
+            }
+            $this->notify('structured-validated', new Validated($class, $json, $errorMessages));
+            throw new AgentException(PHP_EOL.'- '.implode(PHP_EOL.'- ', $errorMessages));
         }
         $this->notify('structured-validated', new Validated($class, $json));
 
