@@ -43,7 +43,7 @@ class MessageMapper implements MessageMapperInterface
 
     protected function mapToolCall(ToolCallMessage $message): void
     {
-        //
+        throw new \Exception('Not implemented');
     }
 
     protected function mapToolsResult(ToolCallResultMessage $message): void
