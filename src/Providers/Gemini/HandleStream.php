@@ -31,7 +31,7 @@ trait HandleStream
             $json['tools'] = $this->generateToolsPayload();
         }
 
-        $stream = $this->client->post(trim($this->baseUri, '/')."/{$this->model}:streamGenerateContent}", [
+        $stream = $this->client->post(trim($this->baseUri, '/')."/{$this->model}:streamGenerateContent", [
             'stream' => true,
             ...\compact('json')
         ])->getBody();
