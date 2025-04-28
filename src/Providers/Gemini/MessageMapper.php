@@ -34,7 +34,9 @@ class MessageMapper implements MessageMapperInterface
     {
         $this->mapping[] = [
             'role' => $message->getRole(),
-            'parts' => ['text' => $message->getContent()],
+            'parts' => [
+                ['text' => $message->getContent()]
+            ],
         ];
     }
 }
