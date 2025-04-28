@@ -43,7 +43,10 @@ class MessageMapper implements MessageMapperInterface
 
     protected function mapToolCall(ToolCallMessage $message): void
     {
-        throw new \Exception('Not implemented');
+        $this->mapping[] = [
+            'role' => Message::ROLE_MODEL,
+            'parts' => $message->getContent(),
+        ];
     }
 
     protected function mapToolsResult(ToolCallResultMessage $message): void

@@ -123,7 +123,9 @@ class OpenAI implements AIProviderInterface
     {
         $tools = \array_map(function (array $item) {
             return $this->findTool($item['function']['name'])
-                ->setInputs(json_decode($item['function']['arguments'], true))
+                ->setInputs(
+                    \json_decode($item['function']['arguments'], true)
+                )
                 ->setCallId($item['id']);
         }, $message['tool_calls']);
 
