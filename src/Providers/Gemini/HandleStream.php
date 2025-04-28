@@ -40,7 +40,18 @@ trait HandleStream
         $toolCalls = [];
 
         while (! $stream->eof()) {
-            if (!$line = $this->parseNextDataLine($stream)) {
+            $line = $this->readLine($stream);
+
+            if (($line = json_decode($line, true)) === null) {
+                continue;
+            }
+
+            // Inform the agent about usage when stream
+            if (\array_key_exists('usageMetadata', $line['candidates'][0]['content'])) {
+                yield \json_encode(['usage' => [
+                    'input_tokens' => $line['candidates'][0]['content']['usageMetadata']['promptTokenCount'],
+                    'output_tokens' => $line['candidates'][0]['content']['usageMetadata']['candidatesTokenCount'],
+                ]]);
                 continue;
             }
 
@@ -80,7 +91,7 @@ trait HandleStream
 
         foreach ($parts as $index => $part) {
             if (isset($part['functionCall'])) {
-                $toolCalls[$index] = $part['functionCall'];
+                $toolCalls[$index]['functionCall'] = $part['functionCall'];
             }
         }
 
@@ -106,45 +117,22 @@ trait HandleStream
         return false;
     }
 
-    protected function parseNextDataLine(StreamInterface $stream): ?array
-    {
-        $line = $this->readLine($stream);
-
-        if (! str_starts_with($line, 'data:')) {
-            return null;
-        }
-
-        $line = trim(substr($line, strlen('data: ')));
-
-        if ($line === '' || $line === '[DONE]') {
-            return null;
-        }
-
-        try {
-            return json_decode($line, true, flags: JSON_THROW_ON_ERROR);
-        } catch (\Throwable $exception) {
-            throw new ProviderException('Gemini Error: '.$exception->getMessage());
-        }
-    }
-
-    protected function readLine(StreamInterface $stream): string
+    private function readLine(StreamInterface $stream): string
     {
         $buffer = '';
 
         while (! $stream->eof()) {
-            $byte = $stream->read(1);
+            $buffer .= $stream->read(1);
 
-            if ($byte === '') {
-                return $buffer;
+            if (strlen($buffer) === 1 && $buffer !== '{') {
+                $buffer = '';
             }
 
-            $buffer .= $byte;
-
-            if ($byte === "\n") {
-                break;
+            if (json_decode($buffer) !== null) {
+                return $buffer;
             }
         }
 
-        return $buffer;
+        return rtrim($buffer, ']');
     }
 }
