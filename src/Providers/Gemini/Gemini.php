@@ -54,7 +54,8 @@ class Gemini implements AIProviderInterface
         protected array $parameters = [],
     ) {
         $this->client = new Client([
-            'base_uri' => trim($this->baseUri, '/').'/',
+            // Since Gemini use colon ":" into the URL guxxle fire an exception udsing base_uri configuration.
+            //'base_uri' => trim($this->baseUri, '/').'/',
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',

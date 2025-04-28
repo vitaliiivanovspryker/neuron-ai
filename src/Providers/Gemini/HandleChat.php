@@ -29,7 +29,7 @@ trait HandleChat
             $json['tools'] = $this->generateToolsPayload();
         }
 
-        $result = $this->client->post("{$this->model}:generateContent", compact('json'))
+        $result = $this->client->post(trim($this->baseUri, '/')."/{$this->model}:generateContent", compact('json'))
             ->getBody()->getContents();
 
         $result = \json_decode($result, true);
