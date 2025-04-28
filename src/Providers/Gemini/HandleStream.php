@@ -56,6 +56,8 @@ trait HandleStream
                             'parts' => $toolCalls
                         ])
                     );
+
+                    return;
                 }
 
                 continue;
