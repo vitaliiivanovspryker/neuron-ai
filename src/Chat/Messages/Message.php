@@ -24,20 +24,26 @@ class Message implements \JsonSerializable
         return $this->role;
     }
 
+    public function setRole(string $role): Message
+    {
+        $this->role = $role;
+        return $this;
+    }
+
     public function getContent(): mixed
     {
         return $this->content;
+    }
+
+    public function getUsage(): ?Usage
+    {
+        return $this->usage;
     }
 
     public function setUsage(Usage $usage): static
     {
         $this->usage = $usage;
         return $this;
-    }
-
-    public function getUsage(): ?Usage
-    {
-        return $this->usage;
     }
 
     public function addMetadata(string $key, string|array|null $value): Message

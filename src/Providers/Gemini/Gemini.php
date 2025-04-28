@@ -54,14 +54,14 @@ class Gemini implements AIProviderInterface
         protected array $parameters = [],
     ) {
         $this->client = new Client([
-            // Since Gemini use colon ":" into the URL guxxle fire an exception udsing base_uri configuration.
-            //'base_uri' => trim($this->baseUri, '/').'/',
-            'headers' => [
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json',
-                'x-goog-api-key' => $this->key,
-            ]
-        ]);
+                                       // Since Gemini use colon ":" into the URL guxxle fire an exception udsing base_uri configuration.
+                                       //'base_uri' => trim($this->baseUri, '/').'/',
+                                       'headers' => [
+                                           'Accept' => 'application/json',
+                                           'Content-Type' => 'application/json',
+                                           'x-goog-api-key' => $this->key,
+                                       ]
+                                   ]);
     }
 
     public function systemPrompt(?string $prompt): AIProviderInterface
@@ -123,18 +123,22 @@ class Gemini implements AIProviderInterface
     protected function createToolCallMessage(array $message): Message
     {
         $tools = \array_map(function (array $item) {
+            if (!isset($item['functionCall'])) {
+                return null;
+            }
+
             // Gemini does not use ID. It uses the tool's name as a unique identifier.
-            return $this->findTool($item['function']['name'])
-                ->setInputs(
-                    \json_decode($item['function']['arguments'], true)
-                );
-        }, $message['tool_calls']);
+            return $this->findTool($item['functionCall']['name'])
+                ->setInputs($item['functionCall']['args'])
+                ->setCallId($item['functionCall']['name']);
+        }, $message['parts']);
 
         $result = new ToolCallMessage(
-            $message['content'],
-            $tools
+            $message,
+            \array_filter($tools)
         );
+        $result->setRole(Message::ROLE_MODEL);
 
-        return $result->addMetadata('tool_calls', $message['tool_calls']);
+        return $result;
     }
 }

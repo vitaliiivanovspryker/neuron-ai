@@ -38,9 +38,9 @@ trait HandleChat
 
         $result = \json_decode($result, true);
 
-        $content = $result['candidates'][0]['contents'][0];
+        $content = $result['candidates'][0]['content'];
 
-        if (\array_key_exists('functionCall', $content) && !empty($content['functionCall'])) {
+        if (\array_key_exists('functionCall', $content['parts'][0]) && !empty($content['parts'][0]['functionCall'])) {
             $response = $this->createToolCallMessage($content);
         } else {
             $response = new Message($content['role'], $content['parts'][0]['text']??'');
