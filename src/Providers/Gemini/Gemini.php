@@ -59,7 +59,7 @@ class Gemini implements AIProviderInterface
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer ' . $this->key,
+                'x-goog-api-key' => $this->key,
             ]
         ]);
     }
