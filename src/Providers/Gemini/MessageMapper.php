@@ -9,6 +9,7 @@ use NeuronAI\Chat\Messages\ToolCallResultMessage;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Exceptions\AgentException;
 use NeuronAI\Providers\MessageMapperInterface;
+use NeuronAI\Tools\ToolInterface;
 
 class MessageMapper implements MessageMapperInterface
 {
@@ -37,6 +38,29 @@ class MessageMapper implements MessageMapperInterface
             'parts' => [
                 ['text' => $message->getContent()]
             ],
+        ];
+    }
+
+    protected function mapToolCall(ToolCallMessage $message): void
+    {
+        //
+    }
+
+    protected function mapToolsResult(ToolCallResultMessage $message): void
+    {
+        $this->mapping[] = [
+            'role' => Message::ROLE_USER,
+            'parts' => \array_map(function (ToolInterface $tool) {
+                return [
+                    'functionResponse' => [
+                        'name' => $tool->getName(),
+                        'response' => [
+                            'name' => $tool->getName(),
+                            'content' => $tool->getResult(),
+                        ],
+                    ],
+                ];
+            }, $message->getTools()),
         ];
     }
 }

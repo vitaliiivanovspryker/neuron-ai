@@ -2,6 +2,9 @@
 
 namespace NeuronAI\Chat\Messages;
 
+use NeuronAI\Tools\Tool;
+use NeuronAI\Tools\ToolInterface;
+
 class ToolCallResultMessage extends UserMessage
 {
     public function __construct(protected array $tools)
@@ -9,6 +12,9 @@ class ToolCallResultMessage extends UserMessage
         parent::__construct(null);
     }
 
+    /**
+     * @return array<ToolInterface>
+     */
     public function getTools(): array
     {
         return $this->tools;
