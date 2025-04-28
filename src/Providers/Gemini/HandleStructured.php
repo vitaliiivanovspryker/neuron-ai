@@ -11,6 +11,13 @@ trait HandleStructured
         string $class,
         array $response_format
     ): Message {
-        throw new \Exception("Not implemented");
+        $this->parameters = \array_merge($this->parameters, [
+            'generationConfig' => [
+                'response_mime_type' => 'application/json',
+                'response_schema' => $response_format,
+            ]
+        ]);
+
+        return $this->chat($messages);
     }
 }
