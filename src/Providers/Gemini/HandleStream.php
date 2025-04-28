@@ -40,12 +40,65 @@ trait HandleStream
                 continue;
             }
 
-            $content = $line['candidates'][0]['content']['parts'][0]['text']??'';
+            // Process tool calls
+            if ($this->hasToolCalls($line)) {
+                $toolCalls = $this->composeToolCalls($line, $toolCalls);
 
+                // Handle tool calls
+                if ($line['candidates'][0]['finishReason'] === 'STOP') {
+                    yield from $executeToolsCallback(
+                        $this->createToolCallMessage([
+                            'content' => $text,
+                            'tool_calls' => $toolCalls
+                        ])
+                    );
+                }
+
+                continue;
+            }
+
+            // Process regular content
+            $content = $line['candidates'][0]['content']['parts'][0]['text']??'';
             $text .= $content;
 
             yield $content;
         }
+    }
+
+    /**
+     * Recreate the tool_calls format from streaming Gemini API.
+     */
+    protected function composeToolCalls(array $line, array $toolCalls): array
+    {
+        $parts = $line['candidates'][0]['content']['parts']??[];
+
+        foreach ($parts as $index => $part) {
+            if (isset($part['functionCall'])) {
+                $toolCalls[$index]['name'] = $part['functionCall']['name'];
+                $toolCalls[$index]['arguments'] = $part['functionCall']['args']??'';
+            }
+        }
+
+        return $toolCalls;
+    }
+
+    /**
+     * Determines if the given line contains tool function calls.
+     *
+     * @param array $line The data line to check for tool function calls.
+     * @return bool Returns true if the line contains tool function calls, otherwise false.
+     */
+    protected function hasToolCalls(array $line): bool
+    {
+        $parts = $line['candidates'][0]['content']['parts']??[];
+
+        foreach ($parts as $part) {
+            if (isset($part['functionCall'])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function parseNextDataLine(StreamInterface $stream): ?array

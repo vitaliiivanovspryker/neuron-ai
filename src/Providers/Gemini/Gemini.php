@@ -4,6 +4,7 @@ namespace NeuronAI\Providers\Gemini;
 
 use GuzzleHttp\Client;
 use NeuronAI\Chat\Messages\Message;
+use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Providers\MessageMapperInterface;
@@ -109,8 +110,19 @@ class Gemini implements AIProviderInterface
         ];
     }
 
-    public function createToolCallMessage(array $content): Message
+    protected function createToolCallMessage(array $message): Message
     {
-        throw new \Exception('Not implemented');
+        $tools = \array_map(function (array $item) {
+            return $this->findTool($item['function']['name'])
+                ->setInputs(json_decode($item['function']['arguments'], true))
+                ->setCallId($item['id']);
+        }, $message['tool_calls']);
+
+        $result = new ToolCallMessage(
+            $message['content'],
+            $tools
+        );
+
+        return $result->addMetadata('tool_calls', $message['tool_calls']);
     }
 }

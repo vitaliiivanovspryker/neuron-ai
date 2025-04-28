@@ -66,7 +66,7 @@ trait HandleStream
                 continue;
             }
 
-            // Handle tool call
+            // Handle tool calls
             if ($line['choices'][0]['finish_reason'] === 'tool_calls') {
                 yield from $executeToolsCallback(
                     $this->createToolCallMessage([
@@ -87,7 +87,7 @@ trait HandleStream
     }
 
     /**
-     * Recreate the tool_calls format of openai API from streaming.
+     * Recreate the tool_calls format from streaming OpenAI API.
      *
      * @param  array<string, mixed>  $line
      * @param  array<int, array<string, mixed>>  $toolCalls
