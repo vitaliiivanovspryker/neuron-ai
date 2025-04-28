@@ -116,7 +116,7 @@ class Gemini implements AIProviderInterface
         }, $this->tools);
 
         return [
-            ['functionDeclarations' => $tools]
+            'functionDeclarations' => $tools
         ];
     }
 
