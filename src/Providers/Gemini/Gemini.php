@@ -105,7 +105,7 @@ class Gemini implements AIProviderInterface
             }, []);
 
             if (!empty($properties)) {
-                $payload['function']['parameters'] = [
+                $payload['parameters'] = [
                     'type' => 'object',
                     'properties' => $properties,
                     'required' => $tool->getRequiredProperties(),
@@ -116,7 +116,7 @@ class Gemini implements AIProviderInterface
         }, $this->tools);
 
         return [
-            'functionDeclarations' => $tools,
+            ['functionDeclarations' => $tools]
         ];
     }
 
@@ -134,7 +134,7 @@ class Gemini implements AIProviderInterface
         }, $message['parts']);
 
         $result = new ToolCallMessage(
-            $message['content'],
+            $message['content']??null,
             \array_filter($tools)
         );
         $result->setRole(Message::ROLE_MODEL);
