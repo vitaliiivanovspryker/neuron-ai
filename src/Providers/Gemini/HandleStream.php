@@ -31,7 +31,7 @@ trait HandleStream
             $json['tools'] = $this->generateToolsPayload();
         }
 
-        $stream = $this->client->post("{$this->model}:streamGenerateContent}", [
+        $stream = $this->client->post(trim($this->baseUri, '/')."/{$this->model}:streamGenerateContent}", [
             'stream' => true,
             ...\compact('json')
         ])->getBody();
@@ -53,7 +53,7 @@ trait HandleStream
                     yield from $executeToolsCallback(
                         $this->createToolCallMessage([
                             'content' => $text,
-                            'tool_calls' => $toolCalls
+                            'parts' => $toolCalls
                         ])
                     );
                 }
@@ -78,8 +78,7 @@ trait HandleStream
 
         foreach ($parts as $index => $part) {
             if (isset($part['functionCall'])) {
-                $toolCalls[$index]['name'] = $part['functionCall']['name'];
-                $toolCalls[$index]['arguments'] = $part['functionCall']['args']??'';
+                $toolCalls[$index] = $part['functionCall'];
             }
         }
 
