@@ -118,8 +118,7 @@ Supported providers:
 - Anthropic
 - Ollama (also available as an [embeddings provider](https://docs.neuron-ai.dev/components/embeddings-provider#ollama))
 - OpenAI
-- Mistral
-- Deepseek
+- Gemini
 
 <a name="tools">
 
