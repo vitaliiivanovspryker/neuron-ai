@@ -28,9 +28,9 @@ class OpenAITest extends TestCase
 
         $client = new Client(['handler' => $stack]);
 
-        $openai = (new OpenAI('', 'gpt-4o'))->setClient($client);
+        $provider = (new OpenAI('', 'gpt-4o'))->setClient($client);
 
-        $response = $openai->chat([new UserMessage('Hi')]);
+        $response = $provider->chat([new UserMessage('Hi')]);
 
         // Ensure we sent one request
         $this->assertCount(1, $sentRequests);
