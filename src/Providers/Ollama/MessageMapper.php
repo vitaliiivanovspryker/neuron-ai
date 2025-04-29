@@ -54,6 +54,15 @@ class MessageMapper implements MessageMapperInterface
             unset($message['usage']);
         }
 
+        if (\array_key_exists('tool_calls', $message)) {
+            $message['tool_calls'] = \array_map(function (array $toolCall) {
+                if (empty($toolCall['function']['arguments'])) {
+                    $toolCall['function']['arguments'] = new \stdClass();
+                }
+                return $toolCall;
+            }, $message['tool_calls']);
+        }
+
         unset($message['type']);
         unset($message['tools']);
 
