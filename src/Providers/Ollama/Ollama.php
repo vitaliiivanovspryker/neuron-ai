@@ -6,7 +6,6 @@ use GuzzleHttp\Client;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Providers\AIProviderInterface;
-use NeuronAI\Providers\Anthropic\MessageMapper;
 use NeuronAI\Providers\HandleClient;
 use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Providers\MessageMapperInterface;
