@@ -8,9 +8,9 @@ use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Chat\Messages\ToolCallResultMessage;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Exceptions\AgentException;
-use NeuronAI\Tools\ToolInterface;
+use NeuronAI\Providers\MessageMapperInterface;
 
-class MessageMapper
+class MessageMapper implements MessageMapperInterface
 {
     /**
      * Mapped messages.
