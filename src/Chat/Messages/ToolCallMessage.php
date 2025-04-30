@@ -23,4 +23,15 @@ class ToolCallMessage extends AssistantMessage
     {
         return $this->tools;
     }
+
+    public function jsonSerialize(): array
+    {
+        return \array_merge(
+            parent::jsonSerialize(),
+            [
+                'type' => 'tool_call',
+                'tools' => \array_map(fn ($tool) => $tool->jsonSerialize(), $this->tools)
+            ]
+        );
+    }
 }

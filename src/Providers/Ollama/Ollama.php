@@ -8,6 +8,7 @@ use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\HandleClient;
 use NeuronAI\Providers\HandleWithTools;
+use NeuronAI\Providers\MessageMapperInterface;
 use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\ToolProperty;
 
@@ -26,6 +27,13 @@ class Ollama implements AIProviderInterface
 
     protected ?string $system;
 
+    /**
+     * The component responsible for mapping the NeuronAI Message to the AI provider format.
+     *
+     * @var MessageMapperInterface
+     */
+    protected MessageMapperInterface $messageMapper;
+
     public function __construct(
         protected string $url, // http://localhost:11434/api
         protected string $model,
@@ -43,6 +51,14 @@ class Ollama implements AIProviderInterface
         return $this;
     }
 
+    public function messageMapper(): MessageMapperInterface
+    {
+        if (!isset($this->messageMapper)) {
+            $this->messageMapper = new MessageMapper();
+        }
+        return $this->messageMapper;
+    }
+
     public function generateToolsPayload(): array
     {
         return \array_map(function (ToolInterface $tool) {
@@ -51,6 +67,11 @@ class Ollama implements AIProviderInterface
                 'function' => [
                     'name' => $tool->getName(),
                     'description' => $tool->getDescription(),
+                    'parameters' => [
+                        'type' => 'object',
+                        'properties' => new \stdClass(),
+                        'required' => [],
+                    ]
                 ],
             ];
 
@@ -75,7 +96,7 @@ class Ollama implements AIProviderInterface
         }, $this->tools);
     }
 
-    protected function createToolMessage(array $message): Message
+    protected function createToolCallMessage(array $message): Message
     {
         $tools = \array_map(function (array $item) {
             return $this->findTool($item['function']['name'])

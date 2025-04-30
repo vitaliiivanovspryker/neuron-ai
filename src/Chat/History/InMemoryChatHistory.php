@@ -11,17 +11,17 @@ class InMemoryChatHistory extends AbstractChatHistory
         parent::__construct($contextWindow);
     }
 
+    protected function storeMessage(Message $message): ChatHistoryInterface
+    {
+        return $this;
+    }
+
     public function removeOldestMessage(): ChatHistoryInterface
     {
         return $this;
     }
 
     protected function clear(): ChatHistoryInterface
-    {
-        return $this;
-    }
-
-    protected function storeMessage(Message $message): ChatHistoryInterface
     {
         return $this;
     }

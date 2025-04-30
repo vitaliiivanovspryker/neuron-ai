@@ -22,11 +22,9 @@ trait HandleChat
             \array_unshift($messages, new AssistantMessage($this->system));
         }
 
-        $mapper = new MessageMapper($messages);
-
         $json = [
             'model' => $this->model,
-            'messages' => $mapper->map(),
+            'messages' => $this->messageMapper()->map($messages),
             ...$this->parameters
         ];
 
@@ -41,7 +39,7 @@ trait HandleChat
         $result = \json_decode($result, true);
 
         if ($result['choices'][0]['finish_reason'] === 'tool_calls') {
-            $response = $this->createToolMessage($result['choices'][0]['message']);
+            $response = $this->createToolCallMessage($result['choices'][0]['message']);
         } else {
             $response = new AssistantMessage($result['choices'][0]['message']['content']);
         }

@@ -8,6 +8,7 @@ use NeuronAI\Tests\Utils\PersonWithAddress;
 use NeuronAI\Tests\Utils\PersonWithTags;
 use NeuronAI\Tests\Utils\Tag;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Validator\Validation;
 
@@ -39,6 +40,10 @@ class ValidatorTest extends TestCase
 
         $this->assertEquals(1, $violations->count());
         $this->assertEquals('firstName', $violations->get(0)->getPropertyPath());
+
+        foreach ($violations as $violation) {
+            $this->assertInstanceOf(ConstraintViolation::class, $violation);
+        }
     }
 
     public function test_validate_nested_class()
@@ -57,6 +62,10 @@ class ValidatorTest extends TestCase
         $this->assertEquals(2, $violations->count());
         $this->assertEquals('address.street', $violations->get(0)->getPropertyPath());
         $this->assertEquals('address.zip', $violations->get(1)->getPropertyPath());
+
+        foreach ($violations as $violation) {
+            $this->assertInstanceOf(ConstraintViolation::class, $violation);
+        }
     }
 
     public function test_validate_array()
@@ -89,5 +98,9 @@ class ValidatorTest extends TestCase
             ->validate($obj);
 
         $this->assertEquals(1, $violations->count());
+
+        foreach ($violations as $violation) {
+            $this->assertInstanceOf(ConstraintViolation::class, $violation);
+        }
     }
 }

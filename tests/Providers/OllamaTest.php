@@ -28,12 +28,12 @@ class OllamaTest extends TestCase
 
         $client = new Client(['handler' => $stack]);
 
-        $ollama = (new Ollama(
+        $provider = (new Ollama(
             url: '',
             model: 'llama3.2',
         ))->setClient($client);
 
-        $response = $ollama->chat([new UserMessage('Hi')]);
+        $response = $provider->chat([new UserMessage('Hi')]);
 
         // Ensure we sent one request
         $this->assertCount(1, $sentRequests);

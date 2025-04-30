@@ -16,12 +16,10 @@ trait HandleChat
             \array_unshift($messages, new Message(Message::ROLE_SYSTEM, $this->system));
         }
 
-        $mapper = new MessageMapper($messages);
-
         $json = [
             'stream' => false,
             'model' => $this->model,
-            'messages' => $mapper->map(),
+            'messages' => $this->messageMapper()->map($messages),
             ...$this->parameters,
         ];
 
@@ -39,7 +37,7 @@ trait HandleChat
         $message = $response['message'];
 
         if (\array_key_exists('tool_calls', $message)) {
-            $message = $this->createToolMessage($message);
+            $message = $this->createToolCallMessage($message);
         } else {
             $message = new AssistantMessage($message['content']);
         }

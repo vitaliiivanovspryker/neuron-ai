@@ -1,18 +1,18 @@
 <?php
 
-namespace NeuronAI\Providers\Anthropic;
+namespace NeuronAI\Providers\Gemini;
 
+use GuzzleHttp\Client;
 use NeuronAI\Chat\Messages\Message;
+use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\HandleClient;
 use NeuronAI\Providers\HandleWithTools;
-use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Providers\MessageMapperInterface;
 use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\ToolProperty;
-use GuzzleHttp\Client;
 
-class Anthropic implements AIProviderInterface
+class Gemini implements AIProviderInterface
 {
     use HandleClient;
     use HandleWithTools;
@@ -32,13 +32,12 @@ class Anthropic implements AIProviderInterface
      *
      * @var string
      */
-    protected string $baseUri = 'https://api.anthropic.com/v1/';
+    protected string $baseUri = 'https://generativelanguage.googleapis.com/v1beta/models';
 
     /**
      * System instructions.
-     * https://docs.anthropic.com/claude/docs/system-prompts#how-to-use-system-prompts
      *
-     * @var string|null
+     * @var ?string
      */
     protected ?string $system;
 
@@ -49,29 +48,22 @@ class Anthropic implements AIProviderInterface
      */
     protected MessageMapperInterface $messageMapper;
 
-    /**
-     * AnthropicClaude constructor.
-     */
     public function __construct(
         protected string $key,
         protected string $model,
-        protected string $version = '2023-06-01',
-        protected int $max_tokens = 8192,
         protected array $parameters = [],
     ) {
         $this->client = new Client([
-            'base_uri' => trim($this->baseUri, '/').'/',
+            // Since Gemini use colon ":" into the URL guxxle fire an exception udsing base_uri configuration.
+            //'base_uri' => trim($this->baseUri, '/').'/',
             'headers' => [
+                'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
-                'x-api-key' => $this->key,
-                'anthropic-version' => $version,
+                'x-goog-api-key' => $this->key,
             ]
         ]);
     }
 
-    /**
-     * @inerhitDoc
-     */
     public function systemPrompt(?string $prompt): AIProviderInterface
     {
         $this->system = $prompt;
@@ -88,11 +80,21 @@ class Anthropic implements AIProviderInterface
 
     public function generateToolsPayload(): array
     {
-        return \array_map(function (ToolInterface $tool) {
-            $properties = \array_reduce($tool->getProperties(), function ($carry, ToolProperty $property) {
+        $tools = \array_map(function (ToolInterface $tool) {
+            $payload = [
+                'name' => $tool->getName(),
+                'description' => $tool->getDescription(),
+                'parameters' => [
+                    'type' => 'object',
+                    'properties' => new \stdClass(),
+                    'required' => [],
+                ],
+            ];
+
+            $properties = \array_reduce($tool->getProperties(), function (array $carry, ToolProperty $property) {
                 $carry[$property->getName()] = [
-                    'type' => $property->getType(),
                     'description' => $property->getDescription(),
+                    'type' => $property->getType(),
                 ];
 
                 if (!empty($property->getEnum())) {
@@ -102,33 +104,41 @@ class Anthropic implements AIProviderInterface
                 return $carry;
             }, []);
 
-            return [
-                'name' => $tool->getName(),
-                'description' => $tool->getDescription(),
-                'input_schema' => [
+            if (!empty($properties)) {
+                $payload['parameters'] = [
                     'type' => 'object',
-                    'properties' => !empty($properties) ? $properties : null,
+                    'properties' => $properties,
                     'required' => $tool->getRequiredProperties(),
-                ],
-            ];
+                ];
+            }
+
+            return $payload;
         }, $this->tools);
+
+        return [
+            'functionDeclarations' => $tools
+        ];
     }
 
-    public function createToolCallMessage(array $content): Message
+    protected function createToolCallMessage(array $message): Message
     {
-        $tool = $this->findTool($content['name'])
-            ->setInputs($content['input'])
-            ->setCallId($content['id']);
+        $tools = \array_map(function (array $item) {
+            if (!isset($item['functionCall'])) {
+                return null;
+            }
 
-        // During serialization and deserialization PHP convert the original empty object {} to empty array []
-        // causing an error on the Anthropic API. If there are no inputs, we need to restore the empty JSON object.
-        if (empty($content['input'])) {
-            $content['input'] = new \stdClass();
-        }
+            // Gemini does not use ID. It uses the tool's name as a unique identifier.
+            return $this->findTool($item['functionCall']['name'])
+                ->setInputs($item['functionCall']['args'])
+                ->setCallId($item['functionCall']['name']);
+        }, $message['parts']);
 
-        return new ToolCallMessage(
-            [$content],
-            [$tool] // Anthropic call one tool at a time. So we pass an array with one element.
+        $result = new ToolCallMessage(
+            $message['content']??null,
+            \array_filter($tools)
         );
+        $result->setRole(Message::ROLE_MODEL);
+
+        return $result;
     }
 }

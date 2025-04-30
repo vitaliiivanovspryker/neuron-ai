@@ -4,6 +4,7 @@ namespace NeuronAI\Providers\OpenAI;
 
 use GuzzleHttp\Exception\GuzzleException;
 use NeuronAI\Chat\Messages\AssistantMessage;
+use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Exceptions\ProviderException;
 use Psr\Http\Message\StreamInterface;
 
@@ -20,12 +21,10 @@ trait HandleStream
             \array_unshift($messages, new AssistantMessage($this->system));
         }
 
-        $mapper = new MessageMapper($messages);
-
         $json = [
             'stream' => true,
             'model' => $this->model,
-            'messages' => $mapper->map(),
+            'messages' => $this->messageMapper()->map($messages),
             'stream_options' => ['include_usage' => true],
             ...$this->parameters
         ];
@@ -67,10 +66,10 @@ trait HandleStream
                 continue;
             }
 
-            // Handle tool call
+            // Handle tool calls
             if ($line['choices'][0]['finish_reason'] === 'tool_calls') {
                 yield from $executeToolsCallback(
-                    $this->createToolMessage([
+                    $this->createToolCallMessage([
                         'content' => $text,
                         'tool_calls' => $toolCalls
                     ])
@@ -88,7 +87,7 @@ trait HandleStream
     }
 
     /**
-     * Recreate the tool_calls format of openai API from streaming.
+     * Recreate the tool_calls format from streaming OpenAI API.
      *
      * @param  array<string, mixed>  $line
      * @param  array<int, array<string, mixed>>  $toolCalls

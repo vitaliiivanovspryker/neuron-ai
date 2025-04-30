@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\Providers\Anthropic;
+namespace NeuronAI\Providers\Gemini;
 
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
@@ -33,40 +33,46 @@ class MessageMapper implements MessageMapperInterface
 
     protected function mapMessage(Message $message): void
     {
-        $message = $message->jsonSerialize();
-
-        if (\array_key_exists('usage', $message)) {
-            unset($message['usage']);
-        }
-
-        $this->mapping[] = $message;
+        $this->mapping[] = [
+            'role' => $message->getRole(),
+            'parts' => [
+                ['text' => $message->getContent()]
+            ],
+        ];
     }
 
     protected function mapToolCall(ToolCallMessage $message): void
     {
-        $message = $message->jsonSerialize();
-
-        if (\array_key_exists('usage', $message)) {
-            unset($message['usage']);
-        }
-
-        unset($message['type']);
-        unset($message['tools']);
-
-        $this->mapping[] = $message;
+        $this->mapping[] = [
+            'role' => Message::ROLE_MODEL,
+            'parts' => [
+                ...\array_map(function (ToolInterface $tool) {
+                    return [
+                        'functionCall' => [
+                            'name' => $tool->getName(),
+                            'args' => $tool->getInputs()?:new \stdClass(),
+                        ]
+                    ];
+                }, $message->getTools())
+            ]
+        ];
     }
 
     protected function mapToolsResult(ToolCallResultMessage $message): void
     {
         $this->mapping[] = [
             'role' => Message::ROLE_USER,
-            'content' => \array_map(function (ToolInterface $tool) {
+            'parts' => \array_map(function (ToolInterface $tool) {
                 return [
-                    'type' => 'tool_result',
-                    'tool_use_id' => $tool->getCallId(),
-                    'content' => $tool->getResult(),
+                    'functionResponse' => [
+                        'name' => $tool->getName(),
+                        'response' => [
+                            'name' => $tool->getName(),
+                            'content' => $tool->getResult(),
+                        ],
+                    ],
                 ];
-            }, $message->getTools())
+            }, $message->getTools()),
         ];
     }
 }

@@ -39,6 +39,8 @@ class QdrantVectorStore implements VectorStoreInterface
                 'id' => $document->id,
                 'payload' => [
                     'content' => $document->content,
+                    'sourceType' => $document->sourceType,
+                    'sourceName' => $document->sourceName,
                 ],
                 'vector' => $document->embedding,
             ]
@@ -59,6 +61,8 @@ class QdrantVectorStore implements VectorStoreInterface
                 'id' => $document->id,
                 'payload' => [
                     'content' => $document->content,
+                    'sourceType' => $document->sourceType,
+                    'sourceName' => $document->sourceName,
                 ],
                 'vector' => $document->embedding,
             ];
@@ -83,6 +87,8 @@ class QdrantVectorStore implements VectorStoreInterface
             $document->id = $item['id'];
             $document->embedding = $item['vector'];
             $document->content = $item['payload']['content'];
+            $document->sourceType = $item['payload']['sourceType'];
+            $document->sourceName = $item['payload']['sourceName'];
             return $document;
         }, $response['result']);
     }

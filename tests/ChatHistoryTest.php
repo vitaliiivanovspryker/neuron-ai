@@ -26,12 +26,20 @@ class ChatHistoryTest extends TestCase
 
     public function test_chat_history_truncate()
     {
+        $history = new InMemoryChatHistory(300);
+        $this->assertEquals(300, $history->getFreeMemory());
+
         $message = new UserMessage('Hello!');
         $message->setUsage(new Usage(100, 100));
+        $history->addMessage($message);
+        $this->assertEquals(100, $history->getFreeMemory());
+        $this->assertEquals(200, $history->calculateTotalUsage());
 
-        $history = new InMemoryChatHistory(300);
+        $message = new UserMessage('Hello!');
+        $message->setUsage(new Usage(300, 100));
         $history->addMessage($message);
-        $history->addMessage($message);
+        $this->assertEquals(0, $history->getFreeMemory());
+        $this->assertEquals(300, $history->calculateTotalUsage());
         $this->assertCount(1, $history->getMessages());
     }
 

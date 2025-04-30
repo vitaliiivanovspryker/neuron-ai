@@ -13,6 +13,10 @@
 
 **[Go to the official documentation](https://neuron.inspector.dev/)**
 
+## Forum
+
+You can post questions and feedback on the [Inspector Forum](https://github.com/inspector-apm/neuron-ai/discussions).
+
 ## Examples
 
 - [Install](#install)
@@ -113,9 +117,8 @@ Supported providers:
 
 - Anthropic
 - Ollama (also available as an [embeddings provider](https://docs.neuron-ai.dev/components/embeddings-provider#ollama))
-- OpenAI
-- Mistral
-- Deepseek
+- OpenAI (also available as an [embeddings provider](https://docs.neuron-ai.dev/components/embeddings-provider#openai))
+- Gemini
 
 <a name="tools">
 
@@ -178,7 +181,7 @@ class YouTubeAgent extends Agent
 }
 ```
 
-Learn more about Tools on the [documentation](https://docs.neuron-ai.dev/tools-and-function-calls).
+Learn more about Tools in the [documentation](https://docs.neuron-ai.dev/tools-and-function-calls).
 
 <a name="mcp">
 
@@ -194,7 +197,7 @@ use NeuronAI\Providers\Anthropic\Anthropic;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 
-class SEOAgent extends Agent
+class YouTubeAgent extends Agent
 {
     public function provider(): AIProviderInterface
     {
@@ -244,7 +247,7 @@ class SEOAgent extends Agent
 }
 ```
 
-Learn more about MCP connector on the [documentation](https://docs.neuron-ai.dev/advanced/mcp-servers-connection).
+Learn more about MCP connector in the [documentation](https://docs.neuron-ai.dev/advanced/mcp-servers-connection).
 
 <a name="rag">
 
@@ -294,7 +297,7 @@ class MyChatBot extends RAG
 }
 ```
 
-Learn more about RAG on the [documentation](https://docs.neuron-ai.dev/rag).
+Learn more about RAG in the [documentation](https://docs.neuron-ai.dev/rag).
 
 <a name="structured">
 

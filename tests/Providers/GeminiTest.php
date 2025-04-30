@@ -8,10 +8,10 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use NeuronAI\Chat\Messages\UserMessage;
-use NeuronAI\Providers\Anthropic\Anthropic;
+use NeuronAI\Providers\Gemini\Gemini;
 use PHPUnit\Framework\TestCase;
 
-class AnthropicTest extends TestCase
+class GeminiTest extends TestCase
 {
     public function test_chat_request(): void
     {
@@ -20,7 +20,22 @@ class AnthropicTest extends TestCase
         $mockHandler = new MockHandler([
             new Response(
                 status: 200,
-                body: '{"model": "claude-3-7-sonnet-latest","role": "assistant","stop_reason": "end_turn","content":[{"type": "text","text": "How can I assist you today?"}],"usage": {"input_tokens": 19,"output_tokens": 29}}',
+                body: '
+                    {
+	"candidates": [
+		{
+			"content": {
+			    "role": "model",
+			    "parts": [
+                    {
+                        "text": "How can I assist you today?"
+                    }
+                ]
+			}
+		}
+	]
+}
+',
             ),
         ]);
         $stack = HandlerStack::create($mockHandler);
@@ -28,7 +43,7 @@ class AnthropicTest extends TestCase
 
         $client = new Client(['handler' => $stack]);
 
-        $provider = (new Anthropic('', 'claude-3-7-sonnet-latest'))->setClient($client);
+        $provider = (new Gemini('', 'gemini-2.0-flash'))->setClient($client);
 
         $response = $provider->chat([new UserMessage('Hi')]);
 
@@ -38,12 +53,12 @@ class AnthropicTest extends TestCase
 
         // Ensure we have sent the expected request payload.
         $expectedResponse = [
-            'model' => 'claude-3-7-sonnet-latest',
-            'max_tokens' => 8192,
-            'messages' => [
+            'contents' => [
                 [
                     'role' => 'user',
-                    'content' => 'Hi',
+                    'parts' => [
+                        ['text' => 'Hi']
+                    ],
                 ],
             ],
         ];
