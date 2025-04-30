@@ -141,8 +141,9 @@ class RAG extends Agent
     /**
      * Apply a series of postprocessors to the retrieved documents.
      *
-     * @param array<Document> $documents
-     * @return array<Document>
+     * @param string $question The question to process the documents for.
+     * @param array<Document> $documents The documents to process.
+     * @return array<Document> The processed documents.
      */
     protected function applyPostProcessors(string $question, array $documents): array
     {
