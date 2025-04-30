@@ -27,12 +27,18 @@ class JinaRerankerPostProcessor implements PostProcessorInterface
 
     public function process(string $question, array $documents): array
     {
+        $jinaDocuments = [];
+
+        foreach ($documents as $document) {
+            $jinaDocuments[] = ['text' => $document->content];
+        }
+
         $response = $this->client->post('rerank', [
             RequestOptions::JSON => [
                 'model' => $this->model,
                 'query' => $question,
                 'top_n' => $this->topN,
-                'documents' => $documents,
+                'documents' => $jinaDocuments,
                 'return_documents' => false,
             ],
         ])->getBody()->getContents();
