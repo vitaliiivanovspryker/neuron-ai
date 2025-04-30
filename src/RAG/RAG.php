@@ -11,6 +11,7 @@ use NeuronAI\Observability\Events\VectorStoreSearching;
 use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
 use NeuronAI\RAG\Embeddings\EmbeddingsProviderInterface;
+use NeuronAI\RAG\PostProcessor\PostProcessorInterface;
 use NeuronAI\RAG\VectorStore\VectorStoreInterface;
 use NeuronAI\SystemPrompt;
 
@@ -27,6 +28,16 @@ class RAG extends Agent
      * @var EmbeddingsProviderInterface
      */
     protected EmbeddingsProviderInterface $embeddingsProvider;
+
+    /**
+     * @var array<PostprocessorInterface>
+     */
+    protected array $postProcessors = [];
+
+    /**
+     * @var array<Document>
+     */
+    protected array $retrievedDocuments;
 
     /**
      * @throws MissingCallbackParameter
@@ -61,10 +72,12 @@ class RAG extends Agent
             'rag-vectorstore-searching',
             new VectorStoreSearching($question)
         );
-        $documents = $this->searchDocuments($question->getContent(), $k);
+        $this->retrievedDocuments = $this->searchDocuments($question->getContent(), $k);
+        $this->retrievedDocuments = $this->applyPostProcessors($question->getContent(), $this->retrievedDocuments);
+
         $this->notify(
             'rag-vectorstore-result',
-            new VectorStoreResult($question, $documents)
+            new VectorStoreResult($question, $this->retrievedDocuments)
         );
 
         $originalInstructions = $this->instructions();
@@ -72,7 +85,7 @@ class RAG extends Agent
             'rag-instructions-changing',
             new InstructionsChanging($originalInstructions)
         );
-        $this->setSystemMessage($documents, $k);
+        $this->setSystemMessage($this->retrievedDocuments, $k);
         $this->notify(
             'rag-instructions-changed',
             new InstructionsChanged($originalInstructions, $this->instructions())
@@ -125,6 +138,26 @@ class RAG extends Agent
         return \array_values($retrievedDocs);
     }
 
+    /**
+     * Apply a series of postprocessors to the retrieved documents.
+     *
+     * @param string $question The question to process the documents for.
+     * @param array<Document> $documents The documents to process.
+     * @return array<Document> The processed documents.
+     */
+    protected function applyPostProcessors(string $question, array $documents): array
+    {
+        $postProcessors = $this->postProcessors();
+
+        foreach ($postProcessors as $postProcessor) {
+            if ($postProcessor instanceof PostProcessorInterface) {
+                $documents = $postProcessor->postProcess($question, $documents);
+            }
+        }
+
+        return $documents;
+    }
+
     public function setEmbeddingsProvider(EmbeddingsProviderInterface $provider): self
     {
         $this->embeddingsProvider = $provider;
@@ -145,5 +178,32 @@ class RAG extends Agent
     protected function vectorStore(): VectorStoreInterface
     {
         return $this->store;
+    }
+
+    /**
+     * @param array<PostprocessorInterface> $postProcessors
+     */
+    public function setPostProcessors(array $postProcessors): self
+    {
+        $this->postProcessors = $postProcessors;
+        return $this;
+    }
+
+    /**
+     * @return array<PostprocessorInterface>
+     */
+    protected function postProcessors(): array
+    {
+        return $this->postProcessors;
+    }
+
+    /**
+     * Get the retrieved documents from the vector store.
+     *
+     * @return array<Document>
+     */
+    public function getRetrievedDocuments(): array
+    {
+        return $this->retrievedDocuments;
     }
 }
