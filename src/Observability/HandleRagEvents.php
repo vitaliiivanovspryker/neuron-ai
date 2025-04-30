@@ -2,14 +2,17 @@
 
 namespace NeuronAI\Observability;
 
+use NeuronAI\AgentInterface;
 use NeuronAI\Observability\Events\InstructionsChanged;
 use NeuronAI\Observability\Events\InstructionsChanging;
+use NeuronAI\Observability\Events\PostProcessed;
+use NeuronAI\Observability\Events\PostProcessing;
 use NeuronAI\Observability\Events\VectorStoreResult;
 use NeuronAI\Observability\Events\VectorStoreSearching;
 
 trait HandleRagEvents
 {
-    public function vectorStoreSearching(\NeuronAI\AgentInterface $agent, string $event, VectorStoreSearching $data)
+    public function vectorStoreSearching(AgentInterface $agent, string $event, VectorStoreSearching $data)
     {
         if (!$this->inspector->canAddSegments()) {
             return;
@@ -22,7 +25,7 @@ trait HandleRagEvents
             ->setColor(self::SEGMENT_COLOR);
     }
 
-    public function vectorStoreResult(\NeuronAI\AgentInterface $agent, string $event, VectorStoreResult $data)
+    public function vectorStoreResult(AgentInterface $agent, string $event, VectorStoreResult $data)
     {
         $id = \md5($data->question->getContent());
 
@@ -36,7 +39,7 @@ trait HandleRagEvents
         }
     }
 
-    public function instructionsChanging(\NeuronAI\AgentInterface $agent, string $event, InstructionsChanging $data)
+    public function instructionsChanging(AgentInterface $agent, string $event, InstructionsChanging $data)
     {
         if (!$this->inspector->canAddSegments()) {
             return;
@@ -49,7 +52,7 @@ trait HandleRagEvents
             ->setColor(self::SEGMENT_COLOR);
     }
 
-    public function instructionsChanged(\NeuronAI\AgentInterface $agent, string $event, InstructionsChanged $data)
+    public function instructionsChanged(AgentInterface $agent, string $event, InstructionsChanged $data)
     {
         $id = 'instructions-'.\md5($data->previous);
 
@@ -59,6 +62,29 @@ trait HandleRagEvents
                     'previous' => $data->previous,
                     'current' => $data->current
                 ])
+                ->end();
+        }
+    }
+
+    public function postProcessing(AgentInterface $agent, string $event, PostProcessing $data)
+    {
+        if (!$this->inspector->canAddSegments()) {
+            return;
+        }
+
+        $this->segments[\md5($data->question->getContent())] = $this->inspector
+            ->startSegment(self::SEGMENT_TYPE.'-postprocessing', $event)
+            ->setColor(self::SEGMENT_COLOR)
+            ->addContext('Question', $data->question)
+            ->addContext('Documents', $data->documents);
+    }
+
+    public function postProcessed(AgentInterface $agent, string $event, PostProcessed $data)
+    {
+        $id = \md5($data->question->getContent());
+
+        if (\array_key_exists($id, $this->segments)) {
+            $this->segments[$id]->addContext('PostProcess', $data->documents)
                 ->end();
         }
     }

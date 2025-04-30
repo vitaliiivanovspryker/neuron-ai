@@ -76,6 +76,8 @@ class AgentMonitoring implements \SplObserver
             'rag-vectorstore-result' => 'vectorStoreResult',
             'rag-instructions-changing' => 'instructionsChanging',
             'rag-instructions-changed' => 'instructionsChanged',
+            'rag-postprocessing' => 'postProcessing',
+            'rag-postprocessed' => 'postProcessed',
         ];
 
         if (!\is_null($event) && \array_key_exists($event, $methods)) {

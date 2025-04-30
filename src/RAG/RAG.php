@@ -3,9 +3,12 @@
 namespace NeuronAI\RAG;
 
 use NeuronAI\Agent;
+use NeuronAI\AgentInterface;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Observability\Events\InstructionsChanged;
 use NeuronAI\Observability\Events\InstructionsChanging;
+use NeuronAI\Observability\Events\PostProcessed;
+use NeuronAI\Observability\Events\PostProcessing;
 use NeuronAI\Observability\Events\VectorStoreResult;
 use NeuronAI\Observability\Events\VectorStoreSearching;
 use NeuronAI\Exceptions\MissingCallbackParameter;
@@ -35,13 +38,9 @@ class RAG extends Agent
     protected array $postProcessors = [];
 
     /**
-     * @var array<Document>
-     */
-    protected array $retrievedDocuments;
-
-    /**
      * @throws MissingCallbackParameter
      * @throws ToolCallableNotSet
+     * @throws \Throwable
      */
     public function answer(Message $question, int $k = 4): Message
     {
@@ -68,28 +67,18 @@ class RAG extends Agent
 
     protected function retrieval(Message $question, int $k = 4): void
     {
-        $this->notify(
-            'rag-vectorstore-searching',
-            new VectorStoreSearching($question)
-        );
-        $this->retrievedDocuments = $this->searchDocuments($question->getContent(), $k);
-        $this->retrievedDocuments = $this->applyPostProcessors($question->getContent(), $this->retrievedDocuments);
+        $this->notify('rag-vectorstore-searching', new VectorStoreSearching($question));
+        $documents = $this->searchDocuments($question->getContent(), $k);
+        $this->notify('rag-vectorstore-result', new VectorStoreResult($question, $documents));
 
-        $this->notify(
-            'rag-vectorstore-result',
-            new VectorStoreResult($question, $this->retrievedDocuments)
-        );
+        $this->notify('rag-postprocessing', new PostProcessing($question, $documents));
+        $documents = $this->applyPostProcessors($question->getContent(), $documents);
+        $this->notify('rag-postprocessed', new PostProcessed($question, $documents));
 
         $originalInstructions = $this->instructions();
-        $this->notify(
-            'rag-instructions-changing',
-            new InstructionsChanging($originalInstructions)
-        );
-        $this->setSystemMessage($this->retrievedDocuments, $k);
-        $this->notify(
-            'rag-instructions-changed',
-            new InstructionsChanged($originalInstructions, $this->instructions())
-        );
+        $this->notify('rag-instructions-changing', new InstructionsChanging($originalInstructions));
+        $this->setSystemMessage($documents, $k);
+        $this->notify('rag-instructions-changed', new InstructionsChanged($originalInstructions, $this->instructions()));
     }
 
     /**
@@ -97,9 +86,9 @@ class RAG extends Agent
      *
      * @param array<Document> $documents
      * @param int $k
-     * @return \NeuronAI\AgentInterface|RAG
+     * @return RAG
      */
-    protected function setSystemMessage(array $documents, int $k)
+    protected function setSystemMessage(array $documents, int $k): AgentInterface
     {
         $context = '';
         $i = 0;
