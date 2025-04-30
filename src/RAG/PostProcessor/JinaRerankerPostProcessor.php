@@ -4,7 +4,9 @@ namespace NeuronAI\RAG\PostProcessor;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
+use NeuronAI\Chat\Messages\Message;
 use NeuronAI\HasGuzzleClient;
+use NeuronAI\RAG\Document;
 
 class JinaRerankerPostProcessor implements PostProcessorInterface
 {
@@ -25,20 +27,14 @@ class JinaRerankerPostProcessor implements PostProcessorInterface
         ]);
     }
 
-    public function process(string $question, array $documents): array
+    public function process(Message $question, array $documents): array
     {
-        $jinaDocuments = [];
-
-        foreach ($documents as $document) {
-            $jinaDocuments[] = ['text' => $document->content];
-        }
-
         $response = $this->client->post('rerank', [
             RequestOptions::JSON => [
                 'model' => $this->model,
-                'query' => $question,
+                'query' => $question->getContent(),
                 'top_n' => $this->topN,
-                'documents' => $jinaDocuments,
+                'documents' => \array_map(fn(Document $document) => ['text' => $document->content], $documents),
                 'return_documents' => false,
             ],
         ])->getBody()->getContents();

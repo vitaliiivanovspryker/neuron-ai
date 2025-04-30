@@ -137,7 +137,7 @@ class RAG extends Agent
     {
         foreach ($this->postProcessors() as $processor) {
             $this->notify('rag-postprocessing', new PostProcessing($processor::class, $question, $documents));
-            $documents = $processor->process($question->getContent(), $documents);
+            $documents = $processor->process($question, $documents);
             $this->notify('rag-postprocessed', new PostProcessed($processor::class, $question, $documents));
         }
 
