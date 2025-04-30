@@ -3,8 +3,8 @@
 namespace NeuronAI\Providers\Anthropic;
 
 use NeuronAI\Chat\Messages\Message;
+use NeuronAI\HasGuzzleClient;
 use NeuronAI\Providers\AIProviderInterface;
-use NeuronAI\Providers\HandleClient;
 use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Providers\MessageMapperInterface;
@@ -14,18 +14,11 @@ use GuzzleHttp\Client;
 
 class Anthropic implements AIProviderInterface
 {
-    use HandleClient;
+    use HasGuzzleClient;
     use HandleWithTools;
     use HandleChat;
     use HandleStream;
     use HandleStructured;
-
-    /**
-     * The http client.
-     *
-     * @var Client
-     */
-    protected Client $client;
 
     /**
      * The main URL of the provider API.
