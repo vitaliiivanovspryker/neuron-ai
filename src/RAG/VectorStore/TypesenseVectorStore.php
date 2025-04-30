@@ -14,7 +14,8 @@ class TypesenseVectorStore implements VectorStoreInterface
     public function __construct(
         protected Client $client,
         protected string $collection,
-        protected int $vectorDimension
+        protected int $vectorDimension,
+        protected string $topK = '4',
     ) {
         try {
 
@@ -124,20 +125,15 @@ class TypesenseVectorStore implements VectorStoreInterface
         }
     }
 
-    public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array
+    public function similaritySearch(array $embedding): array
     {
-        $numCandidates = \max(50, $k * 4);
-        if (\array_key_exists('num_candidates', $additionalArguments)) {
-            $numCandidates = $additionalArguments['num_candidates'];
-        }
-
         $params = [
             'collection' => $this->collection,
             'q' => '*',
             'vector_query' => 'embedding:(' . json_encode($embedding) . ')',
             'exclude_fields' => 'embedding',
-            'per_page' => $k,
-            'num_candidates' => $numCandidates,
+            'per_page' => $this->topK,
+            'num_candidates' => \max(50, $this->topK * 4),
         ];
 
         if (isset($additionalArguments['filter'])) {

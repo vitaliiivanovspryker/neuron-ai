@@ -19,5 +19,5 @@ interface VectorStoreInterface
      * @param  float[]  $embedding
      * @return array<Document>
      */
-    public function similaritySearch(array $embedding, int $k = 4): iterable;
+    public function similaritySearch(array $embedding): iterable;
 }

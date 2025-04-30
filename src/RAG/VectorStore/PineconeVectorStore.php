@@ -13,6 +13,7 @@ class PineconeVectorStore implements VectorStoreInterface
     public function __construct(
         string $key,
         protected string $indexUrl,
+        protected int $topK = 4,
         string $version = '2025-01'
     ) {
         $this->client = new Client([
@@ -50,14 +51,14 @@ class PineconeVectorStore implements VectorStoreInterface
         ]);
     }
 
-    public function similaritySearch(array $embedding, int $k = 4): iterable
+    public function similaritySearch(array $embedding): iterable
     {
         $result = $this->client->post("query", [
             RequestOptions::JSON => [
                 'namespace' => '',
                 'includeMetadata' => true,
                 'vector' => $embedding,
-                'topK' => $k,
+                'topK' => $this->topK,
             ]
         ])->getBody()->getContents();
 

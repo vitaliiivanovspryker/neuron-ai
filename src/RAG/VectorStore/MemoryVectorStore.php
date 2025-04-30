@@ -10,6 +10,8 @@ class MemoryVectorStore implements VectorStoreInterface
     /** @var array<Document> */
     private array $documents = [];
 
+    public function __construct(protected int $topK = 4) {}
+
     public function addDocument(Document $document): void
     {
         $this->documents[] = $document;
@@ -23,7 +25,7 @@ class MemoryVectorStore implements VectorStoreInterface
     /**
      * @throws SimilarityCalculationException
      */
-    public function similaritySearch(array $embedding, int $k = 4): array
+    public function similaritySearch(array $embedding): array
     {
         $distances = [];
 
@@ -37,7 +39,7 @@ class MemoryVectorStore implements VectorStoreInterface
 
         \asort($distances); // Sort by distance (ascending).
 
-        $topKIndices = \array_slice(\array_keys($distances), 0, $k, true);
+        $topKIndices = \array_slice(\array_keys($distances), 0, $this->topK, true);
 
         return \array_reduce($topKIndices, function ($carry, $index) {
             $carry[] = $this->documents[$index];

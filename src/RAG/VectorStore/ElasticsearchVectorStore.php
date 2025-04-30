@@ -17,7 +17,8 @@ class ElasticsearchVectorStore implements VectorStoreInterface
      */
     public function __construct(
         protected Client $client,
-        protected string $index
+        protected string $index,
+        protected int $topK = 4,
     ) {
         /** @var Elasticsearch $existResponse */
         $existResponse = $client->indices()->exists(['index' => $index]);
@@ -131,22 +132,16 @@ class ElasticsearchVectorStore implements VectorStoreInterface
      * @throws ClientResponseException
      * @throws ServerResponseException
      */
-    public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array
+    public function similaritySearch(array $embedding): array
     {
-        if (\array_key_exists('num_candidates', $additionalArguments)) {
-            $numCandidates = $additionalArguments['num_candidates'];
-        } else {
-            $numCandidates = \max(50, $k * 4);
-        }
-
         $searchParams = [
             'index' => $this->index,
             'body' => [
                 'knn' => [
                     'field' => 'embedding',
                     'query_vector' => $embedding,
-                    'k' => $k,
-                    'num_candidates' => $numCandidates,
+                    'k' => $this->topK,
+                    'num_candidates' => \max(50, $this->topK * 4),
                 ],
                 'sort' => [
                     '_score' => [
@@ -156,9 +151,9 @@ class ElasticsearchVectorStore implements VectorStoreInterface
             ],
         ];
 
-        if (\array_key_exists('filter', $additionalArguments)) {
+        /*if (\array_key_exists('filter', $additionalArguments)) {
             $searchParams['body']['knn']['filter'] = $additionalArguments['filter'];
-        }
+        }*/
 
         $response = $this->client->search($searchParams);
 

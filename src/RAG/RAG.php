@@ -14,7 +14,6 @@ use NeuronAI\Observability\Events\VectorStoreResult;
 use NeuronAI\Observability\Events\VectorStoreSearching;
 use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
-use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\RAG\Embeddings\EmbeddingsProviderInterface;
 use NeuronAI\RAG\PostProcessor\PostProcessorInterface;
 use NeuronAI\RAG\VectorStore\VectorStoreInterface;
@@ -59,28 +58,28 @@ class RAG extends Agent
         return $response;
     }
 
-    public function streamAnswer(Message $question, int $k = 4): \Generator
+    public function streamAnswer(Message $question): \Generator
     {
         $this->notify('rag-start');
 
-        $this->retrieval($question, $k);
+        $this->retrieval($question);
 
         yield from $this->stream($question);
 
         $this->notify('rag-stop');
     }
 
-    protected function retrieval(Message $question, int $k = 4): void
+    protected function retrieval(Message $question): void
     {
         $this->notify('rag-vectorstore-searching', new VectorStoreSearching($question));
-        $documents = $this->searchDocuments($question->getContent(), $k);
+        $documents = $this->searchDocuments($question->getContent());
         $this->notify('rag-vectorstore-result', new VectorStoreResult($question, $documents));
 
         $documents = $this->applyPostProcessors($question, $documents);
 
         $originalInstructions = $this->instructions();
         $this->notify('rag-instructions-changing', new InstructionsChanging($originalInstructions));
-        $this->setSystemMessage($documents, $k);
+        $this->setSystemMessage($documents);
         $this->notify('rag-instructions-changed', new InstructionsChanged($originalInstructions, $this->instructions()));
     }
 
@@ -88,18 +87,12 @@ class RAG extends Agent
      * Set the system message based on the context.
      *
      * @param array<Document> $documents
-     * @param int $k
      * @return RAG
      */
-    protected function setSystemMessage(array $documents, int $k): RAG
+    protected function setSystemMessage(array $documents): RAG
     {
         $context = '';
-        $i = 0;
         foreach ($documents as $document) {
-            if ($i >= $k) {
-                break;
-            }
-            $i++;
             $context .= $document->content.' ';
         }
 
@@ -115,10 +108,10 @@ class RAG extends Agent
      * @param int $k
      * @return array<Document>
      */
-    private function searchDocuments(string $question, int $k): array
+    private function searchDocuments(string $question): array
     {
         $embedding = $this->embeddings()->embedText($question);
-        $docs = $this->vectorStore()->similaritySearch($embedding, $k);
+        $docs = $this->vectorStore()->similaritySearch($embedding);
 
         $retrievedDocs = [];
 
