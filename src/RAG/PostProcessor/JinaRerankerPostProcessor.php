@@ -5,7 +5,7 @@ namespace NeuronAI\RAG\PostProcessor;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 
-class JinaRerankerPostProcessor
+class JinaRerankerPostProcessor implements PostProcessorInterface
 {
     protected Client $client;
     protected string $model;
