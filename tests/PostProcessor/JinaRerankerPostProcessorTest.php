@@ -43,7 +43,7 @@ class JinaRerankerPostProcessorTest extends TestCase
             "London is the capital of the United Kingdom"
         ];
 
-        $result = $postProcessor->postProcess($question, $documents);
+        $result = $postProcessor->process($question, $documents);
 
         $this->assertCount(3, $result, "Jina API returns 3 results by default");
         $this->assertEquals("Rome is the capital of Italy", $result[0], "Rome should be the first result");
@@ -81,7 +81,7 @@ class JinaRerankerPostProcessorTest extends TestCase
             "London is the capital of the United Kingdom"
         ];
 
-        $result = $postProcessor->postProcess($question, $documents);
+        $result = $postProcessor->process($question, $documents);
 
         $this->assertCount(2, $result, "Jina API returns exactly top_n results");
         $this->assertEquals("Rome is the capital of Italy", $result[0], "Rome should be the first result");

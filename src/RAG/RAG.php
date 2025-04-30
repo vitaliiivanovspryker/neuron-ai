@@ -174,7 +174,7 @@ class RAG extends Agent
     {
         foreach ($postProcessors as $processor) {
             if (! $processor instanceof PostProcessorInterface) {
-                throw new AgentException("{$processor::class} must implement PostProcessorInterface");
+                throw new AgentException($processor::class." must implement PostProcessorInterface");
             }
 
             $this->postProcessors[] = $processor;
