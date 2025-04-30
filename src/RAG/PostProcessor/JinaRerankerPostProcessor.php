@@ -7,6 +7,8 @@ use GuzzleHttp\RequestOptions;
 
 class JinaRerankerPostProcessor implements PostProcessorInterface
 {
+    use HandleClient;
+
     protected Client $client;
     protected string $model;
     protected int $topN;
