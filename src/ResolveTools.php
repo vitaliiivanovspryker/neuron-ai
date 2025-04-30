@@ -2,6 +2,7 @@
 
 namespace NeuronAI;
 
+use NeuronAI\Exceptions\AgentException;
 use NeuronAI\Tools\ToolInterface;
 
 trait ResolveTools
@@ -44,6 +45,9 @@ trait ResolveTools
         $tool = \is_array($tool) ? $tool : [$tool];
 
         foreach ($tool as $t) {
+            if (! $t instanceof ToolInterface) {
+                throw new AgentException('Tool must be an instance of ToolInterface');
+            }
             $this->tools[] = $t;
         }
 
