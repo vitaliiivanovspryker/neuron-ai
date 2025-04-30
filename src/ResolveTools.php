@@ -34,14 +34,19 @@ trait ResolveTools
     }
 
     /**
-     * Add a tool.
+     * Add tools.
      *
-     * @param ToolInterface $tool
+     * @param ToolInterface|array<ToolInterface> $tool
      * @return AgentInterface
      */
-    public function addTool(ToolInterface $tool): AgentInterface
+    public function addTool(ToolInterface|array $tool): AgentInterface
     {
-        $this->tools[] = $tool;
+        $tool = \is_array($tool) ? $tool : [$tool];
+
+        foreach ($tool as $t) {
+            $this->tools[] = $t;
+        }
+
         return $this;
     }
 }

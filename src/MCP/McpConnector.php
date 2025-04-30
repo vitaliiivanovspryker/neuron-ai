@@ -22,7 +22,7 @@ class McpConnector
      * @return ToolInterface[]
      * @throws \Exception
      */
-    public function tools()
+    public function tools(): array
     {
         $tools = $this->client->listTools();
 
