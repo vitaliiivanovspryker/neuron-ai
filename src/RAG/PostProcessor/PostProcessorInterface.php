@@ -13,5 +13,5 @@ interface PostProcessorInterface
      * @param array<Document> $documents The documents to process.
      * @return array<Document> The processed documents.
      */
-    public function postProcess(string $question, array $documents): array;
+    public function process(string $question, array $documents): array;
 }

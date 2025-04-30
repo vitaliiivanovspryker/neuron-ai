@@ -5,6 +5,7 @@ namespace NeuronAI\RAG;
 use NeuronAI\Agent;
 use NeuronAI\AgentInterface;
 use NeuronAI\Chat\Messages\Message;
+use NeuronAI\Exceptions\AgentException;
 use NeuronAI\Observability\Events\InstructionsChanged;
 use NeuronAI\Observability\Events\InstructionsChanging;
 use NeuronAI\Observability\Events\PostProcessed;
@@ -136,12 +137,8 @@ class RAG extends Agent
      */
     protected function applyPostProcessors(string $question, array $documents): array
     {
-        $postProcessors = $this->postProcessors();
-
-        foreach ($postProcessors as $postProcessor) {
-            if ($postProcessor instanceof PostProcessorInterface) {
-                $documents = $postProcessor->postProcess($question, $documents);
-            }
+        foreach ($this->postProcessors as $processor) {
+            $documents = $processor->process($question, $documents);
         }
 
         return $documents;
@@ -171,19 +168,19 @@ class RAG extends Agent
 
     /**
      * @param array<PostprocessorInterface> $postProcessors
+     * @throws AgentException
      */
     public function setPostProcessors(array $postProcessors): self
     {
-        $this->postProcessors = $postProcessors;
-        return $this;
-    }
+        foreach ($postProcessors as $processor) {
+            if (! $processor instanceof PostProcessorInterface) {
+                throw new AgentException('Post processor must implement PostProcessorInterface');
+            }
 
-    /**
-     * @return array<PostprocessorInterface>
-     */
-    protected function postProcessors(): array
-    {
-        return $this->postProcessors;
+            $this->postProcessors[] = $processor;
+        }
+
+        return $this;
     }
 
     /**
