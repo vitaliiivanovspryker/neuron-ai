@@ -87,7 +87,7 @@ class RAG extends Agent
      * @param int $k
      * @return RAG
      */
-    protected function setSystemMessage(array $documents, int $k): AgentInterface
+    protected function setSystemMessage(array $documents, int $k): RAG
     {
         $context = '';
         $i = 0;
@@ -144,7 +144,7 @@ class RAG extends Agent
         return $documents;
     }
 
-    public function setEmbeddingsProvider(EmbeddingsProviderInterface $provider): self
+    public function setEmbeddingsProvider(EmbeddingsProviderInterface $provider): RAG
     {
         $this->embeddingsProvider = $provider;
         return $this;
@@ -155,7 +155,7 @@ class RAG extends Agent
         return $this->embeddingsProvider;
     }
 
-    public function setVectorStore(VectorStoreInterface $store): self
+    public function setVectorStore(VectorStoreInterface $store): RAG
     {
         $this->store = $store;
         return $this;
@@ -170,7 +170,7 @@ class RAG extends Agent
      * @param array<PostprocessorInterface> $postProcessors
      * @throws AgentException
      */
-    public function setPostProcessors(array $postProcessors): self
+    public function setPostProcessors(array $postProcessors): RAG
     {
         foreach ($postProcessors as $processor) {
             if (! $processor instanceof PostProcessorInterface) {
