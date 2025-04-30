@@ -72,19 +72,17 @@ trait HandleRagEvents
             return;
         }
 
-        $this->segments[\md5($data->question->getContent())] = $this->inspector
-            ->startSegment(self::SEGMENT_TYPE.'-postprocessing', $event)
+        $this->segments[$data->processor] = $this->inspector
+            ->startSegment(self::SEGMENT_TYPE.'-postprocessing', $data->processor)
             ->setColor(self::SEGMENT_COLOR)
-            ->addContext('Question', $data->question)
+            ->addContext('Question', $data->question->jsonSerialize())
             ->addContext('Documents', $data->documents);
     }
 
     public function postProcessed(AgentInterface $agent, string $event, PostProcessed $data)
     {
-        $id = \md5($data->question->getContent());
-
-        if (\array_key_exists($id, $this->segments)) {
-            $this->segments[$id]->addContext('PostProcess', $data->documents)
+        if (\array_key_exists($data->processor, $this->segments)) {
+            $this->segments[$data->processor]->addContext('PostProcess', $data->documents)
                 ->end();
         }
     }

@@ -72,9 +72,7 @@ class RAG extends Agent
         $documents = $this->searchDocuments($question->getContent(), $k);
         $this->notify('rag-vectorstore-result', new VectorStoreResult($question, $documents));
 
-        $this->notify('rag-postprocessing', new PostProcessing($question, $documents));
-        $documents = $this->applyPostProcessors($question->getContent(), $documents);
-        $this->notify('rag-postprocessed', new PostProcessed($question, $documents));
+        $documents = $this->applyPostProcessors($question, $documents);
 
         $originalInstructions = $this->instructions();
         $this->notify('rag-instructions-changing', new InstructionsChanging($originalInstructions));
@@ -131,14 +129,16 @@ class RAG extends Agent
     /**
      * Apply a series of postprocessors to the retrieved documents.
      *
-     * @param string $question The question to process the documents for.
+     * @param Message $question The question to process the documents for.
      * @param array<Document> $documents The documents to process.
      * @return array<Document> The processed documents.
      */
-    protected function applyPostProcessors(string $question, array $documents): array
+    protected function applyPostProcessors(Message $question, array $documents): array
     {
-        foreach ($this->postProcessors as $processor) {
-            $documents = $processor->process($question, $documents);
+        foreach ($this->postProcessors() as $processor) {
+            $this->notify('rag-postprocessing', new PostProcessing($processor::class, $question, $documents));
+            $documents = $processor->process($question->getContent(), $documents);
+            $this->notify('rag-postprocessed', new PostProcessed($processor::class, $question, $documents));
         }
 
         return $documents;
@@ -181,5 +181,13 @@ class RAG extends Agent
         }
 
         return $this;
+    }
+
+    /**
+     * @return PostProcessorInterface[]
+     */
+    protected function postProcessors(): array
+    {
+        return $this->postProcessors;
     }
 }
