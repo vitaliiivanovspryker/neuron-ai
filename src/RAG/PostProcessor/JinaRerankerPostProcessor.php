@@ -9,8 +9,25 @@ class JinaRerankerPostProcessor implements PostProcessorInterface
 {
     use HandleClient;
 
+    /**
+     * The http client.
+     *
+     * @var Client
+     */
     protected Client $client;
+
+    /**
+     * The model to use for the reranking.
+     *
+     * @var string
+     */
     protected string $model;
+
+    /**
+     * The number of documents to return.
+     *
+     * @var int
+     */
     protected int $topN;
 
     public function __construct(string $apiKey, string $model = 'jina-reranker-v2-base-multilingual', int $topN = 3)
