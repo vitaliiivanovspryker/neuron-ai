@@ -2,6 +2,7 @@
 
 namespace NeuronAI\Tests\PostProcessor;
 
+use NeuronAI\RAG\Document;
 use NeuronAI\RAG\PostProcessor\JinaRerankerPostProcessor;
 use PHPUnit\Framework\TestCase;
 use GuzzleHttp\Client;
@@ -21,9 +22,9 @@ class JinaRerankerPostProcessorTest extends TestCase
                 status: 200,
                 body: json_encode([
                     'results' => [
-                        ['index' => 1, 'score' => 0.9],
-                        ['index' => 0, 'score' => 0.2],
-                        ['index' => 2, 'score' => 0.1]
+                        ['index' => 1, 'relevance_score' => 0.9],
+                        ['index' => 0, 'relevance_score' => 0.2],
+                        ['index' => 2, 'relevance_score' => 0.1]
                     ]
                 ])
             )
@@ -37,18 +38,18 @@ class JinaRerankerPostProcessorTest extends TestCase
 
         $question = "What is the capital of Italy?";
         $documents = [
-            "Paris is the capital of France",
-            "Rome is the capital of Italy",
-            "Madrid is the capital of Spain",
-            "London is the capital of the United Kingdom"
+            new Document("Paris is the capital of France"),
+            new Document("Rome is the capital of Italy"),
+            new Document("Madrid is the capital of Spain"),
+            new Document("London is the capital of the United Kingdom")
         ];
 
         $result = $postProcessor->process($question, $documents);
 
         $this->assertCount(3, $result, "Jina API returns 3 results by default");
-        $this->assertEquals("Rome is the capital of Italy", $result[0], "Rome should be the first result");
-        $this->assertEquals("Paris is the capital of France", $result[1], "Paris should be the second result");
-        $this->assertEquals("Madrid is the capital of Spain", $result[2], "Madrid should be the third result");
+        $this->assertEquals("Rome is the capital of Italy", $result[0]->content, "Rome should be the first result");
+        $this->assertEquals("Paris is the capital of France", $result[1]->content, "Paris should be the second result");
+        $this->assertEquals("Madrid is the capital of Spain", $result[2]->content, "Madrid should be the third result");
     }
 
     public function test_post_process_with_top_n_parameter()
@@ -60,8 +61,8 @@ class JinaRerankerPostProcessorTest extends TestCase
                 status: 200,
                 body: json_encode([
                     'results' => [
-                        ['index' => 1, 'score' => 0.9],
-                        ['index' => 0, 'score' => 0.2]
+                        ['index' => 1, 'relevance_score' => 0.9],
+                        ['index' => 0, 'relevance_score' => 0.2]
                     ]
                 ])
             )
@@ -75,16 +76,16 @@ class JinaRerankerPostProcessorTest extends TestCase
 
         $question = "What is the capital of Italy?";
         $documents = [
-            "Paris is the capital of France",
-            "Rome is the capital of Italy",
-            "Madrid is the capital of Spain",
-            "London is the capital of the United Kingdom"
+            new Document("Paris is the capital of France"),
+            new Document("Rome is the capital of Italy"),
+            new Document("Madrid is the capital of Spain"),
+            new Document("London is the capital of the United Kingdom")
         ];
 
         $result = $postProcessor->process($question, $documents);
 
         $this->assertCount(2, $result, "Jina API returns exactly top_n results");
-        $this->assertEquals("Rome is the capital of Italy", $result[0], "Rome should be the first result");
-        $this->assertEquals("Paris is the capital of France", $result[1], "Paris should be the second result");
+        $this->assertEquals("Rome is the capital of Italy", $result[0]->content, "Rome should be the first result");
+        $this->assertEquals("Paris is the capital of France", $result[1]->content, "Paris should be the second result");
     }
 }
