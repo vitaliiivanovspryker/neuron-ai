@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\RAG\VectorStore\Searches;
+namespace NeuronAI\RAG\VectorStore\Search;
 
 use NeuronAI\Exceptions\VectorStoreException;
 
