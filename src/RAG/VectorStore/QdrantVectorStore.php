@@ -17,7 +17,7 @@ class QdrantVectorStore implements VectorStoreInterface
         protected int $topK = 4,
     ) {
         $this->client = new Client([
-            'base_uri' => $this->collectionUrl,
+            'base_uri' => trim($this->collectionUrl, '/').'/',
             'headers' => [
                 'Content-Type' => 'application/json',
                 'api-key' => $this->key,
