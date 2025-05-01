@@ -6,7 +6,7 @@ use NeuronAI\Exceptions\NeuronException;
 use NeuronAI\Exceptions\SimilarityCalculationException;
 use NeuronAI\Exceptions\VectorStoreException;
 use NeuronAI\RAG\Document;
-use NeuronAI\RAG\VectorStore\Searches\CosineSimilaritySearch;
+use NeuronAI\RAG\VectorStore\Searches\SimilaritySearch;
 
 class FileVectorStore implements VectorStoreInterface
 {
@@ -86,6 +86,6 @@ class FileVectorStore implements VectorStoreInterface
 
     protected function cosineSimilarity(array $vector1, array $vector2): float
     {
-        return CosineSimilaritySearch::search($vector1, $vector2);
+        return SimilaritySearch::cosine($vector1, $vector2);
     }
 }
