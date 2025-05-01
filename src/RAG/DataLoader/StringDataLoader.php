@@ -3,7 +3,6 @@
 namespace NeuronAI\RAG\DataLoader;
 
 use NeuronAI\RAG\Document;
-use NeuronAI\RAG\Splitters\DocumentSplitter;
 
 class StringDataLoader extends AbstractDataLoader
 {
@@ -11,6 +10,11 @@ class StringDataLoader extends AbstractDataLoader
 
     public function getDocuments(): array
     {
-        return DocumentSplitter::splitDocument(new Document($this->content));
+        return DocumentSplitter::splitDocument(
+            new Document($this->content),
+            $this->maxLength,
+            $this->separator,
+            $this->wordOverlap
+        );
     }
 }

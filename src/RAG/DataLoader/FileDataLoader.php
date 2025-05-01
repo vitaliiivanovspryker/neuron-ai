@@ -3,7 +3,6 @@
 namespace NeuronAI\RAG\DataLoader;
 
 use NeuronAI\RAG\Document;
-use NeuronAI\RAG\Splitters\DocumentSplitter;
 
 class FileDataLoader extends AbstractDataLoader
 {
@@ -75,7 +74,12 @@ class FileDataLoader extends AbstractDataLoader
             closedir($handle);
         }
 
-        return DocumentSplitter::splitDocuments($documents);
+        return DocumentSplitter::splitDocuments(
+            $documents,
+            $this->maxLength,
+            $this->separator,
+            $this->wordOverlap
+        );
     }
 
     /**

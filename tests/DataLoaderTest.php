@@ -4,7 +4,7 @@ namespace NeuronAI\Tests;
 
 use NeuronAI\RAG\DataLoader\StringDataLoader;
 use NeuronAI\RAG\Document;
-use NeuronAI\RAG\Splitters\DocumentSplitter;
+use NeuronAI\RAG\DataLoader\DocumentSplitter;
 use PHPUnit\Framework\TestCase;
 
 class DataLoaderTest extends TestCase

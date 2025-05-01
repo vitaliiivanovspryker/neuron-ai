@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\RAG\Splitters;
+namespace NeuronAI\RAG\DataLoader;
 
 use NeuronAI\RAG\Document;
 
