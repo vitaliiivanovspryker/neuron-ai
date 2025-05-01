@@ -147,13 +147,13 @@ class TypesenseVectorStore implements VectorStoreInterface
 
         $response = $this->client->multiSearch->perform($searchRequests, $commonSearchParams);
         return \array_map(function (array $hit) {
-            $docData = $hit['document'];
-            $document = new Document($docData['content']);
+            $item = $hit['document'];
+            $document = new Document($item['content']);
             // $document->embedding = $docData['embedding']; // avoid large transfers
-            $document->sourceType = $docData['sourceType'];
-            $document->sourceName = $docData['sourceName'];
-            $document->hash = $docData['hash'];
-            $document->chunkNumber = $docData['chunkNumber'];
+            $document->sourceType = $item['sourceType'];
+            $document->sourceName = $item['sourceName'];
+            $document->hash = $item['hash'];
+            $document->chunkNumber = $item['chunkNumber'];
             return $document;
         }, $response['results'][0]['hits']);
     }

@@ -3,6 +3,7 @@
 namespace NeuronAI\RAG\VectorStore;
 
 use NeuronAI\Exceptions\SimilarityCalculationException;
+use NeuronAI\Exceptions\VectorStoreException;
 use NeuronAI\RAG\Document;
 
 class MemoryVectorStore implements VectorStoreInterface
@@ -31,7 +32,7 @@ class MemoryVectorStore implements VectorStoreInterface
 
         foreach ($this->documents as $index => $document) {
             if ($document->embedding === null) {
-                throw new \Exception("Document with the following content has no embedding: {$document->content}");
+                throw new VectorStoreException("Document with the following content has no embedding: {$document->content}");
             }
             $dist = $this->cosineSimilarity($embedding, $document->embedding);
             $distances[$index] = $dist;
@@ -51,7 +52,7 @@ class MemoryVectorStore implements VectorStoreInterface
     public function cosineSimilarity(array $vector1, array $vector2): float
     {
         if (\count($vector1) !== \count($vector2)) {
-            throw new SimilarityCalculationException('Arrays must have the same length to apply cosine similarity.');
+            throw new VectorStoreException('Arrays must have the same length to apply cosine similarity.');
         }
 
         // Calculate the dot product of the two vectors
