@@ -36,13 +36,17 @@ class QdrantVectorStore implements VectorStoreInterface
     {
         $this->client->put('points', [
             RequestOptions::JSON => [
-                'id' => $document->id,
-                'payload' => [
-                    'content' => $document->content,
-                    'sourceType' => $document->sourceType,
-                    'sourceName' => $document->sourceName,
-                ],
-                'vector' => $document->embedding,
+                'points' => [
+                    [
+                        'id' => $document->id,
+                        'payload' => [
+                            'content' => $document->content,
+                            'sourceType' => $document->sourceType,
+                            'sourceName' => $document->sourceName,
+                        ],
+                        'vector' => $document->embedding,
+                    ]
+                ]
             ]
         ]);
     }
@@ -68,7 +72,13 @@ class QdrantVectorStore implements VectorStoreInterface
             ];
         }, $documents);
 
-        $this->client->put('points', [RequestOptions::JSON => $points]);
+        $this->client->put('points/batch', [
+            RequestOptions::JSON => [
+                'operations' => [
+                    'upsert' => compact('points')
+                ],
+            ]
+        ]);
     }
 
     public function similaritySearch(array $embedding): iterable
