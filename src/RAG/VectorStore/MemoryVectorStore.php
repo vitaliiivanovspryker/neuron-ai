@@ -5,6 +5,7 @@ namespace NeuronAI\RAG\VectorStore;
 use NeuronAI\Exceptions\SimilarityCalculationException;
 use NeuronAI\Exceptions\VectorStoreException;
 use NeuronAI\RAG\Document;
+use NeuronAI\RAG\VectorStore\Searches\CosineSimilaritySearch;
 
 class MemoryVectorStore implements VectorStoreInterface
 {
@@ -23,9 +24,6 @@ class MemoryVectorStore implements VectorStoreInterface
         $this->documents = \array_merge($this->documents, $documents);
     }
 
-    /**
-     * @throws SimilarityCalculationException
-     */
     public function similaritySearch(array $embedding): array
     {
         $distances = [];
@@ -51,24 +49,6 @@ class MemoryVectorStore implements VectorStoreInterface
 
     public function cosineSimilarity(array $vector1, array $vector2): float
     {
-        if (\count($vector1) !== \count($vector2)) {
-            throw new VectorStoreException('Arrays must have the same length to apply cosine similarity.');
-        }
-
-        // Calculate the dot product of the two vectors
-        $dotProduct = \array_sum(\array_map(fn (float $a, float $b): float => $a * $b, $vector1, $vector2));
-
-        // Calculate the magnitudes of each vector
-        $magnitude1 = \sqrt(\array_sum(\array_map(fn (float $a): float => $a * $a, $vector1)));
-
-        $magnitude2 = \sqrt(\array_sum(\array_map(fn (float $a): float => $a * $a, $vector2)));
-
-        // Avoid division by zero
-        if ($magnitude1 * $magnitude2 == 0) {
-            return 0;
-        }
-
-        // Calculate the cosine distance
-        return 1 - $dotProduct / ($magnitude1 * $magnitude2);
+        return CosineSimilaritySearch::search($vector1, $vector2);
     }
 }
