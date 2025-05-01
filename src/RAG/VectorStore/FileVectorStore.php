@@ -59,7 +59,7 @@ class FileVectorStore implements VectorStoreInterface
         $distances = [];
 
         foreach ($this->store as $index => $document) {
-            if (empty($document['embeddings'])) {
+            if (empty($document['embedding'])) {
                 throw new VectorStoreException("Document with the following content has no embedding: {$document['content']}");
             }
             $dist = $this->cosineSimilarity($embedding, $document['embedding']);
@@ -83,7 +83,7 @@ class FileVectorStore implements VectorStoreInterface
     }
 
 
-    public function cosineSimilarity(array $vector1, array $vector2): float
+    protected function cosineSimilarity(array $vector1, array $vector2): float
     {
         if (\count($vector1) !== \count($vector2)) {
             throw new VectorStoreException('Arrays must have the same length to apply cosine similarity.');

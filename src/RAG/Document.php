@@ -25,6 +25,8 @@ class Document implements \JsonSerializable
     {
         return [
             'id' => $this->id,
+            'content' => $this->content,
+            'embedding' => $this->embedding,
             'sourceType' => $this->sourceType,
             'sourceName' => $this->sourceName,
             'hash' => $this->hash,
