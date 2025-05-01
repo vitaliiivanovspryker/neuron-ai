@@ -24,9 +24,9 @@ class DocumentSplitter
             return [$document];
         }
 
-        $words = \explode($separator, $text);
+        $parts = \explode($separator, $text);
 
-        $chunks = self::createChunksWithOverlap($words, $maxLength, $separator, $wordOverlap);
+        $chunks = self::createChunksWithOverlap($parts, $maxLength, $separator, $wordOverlap);
 
         $split = [];
         $chunkNumber = 0;
