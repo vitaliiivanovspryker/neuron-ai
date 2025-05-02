@@ -72,10 +72,10 @@ class QdrantVectorStore implements VectorStoreInterface
             ];
         }, $documents);
 
-        $this->client->put('points/batch', [
+        $this->client->put('points', [
             RequestOptions::JSON => [
                 'operations' => [
-                    'upsert' => compact('points')
+                    ['upsert' => compact('points')]
                 ],
             ]
         ]);
@@ -87,6 +87,8 @@ class QdrantVectorStore implements VectorStoreInterface
             RequestOptions::JSON => [
                 'vector' => $embedding,
                 'limit' => $this->topK,
+                'with_payload' => true,
+                'with_vector' => true,
             ]
         ])->getBody()->getContents();
 
