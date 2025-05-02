@@ -95,7 +95,7 @@ class AgentMonitoring implements \SplObserver
         if ($this->catch) {
             $error = $this->inspector->reportException($data->exception, !$data->unhandled);
             if ($data->exception instanceof RequestException) {
-                $error->message = $data->exception->getRequest()->getBody()->getContents();
+                $error->message = $data->exception->getResponse()->getBody()->getContents();
             }
             if ($data->unhandled) {
                 $this->inspector->transaction()->setResult('error');

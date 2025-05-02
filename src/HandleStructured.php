@@ -92,7 +92,7 @@ trait HandleStructured
                 $this->notify('structured-stop');
                 return $output;
             } catch (RequestException $exception) {
-                $error = $exception->getRequest()->getBody()->getContents();
+                $error = $exception->getResponse()->getBody()->getContents();
                 $this->notify('error', new AgentError($exception, false));
             } catch (\Exception $exception) {
                 $error = $exception->getMessage();
