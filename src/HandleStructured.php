@@ -51,24 +51,23 @@ trait HandleStructured
 
         $error = '';
         do {
-            // Eventually add the error message from the previous attempt
+            // If something goes wrong, retry informing the model about the error
             if (!empty(trim($error))) {
                 $correctionMessage = new UserMessage(
                     "There was a problem in your previous response that generated the following errors".
                     PHP_EOL.PHP_EOL.'- '.$error.PHP_EOL.PHP_EOL.
                     "Try to generate the correct JSON structure based on the provided schema."
                 );
-                $this->notify('message-saving', new MessageSaving($correctionMessage));
-                $this->resolveChatHistory()->addMessage($correctionMessage);
-                $this->notify('message-saved', new MessageSaved($correctionMessage));
+                $this->fillChatHistory($correctionMessage);
             }
 
             $messages = $this->resolveChatHistory()->getMessages();
 
             try {
+                $last = clone $this->resolveChatHistory()->getLastMessage();
                 $this->notify(
                     'inference-start',
-                    new InferenceStart($this->resolveChatHistory()->getLastMessage())
+                    new InferenceStart($last)
                 );
                 $response = $this->resolveProvider()
                     ->systemPrompt($this->instructions())
@@ -76,16 +75,14 @@ trait HandleStructured
                     ->structured($messages, $class, $schema);
                 $this->notify(
                     'inference-stop',
-                    new InferenceStop($this->resolveChatHistory()->getLastMessage(), $response)
+                    new InferenceStop($last, $response)
                 );
 
                 if ($response instanceof ToolCallMessage) {
                     $toolCallResult = $this->executeTools($response);
                     return $this->structured([$response, $toolCallResult], $class, $maxRetries);
                 } else {
-                    $this->notify('message-saving', new MessageSaving($response));
-                    $this->resolveChatHistory()->addMessage($response);
-                    $this->notify('message-saved', new MessageSaved($response));
+                    $this->fillChatHistory($response);
                 }
 
                 $output = $this->processResponse($response, $schema, $class);
@@ -99,7 +96,6 @@ trait HandleStructured
                 $this->notify('error', new AgentError($exception, false));
             }
 
-            // If something goes wrong, retry informing the model about the error
             $maxRetries--;
         } while ($maxRetries >= 0);
 
