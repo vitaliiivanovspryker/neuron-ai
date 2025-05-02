@@ -35,6 +35,12 @@ class Message implements \JsonSerializable
         return $this->content;
     }
 
+    public function setContent(mixed $content): Message
+    {
+        $this->content = $content;
+        return $this;
+    }
+
     public function getUsage(): ?Usage
     {
         return $this->usage;

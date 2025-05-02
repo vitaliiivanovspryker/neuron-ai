@@ -21,16 +21,28 @@ trait HandleStructured
             ];
         }
 
-        $this->parameters['generationConfig'] = \array_merge($this->parameters['generationConfig'], [
-            'response_mime_type' => 'application/json',
-            'response_schema' => $this->adaptSchema($response_format),
-        ]);
+        // Gemini does not support structured output in combination with tools.
+        // So we try to work with a JSON mode in case the agent has some tools defined.
+        if (!empty($this->tools)) {
+            $last_message = \end($messages);
+            if ($last_message instanceof Message && $last_message->getRole() === Message::ROLE_USER) {
+                $last_message->setContent(
+                    $last_message->getContent() . ' Respond using this JSON schema: '.\json_encode($response_format)
+                );
+            }
+        } else {
+            // If there are no tools, we can enforce the structured output.
+            $this->parameters['generationConfig']['response_schema'] = $this->adaptSchema($response_format);
+        }
+
+        // Add mime-type for both JSON schema or structured output
+        $this->parameters['generationConfig']['response_mime_type'] = 'application/json';
 
         return $this->chat($messages);
     }
 
     /**
-     * Gemini does not support additionalProperties.
+     * Gemini does not support additionalProperties attribute.
      *
      * @param array $schema
      * @return array
