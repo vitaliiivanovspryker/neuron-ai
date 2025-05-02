@@ -2,6 +2,7 @@
 
 namespace NeuronAI\Observability;
 
+use GuzzleHttp\Exception\RequestException;
 use Inspector\Inspector;
 use Inspector\Models\Segment;
 use NeuronAI\Chat\Messages\Message;
@@ -46,7 +47,10 @@ class AgentMonitoring implements \SplObserver
      * @param Inspector $inspector The monitoring instance
      * @param bool $catch Report internal agent errors
      */
-    public function __construct(protected Inspector $inspector, protected bool $catch = true) {}
+    public function __construct(
+        protected Inspector $inspector,
+        protected bool $catch = true
+    ) {}
 
     public function update(\SplSubject $subject, string $event = null, $data = null): void
     {
@@ -89,7 +93,10 @@ class AgentMonitoring implements \SplObserver
     public function reportError(\NeuronAI\AgentInterface $agent, string $event, AgentError $data)
     {
         if ($this->catch) {
-            $this->inspector->reportException($data->exception, !$data->unhandled);
+            $error = $this->inspector->reportException($data->exception, !$data->unhandled);
+            if ($data->exception instanceof RequestException) {
+                $error->message = $data->exception->getRequest()->getBody()->getContents();
+            }
             if ($data->unhandled) {
                 $this->inspector->transaction()->setResult('error');
             }

@@ -2,6 +2,7 @@
 
 namespace NeuronAI;
 
+use GuzzleHttp\Exception\RequestException;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Chat\Messages\UserMessage;
@@ -64,41 +65,41 @@ trait HandleStructured
 
             $messages = $this->resolveChatHistory()->getMessages();
 
-            $this->notify(
-                'inference-start',
-                new InferenceStart($this->resolveChatHistory()->getLastMessage())
-            );
-
-            // Call the LLM structured interface
-            $response = $this->resolveProvider()
-                ->systemPrompt($this->instructions())
-                ->setTools($this->tools())
-                ->structured($messages, $class, $schema);
-
-            $this->notify(
-                'inference-stop',
-                new InferenceStop($this->resolveChatHistory()->getLastMessage(), $response)
-            );
-
-            if ($response instanceof ToolCallMessage) {
-                $toolCallResult = $this->executeTools($response);
-                return $this->structured([$response, $toolCallResult], $class, $maxRetries);
-            } else {
-                $this->notify('message-saving', new MessageSaving($response));
-                $this->resolveChatHistory()->addMessage($response);
-                $this->notify('message-saved', new MessageSaved($response));
-            }
-
             try {
+                $this->notify(
+                    'inference-start',
+                    new InferenceStart($this->resolveChatHistory()->getLastMessage())
+                );
+                $response = $this->resolveProvider()
+                    ->systemPrompt($this->instructions())
+                    ->setTools($this->tools())
+                    ->structured($messages, $class, $schema);
+                $this->notify(
+                    'inference-stop',
+                    new InferenceStop($this->resolveChatHistory()->getLastMessage(), $response)
+                );
+
+                if ($response instanceof ToolCallMessage) {
+                    $toolCallResult = $this->executeTools($response);
+                    return $this->structured([$response, $toolCallResult], $class, $maxRetries);
+                } else {
+                    $this->notify('message-saving', new MessageSaving($response));
+                    $this->resolveChatHistory()->addMessage($response);
+                    $this->notify('message-saved', new MessageSaved($response));
+                }
+
                 $output = $this->processResponse($response, $schema, $class);
                 $this->notify('structured-stop');
                 return $output;
-            } catch (\Exception $exception) {
+            } catch (RequestException $exception) {
+                $error = $exception->getRequest()->getBody()->getContents();
                 $this->notify('error', new AgentError($exception, false));
+            } catch (\Exception $exception) {
                 $error = $exception->getMessage();
+                $this->notify('error', new AgentError($exception, false));
             }
 
-            // If something goes wrong, retry informing the model of the error
+            // If something goes wrong, retry informing the model about the error
             $maxRetries--;
         } while ($maxRetries >= 0);
 

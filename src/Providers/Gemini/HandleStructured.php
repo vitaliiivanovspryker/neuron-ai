@@ -35,7 +35,7 @@ trait HandleStructured
             $this->parameters['generationConfig']['response_schema'] = $this->adaptSchema($response_format);
         }
 
-        // Add mime-type for both JSON schema or structured output
+        // Add mime-type for both JSON mode or structured output
         $this->parameters['generationConfig']['response_mime_type'] = 'application/json';
 
         return $this->chat($messages);
