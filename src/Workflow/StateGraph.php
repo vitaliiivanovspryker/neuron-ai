@@ -60,6 +60,12 @@ class StateGraph
         return $this;
     }
 
+    /** @return string[] */
+    public function getNodeNames(): array
+    {
+        return array_keys($this->nodes);
+    }
+
     /**
      * Get the agent attached to a node.
      */

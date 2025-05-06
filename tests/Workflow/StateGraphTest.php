@@ -82,6 +82,14 @@ class StateGraphTest extends TestCase
         (new StateGraph())->getNode('a');
     }
 
+    public function test_get_node_names(): void
+    {
+        $this->assertEqualsCanonicalizing(
+            [StateGraph::START_NODE, 'a', 'b', 'c', StateGraph::END_NODE],
+            $this->getAcyclicGraph()->getNodeNames(),
+        );
+    }
+
     public function test_get_predecessors(): void
     {
         $graph = $this->getAcyclicGraph();
