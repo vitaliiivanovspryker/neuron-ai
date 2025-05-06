@@ -55,8 +55,6 @@ class StateGraphTest extends TestCase
         $successors = $graph->getSuccessors(StateGraph::START_NODE);
         $this->assertContains(StateGraph::END_NODE, $successors);
         $this->assertContains('foo', $successors);
-
-        $this->assertContains(StateGraph::END_NODE, $graph->getSuccessors(StateGraph::START_NODE));
     }
 
     public function test_get_node(): void
@@ -86,7 +84,7 @@ class StateGraphTest extends TestCase
 
     public function test_get_predecessors(): void
     {
-        $graph = $this->getNotCyclicGraph();
+        $graph = $this->getAcyclicGraph();
 
         $this->assertEmpty($graph->getPredecessors(StateGraph::START_NODE));
         $this->assertEquals([StateGraph::START_NODE], $graph->getPredecessors('a'));
@@ -140,7 +138,7 @@ class StateGraphTest extends TestCase
 
     public function test_node_depends_on(): void
     {
-        $graph = $this->getNotCyclicGraph();
+        $graph = $this->getAcyclicGraph();
         $graph
             ->addNode('d', new TestAgent())
             ->addEdge('c', 'd');
@@ -206,16 +204,16 @@ class StateGraphTest extends TestCase
     {
         $this->assertFalse($this->getSimpleGraph()->isCyclic());
         $this->assertFalse($this->getDiamondGraph()->isCyclic());
-        $this->assertFalse($this->getNotCyclicGraph()->isCyclic());
+        $this->assertFalse($this->getAcyclicGraph()->isCyclic());
         $this->assertTrue($this->getCyclicGraph()->isCyclic());
     }
 
     public function test_compile(): void
     {
-        $executionList = $this->getNotCyclicGraph2()->compile();
+        $executionList = $this->getAcyclicGraph2()->compile();
         $this->assertEquals(['c', 'a', 'b'], $executionList);
 
-        $executionList = $this->getNotCyclicGraph()->compile();
+        $executionList = $this->getAcyclicGraph()->compile();
         $this->assertEquals(['a', 'c', 'b'], $executionList);
 
         $graph = (new StateGraph())
@@ -283,7 +281,7 @@ class StateGraphTest extends TestCase
             ->addEdge('b', StateGraph::END_NODE);
     }
 
-    private function getNotCyclicGraph(): StateGraph
+    private function getAcyclicGraph(): StateGraph
     {
         return (new StateGraph())
             ->addNode('a', new TestAgent())
@@ -297,7 +295,7 @@ class StateGraphTest extends TestCase
             ->addEdge('b', StateGraph::END_NODE);
     }
 
-    private function getNotCyclicGraph2(): StateGraph
+    private function getAcyclicGraph2(): StateGraph
     {
         return (new StateGraph())
             ->addNode('a', new TestAgent())

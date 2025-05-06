@@ -13,7 +13,11 @@ class EventSerializer
             return [];
         }
 
-        if (is_array($data) || !is_object($data)) {
+        if (is_array($data)) {
+            return $data;
+        }
+
+        if (!is_object($data)) {
             return ['data' => $data];
         }
 

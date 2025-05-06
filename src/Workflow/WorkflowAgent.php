@@ -10,7 +10,7 @@ class WorkflowAgent extends Agent
     /** @var string[] */
     private array $executionList;
 
-    /** @var \SplObserver[] */
+    /** @var array<event:string,observer:\SplObserver>[] */
     private array $observers = [];
 
     public function __construct(
@@ -30,7 +30,7 @@ class WorkflowAgent extends Agent
             $agent = $this->graph->getNode($node);
 
             foreach ($this->observers as $observer) {
-                $agent->observe($observer);
+                $agent->observe($observer['observer'], $observer['event']);
             }
 
             $lastReply = $agent->chat($input);
@@ -44,8 +44,11 @@ class WorkflowAgent extends Agent
 
     public function observe(\SplObserver $observer, string $event = "*"): self
     {
-        $this->observers[] = $observer;
-        $this->attach($observer, $event);
-        return $this;
+        $this->observers[] = [
+            'event' => $event,
+            'observer' => $observer,
+        ];
+
+        return parent::observe($observer, $event);
     }
 }

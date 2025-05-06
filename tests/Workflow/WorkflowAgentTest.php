@@ -35,7 +35,10 @@ class WorkflowAgentTest extends TestCase
         $handler = new TestHandler();
 
         $agent = WorkflowAgent::make($graph);
-        $agent->observe(new LogObserver(new Logger('my_logger', [$handler])));
+        $agent->observe(
+            new LogObserver(new Logger('my_logger', [$handler])),
+            'test',
+        );
 
         $reply = $agent->chat(new UserMessage('hello'));
 
@@ -55,7 +58,7 @@ class WorkflowAgentTest extends TestCase
      * This test checks if chaining two agents works.
      * 
      * The first agent has a tool to retrive a (hard-coded) timezone for a location.
-     * The second agent has a tool to retrieve the date and time of a timezone.
+     * The second agent has a tool to retrieve the date and time for a timezone.
      * 
      * When asking "What time is it in Paris/France" the two tools must have been called.
      */
