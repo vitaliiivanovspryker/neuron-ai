@@ -6,7 +6,7 @@ use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Chat\Messages\ToolCallResultMessage;
-use NeuronAI\Chat\Messages\UserImage;
+use NeuronAI\Chat\Messages\Image;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Exceptions\AgentException;
 use NeuronAI\Providers\MessageMapperInterface;
@@ -23,7 +23,6 @@ class MessageMapper implements MessageMapperInterface
                 Message::class,
                 UserMessage::class,
                 AssistantMessage::class => $this->mapMessage($message),
-                UserImage::class => $this->mapImage($message),
                 ToolCallMessage::class => $this->mapToolCall($message),
                 ToolCallResultMessage::class => $this->mapToolsResult($message),
                 default => throw new AgentException('Could not map message type '.$message::class),
@@ -33,42 +32,52 @@ class MessageMapper implements MessageMapperInterface
         return $this->mapping;
     }
 
-    protected function mapImage(UserImage $message): void
+    protected function mapMessage(Message $message): void
     {
-        $content = match($message->type) {
+        $serializedMessage = $message->jsonSerialize();
+
+        if (\array_key_exists('usage', $serializedMessage)) {
+            unset($serializedMessage['usage']);
+        }
+
+        $images = $message->getImages();
+
+        if (count($images)) {
+            $serializedMessage['content'] = [
+                [
+                    'type' => 'text',
+                    'text' => $serializedMessage['content'],
+                ],
+            ];
+
+            foreach ($images as $image) {
+                $serializedMessage['content'][] = $this->mapImage($image);
+            }
+        }
+
+        $this->mapping[] = $serializedMessage;
+    }
+
+    protected function mapImage(Image $image): array
+    {
+        return match($image->type) {
             'url' => [
                 'type' => 'image',
                 'source' => [
                     'type' => 'url',
-                    'url' => $message->image,
+                    'url' => $image->image,
                 ],
             ],
             'base64' => [
                 'type' => 'image',
                 'source' => [
                     'type' => 'base64',
-                    'media_type' => $message->mediaType,
-                    'data' => $message->image,
+                    'media_type' => $image->mediaType,
+                    'data' => $image->image,
                 ],
             ],
-            default => throw new AgentException('Invalid image type '.$message->type),
+            default => throw new AgentException('Invalid image type '.$image->type),
         };
-
-        $this->mapping[] = [
-            'role' => $message->getRole(),
-            'content' => json_encode($content),
-        ];
-    }
-
-    protected function mapMessage(Message $message): void
-    {
-        $message = $message->jsonSerialize();
-
-        if (\array_key_exists('usage', $message)) {
-            unset($message['usage']);
-        }
-
-        $this->mapping[] = $message;
     }
 
     protected function mapToolCall(ToolCallMessage $message): void
