@@ -66,19 +66,19 @@ class StateGraphTest extends TestCase
 
     public function test_get_start_node_fails(): void
     {
-        $this->expectException(StateGraphError::clasS);
+        $this->expectException(StateGraphError::class);
         (new StateGraph())->getNode(StateGraph::START_NODE);
     }
 
     public function test_get_end_node_fails(): void
     {
-        $this->expectException(StateGraphError::clasS);
+        $this->expectException(StateGraphError::class);
         (new StateGraph())->getNode(StateGraph::END_NODE);
     }
 
     public function test_get_unexisting_node_fails(): void
     {
-        $this->expectException(StateGraphError::clasS);
+        $this->expectException(StateGraphError::class);
         (new StateGraph())->getNode('a');
     }
 
@@ -237,22 +237,10 @@ class StateGraphTest extends TestCase
 
         $this->assertEquals(['a'], $graph->compile());
 
-        $graph = (new StateGraph())
-            ->addNode('a', new TestAgent())
-            ->addNode('b', new TestAgent())
-            ->addNode('c', new TestAgent())
-            ->addNode('d', new TestAgent())
-            ->addNode('e', new TestAgent())
-            ->addEdge(StateGraph::START_NODE, 'a')
-            ->addEdge(StateGraph::START_NODE, 'c')
-            ->addEdge('c', 'a')
-            ->addEdge('a', 'b')
-            ->addEdge('a', 'd')
-            ->addEdge('d', 'e')
-            ->addEdge('b', StateGraph::END_NODE)
-            ->addEdge('e', StateGraph::END_NODE);
-
-        $this->assertEquals(['c', 'a', 'b', 'd', 'e'], $graph->compile());
+        $this->assertEquals(
+            ['c', 'a', 'b', 'd', 'e'],
+            $this->getComplexGraph()->compile()
+        );
     }
 
     public function test_compile_with_invalid_graph_fails(): void
@@ -266,6 +254,22 @@ class StateGraphTest extends TestCase
     {
         $this->expectException(StateGraphError::class);
         $this->getCyclicGraph()->compile();
+    }
+
+    public function test_to_dot(): void
+    {
+        $dot = <<<DOT
+        digraph G {
+          START -> {a,c}
+          a -> {b,d}
+          b -> END
+          c -> a
+          d -> e
+          e -> END
+        }
+        DOT;
+
+        $this->assertEquals($dot, $this->getComplexGraph()->toDot());
     }
 
     private function getSimpleGraph(): StateGraph
@@ -328,5 +332,23 @@ class StateGraphTest extends TestCase
             ->addEdge('b', 'c')
             ->addEdge('c', 'a')
             ->addEdge('b', StateGraph::END_NODE);
+    }
+
+    private function getComplexGraph(): StateGraph
+    {
+        return (new StateGraph())
+            ->addNode('a', new TestAgent())
+            ->addNode('b', new TestAgent())
+            ->addNode('c', new TestAgent())
+            ->addNode('d', new TestAgent())
+            ->addNode('e', new TestAgent())
+            ->addEdge(StateGraph::START_NODE, 'a')
+            ->addEdge(StateGraph::START_NODE, 'c')
+            ->addEdge('c', 'a')
+            ->addEdge('a', 'b')
+            ->addEdge('a', 'd')
+            ->addEdge('d', 'e')
+            ->addEdge('b', StateGraph::END_NODE)
+            ->addEdge('e', StateGraph::END_NODE);
     }
 }

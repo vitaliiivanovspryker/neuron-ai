@@ -170,6 +170,36 @@ class StateGraph
     }
 
     /**
+     * Export the graph to Graphwiz format
+     * @see https://graphviz.org/doc/info/lang.html
+     */
+    public function toDot(): string
+    {
+        $edges = [];
+
+        $normalize = static fn(string $node) =>
+            match ($node) {
+                self::START_NODE => 'START',
+                self::END_NODE => 'END',
+                default => $node,
+            };
+
+        foreach ($this->edges as $from => $to) {
+            if (count($to) === 0) {
+                continue;
+            }
+
+            $destination = count($to) === 1
+                ? $normalize($to[0])
+                : sprintf('{%s}', implode(',', array_map(fn($node) => $normalize($node), $to)));
+
+            $edges[] = sprintf("  %s -> %s", $normalize($from), $destination);
+        }
+
+        return sprintf("digraph G {\n%s\n}", implode(PHP_EOL, $edges));
+    }
+
+    /**
      * Returns true is there is a path from the $from node to the $to node.
      */
     public function nodeIsConnectedTo(string $from, string $to): bool
