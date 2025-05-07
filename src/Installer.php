@@ -2,7 +2,7 @@
 
 namespace NeuronAI;
 
-use Composer\Installer\PackageEvent as Event;
+use Composer\Script\Event;
 
 class Installer
 {
