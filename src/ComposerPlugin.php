@@ -4,9 +4,9 @@ namespace NeuronAI;
 
 use Composer\Composer;
 use Composer\EventDispatcher\EventSubscriberInterface;
+use Composer\Installer\PackageEvents;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
-use Composer\Script\ScriptEvents;
 
 class ComposerPlugin implements PluginInterface, EventSubscriberInterface
 {
@@ -32,7 +32,8 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            ScriptEvents::POST_AUTOLOAD_DUMP => 'displayMessage',
+            PackageEvents::POST_PACKAGE_INSTALL => 'displayMessage',
+            PackageEvents::POST_PACKAGE_UPDATE => 'displayMessage',
         ];
     }
 
