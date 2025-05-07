@@ -2,7 +2,7 @@
 
 namespace NeuronAI;
 
-use Composer\Script\Event;
+use Composer\Installer\PackageEvent as Event;
 
 class Installer
 {
@@ -23,11 +23,11 @@ class Installer
 
         // Neuron AI logo/banner
         $io->write("\n");
-        $io->write("<fg=blue>    _   __                             ___    ___</>");
-        $io->write("<fg=blue>   / | / /__  __  _________  ____    /   |  /   |</>");
-        $io->write("<fg=blue>  /  |/ / _ \/ / / / ___/ / / / /   / /| | / /| |</>");
-        $io->write("<fg=blue> / /|  /  __/ /_/ / /  / /_/ / /___/ ___ |/ ___ |</>");
-        $io->write("<fg=blue>/_/ |_/\___/\__,_/_/   \__,_/_____/_/  |_/_/  |_|</>");
+        $io->write("<fg=blue>    _   __                            ___ _  </>");
+        $io->write("<fg=blue>   / | / /__  __  _________  ____  __/   | | </>");
+        $io->write("<fg=blue>  /  |/ / _ \/ / / / ___/ / / / | / / /| | | </>");
+        $io->write("<fg=blue> / /|  /  __/ /_/ / /  / /_/ /  |/ / /_| | | </>");
+        $io->write("<fg=blue>/_/ |_/\___/\__,_/_/   \__,_/_/|__/_/  |_|_| </>");
         $io->write("\n");
 
         // Main welcome message
@@ -43,14 +43,10 @@ class Installer
         $io->write("  • <fg=white>Real-time visibility into your AI agents' activities</>");
         $io->write("  • <fg=white>Performance metrics and latency monitoring</>");
         $io->write("  • <fg=white>Error tracking and anomaly detection</>");
-        $io->write("  • <fg=white>Usage patterns and cost optimization</>\n");
 
         // Documentation links
         $io->write("<fg=white;options=bold>📚 Resources:</>");
         $io->write("  • Neuron AI Documentation: <fg=green>https://docs.neuronai.dev</>");
         $io->write("  • Inspector Integration Guide: <fg=green>https://docs.neuron-ai.dev/advanced/observability</>\n");
-
-        // Final note
-        $io->write("<fg=green>Happy building with Neuron AI</>\n");
     }
 }
