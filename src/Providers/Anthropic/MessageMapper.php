@@ -9,6 +9,7 @@ use NeuronAI\Chat\Messages\ToolCallResultMessage;
 use NeuronAI\Chat\Messages\Image;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Exceptions\AgentException;
+use NeuronAI\Exceptions\ProviderException;
 use NeuronAI\Providers\MessageMapperInterface;
 use NeuronAI\Tools\ToolInterface;
 
@@ -53,6 +54,8 @@ class MessageMapper implements MessageMapperInterface
             foreach ($images as $image) {
                 $serializedMessage['content'][] = $this->mapImage($image);
             }
+
+            unset($serializedMessage['images']);
         }
 
         $this->mapping[] = $serializedMessage;
@@ -76,7 +79,7 @@ class MessageMapper implements MessageMapperInterface
                     'data' => $image->image,
                 ],
             ],
-            default => throw new AgentException('Invalid image type '.$image->type),
+            default => throw new ProviderException('Invalid image type '.$image->type),
         };
     }
 
