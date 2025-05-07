@@ -11,6 +11,7 @@ class Message implements \JsonSerializable
     const ROLE_SYSTEM = 'system';
 
     protected ?Usage $usage = null;
+    protected array $images = [];
 
     protected array $meta = [];
 
@@ -38,6 +39,17 @@ class Message implements \JsonSerializable
     public function setContent(mixed $content): Message
     {
         $this->content = $content;
+        return $this;
+    }
+
+    public function getImages(): array
+    {
+        return $this->images;
+    }
+
+    public function addImage(Image $image): Message
+    {
+        $this->images[] = $image;
         return $this;
     }
 

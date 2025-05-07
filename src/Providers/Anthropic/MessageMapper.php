@@ -6,6 +6,7 @@ use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Chat\Messages\ToolCallResultMessage;
+use NeuronAI\Chat\Messages\Image;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Exceptions\AgentException;
 use NeuronAI\Providers\MessageMapperInterface;
@@ -33,13 +34,50 @@ class MessageMapper implements MessageMapperInterface
 
     protected function mapMessage(Message $message): void
     {
-        $message = $message->jsonSerialize();
+        $serializedMessage = $message->jsonSerialize();
 
-        if (\array_key_exists('usage', $message)) {
-            unset($message['usage']);
+        if (\array_key_exists('usage', $serializedMessage)) {
+            unset($serializedMessage['usage']);
         }
 
-        $this->mapping[] = $message;
+        $images = $message->getImages();
+
+        if (count($images)) {
+            $serializedMessage['content'] = [
+                [
+                    'type' => 'text',
+                    'text' => $serializedMessage['content'],
+                ],
+            ];
+
+            foreach ($images as $image) {
+                $serializedMessage['content'][] = $this->mapImage($image);
+            }
+        }
+
+        $this->mapping[] = $serializedMessage;
+    }
+
+    protected function mapImage(Image $image): array
+    {
+        return match($image->type) {
+            'url' => [
+                'type' => 'image',
+                'source' => [
+                    'type' => 'url',
+                    'url' => $image->image,
+                ],
+            ],
+            'base64' => [
+                'type' => 'image',
+                'source' => [
+                    'type' => 'base64',
+                    'media_type' => $image->mediaType,
+                    'data' => $image->image,
+                ],
+            ],
+            default => throw new AgentException('Invalid image type '.$image->type),
+        };
     }
 
     protected function mapToolCall(ToolCallMessage $message): void
