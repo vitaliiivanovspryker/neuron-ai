@@ -49,5 +49,13 @@
         "allow-plugins": {
             "php-http/discovery": true
         }
+    },
+    "scripts": {
+        "post-package-install": [
+            "NeuronAI\\Installer::postInstall"
+        ],
+        "post-package-update": [
+            "NeuronAI\\Installer::postUpdate"
+        ]
     }
 }
