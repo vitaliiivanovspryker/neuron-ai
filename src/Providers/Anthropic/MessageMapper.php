@@ -26,7 +26,7 @@ class MessageMapper implements MessageMapperInterface
                 AssistantMessage::class => $this->mapMessage($message),
                 ToolCallMessage::class => $this->mapToolCall($message),
                 ToolCallResultMessage::class => $this->mapToolsResult($message),
-                default => throw new AgentException('Could not map message type '.$message::class),
+                default => throw new ProviderException('Could not map message type '.$message::class),
             };
         }
 
