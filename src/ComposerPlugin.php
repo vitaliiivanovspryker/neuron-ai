@@ -32,25 +32,12 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            ScriptEvents::POST_INSTALL_CMD => 'onPackageInstall',
-            ScriptEvents::POST_UPDATE_CMD => 'onPackageUpdate',
+            ScriptEvents::POST_AUTOLOAD_DUMP => 'displayMessage',
         ];
     }
 
-    public function onPackageInstall()
+    private function displayMessage()
     {
-        $this->displayMessage('install');
-    }
-
-    public function onPackageUpdate()
-    {
-        $this->displayMessage('update');
-    }
-
-    private function displayMessage(string $action)
-    {
-        $actionText = ($action === 'install') ? 'installing' : 'updating';
-
         $this->io->write("\n");
         $this->io->write("<fg=blue>    _   __                            ___ _  </>");
         $this->io->write("<fg=blue>   / | / /__  __  __ ____ ____ __  __/   | | </>");
@@ -59,7 +46,7 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
         $this->io->write("<fg=blue>/_/ |_/\___/\__,_/_/   \__,_/_/|__/_/  |_|_| </>");
         $this->io->write("\n");
 
-        $this->io->write("<fg=green;options=bold>Thank you for {$actionText} Neuron AI!</>");
+        $this->io->write("<fg=green;options=bold>Thank you for using Neuron AI!</>");
         $this->io->write("<fg=green>Your AI agent framework is ready to use.</>\n");
 
         $this->io->write("<fg=yellow;options=bold>🔍 Monitor Your AI Agents</>");
