@@ -47,7 +47,7 @@ trait HandleStream
             }
 
             // Inform the agent about usage when stream
-            if (\array_key_exists('usageMetadata', $line['candidates'][0]['content'])) {
+            if (\array_key_exists('usageMetadata', $line)) {
                 yield \json_encode(['usage' => [
                     'input_tokens' => $line['usageMetadata']['promptTokenCount'],
                     'output_tokens' => $line['usageMetadata']['candidatesTokenCount'],
