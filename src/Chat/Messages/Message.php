@@ -42,6 +42,9 @@ class Message implements \JsonSerializable
         return $this;
     }
 
+    /**
+     * @return array<Image>
+     */
     public function getImages(): array
     {
         return $this->images;

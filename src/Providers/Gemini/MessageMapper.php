@@ -3,6 +3,7 @@
 namespace NeuronAI\Providers\Gemini;
 
 use NeuronAI\Chat\Messages\AssistantMessage;
+use NeuronAI\Chat\Messages\Image;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Chat\Messages\ToolCallResultMessage;
@@ -34,12 +35,38 @@ class MessageMapper implements MessageMapperInterface
 
     protected function mapMessage(Message $message): void
     {
-        $this->mapping[] = [
+        $payload = [
             'role' => $message->getRole(),
             'parts' => [
                 ['text' => $message->getContent()]
             ],
         ];
+
+        if ($images = $message->getImages()) {
+            foreach ($images as $image) {
+                $payload['parts'][] = $this->mapImage($image);
+            }
+        }
+
+        $this->mapping[] = $payload;
+    }
+
+    protected function mapImage(Image $image)
+    {
+        return match($image->type) {
+            Image::TYPE_URL => [
+                'file_data' => [
+                    'file_uri' => $image->image,
+                    'mime_type' => $image->mediaType,
+                ],
+            ],
+            Image::TYPE_BASE64 => [
+                'inline_data' => [
+                    'data' => $image->image,
+                    'mime_type' => $image->mediaType,
+                ]
+            ]
+        };
     }
 
     protected function mapToolCall(ToolCallMessage $message): void
