@@ -1,0 +1,76 @@
+<?php
+
+namespace NeuronAI;
+
+use Composer\Composer;
+use Composer\EventDispatcher\EventSubscriberInterface;
+use Composer\IO\IOInterface;
+use Composer\Plugin\PluginInterface;
+use Composer\Script\ScriptEvents;
+
+class ComposerPlugin implements PluginInterface, EventSubscriberInterface
+{
+    protected $composer;
+    protected $io;
+
+    public function activate(Composer $composer, IOInterface $io)
+    {
+        $this->composer = $composer;
+        $this->io = $io;
+    }
+
+    public function deactivate(Composer $composer, IOInterface $io)
+    {
+        // Not needed for this example
+    }
+
+    public function uninstall(Composer $composer, IOInterface $io)
+    {
+        // Not needed for this example
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            ScriptEvents::POST_INSTALL_CMD => 'onPackageInstall',
+            ScriptEvents::POST_UPDATE_CMD => 'onPackageUpdate',
+        ];
+    }
+
+    public function onPackageInstall()
+    {
+        $this->displayMessage('install');
+    }
+
+    public function onPackageUpdate()
+    {
+        $this->displayMessage('update');
+    }
+
+    private function displayMessage(string $action)
+    {
+        $actionText = ($action === 'install') ? 'installing' : 'updating';
+
+        $this->io->write("\n");
+        $this->io->write("<fg=blue>    _   __                            ___ _  </>");
+        $this->io->write("<fg=blue>   / | / /__  __  __ ____ ____ __  __/   | | </>");
+        $this->io->write("<fg=blue>  /  |/ / _ \/ / / / ___/ __  / | / / /| | | </>");
+        $this->io->write("<fg=blue> / /|  /  __/ /_/ / /  / /_/ /  |/ / /_| | | </>");
+        $this->io->write("<fg=blue>/_/ |_/\___/\__,_/_/   \__,_/_/|__/_/  |_|_| </>");
+        $this->io->write("\n");
+
+        $this->io->write("<fg=green;options=bold>Thank you for {$actionText} Neuron AI!</>");
+        $this->io->write("<fg=green>Your AI agent framework is ready to use.</>\n");
+
+        $this->io->write("<fg=yellow;options=bold>🔍 Monitor Your AI Agents</>");
+        $this->io->write("<fg=yellow>We recommend Inspector.dev to monitor performance and detect issues:</>\n");
+
+        $this->io->write("  • <fg=white>Real-time visibility into your AI agents' activities</>");
+        $this->io->write("  • <fg=white>Performance metrics and latency monitoring</>");
+        $this->io->write("  • <fg=white>Error tracking and anomaly detection</>\n");
+
+        $this->io->write("<fg=white;options=bold>📚 Resources:</>");
+        $this->io->write("  • Neuron AI Documentation: <fg=green>https://docs.neuronai.dev</>");
+        $this->io->write("  • Inspector Integration Guide: <fg=green>https://docs.neuron-ai.dev/advanced/observability</>\n");
+    }
+}
