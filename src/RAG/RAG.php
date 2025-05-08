@@ -46,11 +46,11 @@ class RAG extends Agent
      * @throws ToolCallableNotSet
      * @throws \Throwable
      */
-    public function answer(Message $question, int $k = 4): Message
+    public function answer(Message $question): Message
     {
         $this->notify('rag-start');
 
-        $this->retrieval($question, $k);
+        $this->retrieval($question);
 
         $response = $this->chat($question);
 
