@@ -27,6 +27,7 @@ You can post questions and feedback on the [Inspector Forum](https://github.com/
 - [MCP server connector](#mcp)
 - [Implement RAG systems](#rag)
 - [Structured Output](#structured)
+- [Observability](#observability)
 - [Official Documentation](#documentation)
 
 <a name="install">
@@ -333,6 +334,25 @@ echo $person->name ' like '.$person->preference;
 ```
 
 Learn more about Structured Output on the [documentation](https://docs.neuron-ai.dev/advanced/structured-output).
+
+<a name="observability">
+
+## Observability
+
+Neuron offers a built-in integration with [Inspector.dev](https://inspector.dev) to monitor the performance of your agents
+and detect unexpected errors in real time.
+
+You have to install the Inspector package based on your development environment. We provide integration packages
+for [PHP](https://github.com/inspector-apm/inspector-php), [Laravel](https://github.com/inspector-apm/inspector-laravel),
+[Symfony](https://github.com/inspector-apm/inspector-symfony), [CodeIgniter](https://github.com/inspector-apm/inspector-codeigniter),
+[Drupal](https://git.drupalcode.org/project/inspector_monitoring).
+
+Neuron AI integrates seamlessly with Inspector just installing the appropriate package.
+When your agents are being executed, you will see the details of their internal steps on the Inspector dashboard.
+
+![](./docs/img/neuron-observability.png)
+
+Learn more about Observability in the [documentation](https://docs.neuron-ai.dev/advanced/observability).
 
 <a name="documentation">
 
