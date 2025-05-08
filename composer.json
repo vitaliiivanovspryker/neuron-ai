@@ -1,7 +1,6 @@
 {
     "name": "inspector-apm/neuron-ai",
     "description": "PHP AI Framework with built-in observability.",
-    "type": "library",
     "minimum-stability": "stable",
     "license": "MIT",
     "authors": [
