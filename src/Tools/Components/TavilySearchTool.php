@@ -11,7 +11,7 @@ class TavilySearchTool extends Tool
 {
     protected Client $client;
 
-    protected string $utl = 'https://api.tavily.com/v1/';
+    protected string $utl = 'https://api.tavily.com/';
 
     protected array $options = [
         'search_depth' => 'basic',
