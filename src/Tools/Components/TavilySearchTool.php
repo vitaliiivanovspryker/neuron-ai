@@ -58,7 +58,9 @@ class TavilySearchTool extends Tool
                 'topic',
                 'string',
                 'Explicit the topic you want to perform the web search on.',
-                false),
+                false,
+                ['general', 'news']
+            ),
         )->addProperty(
             new ToolProperty(
                 'time_range',
@@ -89,7 +91,7 @@ class TavilySearchTool extends Tool
 
     protected function search(
         string $search_query,
-        string $topic = null,
+        string $topic = 'general',
         string $time_range = 'day',
         int $days = 7,
     ) {
