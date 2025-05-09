@@ -369,6 +369,9 @@ $response = MyAgent::make()
 
 ![](./docs/img/neuron-observability.png)
 
+> If you use a framework like Laravel, Symfony, or CodeIgniter, you already have the Inspector instance in the container
+> so you don't need to create one.
+
 Learn more about Observability in the [documentation](https://docs.neuron-ai.dev/advanced/observability).
 
 <a name="documentation">
