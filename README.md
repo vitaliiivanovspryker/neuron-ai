@@ -351,6 +351,14 @@ Neuron AI integrates seamlessly with Inspector just installing the appropriate p
 When your agents are being executed, you will see the details of their internal steps on the Inspector dashboard.
 
 ```php
+new NeuronAI\Observability\AgentMonitoring;
+
+// The Inspector instance in your application
+$inspector = new \Inspector\Inspector(
+    new Configuration('YOUR-INGESTION-KEY')
+);
+
+// Attach monitoring to the Agent
 $response = MyAgent::make()
     ->observe(
         new AgentMonitoring($inspector)
