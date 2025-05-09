@@ -347,7 +347,7 @@ for [PHP](https://github.com/inspector-apm/inspector-php), [Laravel](https://git
 [Symfony](https://github.com/inspector-apm/inspector-symfony), [CodeIgniter](https://github.com/inspector-apm/inspector-codeigniter),
 [Drupal](https://git.drupalcode.org/project/inspector_monitoring).
 
-Attach the `AgentMonitoring` component to the agent and monitor the internal execution timeline in the Inspector dashboard.
+Attach the `AgentMonitoring` component to the agent to monitor the internal execution timeline in the Inspector dashboard.
 If the agent fires an error, you will be alerted in real-time. You can connect several notification channels like email, slack, discord, telegram, and more.
 Here is a code example in a legacy PHP script:
 
