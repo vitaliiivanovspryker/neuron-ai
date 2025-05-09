@@ -29,7 +29,37 @@ class AgentMonitoring implements \SplObserver
     /**
      * @var array<string, Segment>
      */
-    protected $segments = [];
+    protected array $segments = [];
+
+    protected array $methodsMap = [
+        'error' => 'reportError',
+        'chat-start' => 'start',
+        'chat-stop' => 'stop',
+        'stream-start' => 'start',
+        'stream-stop' => 'stop',
+        'rag-start' => 'start',
+        'rag-stop' => 'stop',
+        'structured-start' => 'start',
+        'structured-stop' => 'stop',
+        'message-saving' => 'messageSaving',
+        'message-saved' => 'messageSaved',
+        'inference-start' => 'inferenceStart',
+        'inference-stop' => 'inferenceStop',
+        'tool-calling' => 'toolCalling',
+        'tool-called' => 'toolCalled',
+        'structured-extracting' => 'extracting',
+        'structured-extracted' => 'extracted',
+        'structured-deserializing' => 'deserializing',
+        'structured-deserialized' => 'deserialized',
+        'structured-validating' => 'validating',
+        'structured-validated' => 'validated',
+        'rag-vectorstore-searching' => 'vectorStoreSearching',
+        'rag-vectorstore-result' => 'vectorStoreResult',
+        'rag-instructions-changing' => 'instructionsChanging',
+        'rag-instructions-changed' => 'instructionsChanged',
+        'rag-postprocessing' => 'postProcessing',
+        'rag-postprocessed' => 'postProcessed',
+    ];
 
     /**
      * @param Inspector $inspector The monitoring instance
@@ -42,38 +72,8 @@ class AgentMonitoring implements \SplObserver
 
     public function update(\SplSubject $subject, string $event = null, $data = null): void
     {
-        $methods = [
-            'error' => 'reportError',
-            'chat-start' => 'start',
-            'chat-stop' => 'stop',
-            'stream-start' => 'start',
-            'stream-stop' => 'stop',
-            'rag-start' => 'start',
-            'rag-stop' => 'stop',
-            'structured-start' => 'start',
-            'structured-stop' => 'stop',
-            'message-saving' => 'messageSaving',
-            'message-saved' => 'messageSaved',
-            'inference-start' => 'inferenceStart',
-            'inference-stop' => 'inferenceStop',
-            'tool-calling' => 'toolCalling',
-            'tool-called' => 'toolCalled',
-            'structured-extracting' => 'extracting',
-            'structured-extracted' => 'extracted',
-            'structured-deserializing' => 'deserializing',
-            'structured-deserialized' => 'deserialized',
-            'structured-validating' => 'validating',
-            'structured-validated' => 'validated',
-            'rag-vectorstore-searching' => 'vectorStoreSearching',
-            'rag-vectorstore-result' => 'vectorStoreResult',
-            'rag-instructions-changing' => 'instructionsChanging',
-            'rag-instructions-changed' => 'instructionsChanged',
-            'rag-postprocessing' => 'postProcessing',
-            'rag-postprocessed' => 'postProcessed',
-        ];
-
-        if (!\is_null($event) && \array_key_exists($event, $methods)) {
-            $method = $methods[$event];
+        if (!\is_null($event) && \array_key_exists($event, $this->methodsMap)) {
+            $method = $this->methodsMap[$event];
             $this->$method($subject, $event, $data);
         }
     }
@@ -101,7 +101,7 @@ class AgentMonitoring implements \SplObserver
         $class = get_class($agent);
 
         if ($this->inspector->needTransaction()) {
-            $this->inspector->startTransaction($class);
+            $this->inspector->startTransaction($class)->setType('agent');
         } elseif ($this->inspector->canAddSegments() && $entity !== 'chat') {
             $this->segments[
                 $entity.$class
