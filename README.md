@@ -350,6 +350,14 @@ for [PHP](https://github.com/inspector-apm/inspector-php), [Laravel](https://git
 Neuron AI integrates seamlessly with Inspector just installing the appropriate package.
 When your agents are being executed, you will see the details of their internal steps on the Inspector dashboard.
 
+```php
+$response = MyAgent::make()
+    ->observe(
+        new AgentMonitoring($inspector)
+    )
+    ->chat(...);
+```
+
 ![](./docs/img/neuron-observability.png)
 
 Learn more about Observability in the [documentation](https://docs.neuron-ai.dev/advanced/observability).
