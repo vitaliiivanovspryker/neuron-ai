@@ -2,13 +2,14 @@
 
 namespace NeuronAI\Providers\Anthropic;
 
+use NeuronAI\Chat\Attachments\Attachment;
+use NeuronAI\Chat\Attachments\Document;
+use NeuronAI\Chat\Attachments\Image;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Chat\Messages\ToolCallResultMessage;
-use NeuronAI\Chat\Messages\Image;
 use NeuronAI\Chat\Messages\UserMessage;
-use NeuronAI\Exceptions\AgentException;
 use NeuronAI\Exceptions\ProviderException;
 use NeuronAI\Providers\MessageMapperInterface;
 use NeuronAI\Tools\ToolInterface;
@@ -41,40 +42,70 @@ class MessageMapper implements MessageMapperInterface
             unset($payload['usage']);
         }
 
-        if ($images = $message->getImages()) {
+        $documents = $message->getDocuments();
+        $images = $message->getImages();
+
+        if (is_string($payload['content']) && ($documents || $images)) {
             $payload['content'] = [
                 [
                     'type' => 'text',
                     'text' => $payload['content'],
                 ],
             ];
-
-            foreach ($images as $image) {
-                $payload['content'][] = $this->mapImage($image);
-            }
-
-            unset($payload['images']);
         }
 
+        foreach ($documents as $document) {
+            $payload['content'][] = $this->mapDocument($document);
+        }
+
+        foreach ($images as $image) {
+            $payload['content'][] = $this->mapImage($image);
+        }
+
+        unset($payload['documents']);
+        unset($payload['images']);
+
         $this->mapping[] = $payload;
+    }
+
+    protected function mapDocument(Document $document): array
+    {
+        return match($document->type) {
+            Attachment::TYPE_URL => [
+                'type' => 'document',
+                'source' => [
+                    'type' => 'url',
+                    'url' => $document->content,
+                ],
+            ],
+            Attachment::TYPE_BASE64 => [
+                'type' => 'document',
+                'source' => [
+                    'type' => 'base64',
+                    'media_type' => $document->mediaType,
+                    'data' => $document->content,
+                ],
+            ],
+            default => throw new ProviderException('Invalid document type '.$document->type),
+        };
     }
 
     protected function mapImage(Image $image): array
     {
         return match($image->type) {
-            Image::TYPE_URL => [
+            Attachment::TYPE_URL => [
                 'type' => 'image',
                 'source' => [
                     'type' => 'url',
-                    'url' => $image->image,
+                    'url' => $image->content,
                 ],
             ],
-            Image::TYPE_BASE64 => [
+            Attachment::TYPE_BASE64 => [
                 'type' => 'image',
                 'source' => [
                     'type' => 'base64',
                     'media_type' => $image->mediaType,
-                    'data' => $image->image,
+                    'data' => $image->content,
                 ],
             ],
             default => throw new ProviderException('Invalid image type '.$image->type),

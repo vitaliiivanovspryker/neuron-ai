@@ -7,7 +7,7 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
-use NeuronAI\Chat\Messages\Image;
+use NeuronAI\Chat\Attachments\Image;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Providers\OpenAI\OpenAI;
 use PHPUnit\Framework\TestCase;

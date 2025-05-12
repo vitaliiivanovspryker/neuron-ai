@@ -2,6 +2,9 @@
 
 namespace NeuronAI\Chat\Messages;
 
+use NeuronAI\Chat\Attachments\Document;
+use NeuronAI\Chat\Attachments\Image;
+
 class Message implements \JsonSerializable
 {
     const ROLE_USER = 'user';
@@ -11,6 +14,7 @@ class Message implements \JsonSerializable
     const ROLE_SYSTEM = 'system';
 
     protected ?Usage $usage = null;
+    protected array $documents = [];
     protected array $images = [];
 
     protected array $meta = [];
@@ -39,6 +43,20 @@ class Message implements \JsonSerializable
     public function setContent(mixed $content): Message
     {
         $this->content = $content;
+        return $this;
+    }
+
+    /**
+     * @return array<Document>
+     */
+    public function getDocuments(): array
+    {
+        return $this->documents;
+    }
+
+    public function addDocument(Document $document): Message
+    {
+        $this->documents[] = $document;
         return $this;
     }
 
