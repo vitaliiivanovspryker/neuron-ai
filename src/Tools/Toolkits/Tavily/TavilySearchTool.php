@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\Tools\Components;
+namespace NeuronAI\Tools\Toolkits\Tavily;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
