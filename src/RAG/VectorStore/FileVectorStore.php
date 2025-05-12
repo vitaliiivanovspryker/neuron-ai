@@ -2,16 +2,12 @@
 
 namespace NeuronAI\RAG\VectorStore;
 
-use NeuronAI\Exceptions\NeuronException;
-use NeuronAI\Exceptions\SimilarityCalculationException;
 use NeuronAI\Exceptions\VectorStoreException;
 use NeuronAI\RAG\Document;
 use NeuronAI\RAG\VectorStore\Search\SimilaritySearch;
 
 class FileVectorStore implements VectorStoreInterface
 {
-    protected array $store = [];
-
     public function __construct(
         protected string $directory,
         protected int $topK = 4,
@@ -21,15 +17,6 @@ class FileVectorStore implements VectorStoreInterface
         if (!\is_dir($this->directory)) {
             throw new VectorStoreException("Directory '{$this->directory}' does not exist");
         }
-
-        $this->init();
-    }
-
-    protected function init()
-    {
-        if (\is_file($this->getFilePath())) {
-            $this->store = \json_decode(\file_get_contents($this->getFilePath()), true);
-        }
     }
 
     protected function getFilePath(): string
@@ -37,42 +24,41 @@ class FileVectorStore implements VectorStoreInterface
         return $this->directory . DIRECTORY_SEPARATOR . $this->name.$this->ext;
     }
 
-    protected function updateFile(): void
-    {
-        \file_put_contents($this->getFilePath(), json_encode($this->store), LOCK_EX);
-    }
-
     public function addDocument(Document $document): void
     {
-        $this->addDocuments([$document]);;
+        $this->addDocuments([$document]);
     }
 
     public function addDocuments(array $documents): void
     {
-        foreach ($documents as $document) {
-            $this->store[] = $document->jsonSerialize();
-        };
-        $this->updateFile();
+        $this->appendToFile(
+            \array_map(fn (Document $document) => $document->jsonSerialize(), $documents)
+        );
     }
 
     public function similaritySearch(array $embedding): array
     {
-        $distances = [];
+        $topItems = [];
 
-        foreach ($this->store as $index => $document) {
+        foreach ($this->getLine($this->getFilePath()) as $index => $document) {
+            $document = \json_decode($document, true);
+
             if (empty($document['embedding'])) {
                 throw new VectorStoreException("Document with the following content has no embedding: {$document['content']}");
             }
             $dist = $this->cosineSimilarity($embedding, $document['embedding']);
-            $distances[$index] = $dist;
+
+            $topItems[] = compact('dist', 'document');
+
+            \usort($topItems, fn($a, $b) => $a['dist'] <=> $b['dist']);
+
+            if (\count($topItems) > $this->topK) {
+                $topItems = \array_slice($topItems, 0, $this->topK, true);
+            }
         }
 
-        \asort($distances); // Sort by distance (ascending).
-
-        $topKIndices = \array_slice(\array_keys($distances), 0, $this->topK, true);
-
-        return \array_reduce($topKIndices, function ($carry, $index) {
-            $item = $this->store[$index];
+        return \array_reduce($topItems, function ($carry, $item) {
+            $item = $item['document'];
             $document = new Document($item['content']);
             $document->embedding = $item['embedding'];
             $document->sourceType = $item['sourceType'];
@@ -87,5 +73,27 @@ class FileVectorStore implements VectorStoreInterface
     protected function cosineSimilarity(array $vector1, array $vector2): float
     {
         return SimilaritySearch::cosine($vector1, $vector2);
+    }
+
+    protected function appendToFile(array $vectors): void
+    {
+        \file_put_contents(
+            $this->getFilePath(),
+            implode(PHP_EOL, \array_map(fn(array $vector) => \json_encode($vector), $vectors)).PHP_EOL,
+            FILE_APPEND
+        );
+    }
+
+    protected function getLine($file): \Generator
+    {
+        $f = fopen($file, 'r');
+
+        try {
+            while ($line = fgets($f)) {
+                yield $line;
+            }
+        } finally {
+            fclose($f);
+        }
     }
 }
