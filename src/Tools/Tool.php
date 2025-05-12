@@ -76,9 +76,13 @@ class Tool implements ToolInterface
 
     public function getRequiredProperties(): array
     {
-        return \array_filter(\array_map(function (ToolProperty $property) {
-            return $property->isRequired() ? $property->getName() : null;
-        }, $this->properties));
+        return \array_reduce($this->properties, function ($carry, ToolProperty $property) {
+            if ($property->isRequired()) {
+                $carry[] = $property->getName();
+            }
+
+            return $carry;
+        }, []);
     }
 
     public function setCallable(callable $callback): self
