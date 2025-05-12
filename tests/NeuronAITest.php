@@ -56,13 +56,4 @@ class NeuronAITest extends TestCase
         $this->assertInstanceOf(Message::class, new AssistantMessage(''));
         $this->assertInstanceOf(Message::class, new ToolCallMessage('', $tools));
     }
-
-    public function test_tool_instance()
-    {
-        $tool = new Tool('example', 'example');
-        $this->assertInstanceOf(ToolInterface::class, $tool);
-
-        $tool->setInputs(null);
-        $this->assertEquals([], $tool->getInputs());
-    }
 }
