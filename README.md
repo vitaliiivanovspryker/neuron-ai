@@ -387,4 +387,4 @@ Please check out the [Contribution Guidelines](CONTRIBUTING.md) about how to pro
 
 ## LICENSE
 
-This bundle is licensed under the [MIT](LICENSE-MPL-2.0) license.
+This project is licensed under the [MPL 2.0](LICENSE-MPL-2.0) license.
