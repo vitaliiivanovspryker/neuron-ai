@@ -380,11 +380,4 @@ Learn more about Observability in the [documentation](https://docs.neuron-ai.dev
 
 **[Go to the official documentation](https://neuron.inspector.dev/)**
 
-## Contributing
 
-We encourage you to contribute to the development of Neuron AI Framework!
-Please check out the [Contribution Guidelines](CONTRIBUTING.md) about how to proceed. Join us!
-
-## LICENSE
-
-This project is licensed under the [MPL 2.0](LICENSE-MPL-2.0) license.
