@@ -101,6 +101,7 @@ class QdrantVectorStore implements VectorStoreInterface
             $document->content = $item['payload']['content'];
             $document->sourceType = $item['payload']['sourceType'];
             $document->sourceName = $item['payload']['sourceName'];
+            $document->score = $item['score'];
             return $document;
         }, $response['result']);
     }
