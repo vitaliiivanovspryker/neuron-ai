@@ -42,7 +42,9 @@ class JinaRerankerPostProcessor implements PostProcessorInterface
         $result = \json_decode($response, true);
 
         return \array_map(function ($item) use ($documents) {
-            return $documents[$item['index']];
+            $document = $documents[$item['index']];
+            $document->score = $item['relevance_score'];
+            return $document;
         }, $result['results']);
     }
 }
