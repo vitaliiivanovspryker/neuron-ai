@@ -6,7 +6,7 @@ use NeuronAI\Exceptions\VectorStoreException;
 
 class SimilaritySearch
 {
-    public static function cosine(array $vector1, array $vector2)
+    public static function cosine(array $vector1, array $vector2): float|int
     {
         if (\count($vector1) !== \count($vector2)) {
             throw new VectorStoreException('Arrays must have the same length to apply cosine similarity.');
