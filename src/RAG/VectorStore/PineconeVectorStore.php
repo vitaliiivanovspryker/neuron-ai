@@ -71,6 +71,7 @@ class PineconeVectorStore implements VectorStoreInterface
             $document->content = $item['metadata']['content'];
             $document->sourceType = $item['metadata']['sourceType'];
             $document->sourceName = $item['metadata']['sourceName'];
+            $document->score = $item['score'];
             return $document;
         }, $result['matches']);
     }

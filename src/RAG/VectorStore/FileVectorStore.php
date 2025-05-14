@@ -58,12 +58,13 @@ class FileVectorStore implements VectorStoreInterface
         }
 
         return \array_reduce($topItems, function ($carry, $item) {
-            $item = $item['document'];
-            $document = new Document($item['content']);
-            $document->embedding = $item['embedding'];
-            $document->sourceType = $item['sourceType'];
-            $document->sourceName = $item['sourceName'];
-            $document->id = $item['id'];
+            $itemDoc = $item['document'];
+            $document = new Document($itemDoc['content']);
+            $document->embedding = $itemDoc['embedding'];
+            $document->sourceType = $itemDoc['sourceType'];
+            $document->sourceName = $itemDoc['sourceName'];
+            $document->id = $itemDoc['id'];
+            $document->score = 1 - $item['dist'];
             $carry[] = $document;
             return $carry;
         }, []);

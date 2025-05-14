@@ -154,6 +154,7 @@ class TypesenseVectorStore implements VectorStoreInterface
             $document->sourceName = $item['sourceName'];
             $document->hash = $item['hash'];
             $document->chunkNumber = $item['chunkNumber'];
+            $document->score = 1 - $hit['vector_distance'];
             return $document;
         }, $response['results'][0]['hits']);
     }
