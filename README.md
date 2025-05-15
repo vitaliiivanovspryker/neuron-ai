@@ -3,7 +3,11 @@
 
 > Before moving on, support the community giving a GitHub star ⭐️. Thank you!
 
-![](./docs/img/neuron-ai-php-framework.png)
+[**Video Tutorial**](https://www.youtube.com/watch?v=fJSX8wWIDO8)
+
+[![Neuron & Inspector](./docs/img/youtube.png)](https://www.youtube.com/watch?v=fJSX8wWIDO8)
+
+---
 
 ## Requirements
 
