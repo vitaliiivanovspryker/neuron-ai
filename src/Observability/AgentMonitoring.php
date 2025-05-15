@@ -102,7 +102,7 @@ class AgentMonitoring implements \SplObserver
 
         if ($this->inspector->needTransaction()) {
             $this->inspector->startTransaction($class)->setType('agent');
-        } elseif ($this->inspector->canAddSegments()) {
+        } elseif ($this->inspector->canAddSegments() && $entity !== 'chat') {
             $this->segments[
                 $entity.$class
             ] = $this->inspector->startSegment(self::SEGMENT_TYPE.'-'.$entity, $entity.':'.$class)
