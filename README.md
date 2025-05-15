@@ -21,7 +21,7 @@
 
 You can post questions and feedback on the [Inspector Forum](https://github.com/inspector-apm/neuron-ai/discussions).
 
-## Examples
+## Neuron AI Examples
 
 - [Install](#install)
 - [Create an Agent](#create)
