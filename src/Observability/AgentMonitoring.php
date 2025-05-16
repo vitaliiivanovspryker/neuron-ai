@@ -102,7 +102,7 @@ class AgentMonitoring implements \SplObserver
 
         if ($this->inspector->needTransaction()) {
             $this->inspector->startTransaction($class)->setType('agent');
-        } elseif ($this->inspector->canAddSegments() && $entity !== 'chat') {
+        } elseif ($this->inspector->canAddSegments()) {
             $this->segments[
                 $entity.$class
             ] = $this->inspector->startSegment(self::SEGMENT_TYPE.'-'.$entity, $entity.':'.$class)
@@ -116,9 +116,12 @@ class AgentMonitoring implements \SplObserver
         $class = get_class($agent);
 
         if (\array_key_exists($entity.$class, $this->segments)) {
-            $this->segments[$entity.$class]
-                ->setContext($this->getContext($agent))
-                ->end();
+            // End the last segment for the given entity and agent
+            for ($i = \array_key_last($this->segments); $i >= 0; $i--) {
+                if ($this->segments[$i] === $entity.$class) {
+                    $this->segments[$i]->setContext($this->getContext($agent))->end();
+                }
+            }
         } elseif ($this->inspector->canAddSegments()) {
             $this->inspector->transaction()->setContext($this->getContext($agent));
         }
