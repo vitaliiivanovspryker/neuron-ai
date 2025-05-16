@@ -13,7 +13,7 @@ class JinaRerankerPostProcessor implements PostProcessorInterface
     use HasGuzzleClient;
 
     public function __construct(
-        string $apiKey,
+        string $key,
         protected string $model = 'jina-reranker-v2-base-multilingual',
         protected int $topN = 3
     ) {
@@ -22,7 +22,7 @@ class JinaRerankerPostProcessor implements PostProcessorInterface
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer '.$apiKey,
+                'Authorization' => 'Bearer '.$key,
             ],
         ]);
     }

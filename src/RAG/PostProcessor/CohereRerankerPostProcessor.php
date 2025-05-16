@@ -13,7 +13,7 @@ class CohereRerankerPostProcessor implements PostProcessorInterface
     use HasGuzzleClient;
 
     public function __construct(
-        string $apiKey,
+        string $key,
         protected string $model = 'rerank-v3.5',
         protected int $topN = 3
     ) {
@@ -22,7 +22,7 @@ class CohereRerankerPostProcessor implements PostProcessorInterface
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer '.$apiKey,
+                'Authorization' => 'Bearer '.$key,
             ],
         ]);
     }
