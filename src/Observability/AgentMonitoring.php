@@ -97,29 +97,34 @@ class AgentMonitoring implements \SplObserver
             return;
         }
 
-        $entity = $this->getEventEntity($event);
+        $method = $this->getPrefix($event);
         $class = get_class($agent);
 
         if ($this->inspector->needTransaction()) {
             $this->inspector->startTransaction($class)->setType('agent');
         } elseif ($this->inspector->canAddSegments()) {
-            $this->segments[
-                $entity.$class
-            ] = $this->inspector->startSegment(self::SEGMENT_TYPE.'-'.$entity, $entity.':'.$class)
+            $key = $class.$method;
+
+            if (\array_key_exists($key, $this->segments)) {
+                $key .= '-'.\uniqid();
+            }
+
+            $this->segments[$key] = $this->inspector->startSegment(self::SEGMENT_TYPE.'-'.$method, "{$class}::{$method}()")
                 ->setColor(self::SEGMENT_COLOR);
         }
     }
 
     public function stop(\NeuronAI\AgentInterface $agent, string $event, $data = null)
     {
-        $entity = $this->getEventEntity($event);
+        $method = $this->getPrefix($event);
         $class = get_class($agent);
 
-        if (\array_key_exists($entity.$class, $this->segments)) {
-            // End the last segment for the given entity and agent
+        if (\array_key_exists($class.$method, $this->segments)) {
+            // End the last segment for the given method and agent class
             foreach (\array_reverse($this->segments, true) as $key => $value) {
-                if ($key === $entity.$class) {
+                if ($this->getPrefix($key) === $class.$method) {
                     $value->setContext($this->getContext($agent))->end();
+                    unset($this->segments[$key]);
                     break;
                 }
             }
@@ -128,7 +133,7 @@ class AgentMonitoring implements \SplObserver
         }
     }
 
-    public function getEventEntity(string $event): string
+    public function getPrefix(string $event): string
     {
         return explode('-', $event)[0];
     }
