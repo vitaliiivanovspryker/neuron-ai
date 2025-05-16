@@ -120,6 +120,7 @@ class AgentMonitoring implements \SplObserver
             foreach (\array_reverse($this->segments, true) as $key => $value) {
                 if ($key === $entity.$class) {
                     $value->setContext($this->getContext($agent))->end();
+                    break;
                 }
             }
         } elseif ($this->inspector->canAddSegments()) {
