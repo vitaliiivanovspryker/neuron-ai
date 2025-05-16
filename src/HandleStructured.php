@@ -13,8 +13,6 @@ use NeuronAI\Observability\Events\Extracted;
 use NeuronAI\Observability\Events\Extracting;
 use NeuronAI\Observability\Events\InferenceStart;
 use NeuronAI\Observability\Events\InferenceStop;
-use NeuronAI\Observability\Events\MessageSaved;
-use NeuronAI\Observability\Events\MessageSaving;
 use NeuronAI\Exceptions\AgentException;
 use NeuronAI\Observability\Events\Validated;
 use NeuronAI\Observability\Events\Validating;
@@ -42,11 +40,10 @@ trait HandleStructured
     {
         $this->notify('structured-start');
 
-        $class = $class ?? $this->getOutputClass();
-
         $this->fillChatHistory($messages);
 
         // Get the JSON schema from the response model
+        $class = $class ?? $this->getOutputClass();
         $schema = (new JsonSchema())->generate($class);
 
         $error = '';
