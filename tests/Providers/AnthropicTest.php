@@ -157,7 +157,7 @@ class AnthropicTest extends TestCase
         $this->assertSame($expectedResponse, json_decode($request['request']->getBody()->getContents(), true));
     }
 
-    public function test_chat_with_document(): void
+    public function test_chat_with_base64_document(): void
     {
         $sentRequests = [];
         $history = Middleware::history($sentRequests);
@@ -173,7 +173,7 @@ class AnthropicTest extends TestCase
         $client = new Client(['handler' => $stack]);
         $provider = (new Anthropic('', 'claude-3-7-sonnet-latest'))->setClient($client);
 
-        $message = (new UserMessage('Describe this image'))
+        $message = (new UserMessage('Describe this document'))
             ->addAttachment(new Document(
                 document: 'base64_encoded_document_data',
                 type: 'base64',
@@ -193,7 +193,7 @@ class AnthropicTest extends TestCase
                     'content' => [
                         [
                             'type' => 'text',
-                            'text' => 'Describe this image',
+                            'text' => 'Describe this document',
                         ],
                         [
                             'type' => 'document',
@@ -201,6 +201,55 @@ class AnthropicTest extends TestCase
                                 'type' => 'base64',
                                 'media_type' => 'pdf',
                                 'data' => 'base64_encoded_document_data',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertSame($expectedResponse, json_decode($request['request']->getBody()->getContents(), true));
+    }
+
+    public function test_chat_with_url_document(): void
+    {
+        $sentRequests = [];
+        $history = Middleware::history($sentRequests);
+        $mockHandler = new MockHandler([
+            new Response(
+                status: 200,
+                body: '{"model": "claude-3-7-sonnet-latest","role": "assistant","stop_reason": "end_turn","content":[{"type": "text","text": "Understood."}],"usage": {"input_tokens": 50,"output_tokens": 10}}',
+            ),
+        ]);
+        $stack = HandlerStack::create($mockHandler);
+        $stack->push($history);
+
+        $client = new Client(['handler' => $stack]);
+        $provider = (new Anthropic('', 'claude-3-7-sonnet-latest'))->setClient($client);
+
+        $message = (new UserMessage('Describe this document'))
+            ->addAttachment(new Document(document: 'https://example.com/document.pdf'));
+
+        $provider->chat([$message]);
+
+        $request = $sentRequests[0];
+
+        $expectedResponse = [
+            'model' => 'claude-3-7-sonnet-latest',
+            'max_tokens' => 8192,
+            'messages' => [
+                [
+                    'role' => 'user',
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => 'Describe this document',
+                        ],
+                        [
+                            'type' => 'document',
+                            'source' => [
+                                'type' => 'url',
+                                'url' => 'https://example.com/document.pdf',
                             ],
                         ],
                     ],

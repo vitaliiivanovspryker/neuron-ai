@@ -53,12 +53,14 @@ class MessageMapper implements MessageMapperInterface
             }
         }
 
+        unset($payload['attachments']);
+
         $this->mapping[] = $payload;
     }
 
     protected function mapImage(Image $image): string
     {
-        return match($image->type) {
+        return match($image->contentType) {
             Attachment::TYPE_BASE64 => $image->content,
             // Transform url in base64 could be a security issue. So we raise an exception.
             Attachment::TYPE_URL => throw new ProviderException('Ollama support only base64 image type.'),
