@@ -66,7 +66,7 @@ class OpenAITest extends TestCase
         $provider = (new OpenAI('', 'gpt-4o'))->setClient($client);
 
         $message = (new UserMessage('Describe this image'))
-            ->addImage(new Image('base_64_encoded_image', Image::TYPE_BASE64, 'image/jpeg'));
+            ->addAttachment(new Image('base_64_encoded_image', Image::TYPE_BASE64, 'image/jpeg'));
 
         $response = $provider->chat([$message]);
 

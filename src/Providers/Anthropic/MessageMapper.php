@@ -3,8 +3,6 @@
 namespace NeuronAI\Providers\Anthropic;
 
 use NeuronAI\Chat\Attachments\Attachment;
-use NeuronAI\Chat\Attachments\Document;
-use NeuronAI\Chat\Attachments\Image;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
