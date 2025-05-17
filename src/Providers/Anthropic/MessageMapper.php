@@ -42,10 +42,9 @@ class MessageMapper implements MessageMapperInterface
             unset($payload['usage']);
         }
 
-        $documents = $message->getDocuments();
-        $images = $message->getImages();
+        $attachments = $message->getAttachments();
 
-        if (is_string($payload['content']) && ($documents || $images)) {
+        if (is_string($payload['content']) && $attachments) {
             $payload['content'] = [
                 [
                     'type' => 'text',
@@ -54,61 +53,40 @@ class MessageMapper implements MessageMapperInterface
             ];
         }
 
-        foreach ($documents as $document) {
-            $payload['content'][] = $this->mapDocument($document);
+        foreach ($attachments as $attachment) {
+            $payload['content'][] = $this->mapAttachment($attachment);
         }
 
-        foreach ($images as $image) {
-            $payload['content'][] = $this->mapImage($image);
-        }
-
-        unset($payload['documents']);
-        unset($payload['images']);
+        unset($payload['attachments']);
 
         $this->mapping[] = $payload;
     }
 
-    protected function mapDocument(Document $document): array
+    protected function mapAttachment(Attachment $attachment): array
     {
-        return match($document->type) {
-            Attachment::TYPE_URL => [
-                'type' => 'document',
-                'source' => [
-                    'type' => 'url',
-                    'url' => $document->content,
-                ],
-            ],
-            Attachment::TYPE_BASE64 => [
-                'type' => 'document',
-                'source' => [
-                    'type' => 'base64',
-                    'media_type' => $document->mediaType,
-                    'data' => $document->content,
-                ],
-            ],
-            default => throw new ProviderException('Invalid document type '.$document->type),
+        $type = match($attachment::class) {
+            Document::class => 'document',
+            Image::class => 'image',
+            default => throw new ProviderException('Invalid attachment type '.$attachment::class),
         };
-    }
 
-    protected function mapImage(Image $image): array
-    {
-        return match($image->type) {
+        return match($attachment->type) {
             Attachment::TYPE_URL => [
-                'type' => 'image',
+                'type' => $type,
                 'source' => [
                     'type' => 'url',
-                    'url' => $image->content,
+                    'url' => $attachment->content,
                 ],
             ],
             Attachment::TYPE_BASE64 => [
-                'type' => 'image',
+                'type' => $type,
                 'source' => [
                     'type' => 'base64',
-                    'media_type' => $image->mediaType,
-                    'data' => $image->content,
+                    'media_type' => $attachment->mediaType,
+                    'data' => $attachment->content,
                 ],
             ],
-            default => throw new ProviderException('Invalid image type '.$image->type),
+            default => throw new ProviderException('Invalid document type '.$attachment->type),
         };
     }
 

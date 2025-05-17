@@ -5,13 +5,13 @@ namespace NeuronAI\Chat\Attachments;
 class Document extends Attachment
 {
     public function __construct(
-        string $content,
+        string $document,
         string $type = self::TYPE_URL,
         $mediaType = null
     ) {
         parent::__construct(
             Attachment::DOCUMENT,
-            $content,
+            $document,
             $type,
             $mediaType
         );
