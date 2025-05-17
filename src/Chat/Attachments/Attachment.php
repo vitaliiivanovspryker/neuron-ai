@@ -2,8 +2,12 @@
 
 namespace NeuronAI\Chat\Attachments;
 
+use NeuronAI\StaticConstructor;
+
 class Attachment implements \JsonSerializable
 {
+    use StaticConstructor;
+
     const DOCUMENT = 'document';
     const IMAGE = 'image';
     const TYPE_URL = 'url';
