@@ -2,6 +2,7 @@
 
 namespace NeuronAI\Providers\Ollama;
 
+use NeuronAI\Chat\Attachments\Attachment;
 use NeuronAI\Chat\Attachments\Image;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
@@ -44,19 +45,23 @@ class MessageMapper implements MessageMapperInterface
             unset($payload['usage']);
         }
 
-        if ($images = $message->getImages()) {
-            $payload['images'] = \array_map(fn (Image $image) => $this->mapImage($image), $images);
+        $attachments = $message->getAttachments();
+
+        foreach ($attachments as $attachment) {
+            if ($attachment instanceof Image) {
+                $payload['images'][] = $this->mapImage($attachment);
+            }
         }
 
         $this->mapping[] = $payload;
     }
 
-    protected function mapImage(Image $image)
+    protected function mapImage(Image $image): string
     {
         return match($image->type) {
-            Image::TYPE_BASE64 => $image->image,
+            Attachment::TYPE_BASE64 => $image->content,
             // Transform url in base64 could be a security issue. So we raise an exception.
-            Image::TYPE_URL => throw new ProviderException('Ollama support only base64 image type.'),
+            Attachment::TYPE_URL => throw new ProviderException('Ollama support only base64 image type.'),
         };
     }
 
