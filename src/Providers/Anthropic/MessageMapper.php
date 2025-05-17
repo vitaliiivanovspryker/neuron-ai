@@ -64,29 +64,23 @@ class MessageMapper implements MessageMapperInterface
 
     protected function mapAttachment(Attachment $attachment): array
     {
-        $type = match($attachment::class) {
-            Document::class => 'document',
-            Image::class => 'image',
-            default => throw new ProviderException('Invalid attachment type '.$attachment::class),
-        };
-
-        return match($attachment->type) {
+        return match($attachment->contentType) {
             Attachment::TYPE_URL => [
-                'type' => $type,
+                'type' => $attachment->type,
                 'source' => [
                     'type' => 'url',
                     'url' => $attachment->content,
                 ],
             ],
             Attachment::TYPE_BASE64 => [
-                'type' => $type,
+                'type' => $attachment->type,
                 'source' => [
                     'type' => 'base64',
                     'media_type' => $attachment->mediaType,
                     'data' => $attachment->content,
                 ],
             ],
-            default => throw new ProviderException('Invalid document type '.$attachment->type),
+            default => throw new ProviderException('Invalid document type '.$attachment->contentType),
         };
     }
 
