@@ -30,7 +30,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
             }, 0);
 
             // Subtract the previous input consumption.
-            $message->getUsage()->inputTokens = $message->getUsage()->inputTokens - $previousInputConsumption;
+            $message->getUsage()->inputTokens -= $previousInputConsumption;
         }
     }
 
@@ -107,12 +107,10 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     protected function unserializeMessages(array $messages): array
     {
-        return \array_map(function (array $message) {
-            return match ($message['type']??null) {
-                'tool_call' => $this->unserializeToolCall($message),
-                'tool_call_result' => $this->unserializeToolCallResult($message),
-                default => $this->unserializeMessage($message),
-            };
+        return \array_map(fn(array $message) => match ($message['type']??null) {
+            'tool_call' => $this->unserializeToolCall($message),
+            'tool_call_result' => $this->unserializeToolCallResult($message),
+            default => $this->unserializeMessage($message),
         }, $messages);
     }
 
@@ -131,11 +129,9 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     protected function unserializeToolCall(array $message): ToolCallMessage
     {
-        $tools = \array_map(function (array $tool) {
-            return Tool::make($tool['name'], $tool['description'])
-                ->setInputs($tool['inputs'])
-                ->setCallId($tool['callId']);
-        }, $message['tools']);
+        $tools = \array_map(fn(array $tool) => Tool::make($tool['name'], $tool['description'])
+            ->setInputs($tool['inputs'])
+            ->setCallId($tool['callId']), $message['tools']);
 
         $item = new ToolCallMessage($message['content'], $tools);
 
@@ -146,19 +142,17 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     protected function unserializeToolCallResult(array $message): ToolCallResultMessage
     {
-        $tools = \array_map(function (array $tool) {
-            return Tool::make($tool['name'], $tool['description'])
-                ->setInputs($tool['inputs'])
-                ->setCallId($tool['callId'])
-                ->setResult($tool['result']);
-        }, $message['tools']);
+        $tools = \array_map(fn(array $tool) => Tool::make($tool['name'], $tool['description'])
+            ->setInputs($tool['inputs'])
+            ->setCallId($tool['callId'])
+            ->setResult($tool['result']), $message['tools']);
 
         return new ToolCallResultMessage($tools);
     }
 
     /**
      * @param array $message
-     * @param ToolCallMessage $item
+     * @param Message $item
      * @return void
      */
     protected function unserializeMeta(array $message, Message $item): void

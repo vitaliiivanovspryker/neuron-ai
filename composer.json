@@ -29,11 +29,27 @@
     },
     "require-dev": {
         "elasticsearch/elasticsearch": "^8.0",
-        "inspector-apm/inspector-php": "^3.9",
+        "inspector-apm/inspector-php": "dev-master",
         "phpunit/phpunit": "^9.0",
         "symfony/process": "^5.0|^6.0|^7.0",
         "typesense/typesense-php": "^5.0",
-        "php-http/curl-client": "^2.3"
+        "php-http/curl-client": "^2.3",
+        "phpstan/phpstan": "^2.1",
+        "tomasvotruba/type-coverage": "^2.0",
+        "rector/rector": "^2.0"
+    },
+    "scripts": {
+        "analyse": [
+            "./vendor/bin/phpstan analyse -v"
+        ],
+        "test": [
+            "vendor/bin/phpunit --colors=always"
+        ]
+    },
+    "scripts-descriptions": {
+        "analyse": "Run PHPStan static analysis against your application.",
+        "format": "Run Pint code fixer against your application.",
+        "test": "Run PHPUnit to test"
     },
     "autoload": {
         "psr-4": {

@@ -29,7 +29,7 @@ class ToolTest extends TestCase
             ->addProperty(
                 new \NeuronAI\Tools\ToolProperty('age', 'integer', 'User age', true)
             )
-            ->setCallable(function () {});
+            ->setCallable(function (): void {});
 
         $this->assertIsArray($tool->getRequiredProperties());
         $this->assertEquals(['name', 'age'], $tool->getRequiredProperties());

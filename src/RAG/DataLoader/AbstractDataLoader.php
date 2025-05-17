@@ -10,6 +10,7 @@ abstract class AbstractDataLoader implements DataLoaderInterface
 
     public static function for(...$args): static
     {
+        /** @phpstan-ignore new.static */
         return new static(...$args);
     }
 

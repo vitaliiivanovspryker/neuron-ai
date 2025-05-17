@@ -41,7 +41,7 @@ class JsonExtractor
 
                 try {
                     $data = $this->tryParse($candidate);
-                } catch (\Throwable $exception) {
+                } catch (\Throwable) {
                     continue;
                 }
 

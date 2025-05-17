@@ -38,7 +38,7 @@ class JsonSchemaTest extends TestCase
     {
         $class = new class {
             public string $firstName;
-            public ?string $lastName;
+            public ?string $lastName = null;
         };
 
         $schema = (new JsonSchema())->generate($class::class);

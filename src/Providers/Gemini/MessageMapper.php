@@ -64,7 +64,8 @@ class MessageMapper implements MessageMapperInterface
                     'data' => $image->image,
                     'mime_type' => $image->mediaType,
                 ]
-            ]
+            ],
+            default => throw new ProviderException('Invalid image type '.$image->type),
         };
     }
 
@@ -73,14 +74,12 @@ class MessageMapper implements MessageMapperInterface
         $this->mapping[] = [
             'role' => Message::ROLE_MODEL,
             'parts' => [
-                ...\array_map(function (ToolInterface $tool) {
-                    return [
-                        'functionCall' => [
-                            'name' => $tool->getName(),
-                            'args' => $tool->getInputs()?:new \stdClass(),
-                        ]
-                    ];
-                }, $message->getTools())
+                ...\array_map(fn(ToolInterface $tool) => [
+                    'functionCall' => [
+                        'name' => $tool->getName(),
+                        'args' => $tool->getInputs()?:new \stdClass(),
+                    ]
+                ], $message->getTools())
             ]
         ];
     }
@@ -89,17 +88,15 @@ class MessageMapper implements MessageMapperInterface
     {
         $this->mapping[] = [
             'role' => Message::ROLE_USER,
-            'parts' => \array_map(function (ToolInterface $tool) {
-                return [
-                    'functionResponse' => [
+            'parts' => \array_map(fn(ToolInterface $tool) => [
+                'functionResponse' => [
+                    'name' => $tool->getName(),
+                    'response' => [
                         'name' => $tool->getName(),
-                        'response' => [
-                            'name' => $tool->getName(),
-                            'content' => $tool->getResult(),
-                        ],
+                        'content' => $tool->getResult(),
                     ],
-                ];
-            }, $message->getTools()),
+                ],
+            ], $message->getTools()),
         ];
     }
 }

@@ -33,7 +33,7 @@ class Anthropic implements AIProviderInterface
      *
      * @var string|null
      */
-    protected ?string $system;
+    protected ?string $system = null;
 
     /**
      * The component responsible for mapping the NeuronAI Message to the AI provider format.

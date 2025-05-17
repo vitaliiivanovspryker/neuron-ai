@@ -12,7 +12,7 @@ trait HandleChat
     /**
      * Send a message to the LLM.
      *
-     * @param Message|array<Message> $messages
+     * @param array<Message> $messages
      * @throws GuzzleException
      */
     public function chat(array $messages): Message

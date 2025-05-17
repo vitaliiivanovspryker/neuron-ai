@@ -50,13 +50,13 @@ class TypesenseTest extends TestCase
         return false;
     }
 
-    public function test_typesense_instance()
+    public function test_typesense_instance(): void
     {
         $store = new TypesenseVectorStore($this->client, 'test', $this->vectorDimension);
         $this->assertInstanceOf(VectorStoreInterface::class, $store);
     }
 
-    public function test_add_document_and_search()
+    public function test_add_document_and_search(): void
     {
         $store = new TypesenseVectorStore($this->client, 'test', $this->vectorDimension);
 

@@ -71,7 +71,8 @@ class MessageMapper implements MessageMapperInterface
                 'image_url' => [
                     'url' => 'data:'.$image->mediaType.';base64,'.$image->image,
                 ]
-            ]
+            ],
+            default => throw new ProviderException('Invalid image type '.$image->type),
         };
     }
 

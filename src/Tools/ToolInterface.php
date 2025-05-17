@@ -33,9 +33,6 @@ interface ToolInterface extends \JsonSerializable
 
     /**
      * Define the code to be executed.
-     *
-     * @param callable $callback
-     * @return mixed
      */
     public function setCallable(callable $callback): ToolInterface;
 

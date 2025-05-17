@@ -7,8 +7,6 @@ use NeuronAI\RAG\Document;
 
 class AdaptiveThresholdPostProcessor implements PostProcessorInterface
 {
-    private float $multiplier;
-
     /**
      * Creates a post processor that filters documents using an adaptive threshold
      * based on median and MAD (Median Absolute Deviation).
@@ -21,9 +19,8 @@ class AdaptiveThresholdPostProcessor implements PostProcessorInterface
      *
      * @param float $multiplier multiplier for MAD (higher values = more inclusive)
      */
-    public function __construct(float $multiplier = 0.6)
+    public function __construct(private readonly float $multiplier = 0.6)
     {
-        $this->multiplier = $multiplier;
     }
 
     /**
@@ -55,9 +52,7 @@ class AdaptiveThresholdPostProcessor implements PostProcessorInterface
         // Ensure threshold is not negative
         $threshold = max(0, $threshold);
 
-        return \array_values(\array_filter($documents, function ($document) use ($threshold) {
-            return $document->score >= $threshold;
-        }));
+        return \array_values(\array_filter($documents, fn($document) => $document->score >= $threshold));
     }
 
     /**

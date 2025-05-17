@@ -13,7 +13,7 @@ class LogObserver implements \SplObserver
         private readonly LoggerInterface $logger
     ) {}
 
-    public function update(\SplSubject $subject, string $event = null, mixed $data = null): void
+    public function update(\SplSubject $subject, ?string $event = null, mixed $data = null): void
     {
         if ($event !== null) {
             $this->logger->log(LogLevel::INFO, $event, $this->serializeData($data));
@@ -34,7 +34,7 @@ class LogObserver implements \SplObserver
             return ['data' => $data];
         }
 
-        return match (get_class($data)) {
+        return match ($data::class) {
             Events\AgentError::class => [
                 'error' => $data->exception->getMessage(),
             ],

@@ -33,7 +33,7 @@ class OpenAI implements AIProviderInterface
      *
      * @var ?string
      */
-    protected ?string $system;
+    protected ?string $system = null;
 
     /**
      * The component responsible for mapping the NeuronAI Message to the AI provider format.
@@ -114,13 +114,11 @@ class OpenAI implements AIProviderInterface
 
     protected function createToolCallMessage(array $message): Message
     {
-        $tools = \array_map(function (array $item) {
-            return $this->findTool($item['function']['name'])
-                ->setInputs(
-                    \json_decode($item['function']['arguments'], true)
-                )
-                ->setCallId($item['id']);
-        }, $message['tool_calls']);
+        $tools = \array_map(fn(array $item) => $this->findTool($item['function']['name'])
+            ->setInputs(
+                \json_decode($item['function']['arguments'], true)
+            )
+            ->setCallId($item['id']), $message['tool_calls']);
 
         $result = new ToolCallMessage(
             $message['content'],

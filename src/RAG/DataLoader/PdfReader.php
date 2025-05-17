@@ -123,6 +123,7 @@ class PdfReader implements ReaderInterface
         string $filePath,
         array $options = []
     ): string {
+        /** @phpstan-ignore new.static */
         $instance = new static();
 
         if (\array_key_exists('binPath', $options)) {

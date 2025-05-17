@@ -37,7 +37,7 @@ trait ResolveTools
     /**
      * Add tools.
      *
-     * @param ToolInterface|array<ToolInterface> $tool
+     * @param ToolInterface|array $tool
      * @return AgentInterface
      */
     public function addTool(ToolInterface|array $tool): AgentInterface

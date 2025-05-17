@@ -28,9 +28,7 @@ class McpConnector
     {
         $tools = $this->client->listTools();
 
-        return \array_map(function ($tool) {
-            return $this->createTool($tool);
-        }, $tools);
+        return \array_map(fn($tool) => $this->createTool($tool), $tools);
     }
 
     /**
@@ -42,7 +40,7 @@ class McpConnector
             name: $item['name'],
             description: $item['description']??''
         )->setCallable(function (...$args) use ($item) {
-            $response = call_user_func([$this->client, 'callTool'], $item['name'], $args);
+            $response = call_user_func($this->client->callTool(...), $item['name'], $args);
             $response = $response['result']['content'][0];
 
             if ($response['type'] === 'text') {

@@ -10,7 +10,7 @@ class SystemPrompt implements \Stringable
         public array $output = [],
     ) {}
 
-    public function __toString()
+    public function __toString(): string
     {
         $prompt = "# IDENTITY and PURPOSE".PHP_EOL.implode(PHP_EOL, $this->background);
 

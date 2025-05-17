@@ -40,7 +40,7 @@ class FileVectorStore implements VectorStoreInterface
     {
         $topItems = [];
 
-        foreach ($this->getLine($this->getFilePath()) as $index => $document) {
+        foreach ($this->getLine($this->getFilePath()) as $document) {
             $document = \json_decode($document, true);
 
             if (empty($document['embedding'])) {

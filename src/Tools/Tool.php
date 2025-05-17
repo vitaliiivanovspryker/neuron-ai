@@ -18,9 +18,9 @@ class Tool implements ToolInterface
     protected array $properties = [];
 
     /**
-     * @var callable
+     * @var ?callable
      */
-    protected $callback;
+    protected $callback = null;
 
     /**
      * The arguments to pass in to the callback.
@@ -132,7 +132,7 @@ class Tool implements ToolInterface
      */
     public function execute(): void
     {
-        if (!isset($this->callback)) {
+        if (!is_callable($this->callback)) {
             throw new ToolCallableNotSet('No callback defined for execution.');
         }
 

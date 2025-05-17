@@ -20,7 +20,7 @@ class Ollama implements AIProviderInterface
     use HandleStream;
     use HandleStructured;
 
-    protected ?string $system;
+    protected ?string $system = null;
 
     /**
      * The component responsible for mapping the NeuronAI Message to the AI provider format.
@@ -93,10 +93,8 @@ class Ollama implements AIProviderInterface
 
     protected function createToolCallMessage(array $message): Message
     {
-        $tools = \array_map(function (array $item) {
-            return $this->findTool($item['function']['name'])
-                ->setInputs($item['function']['arguments']);
-        }, $message['tool_calls']);
+        $tools = \array_map(fn(array $item) => $this->findTool($item['function']['name'])
+            ->setInputs($item['function']['arguments']), $message['tool_calls']);
 
         $result = new ToolCallMessage(
             $message['content'],

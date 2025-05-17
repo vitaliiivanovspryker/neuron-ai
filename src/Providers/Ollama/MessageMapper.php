@@ -57,6 +57,7 @@ class MessageMapper implements MessageMapperInterface
             Image::TYPE_BASE64 => $image->image,
             // Transform url in base64 could be a security issue. So we raise an exception.
             Image::TYPE_URL => throw new ProviderException('Ollama support only base64 image type.'),
+            default => throw new ProviderException('Invalid image type '.$image->type),
         };
     }
 
