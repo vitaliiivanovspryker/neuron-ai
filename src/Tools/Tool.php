@@ -4,6 +4,7 @@ namespace NeuronAI\Tools;
 
 use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
+use NeuronAI\Exceptions\ToolException;
 use NeuronAI\StaticConstructor;
 
 class Tool implements ToolInterface
@@ -118,17 +119,31 @@ class Tool implements ToolInterface
         return $this->result;
     }
 
-    public function setResult($result): self
+    public function setResult(object|string|array $result): self
     {
-        $this->result = $result;
-        return $this;
+        if (is_string($result)) {
+            $this->result = $result;
+            return $this;
+        }
+
+        if (is_array($result)) {
+            $this->result = \json_encode($result);
+            return $this;
+        }
+
+        if (is_object($result) && \method_exists($result, '__toString')) {
+            $this->result = (string) $result;
+            return $this;
+        }
+
+        throw new ToolException("Invalid tool result. Must be a string, array or object with __toString method.");
     }
 
     /**
      * Execute the client side function.
      *
      * @throws MissingCallbackParameter
-     * @throws ToolCallableNotSet
+     * @throws ToolCallableNotSet|ToolException
      */
     public function execute(): void
     {
@@ -143,7 +158,9 @@ class Tool implements ToolInterface
             }
         }
 
-        $this->result = \call_user_func($this->callback, ...$this->getInputs());
+        $this->setResult(
+            \call_user_func($this->callback, ...$this->getInputs())
+        );
     }
 
     public function jsonSerialize(): array
