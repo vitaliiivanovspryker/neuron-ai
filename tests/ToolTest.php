@@ -2,6 +2,7 @@
 
 namespace NeuronAI\Tests;
 
+use NeuronAI\Exceptions\ToolException;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolInterface;
 use PHPUnit\Framework\TestCase;
@@ -64,5 +65,16 @@ class ToolTest extends TestCase
             };
         })->execute();
         $this->assertEquals('test', $tool->getResult());
+    }
+
+    public function test_invalid_return_type()
+    {
+        $tool = Tool::make('test', 'Test tool');
+
+        $this->expectException(ToolException::class);
+
+        $tool->setCallable(function () {
+            return new class {};
+        })->execute();
     }
 }
