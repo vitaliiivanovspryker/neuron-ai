@@ -40,9 +40,9 @@ class Tool implements ToolInterface
     /**
      * The result of the execution.
      *
-     * @var mixed
+     * @var string|null
      */
-    protected mixed $result = null;
+    protected string|null $result = null;
 
     /**
      * Tool constructor.
@@ -114,7 +114,7 @@ class Tool implements ToolInterface
         return $this;
     }
 
-    public function getResult(): mixed
+    public function getResult(): string
     {
         return $this->result;
     }

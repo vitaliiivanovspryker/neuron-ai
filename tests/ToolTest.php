@@ -34,4 +34,35 @@ class ToolTest extends TestCase
         $this->assertIsArray($tool->getRequiredProperties());
         $this->assertEquals(['name', 'age'], $tool->getRequiredProperties());
     }
+
+    public function test_tool_return_value()
+    {
+        $tool = Tool::make('test', 'Test tool');
+
+        $tool->setCallable(function () {
+            return 'test';
+        })->execute();
+        $this->assertEquals('test', $tool->getResult());
+
+        $tool->setCallable(function () {
+            return ['test'];
+        })->execute();
+        $this->assertEquals('["test"]', $tool->getResult());
+
+        $tool->setCallable(function () {
+            return ['foo' => 'bar'];
+        })->execute();
+        $this->assertEquals('{"foo":"bar"}', $tool->getResult());
+
+        $tool->setCallable(function () {
+            return new class
+            {
+                public function __toString(): string
+                {
+                    return 'test';
+                }
+            };
+        })->execute();
+        $this->assertEquals('test', $tool->getResult());
+    }
 }
