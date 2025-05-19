@@ -18,7 +18,6 @@ use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\RAG\Embeddings\EmbeddingsProviderInterface;
 use NeuronAI\RAG\PostProcessor\PostProcessorInterface;
 use NeuronAI\RAG\VectorStore\VectorStoreInterface;
-use NeuronAI\SystemPrompt;
 
 /**
  * @method RAG withProvider(AIProviderInterface $provider)

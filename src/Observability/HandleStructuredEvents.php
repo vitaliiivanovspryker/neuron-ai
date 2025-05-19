@@ -31,7 +31,8 @@ trait HandleStructuredEvents
                     'json' => $data->json,
                 ]
             )->addContext(
-                'Schema', $data->schema
+                'Schema',
+                $data->schema
             )->end();
             unset($this->segments[$id]);
         }

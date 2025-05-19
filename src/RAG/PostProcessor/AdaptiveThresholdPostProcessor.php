@@ -37,7 +37,7 @@ class AdaptiveThresholdPostProcessor implements PostProcessorInterface
             return $documents;
         }
 
-        $scores = array_map(fn($d) => $d->score, $documents);
+        $scores = array_map(fn ($d) => $d->score, $documents);
         $median = $this->calculateMedian($scores);
         $mad = $this->calculateMAD($scores, $median);
 
@@ -52,12 +52,12 @@ class AdaptiveThresholdPostProcessor implements PostProcessorInterface
         // Ensure threshold is not negative
         $threshold = max(0, $threshold);
 
-        return \array_values(\array_filter($documents, fn($document) => $document->score >= $threshold));
+        return \array_values(\array_filter($documents, fn ($document) => $document->score >= $threshold));
     }
 
     /**
      * Calculates the median of an array of values
-     * 
+     *
      * @param float[] $values
      * @return float
      */
@@ -76,14 +76,14 @@ class AdaptiveThresholdPostProcessor implements PostProcessorInterface
 
     /**
      * Calculates the Median Absolute Deviation (MAD)
-     * 
+     *
      * @param float[] $values
      * @param float $median The median of the values
      * @return float
      */
     protected function calculateMAD(array $values, float $median): float
     {
-        $deviations = array_map(fn($v) => abs($v - $median), $values);
+        $deviations = array_map(fn ($v) => abs($v - $median), $values);
 
         // MAD is the median of deviations
         return $this->calculateMedian($deviations);

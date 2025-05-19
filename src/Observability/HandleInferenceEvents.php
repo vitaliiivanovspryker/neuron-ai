@@ -3,8 +3,6 @@
 namespace NeuronAI\Observability;
 
 use NeuronAI\AgentInterface;
-use NeuronAI\Chat\Messages\ToolCallMessage;
-use NeuronAI\Chat\Messages\ToolCallResultMessage;
 use NeuronAI\Observability\Events\InferenceStart;
 use NeuronAI\Observability\Events\InferenceStop;
 use NeuronAI\Observability\Events\MessageSaved;

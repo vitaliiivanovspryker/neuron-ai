@@ -34,7 +34,7 @@ class CohereRerankerPostProcessor implements PostProcessorInterface
                 'model' => $this->model,
                 'query' => $question->getContent(),
                 'top_n' => $this->topN,
-                'documents' => \array_map(fn(Document $document) => $document->content, $documents),
+                'documents' => \array_map(fn (Document $document) => $document->content, $documents),
             ],
         ])->getBody()->getContents();
 

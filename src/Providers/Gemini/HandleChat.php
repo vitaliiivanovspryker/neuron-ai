@@ -43,7 +43,7 @@ trait HandleChat
         if (\array_key_exists('functionCall', $content['parts'][0]) && !empty($content['parts'][0]['functionCall'])) {
             $response = $this->createToolCallMessage($content);
         } else {
-            $response = new Message($content['role'], $content['parts'][0]['text']??'');
+            $response = new Message($content['role'], $content['parts'][0]['text'] ?? '');
         }
 
         // Attach the usage for the current interaction

@@ -123,10 +123,10 @@ class GeminiTest extends TestCase
 
         $message = (new UserMessage('Describe this image'))
             ->addImage(new Image(
-                           image: 'base64_encoded_image_data',
-                           type: 'base64',
-                           mediaType: 'image/png'
-                       ));
+                image: 'base64_encoded_image_data',
+                type: 'base64',
+                mediaType: 'image/png'
+            ));
 
         $response = $provider->chat([$message]);
 

@@ -17,8 +17,7 @@ class FixedThresholdPostProcessor implements PostProcessorInterface
          * The threshold value below which documents will be filtered out.
          */
         protected float $threshold = 0.5
-    )
-    {
+    ) {
     }
 
     /**
@@ -30,6 +29,6 @@ class FixedThresholdPostProcessor implements PostProcessorInterface
      */
     public function process(Message $question, array $documents): array
     {
-        return \array_values(\array_filter($documents, fn($document) => $document->score >= $this->threshold));
+        return \array_values(\array_filter($documents, fn ($document) => $document->score >= $this->threshold));
     }
 }

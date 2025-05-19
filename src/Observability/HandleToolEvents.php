@@ -7,7 +7,6 @@ use NeuronAI\Observability\Events\ToolCalling;
 
 trait HandleToolEvents
 {
-
     public function toolCalling(\NeuronAI\AgentInterface $agent, string $event, ToolCalling $data)
     {
         if (!$this->inspector->canAddSegments()) {

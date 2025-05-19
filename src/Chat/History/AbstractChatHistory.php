@@ -15,7 +15,9 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 {
     protected array $history = [];
 
-    public function __construct(protected int $contextWindow = 50000) {}
+    public function __construct(protected int $contextWindow = 50000)
+    {
+    }
 
     protected function updateUsedTokens(Message $message): void
     {
@@ -107,7 +109,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     protected function unserializeMessages(array $messages): array
     {
-        return \array_map(fn(array $message) => match ($message['type']??null) {
+        return \array_map(fn (array $message) => match ($message['type'] ?? null) {
             'tool_call' => $this->unserializeToolCall($message),
             'tool_call_result' => $this->unserializeToolCallResult($message),
             default => $this->unserializeMessage($message),
@@ -116,10 +118,10 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     protected function unserializeMessage(array $message): Message
     {
-        $item = match ($message['role']){
-            Message::ROLE_ASSISTANT => new AssistantMessage($message['content']??''),
-            Message::ROLE_USER => new UserMessage($message['content']??''),
-            default => new Message($message['role'], $message['content']??'')
+        $item = match ($message['role']) {
+            Message::ROLE_ASSISTANT => new AssistantMessage($message['content'] ?? ''),
+            Message::ROLE_USER => new UserMessage($message['content'] ?? ''),
+            default => new Message($message['role'], $message['content'] ?? '')
         };
 
         $this->unserializeMeta($message, $item);
@@ -129,7 +131,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     protected function unserializeToolCall(array $message): ToolCallMessage
     {
-        $tools = \array_map(fn(array $tool) => Tool::make($tool['name'], $tool['description'])
+        $tools = \array_map(fn (array $tool) => Tool::make($tool['name'], $tool['description'])
             ->setInputs($tool['inputs'])
             ->setCallId($tool['callId']), $message['tools']);
 
@@ -142,7 +144,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     protected function unserializeToolCallResult(array $message): ToolCallResultMessage
     {
-        $tools = \array_map(fn(array $tool) => Tool::make($tool['name'], $tool['description'])
+        $tools = \array_map(fn (array $tool) => Tool::make($tool['name'], $tool['description'])
             ->setInputs($tool['inputs'])
             ->setCallId($tool['callId'])
             ->setResult($tool['result']), $message['tools']);

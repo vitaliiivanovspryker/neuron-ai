@@ -127,7 +127,7 @@ class Gemini implements AIProviderInterface
         }, $message['parts']);
 
         $result = new ToolCallMessage(
-            $message['content']??null,
+            $message['content'] ?? null,
             \array_filter($tools)
         );
         $result->setRole(Message::ROLE_MODEL);

@@ -11,5 +11,6 @@ class SchemaProperty
         public ?string $title = null,
         public ?string $description = null,
         public ?bool $required = null
-    ) {}
+    ) {
+    }
 }

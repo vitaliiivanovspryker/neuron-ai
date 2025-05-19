@@ -2,7 +2,6 @@
 
 namespace NeuronAI\Tests;
 
-
 use NeuronAI\Agent;
 use NeuronAI\AgentInterface;
 use NeuronAI\Chat\History\ChatHistoryInterface;
@@ -14,7 +13,6 @@ use NeuronAI\RAG\RAG;
 use NeuronAI\SystemPrompt;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Chat\Messages\ToolCallMessage;
-use NeuronAI\Tools\ToolInterface;
 use PHPUnit\Framework\TestCase;
 
 class NeuronAITest extends TestCase

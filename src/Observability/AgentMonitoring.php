@@ -23,8 +23,8 @@ class AgentMonitoring implements \SplObserver
     use HandleInferenceEvents;
     use HandleStructuredEvents;
 
-    const SEGMENT_TYPE = 'neuron';
-    const SEGMENT_COLOR = '#506b9b';
+    public const SEGMENT_TYPE = 'neuron';
+    public const SEGMENT_COLOR = '#506b9b';
 
     /**
      * @var array<string, Segment>
@@ -68,7 +68,8 @@ class AgentMonitoring implements \SplObserver
     public function __construct(
         protected Inspector $inspector,
         protected bool $catch = true
-    ) {}
+    ) {
+    }
 
     public function update(\SplSubject $subject, ?string $event = null, mixed $data = null): void
     {
@@ -145,10 +146,10 @@ class AgentMonitoring implements \SplObserver
                 'instructions' => $agent->instructions(),
                 'provider' => $agent->resolveProvider()::class,
             ],
-            'Tools' => \array_map(fn(Tool $tool) => [
+            'Tools' => \array_map(fn (Tool $tool) => [
                 'name' => $tool->getName(),
                 'description' => $tool->getDescription(),
-                'properties' => \array_map(fn(ToolProperty $property) => $property->jsonSerialize(), $tool->getProperties()),
+                'properties' => \array_map(fn (ToolProperty $property) => $property->jsonSerialize(), $tool->getProperties()),
             ], $agent->getTools()),
             //'Messages' => $agent->resolveChatHistory()->getMessages(),
         ];

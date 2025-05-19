@@ -11,7 +11,8 @@ class LogObserver implements \SplObserver
 {
     public function __construct(
         private readonly LoggerInterface $logger
-    ) {}
+    ) {
+    }
 
     public function update(\SplSubject $subject, ?string $event = null, mixed $data = null): void
     {

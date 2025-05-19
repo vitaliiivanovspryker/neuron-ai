@@ -65,7 +65,8 @@ class FileDataLoader extends AbstractDataLoader
                     } else {
                         try {
                             $documents[] = $this->getDocument($this->getContentFromFile($fullPath), $entry);
-                        } catch (\Throwable) {}
+                        } catch (\Throwable) {
+                        }
                     }
                 }
             }

@@ -13,16 +13,16 @@ class FixedThresholdPostProcessorTest extends TestCase
     {
         $doc1 = new Document();
         $doc1->score = 0.8;
-        
+
         $doc2 = new Document();
         $doc2->score = 0.3;
-        
+
         $doc3 = new Document();
         $doc3->score = 0.7;
-        
+
         $doc4 = new Document();
         $doc4->score = 0.4;
-        
+
         $doc5 = new Document();
         $doc5->score = 0.9;
 
@@ -30,7 +30,7 @@ class FixedThresholdPostProcessorTest extends TestCase
 
         $processor = new FixedThresholdPostProcessor(0.8);
         $question = new UserMessage('test question');
-        
+
         $result = $processor->process($question, $documents);
 
         $this->assertCount(2, $result);

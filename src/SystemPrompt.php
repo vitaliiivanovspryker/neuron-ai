@@ -8,7 +8,8 @@ class SystemPrompt implements \Stringable
         public array $background,
         public array $steps = [],
         public array $output = [],
-    ) {}
+    ) {
+    }
 
     public function __toString(): string
     {

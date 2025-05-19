@@ -74,10 +74,10 @@ class MessageMapper implements MessageMapperInterface
         $this->mapping[] = [
             'role' => Message::ROLE_MODEL,
             'parts' => [
-                ...\array_map(fn(ToolInterface $tool) => [
+                ...\array_map(fn (ToolInterface $tool) => [
                     'functionCall' => [
                         'name' => $tool->getName(),
-                        'args' => $tool->getInputs()?:new \stdClass(),
+                        'args' => $tool->getInputs() ?: new \stdClass(),
                     ]
                 ], $message->getTools())
             ]
@@ -88,7 +88,7 @@ class MessageMapper implements MessageMapperInterface
     {
         $this->mapping[] = [
             'role' => Message::ROLE_USER,
-            'parts' => \array_map(fn(ToolInterface $tool) => [
+            'parts' => \array_map(fn (ToolInterface $tool) => [
                 'functionResponse' => [
                     'name' => $tool->getName(),
                     'response' => [

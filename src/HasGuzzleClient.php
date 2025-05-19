@@ -3,7 +3,6 @@
 namespace NeuronAI;
 
 use GuzzleHttp\Client;
-use NeuronAI\RAG\PostProcessor\PostProcessorInterface;
 
 trait HasGuzzleClient
 {

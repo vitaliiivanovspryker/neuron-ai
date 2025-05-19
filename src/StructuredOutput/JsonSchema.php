@@ -42,7 +42,7 @@ class JsonSchema
 
         // Add definitions if any exist
         if (!empty($this->definitions)) {
-            $schema['definitions'] = \array_map(fn(array $definition) => [...$definition, 'additionalProperties' => false], $this->definitions);
+            $schema['definitions'] = \array_map(fn (array $definition) => [...$definition, 'additionalProperties' => false], $this->definitions);
         }
 
         return $schema;

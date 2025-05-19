@@ -13,5 +13,6 @@ class VectorStoreResult
     public function __construct(
         public Message $question,
         public array $documents,
-    ) {}
+    ) {
+    }
 }

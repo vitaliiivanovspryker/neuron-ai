@@ -10,5 +10,6 @@ class PostProcessing
         public string $processor,
         public Message $question,
         public array $documents
-    ) {}
+    ) {
+    }
 }

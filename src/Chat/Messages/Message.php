@@ -4,11 +4,11 @@ namespace NeuronAI\Chat\Messages;
 
 class Message implements \JsonSerializable
 {
-    const ROLE_USER = 'user';
-    const ROLE_ASSISTANT = 'assistant';
-    const ROLE_MODEL = 'model';
-    const ROLE_TOOL = 'tool';
-    const ROLE_SYSTEM = 'system';
+    public const ROLE_USER = 'user';
+    public const ROLE_ASSISTANT = 'assistant';
+    public const ROLE_MODEL = 'model';
+    public const ROLE_TOOL = 'tool';
+    public const ROLE_SYSTEM = 'system';
 
     protected ?Usage $usage = null;
     protected array $images = [];
@@ -18,7 +18,8 @@ class Message implements \JsonSerializable
     public function __construct(
         protected string $role,
         protected array|string|int|float|null $content = null
-    ) {}
+    ) {
+    }
 
     public function getRole(): string
     {

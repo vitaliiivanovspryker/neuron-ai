@@ -98,7 +98,7 @@ class MessageMapper implements MessageMapperInterface
     {
         $this->mapping[] = [
             'role' => Message::ROLE_USER,
-            'content' => \array_map(fn(ToolInterface $tool) => [
+            'content' => \array_map(fn (ToolInterface $tool) => [
                 'type' => 'tool_result',
                 'tool_use_id' => $tool->getCallId(),
                 'content' => $tool->getResult(),

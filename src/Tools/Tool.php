@@ -52,7 +52,8 @@ class Tool implements ToolInterface
     public function __construct(
         protected string $name,
         protected string $description,
-    ) {}
+    ) {
+    }
 
     public function getName(): string
     {
@@ -64,7 +65,8 @@ class Tool implements ToolInterface
         return $this->description;
     }
 
-    public function addProperty(ToolProperty $property): ToolInterface {
+    public function addProperty(ToolProperty $property): ToolInterface
+    {
         $this->properties[] = $property;
         return $this;
     }
@@ -98,7 +100,7 @@ class Tool implements ToolInterface
 
     public function setInputs(?array $inputs): self
     {
-        $this->inputs = $inputs??[];
+        $this->inputs = $inputs ?? [];
         return $this;
     }
 
