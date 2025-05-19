@@ -9,6 +9,7 @@ class Message implements \JsonSerializable
     const ROLE_MODEL = 'model';
     const ROLE_TOOL = 'tool';
     const ROLE_SYSTEM = 'system';
+    const ROLE_DEVELOPER = 'developer';
 
     protected ?Usage $usage = null;
     protected array $images = [];
