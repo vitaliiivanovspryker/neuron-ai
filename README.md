@@ -99,12 +99,12 @@ Send a prompt to the agent to get a response from the underlying LLM:
 ```php
 $agent = YouTubeAgent::make();
 
-$response = $agent->run(new UserMessage("Hi, I'm Valerio. Who are you?"));
+$response = $agent->chat(new UserMessage("Hi, I'm Valerio. Who are you?"));
 echo $response->getContent();
 // I'm a friendly YouTube assistant to help you summarize videos.
 
 
-$response = $agent->run(
+$response = $agent->chat(
     new UserMessage("Do you know my name?")
 );
 echo $response->getContent();
