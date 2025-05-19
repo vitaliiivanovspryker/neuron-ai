@@ -17,7 +17,7 @@ class McpClient
             $this->transport = new StdioTransport($config);
             $this->transport->connect();
         } else {
-            // todo: implement support for SSE server with URL config property
+            // todo: implement support for SSE with URL config property
             throw new \Exception('Transport not supported!');
         }
     }
@@ -40,7 +40,7 @@ class McpClient
 
             // Eventually add pagination
             if (isset($response) && \array_key_exists('nextCursor', $response['result'])) {
-                $request['params'] = ['cursor' => $response['nextCursor']];
+                $request['params'] = ['cursor' => $response['result']['nextCursor']];
             }
 
             $this->transport->send($request);
