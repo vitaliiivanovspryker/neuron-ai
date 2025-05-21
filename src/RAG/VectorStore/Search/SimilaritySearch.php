@@ -9,7 +9,7 @@ class SimilaritySearch
     public static function cosine(array $vec1, array $vec2): float|int
     {
         if (\count($vec1) !== \count($vec2)) {
-            throw new VectorStoreException('Arrays must have the same length to apply cosine similarity.');
+            throw new VectorStoreException('Vectors must have the same length to apply cosine similarity.');
         }
 
         $dotProduct = 0.0;
