@@ -2,6 +2,8 @@
 
 namespace NeuronAI\Chat\Messages;
 
+use NeuronAI\Chat\Attachments\Attachment;
+
 class Message implements \JsonSerializable
 {
     const ROLE_USER = 'user';
@@ -12,7 +14,7 @@ class Message implements \JsonSerializable
     const ROLE_DEVELOPER = 'developer';
 
     protected ?Usage $usage = null;
-    protected array $images = [];
+    protected array $attachments = [];
 
     protected array $meta = [];
 
@@ -44,16 +46,16 @@ class Message implements \JsonSerializable
     }
 
     /**
-     * @return array<Image>
+     * @return array<Attachment>
      */
-    public function getImages(): array
+    public function getAttachments(): array
     {
-        return $this->images;
+        return $this->attachments;
     }
 
-    public function addImage(Image $image): Message
+    public function addAttachment(Attachment $attachment): Message
     {
-        $this->images[] = $image;
+        $this->attachments[] = $attachment;
         return $this;
     }
 
@@ -85,8 +87,8 @@ class Message implements \JsonSerializable
             $data['usage'] = $this->getUsage()->jsonSerialize();
         }
 
-        if (!empty($this->getImages())) {
-            $data['images'] = \array_map(fn (Image $image) => $image->jsonSerialize(), $this->getImages());
+        if (!empty($this->getAttachments())) {
+            $data['attachments'] = \array_map(fn (Attachment $attachment) => $attachment->jsonSerialize(), $this->getAttachments());
         }
 
         return \array_merge($this->meta, $data);
