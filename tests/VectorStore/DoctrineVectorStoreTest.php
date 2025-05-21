@@ -16,13 +16,12 @@ use PHPUnit\Framework\TestCase;
 
 class DoctrineVectorStoreTest extends TestCase
 {
+    use NeedsDatabaseBootstrap;
     private const TYPE_NAME = 'vector';
     private const EMBEDDING_SIZE = 3072;
     private EntityManager $entityManager;
     private SchemaTool $schemaTool;
     private ClassMetadata $metadata;
-
-    use NeedsDatabaseBootstrap;
 
     protected function setUp(): void
     {
@@ -60,7 +59,8 @@ class DoctrineVectorStoreTest extends TestCase
     /**
      * @dataProvider provideVectors
      */
-    public function test_add_documents_and_search(array $embeddings, array $expectedEmbeddings): void {
+    public function test_add_documents_and_search(array $embeddings, array $expectedEmbeddings): void
+    {
         $documents = [];
         foreach ($embeddings as $embedding) {
             $document = new EntityVectorStub();

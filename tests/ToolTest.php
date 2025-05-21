@@ -56,8 +56,7 @@ class ToolTest extends TestCase
         $this->assertEquals('{"foo":"bar"}', $tool->getResult());
 
         $tool->setCallable(function () {
-            return new class
-            {
+            return new class () {
                 public function __toString(): string
                 {
                     return 'test';
@@ -74,7 +73,7 @@ class ToolTest extends TestCase
         $this->expectException(ToolException::class);
 
         $tool->setCallable(function () {
-            return new class {};
+            return new class () {};
         })->execute();
     }
 }

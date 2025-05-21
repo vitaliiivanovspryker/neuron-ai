@@ -19,4 +19,3 @@ final class MariaDBVectorL2OperatorDql extends AbstractDBL2OperatorDql
             ')';
     }
 }
-
