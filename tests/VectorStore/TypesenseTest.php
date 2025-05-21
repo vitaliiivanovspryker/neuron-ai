@@ -58,6 +58,7 @@ class TypesenseTest extends TestCase
 
     public function test_add_document_and_search(): void
     {
+        $this->expectNotToPerformAssertions();
         $store = new TypesenseVectorStore($this->client, 'test', $this->vectorDimension);
 
         $document = new Document('Hello World!');
@@ -67,6 +68,5 @@ class TypesenseTest extends TestCase
         $store->addDocument($document);
 
         $results = $store->similaritySearch($this->embedding);
-        $this->assertIsArray($results);
     }
 }

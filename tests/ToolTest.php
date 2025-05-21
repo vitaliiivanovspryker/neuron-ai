@@ -31,7 +31,7 @@ class ToolTest extends TestCase
             )
             ->setCallable(function (): void {});
 
-        $this->assertIsArray($tool->getRequiredProperties());
-        $this->assertEquals(['name', 'age'], $tool->getRequiredProperties());
+        $properties = $tool->getRequiredProperties();
+        $this->assertEquals(['name', 'age'], $properties);
     }
 }

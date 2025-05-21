@@ -50,6 +50,7 @@ class JsonSchemaTest extends TestCase
                 ],
                 'lastName' => [
                     'type' => ['string', 'null'],
+                    'default' => null
                 ]
             ],
             'required' => ['firstName'],

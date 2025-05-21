@@ -39,7 +39,7 @@ class McpClient
             ];
 
             // Eventually add pagination
-            if (isset($response) && \array_key_exists('nextCursor', $response['result'])) {
+            if (isset($response['nextCursor'])) {
                 $request['params'] = ['cursor' => $response['nextCursor']];
             }
 
@@ -47,7 +47,7 @@ class McpClient
             $response = $this->transport->receive();
 
             $tools = \array_merge($tools, $response['result']['tools']);
-        } while (\array_key_exists('nextCursor', $response['result']));
+        } while (isset($response['nextCursor']));
 
         return $tools;
     }
