@@ -3,7 +3,7 @@
 namespace NeuronAI\Providers\OpenAI;
 
 use GuzzleHttp\Exception\GuzzleException;
-use NeuronAI\Chat\Messages\AssistantMessage;
+use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Exceptions\ProviderException;
 use Psr\Http\Message\StreamInterface;
 
@@ -17,7 +17,7 @@ trait HandleStream
     {
         // Attach the system prompt
         if (isset($this->system)) {
-            \array_unshift($messages, new AssistantMessage($this->system));
+            \array_unshift($messages, new Message(Message::ROLE_SYSTEM, $this->system));
         }
 
         $json = [

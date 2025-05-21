@@ -19,7 +19,7 @@ trait HandleChat
     {
         // Include the system prompt
         if (isset($this->system)) {
-            \array_unshift($messages, new AssistantMessage($this->system));
+            \array_unshift($messages, new Message(Message::ROLE_SYSTEM, $this->system));
         }
 
         $json = [
