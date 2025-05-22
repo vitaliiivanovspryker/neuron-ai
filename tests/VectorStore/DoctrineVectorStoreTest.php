@@ -10,13 +10,16 @@ use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
 use NeuronAI\RAG\VectorStore\Doctrine\DoctrineVectorStore;
 use NeuronAI\RAG\VectorStore\Doctrine\VectorType;
+use NeuronAI\Tests\CheckOpenPort;
 use NeuronAI\Tests\stubs\EntityVectorStub;
 use NeuronAI\Tests\Traits\NeedsDatabaseBootstrap;
 use PHPUnit\Framework\TestCase;
 
 class DoctrineVectorStoreTest extends TestCase
 {
+    use CheckOpenPort;
     use NeedsDatabaseBootstrap;
+
     private const TYPE_NAME = 'vector';
     private const EMBEDDING_SIZE = 3072;
     private EntityManager $entityManager;
@@ -26,6 +29,10 @@ class DoctrineVectorStoreTest extends TestCase
 
     protected function setUp(): void
     {
+        if (!$this->isPortOpen('127.0.0.1', 3306)) {
+            $this->markTestSkipped('Port 3306 is not open. Skipping test.');
+        }
+
         if (!Type::hasType(self::TYPE_NAME)) {
             Type::addType(self::TYPE_NAME, VectorType::class);
         }

@@ -7,10 +7,13 @@ use Elastic\Elasticsearch\ClientBuilder;
 use NeuronAI\RAG\Document;
 use NeuronAI\RAG\VectorStore\ElasticsearchVectorStore;
 use NeuronAI\RAG\VectorStore\VectorStoreInterface;
+use NeuronAI\Tests\CheckOpenPort;
 use PHPUnit\Framework\TestCase;
 
 class ElasticsearchTest extends TestCase
 {
+    use CheckOpenPort;
+
     protected Client $client;
 
     protected array $embedding;
@@ -25,16 +28,6 @@ class ElasticsearchTest extends TestCase
 
         // embedding "Hello World!"
         $this->embedding = json_decode(file_get_contents(__DIR__ . '/../stubs/hello-world.embeddings'), true);
-    }
-
-    private function isPortOpen(string $host, int $port, int $timeout = 1): bool
-    {
-        $connection = @fsockopen($host, $port, $errno, $errstr, $timeout);
-        if (is_resource($connection)) {
-            fclose($connection);
-            return true;
-        }
-        return false;
     }
 
     public function test_elasticsearch_instance()
