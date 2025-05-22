@@ -23,7 +23,7 @@ class TypesenseVectorStore implements VectorStoreInterface
             $this->checkVectorDimension($this->vectorDimension);
             return;
 
-        } catch (ObjectNotFound $e) {
+        } catch (ObjectNotFound) {
             $this->client->collections->create([
                 'name' => $collection,
                 'fields' => [
@@ -133,12 +133,8 @@ class TypesenseVectorStore implements VectorStoreInterface
             'vector_query' => 'embedding:(' . json_encode($embedding) . ')',
             'exclude_fields' => 'embedding',
             'per_page' => $this->topK,
-            'num_candidates' => \max(50, $this->topK * 4),
+            'num_candidates' => \max(50, intval($this->topK) * 4),
         ];
-
-        if (isset($additionalArguments['filter'])) {
-            $params['filter_by'] = $additionalArguments['filter'];
-        }
 
         $searchRequests = ['searches' => [$params]];
 
@@ -154,6 +150,7 @@ class TypesenseVectorStore implements VectorStoreInterface
             $document->sourceName = $item['sourceName'];
             $document->hash = $item['hash'];
             $document->chunkNumber = $item['chunkNumber'];
+            $document->score = 1 - $hit['vector_distance'];
             return $document;
         }, $response['results'][0]['hits']);
     }

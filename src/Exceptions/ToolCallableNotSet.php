@@ -2,7 +2,6 @@
 
 namespace NeuronAI\Exceptions;
 
-class ToolCallableNotSet extends NeuronException
+class ToolCallableNotSet extends ToolException
 {
-
 }

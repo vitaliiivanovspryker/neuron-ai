@@ -3,7 +3,11 @@
 
 > Before moving on, support the community giving a GitHub star ⭐️. Thank you!
 
-![](./docs/img/neuron-ai-php-framework.png)
+[**Video Tutorial**](https://www.youtube.com/watch?v=fJSX8wWIDO8)
+
+[![Neuron & Inspector](./docs/img/youtube.png)](https://www.youtube.com/watch?v=fJSX8wWIDO8)
+
+---
 
 ## Requirements
 
@@ -17,7 +21,7 @@
 
 You can post questions and feedback on the [Inspector Forum](https://github.com/inspector-apm/neuron-ai/discussions).
 
-## Examples
+## Neuron AI Examples
 
 - [Install](#install)
 - [Create an Agent](#create)
@@ -27,6 +31,7 @@ You can post questions and feedback on the [Inspector Forum](https://github.com/
 - [MCP server connector](#mcp)
 - [Implement RAG systems](#rag)
 - [Structured Output](#structured)
+- [Observability](#observability)
 - [Official Documentation](#documentation)
 
 <a name="install">
@@ -94,12 +99,12 @@ Send a prompt to the agent to get a response from the underlying LLM:
 ```php
 $agent = YouTubeAgent::make();
 
-$response = $agent->run(new UserMessage("Hi, I'm Valerio. Who are you?"));
+$response = $agent->chat(new UserMessage("Hi, I'm Valerio. Who are you?"));
 echo $response->getContent();
 // I'm a friendly YouTube assistant to help you summarize videos.
 
 
-$response = $agent->run(
+$response = $agent->chat(
     new UserMessage("Do you know my name?")
 );
 echo $response->getContent();
@@ -334,17 +339,49 @@ echo $person->name ' like '.$person->preference;
 
 Learn more about Structured Output on the [documentation](https://docs.neuron-ai.dev/advanced/structured-output).
 
+<a name="observability">
+
+## Observability
+
+Neuron offers a built-in integration with [Inspector.dev](https://inspector.dev) to monitor the performance of your agents
+and detect unexpected errors in real time.
+
+You have to install the Inspector package based on your development environment. We provide integration packages
+for [PHP](https://github.com/inspector-apm/inspector-php), [Laravel](https://github.com/inspector-apm/inspector-laravel),
+[Symfony](https://github.com/inspector-apm/inspector-symfony), [CodeIgniter](https://github.com/inspector-apm/inspector-codeigniter),
+[Drupal](https://git.drupalcode.org/project/inspector_monitoring).
+
+Attach the `AgentMonitoring` component to the agent to monitor the internal execution timeline in the Inspector dashboard.
+If the agent fires an error, you will be alerted in real-time. You can connect several notification channels like email, slack, discord, telegram, and more.
+Here is a code example in a legacy PHP script:
+
+```php
+new NeuronAI\Observability\AgentMonitoring;
+
+// The Inspector instance in your application
+$inspector = new \Inspector\Inspector(
+    new Configuration('YOUR-INGESTION-KEY')
+);
+
+// Attach monitoring to the Agent
+$response = MyAgent::make()
+    ->observe(
+        new AgentMonitoring($inspector)
+    )
+    ->chat(...);
+```
+
+![](./docs/img/neuron-observability.png)
+
+> If you use a framework like Laravel, Symfony, or CodeIgniter, the connection is even easier,
+> since you already have the Inspector instance in the container.
+
+Learn more about Observability in the [documentation](https://docs.neuron-ai.dev/advanced/observability).
+
 <a name="documentation">
 
 ## Official documentation
 
 **[Go to the official documentation](https://neuron.inspector.dev/)**
 
-## Contributing
 
-We encourage you to contribute to the development of Neuron AI Framework!
-Please check out the [Contribution Guidelines](CONTRIBUTING.md) about how to proceed. Join us!
-
-## LICENSE
-
-This bundle is licensed under the [MIT](LICENSE) license.

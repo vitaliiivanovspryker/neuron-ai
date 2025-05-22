@@ -6,19 +6,7 @@ use GuzzleHttp\Exception\RequestException;
 use Inspector\Inspector;
 use Inspector\Models\Segment;
 use NeuronAI\Chat\Messages\Message;
-use NeuronAI\Chat\Messages\ToolCallMessage;
-use NeuronAI\Chat\Messages\ToolCallResultMessage;
 use NeuronAI\Observability\Events\AgentError;
-use NeuronAI\Observability\Events\InstructionsChanged;
-use NeuronAI\Observability\Events\InstructionsChanging;
-use NeuronAI\Observability\Events\MessageSaved;
-use NeuronAI\Observability\Events\MessageSaving;
-use NeuronAI\Observability\Events\InferenceStart;
-use NeuronAI\Observability\Events\InferenceStop;
-use NeuronAI\Observability\Events\ToolCalled;
-use NeuronAI\Observability\Events\ToolCalling;
-use NeuronAI\Observability\Events\VectorStoreResult;
-use NeuronAI\Observability\Events\VectorStoreSearching;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 
@@ -35,13 +23,43 @@ class AgentMonitoring implements \SplObserver
     use HandleInferenceEvents;
     use HandleStructuredEvents;
 
-    const SEGMENT_TYPE = 'neuron';
-    const SEGMENT_COLOR = '#506b9b';
+    public const SEGMENT_TYPE = 'neuron';
+    public const SEGMENT_COLOR = '#506b9b';
 
     /**
      * @var array<string, Segment>
      */
-    protected $segments = [];
+    protected array $segments = [];
+
+    protected array $methodsMap = [
+        'error' => 'reportError',
+        'chat-start' => 'start',
+        'chat-stop' => 'stop',
+        'stream-start' => 'start',
+        'stream-stop' => 'stop',
+        'rag-start' => 'start',
+        'rag-stop' => 'stop',
+        'structured-start' => 'start',
+        'structured-stop' => 'stop',
+        'message-saving' => 'messageSaving',
+        'message-saved' => 'messageSaved',
+        'inference-start' => 'inferenceStart',
+        'inference-stop' => 'inferenceStop',
+        'tool-calling' => 'toolCalling',
+        'tool-called' => 'toolCalled',
+        'structured-extracting' => 'extracting',
+        'structured-extracted' => 'extracted',
+        'structured-deserializing' => 'deserializing',
+        'structured-deserialized' => 'deserialized',
+        'structured-validating' => 'validating',
+        'structured-validated' => 'validated',
+        'rag-vectorstore-searching' => 'vectorStoreSearching',
+        'rag-vectorstore-result' => 'vectorStoreResult',
+        'rag-instructions-changing' => 'instructionsChanging',
+        'rag-instructions-changed' => 'instructionsChanged',
+        'rag-postprocessing' => 'postProcessing',
+        'rag-postprocessed' => 'postProcessed',
+    ];
 
     /**
      * @param Inspector $inspector The monitoring instance
@@ -50,42 +68,13 @@ class AgentMonitoring implements \SplObserver
     public function __construct(
         protected Inspector $inspector,
         protected bool $catch = true
-    ) {}
+    ) {
+    }
 
-    public function update(\SplSubject $subject, string $event = null, $data = null): void
+    public function update(\SplSubject $subject, ?string $event = null, mixed $data = null): void
     {
-        $methods = [
-            'error' => 'reportError',
-            'chat-start' => 'start',
-            'chat-stop' => 'stop',
-            'stream-start' => 'start',
-            'stream-stop' => 'stop',
-            'rag-start' => 'start',
-            'rag-stop' => 'stop',
-            'structured-start' => 'start',
-            'structured-stop' => 'stop',
-            'message-saving' => 'messageSaving',
-            'message-saved' => 'messageSaved',
-            'inference-start' => 'inferenceStart',
-            'inference-stop' => 'inferenceStop',
-            'tool-calling' => 'toolCalling',
-            'tool-called' => 'toolCalled',
-            'structured-extracting' => 'extracting',
-            'structured-extracted' => 'extracted',
-            'structured-deserializing' => 'deserializing',
-            'structured-deserialized' => 'deserialized',
-            'structured-validating' => 'validating',
-            'structured-validated' => 'validated',
-            'rag-vectorstore-searching' => 'vectorStoreSearching',
-            'rag-vectorstore-result' => 'vectorStoreResult',
-            'rag-instructions-changing' => 'instructionsChanging',
-            'rag-instructions-changed' => 'instructionsChanged',
-            'rag-postprocessing' => 'postProcessing',
-            'rag-postprocessed' => 'postProcessed',
-        ];
-
-        if (!\is_null($event) && \array_key_exists($event, $methods)) {
-            $method = $methods[$event];
+        if (!\is_null($event) && \array_key_exists($event, $this->methodsMap)) {
+            $method = $this->methodsMap[$event];
             $this->$method($subject, $event, $data);
         }
     }
@@ -109,34 +98,43 @@ class AgentMonitoring implements \SplObserver
             return;
         }
 
-        $entity = $this->getEventEntity($event);
-        $class = get_class($agent);
+        $method = $this->getPrefix($event);
+        $class = $agent::class;
 
         if ($this->inspector->needTransaction()) {
-            $this->inspector->startTransaction($class);
-        } elseif ($this->inspector->canAddSegments() && $entity !== 'chat') {
-            $this->segments[
-                $entity.$class
-            ] = $this->inspector->startSegment(self::SEGMENT_TYPE.'-'.$entity, $entity.':'.$class)
+            $this->inspector->startTransaction($class)->setType('agent');
+        } elseif ($this->inspector->canAddSegments()) {
+            $key = $class.$method;
+
+            if (\array_key_exists($key, $this->segments)) {
+                $key .= '-'.\uniqid();
+            }
+
+            $this->segments[$key] = $this->inspector->startSegment(self::SEGMENT_TYPE.'-'.$method, "{$class}::{$method}()")
                 ->setColor(self::SEGMENT_COLOR);
         }
     }
 
     public function stop(\NeuronAI\AgentInterface $agent, string $event, $data = null)
     {
-        $entity = $this->getEventEntity($event);
-        $class = get_class($agent);
+        $method = $this->getPrefix($event);
+        $class = $agent::class;
 
-        if (\array_key_exists($entity.$class, $this->segments)) {
-            $this->segments[$entity.$class]
-                ->setContext($this->getContext($agent))
-                ->end();
+        if (\array_key_exists($class.$method, $this->segments)) {
+            // End the last segment for the given method and agent class
+            foreach (\array_reverse($this->segments, true) as $key => $value) {
+                if ($this->getPrefix($key) === $class.$method) {
+                    $value->setContext($this->getContext($agent))->end();
+                    unset($this->segments[$key]);
+                    break;
+                }
+            }
         } elseif ($this->inspector->canAddSegments()) {
             $this->inspector->transaction()->setContext($this->getContext($agent));
         }
     }
 
-    public function getEventEntity(string $event): string
+    public function getPrefix(string $event): string
     {
         return explode('-', $event)[0];
     }
@@ -146,17 +144,13 @@ class AgentMonitoring implements \SplObserver
         return [
             'Agent' => [
                 'instructions' => $agent->instructions(),
-                'provider' => get_class($agent->resolveProvider()),
+                'provider' => $agent->resolveProvider()::class,
             ],
-            'Tools' => \array_map(function (Tool $tool) {
-                return [
-                    'name' => $tool->getName(),
-                    'description' => $tool->getDescription(),
-                    'properties' => \array_map(function (ToolProperty $property) {
-                        return $property->jsonSerialize();
-                    }, $tool->getProperties()),
-                ];
-            }, $agent->getTools()??[]),
+            'Tools' => \array_map(fn (Tool $tool) => [
+                'name' => $tool->getName(),
+                'description' => $tool->getDescription(),
+                'properties' => \array_map(fn (ToolProperty $property) => $property->jsonSerialize(), $tool->getProperties()),
+            ], $agent->getTools()),
             //'Messages' => $agent->resolveChatHistory()->getMessages(),
         ];
     }

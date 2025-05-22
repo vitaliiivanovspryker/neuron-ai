@@ -3,7 +3,6 @@
 namespace NeuronAI\Providers\OpenAI;
 
 use GuzzleHttp\Exception\GuzzleException;
-use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Exceptions\ProviderException;
 use Psr\Http\Message\StreamInterface;
@@ -18,7 +17,7 @@ trait HandleStream
     {
         // Attach the system prompt
         if (isset($this->system)) {
-            \array_unshift($messages, new AssistantMessage($this->system));
+            \array_unshift($messages, new Message(Message::ROLE_SYSTEM, $this->system));
         }
 
         $json = [
@@ -79,7 +78,7 @@ trait HandleStream
             }
 
             // Process regular content
-            $content = $line['choices'][0]['delta']['content']??'';
+            $content = $line['choices'][0]['delta']['content'] ?? '';
             $text .= $content;
 
             yield $content;
@@ -97,13 +96,13 @@ trait HandleStream
     {
         foreach ($line['choices'][0]['delta']['tool_calls'] as $index => $call) {
             if (!\array_key_exists($index, $toolCalls)) {
-                if ($name = $call['function']['name']??null) {
+                if ($name = $call['function']['name'] ?? null) {
                     $toolCalls[$index]['function'] = ['name' => $name, 'arguments' => ''];
                     $toolCalls[$index]['id'] = $call['id'];
                     $toolCalls[$index]['type'] = 'function';
                 }
             } else {
-                if ($arguments = $call['function']['arguments']??null) {
+                if ($arguments = $call['function']['arguments'] ?? null) {
                     $toolCalls[$index]['function']['arguments'] .= $arguments;
                 }
             }

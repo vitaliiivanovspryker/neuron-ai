@@ -17,8 +17,15 @@ class FileVectorStoreTest extends TestCase
         $document->sourceName = 'test';
         $document->sourceType = 'string';
 
-        $store = new FileVectorStore(__DIR__);
-        $store->addDocument($document);
+        $document2 = new Document('Hello 2!');
+        $document2->embedding = [3, 4, 5];
+        $document2->id = 2;
+        $document2->chunkNumber = 2;
+        $document2->sourceName = 'test';
+        $document2->sourceType = 'string';
+
+        $store = new FileVectorStore(__DIR__, 1);
+        $store->addDocuments([$document, $document2]);
 
         $result = $store->similaritySearch([1, 2, 3]);
 

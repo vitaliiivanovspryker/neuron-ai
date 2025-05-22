@@ -4,6 +4,7 @@ namespace NeuronAI\Tools;
 
 use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
+use NeuronAI\Exceptions\ToolException;
 use NeuronAI\StaticConstructor;
 
 class Tool implements ToolInterface
@@ -18,9 +19,9 @@ class Tool implements ToolInterface
     protected array $properties = [];
 
     /**
-     * @var callable
+     * @var ?callable
      */
-    protected $callback;
+    protected $callback = null;
 
     /**
      * The arguments to pass in to the callback.
@@ -39,9 +40,9 @@ class Tool implements ToolInterface
     /**
      * The result of the execution.
      *
-     * @var mixed
+     * @var string|null
      */
-    protected mixed $result = null;
+    protected string|null $result = null;
 
     /**
      * Tool constructor.
@@ -52,7 +53,8 @@ class Tool implements ToolInterface
     public function __construct(
         protected string $name,
         protected string $description,
-    ) {}
+    ) {
+    }
 
     public function getName(): string
     {
@@ -64,7 +66,8 @@ class Tool implements ToolInterface
         return $this->description;
     }
 
-    public function addProperty(ToolProperty $property): ToolInterface {
+    public function addProperty(ToolProperty $property): ToolInterface
+    {
         $this->properties[] = $property;
         return $this;
     }
@@ -76,9 +79,13 @@ class Tool implements ToolInterface
 
     public function getRequiredProperties(): array
     {
-        return \array_filter(\array_map(function (ToolProperty $property) {
-            return $property->isRequired() ? $property->getName() : null;
-        }, $this->properties));
+        return \array_reduce($this->properties, function ($carry, ToolProperty $property) {
+            if ($property->isRequired()) {
+                $carry[] = $property->getName();
+            }
+
+            return $carry;
+        }, []);
     }
 
     public function setCallable(callable $callback): self
@@ -94,7 +101,7 @@ class Tool implements ToolInterface
 
     public function setInputs(?array $inputs): self
     {
-        $this->inputs = $inputs??[];
+        $this->inputs = $inputs ?? [];
         return $this;
     }
 
@@ -109,26 +116,40 @@ class Tool implements ToolInterface
         return $this;
     }
 
-    public function getResult(): mixed
+    public function getResult(): string
     {
         return $this->result;
     }
 
-    public function setResult($result): self
+    public function setResult(object|string|array $result): self
     {
-        $this->result = $result;
-        return $this;
+        if (is_string($result)) {
+            $this->result = $result;
+            return $this;
+        }
+
+        if (is_array($result)) {
+            $this->result = \json_encode($result);
+            return $this;
+        }
+
+        if (\method_exists($result, '__toString')) {
+            $this->result = (string) $result;
+            return $this;
+        }
+
+        throw new ToolException("Invalid tool result. Must be a string, array or object with __toString method.");
     }
 
     /**
      * Execute the client side function.
      *
      * @throws MissingCallbackParameter
-     * @throws ToolCallableNotSet
+     * @throws ToolCallableNotSet|ToolException
      */
     public function execute(): void
     {
-        if (!isset($this->callback)) {
+        if (!is_callable($this->callback)) {
             throw new ToolCallableNotSet('No callback defined for execution.');
         }
 
@@ -139,7 +160,9 @@ class Tool implements ToolInterface
             }
         }
 
-        $this->result = \call_user_func($this->callback, ...$this->getInputs());
+        $this->setResult(
+            \call_user_func($this->callback, ...$this->getInputs())
+        );
     }
 
     public function jsonSerialize(): array

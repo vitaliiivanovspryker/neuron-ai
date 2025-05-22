@@ -7,7 +7,8 @@ class Usage implements \JsonSerializable
     public function __construct(
         public int $inputTokens,
         public int $outputTokens
-    ) {}
+    ) {
+    }
 
     public function getTotal(): int
     {

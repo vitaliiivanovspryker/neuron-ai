@@ -6,26 +6,31 @@ use NeuronAI\Exceptions\VectorStoreException;
 
 class SimilaritySearch
 {
-    public static function cosine(array $vector1, array $vector2)
+    public static function cosine(array $vec1, array $vec2): float|int
     {
-        if (\count($vector1) !== \count($vector2)) {
-            throw new VectorStoreException('Arrays must have the same length to apply cosine similarity.');
+        if (\count($vec1) !== \count($vec2)) {
+            throw new VectorStoreException('Vectors must have the same length to apply cosine similarity.');
         }
 
-        // Calculate the dot product of the two vectors
-        $dotProduct = \array_sum(\array_map(fn (float $a, float $b): float => $a * $b, $vector1, $vector2));
+        $dotProduct = 0.0;
+        $mag1 = 0.0;
+        $mag2 = 0.0;
 
-        // Calculate the magnitudes of each vector
-        $magnitude1 = \sqrt(\array_sum(\array_map(fn (float $a): float => $a * $a, $vector1)));
-
-        $magnitude2 = \sqrt(\array_sum(\array_map(fn (float $a): float => $a * $a, $vector2)));
-
-        // Avoid division by zero
-        if ($magnitude1 * $magnitude2 == 0) {
-            return 0;
+        foreach ($vec1 as $key => $value) {
+            if (isset($vec2[$key])) {
+                $dotProduct += $value * $vec2[$key];
+            }
+            $mag1 += $value ** 2;
         }
 
-        // Calculate the cosine distance
-        return 1 - $dotProduct / ($magnitude1 * $magnitude2);
+        foreach ($vec2 as $value) {
+            $mag2 += $value ** 2;
+        }
+
+        if ($mag1 === 0.0 || $mag2 === 0.0) {
+            return 0.0;
+        }
+
+        return 1 - $dotProduct / (sqrt($mag1) * sqrt($mag2));
     }
 }

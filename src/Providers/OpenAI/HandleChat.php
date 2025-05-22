@@ -12,14 +12,14 @@ trait HandleChat
     /**
      * Send a message to the LLM.
      *
-     * @param Message|array<Message> $messages
+     * @param array<Message> $messages
      * @throws GuzzleException
      */
     public function chat(array $messages): Message
     {
         // Include the system prompt
         if (isset($this->system)) {
-            \array_unshift($messages, new AssistantMessage($this->system));
+            \array_unshift($messages, new Message(Message::ROLE_SYSTEM, $this->system));
         }
 
         $json = [

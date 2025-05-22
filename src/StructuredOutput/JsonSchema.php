@@ -4,7 +4,9 @@ namespace NeuronAI\StructuredOutput;
 
 use ReflectionClass;
 use ReflectionEnum;
+use ReflectionEnumBackedCase;
 use ReflectionException;
+use ReflectionNamedType;
 use ReflectionProperty;
 
 class JsonSchema
@@ -40,9 +42,7 @@ class JsonSchema
 
         // Add definitions if any exist
         if (!empty($this->definitions)) {
-            $schema['definitions'] = \array_map(function (array $definition) {
-                return [...$definition, 'additionalProperties' => false];
-            }, $this->definitions);
+            $schema['definitions'] = \array_map(fn (array $definition) => [...$definition, 'additionalProperties' => false], $this->definitions);
         }
 
         return $schema;
@@ -72,7 +72,7 @@ class JsonSchema
 
         // Handle enum types differently
         if ($reflection->isEnum()) {
-            return $this->processEnum($reflection, $isRoot);
+            return $this->processEnum(new ReflectionEnum($class), $isRoot);
         }
 
         // Create a basic object schema
@@ -149,6 +149,7 @@ class JsonSchema
             }
         }
 
+        /** @var ?ReflectionNamedType $type */
         $type = $property->getType();
         $typeName = $type?->getName();
 
@@ -252,6 +253,7 @@ class JsonSchema
         // Extract enum values
         foreach ($enum->getCases() as $case) {
             if ($enum->isBacked()) {
+                /** @var ReflectionEnumBackedCase $case */
                 // For backed enums, use the backing value
                 $schema['enum'][] = $case->getBackingValue();
             } else {

@@ -47,10 +47,10 @@ trait HandleStream
             }
 
             // Inform the agent about usage when stream
-            if (\array_key_exists('usageMetadata', $line['candidates'][0]['content'])) {
+            if (\array_key_exists('usageMetadata', $line)) {
                 yield \json_encode(['usage' => [
-                    'input_tokens' => $line['candidates'][0]['content']['usageMetadata']['promptTokenCount'],
-                    'output_tokens' => $line['candidates'][0]['content']['usageMetadata']['candidatesTokenCount'],
+                    'input_tokens' => $line['usageMetadata']['promptTokenCount'],
+                    'output_tokens' => $line['usageMetadata']['candidatesTokenCount'],
                 ]]);
                 continue;
             }
@@ -75,7 +75,7 @@ trait HandleStream
             }
 
             // Process regular content
-            $content = $line['candidates'][0]['content']['parts'][0]['text']??'';
+            $content = $line['candidates'][0]['content']['parts'][0]['text'] ?? '';
             $text .= $content;
 
             yield $content;
@@ -87,7 +87,7 @@ trait HandleStream
      */
     protected function composeToolCalls(array $line, array $toolCalls): array
     {
-        $parts = $line['candidates'][0]['content']['parts']??[];
+        $parts = $line['candidates'][0]['content']['parts'] ?? [];
 
         foreach ($parts as $index => $part) {
             if (isset($part['functionCall'])) {
@@ -106,7 +106,7 @@ trait HandleStream
      */
     protected function hasToolCalls(array $line): bool
     {
-        $parts = $line['candidates'][0]['content']['parts']??[];
+        $parts = $line['candidates'][0]['content']['parts'] ?? [];
 
         foreach ($parts as $part) {
             if (isset($part['functionCall'])) {

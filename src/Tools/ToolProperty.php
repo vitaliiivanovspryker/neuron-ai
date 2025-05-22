@@ -10,7 +10,8 @@ class ToolProperty implements \JsonSerializable
         protected string $description,
         protected bool $required = false,
         protected array $enum = [],
-    ) {}
+    ) {
+    }
 
     /**
      * @return array

@@ -12,10 +12,10 @@ class JsonExtractor
     public function __construct()
     {
         $this->extractors = [
-            fn($text) => [$text],                   // Try as it is
-            fn($text) => $this->findByMarkdown($text),
-            fn($text) => $this->findByBrackets($text),
-            fn($text) => $this->findJSONLikeStrings($text),
+            fn ($text) => [$text],                   // Try as it is
+            fn ($text) => $this->findByMarkdown($text),
+            fn ($text) => $this->findByBrackets($text),
+            fn ($text) => $this->findJSONLikeStrings($text),
         ];
     }
 
@@ -41,7 +41,7 @@ class JsonExtractor
 
                 try {
                     $data = $this->tryParse($candidate);
-                } catch (\Throwable $exception) {
+                } catch (\Throwable) {
                     continue;
                 }
 

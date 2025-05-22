@@ -2,12 +2,14 @@
 
 namespace NeuronAI\Providers\Ollama;
 
+use NeuronAI\Chat\Attachments\Attachment;
+use NeuronAI\Chat\Attachments\Image;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Chat\Messages\ToolCallResultMessage;
 use NeuronAI\Chat\Messages\UserMessage;
-use NeuronAI\Exceptions\AgentException;
+use NeuronAI\Exceptions\ProviderException;
 use NeuronAI\Providers\MessageMapperInterface;
 
 class MessageMapper implements MessageMapperInterface
@@ -28,7 +30,7 @@ class MessageMapper implements MessageMapperInterface
                 AssistantMessage::class => $this->mapMessage($message),
                 ToolCallMessage::class => $this->mapToolCall($message),
                 ToolCallResultMessage::class => $this->mapToolsResult($message),
-                default => throw new AgentException('Could not map message type '.$message::class),
+                default => throw new ProviderException('Could not map message type '.$message::class),
             };
         }
 
@@ -37,13 +39,33 @@ class MessageMapper implements MessageMapperInterface
 
     public function mapMessage(Message $message): void
     {
-        $message = $message->jsonSerialize();
+        $payload = $message->jsonSerialize();
 
-        if (\array_key_exists('usage', $message)) {
-            unset($message['usage']);
+        if (\array_key_exists('usage', $payload)) {
+            unset($payload['usage']);
         }
 
-        $this->mapping[] = $message;
+        $attachments = $message->getAttachments();
+
+        foreach ($attachments as $attachment) {
+            if ($attachment instanceof Image) {
+                $payload['images'][] = $this->mapImage($attachment);
+            }
+        }
+
+        unset($payload['attachments']);
+
+        $this->mapping[] = $payload;
+    }
+
+    protected function mapImage(Image $image): string
+    {
+        return match($image->contentType) {
+            Attachment::TYPE_BASE64 => $image->content,
+            // Transform url in base64 could be a security issue. So we raise an exception.
+            Image::TYPE_URL => throw new ProviderException('Ollama support only base64 image type.'),
+            default => throw new ProviderException('Invalid image type '.$image->type),
+        };
     }
 
     protected function mapToolCall(ToolCallMessage $message): void

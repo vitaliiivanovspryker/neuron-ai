@@ -13,5 +13,6 @@ class Validated
         public string $class,
         public string $json,
         public array $violations = []
-    ) {}
+    ) {
+    }
 }

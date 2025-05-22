@@ -3,7 +3,9 @@
 namespace NeuronAI\MCP;
 
 use NeuronAI\StaticConstructor;
+use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolInterface;
+use NeuronAI\Tools\ToolProperty;
 
 class McpConnector
 {
@@ -26,9 +28,7 @@ class McpConnector
     {
         $tools = $this->client->listTools();
 
-        return \array_map(function ($tool) {
-            return $this->createTool($tool);
-        }, $tools);
+        return \array_map(fn ($tool) => $this->createTool($tool), $tools);
     }
 
     /**
@@ -36,11 +36,11 @@ class McpConnector
      */
     protected function createTool(array $item): ToolInterface
     {
-        $tool = \NeuronAI\Tools\Tool::make(
+        $tool = Tool::make(
             name: $item['name'],
-            description: $item['description']
+            description: $item['description'] ?? ''
         )->setCallable(function (...$args) use ($item) {
-            $response = call_user_func([$this->client, 'callTool'], $item['name'], $args);
+            $response = call_user_func($this->client->callTool(...), $item['name'], $args);
             $response = $response['result']['content'][0];
 
             if ($response['type'] === 'text') {
@@ -56,11 +56,11 @@ class McpConnector
 
         foreach ($item['inputSchema']['properties'] as $name => $input) {
             $tool->addProperty(
-                new \NeuronAI\Tools\ToolProperty(
+                new ToolProperty(
                     $name,
                     $input['type'],
-                    $input['description'],
-                    \in_array($name, $item['inputSchema']['required']??[])
+                    $input['description'] ?? '',
+                    \in_array($name, $item['inputSchema']['required'] ?? [])
                 )
             );
         }

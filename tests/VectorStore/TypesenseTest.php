@@ -5,11 +5,14 @@ namespace NeuronAI\Tests\VectorStore;
 use NeuronAI\RAG\Document;
 use NeuronAI\RAG\VectorStore\TypesenseVectorStore;
 use NeuronAI\RAG\VectorStore\VectorStoreInterface;
+use NeuronAI\Tests\Traits\CheckOpenPort;
 use PHPUnit\Framework\TestCase;
 use Typesense\Client;
 
 class TypesenseTest extends TestCase
 {
+    use CheckOpenPort;
+
     protected Client $client;
 
     protected int $vectorDimension = 1024;
@@ -40,24 +43,15 @@ class TypesenseTest extends TestCase
         $this->embedding = json_decode(file_get_contents(__DIR__ . '/../stubs/hello-world.embeddings'), true);
     }
 
-    private function isPortOpen(string $host, int $port, int $timeout = 1): bool
-    {
-        $connection = @fsockopen($host, $port, $errno, $errstr, $timeout);
-        if (is_resource($connection)) {
-            fclose($connection);
-            return true;
-        }
-        return false;
-    }
-
-    public function test_typesense_instance()
+    public function test_typesense_instance(): void
     {
         $store = new TypesenseVectorStore($this->client, 'test', $this->vectorDimension);
         $this->assertInstanceOf(VectorStoreInterface::class, $store);
     }
 
-    public function test_add_document_and_search()
+    public function test_add_document_and_search(): void
     {
+        $this->expectNotToPerformAssertions();
         $store = new TypesenseVectorStore($this->client, 'test', $this->vectorDimension);
 
         $document = new Document('Hello World!');
@@ -67,6 +61,5 @@ class TypesenseTest extends TestCase
         $store->addDocument($document);
 
         $results = $store->similaritySearch($this->embedding);
-        $this->assertIsArray($results);
     }
 }

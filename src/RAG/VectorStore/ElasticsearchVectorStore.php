@@ -164,6 +164,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
             $document->sourceName = $item['_source']['sourceName'];
             $document->hash = $item['_source']['hash'];
             $document->chunkNumber = $item['_source']['chunkNumber'];
+            $document->score = $item['_score'];
             return $document;
         }, $response['hits']['hits']);
     }

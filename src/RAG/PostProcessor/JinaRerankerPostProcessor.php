@@ -13,7 +13,7 @@ class JinaRerankerPostProcessor implements PostProcessorInterface
     use HasGuzzleClient;
 
     public function __construct(
-        string $apiKey,
+        string $key,
         protected string $model = 'jina-reranker-v2-base-multilingual',
         protected int $topN = 3
     ) {
@@ -22,7 +22,7 @@ class JinaRerankerPostProcessor implements PostProcessorInterface
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer '.$apiKey,
+                'Authorization' => 'Bearer '.$key,
             ],
         ]);
     }
@@ -34,7 +34,7 @@ class JinaRerankerPostProcessor implements PostProcessorInterface
                 'model' => $this->model,
                 'query' => $question->getContent(),
                 'top_n' => $this->topN,
-                'documents' => \array_map(fn(Document $document) => ['text' => $document->content], $documents),
+                'documents' => \array_map(fn (Document $document) => ['text' => $document->content], $documents),
                 'return_documents' => false,
             ],
         ])->getBody()->getContents();
@@ -42,7 +42,9 @@ class JinaRerankerPostProcessor implements PostProcessorInterface
         $result = \json_decode($response, true);
 
         return \array_map(function ($item) use ($documents) {
-            return $documents[$item['index']];
+            $document = $documents[$item['index']];
+            $document->score = $item['relevance_score'];
+            return $document;
         }, $result['results']);
     }
 }

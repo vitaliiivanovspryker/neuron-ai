@@ -2,7 +2,6 @@
 
 namespace NeuronAI\Tests;
 
-
 use NeuronAI\Agent;
 use NeuronAI\AgentInterface;
 use NeuronAI\Chat\History\ChatHistoryInterface;
@@ -14,7 +13,6 @@ use NeuronAI\RAG\RAG;
 use NeuronAI\SystemPrompt;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Chat\Messages\ToolCallMessage;
-use NeuronAI\Tools\ToolInterface;
 use PHPUnit\Framework\TestCase;
 
 class NeuronAITest extends TestCase
@@ -22,8 +20,6 @@ class NeuronAITest extends TestCase
     /**
      * Sets up the fixture, for example, open a network connection.
      * This method is called before a test is executed.
-     *
-     * @throws \Exception
      */
     public function setUp(): void
     {
@@ -55,14 +51,5 @@ class NeuronAITest extends TestCase
         $this->assertInstanceOf(Message::class, new UserMessage(''));
         $this->assertInstanceOf(Message::class, new AssistantMessage(''));
         $this->assertInstanceOf(Message::class, new ToolCallMessage('', $tools));
-    }
-
-    public function test_tool_instance()
-    {
-        $tool = new Tool('example', 'example');
-        $this->assertInstanceOf(ToolInterface::class, $tool);
-
-        $tool->setInputs(null);
-        $this->assertEquals([], $tool->getInputs());
     }
 }

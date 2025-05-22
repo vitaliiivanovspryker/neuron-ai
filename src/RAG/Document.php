@@ -17,9 +17,12 @@ class Document implements \JsonSerializable
 
     public int $chunkNumber = 0;
 
+    public float $score = 0;
+
     public function __construct(
         public string $content = '',
-    ) {}
+    ) {
+    }
 
     public function jsonSerialize(): array
     {
@@ -31,6 +34,7 @@ class Document implements \JsonSerializable
             'sourceName' => $this->sourceName,
             'hash' => $this->hash,
             'chunkNumber' => $this->chunkNumber,
+            'score' => $this->score,
         ];
     }
 }

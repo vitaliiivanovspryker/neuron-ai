@@ -13,8 +13,6 @@ use NeuronAI\Observability\Events\Extracted;
 use NeuronAI\Observability\Events\Extracting;
 use NeuronAI\Observability\Events\InferenceStart;
 use NeuronAI\Observability\Events\InferenceStop;
-use NeuronAI\Observability\Events\MessageSaved;
-use NeuronAI\Observability\Events\MessageSaving;
 use NeuronAI\Exceptions\AgentException;
 use NeuronAI\Observability\Events\Validated;
 use NeuronAI\Observability\Events\Validating;
@@ -22,6 +20,7 @@ use NeuronAI\StructuredOutput\Deserializer;
 use NeuronAI\StructuredOutput\JsonExtractor;
 use NeuronAI\StructuredOutput\JsonSchema;
 use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\Mapping\Loader\AnnotationLoader;
 use Symfony\Component\Validator\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Validator\Validation;
 
@@ -42,11 +41,10 @@ trait HandleStructured
     {
         $this->notify('structured-start');
 
-        $class = $class ?? $this->getOutputClass();
-
         $this->fillChatHistory($messages);
 
         // Get the JSON schema from the response model
+        $class ??= $this->getOutputClass();
         $schema = (new JsonSchema())->generate($class);
 
         $error = '';
@@ -127,8 +125,9 @@ trait HandleStructured
         // Validate if the object fields respect the validation attributes
         // https://symfony.com/doc/current/validation.html#constraints
         $this->notify('structured-validating', new Validating($class, $json));
+        $loader = class_exists(AnnotationLoader::class) ? new AnnotationLoader() : new AttributeLoader();
         $violations = Validation::createValidatorBuilder()
-            ->addLoader(new AttributeLoader())
+            ->addLoader($loader)
             ->getValidator()
             ->validate($obj);
 
