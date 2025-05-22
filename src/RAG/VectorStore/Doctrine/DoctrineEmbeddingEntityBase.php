@@ -15,7 +15,7 @@ abstract class DoctrineEmbeddingEntityBase extends Document
     public mixed $id;
 
     #[ORM\Column(type: VectorType::VECTOR, length: 3072)]
-    public ?array $embedding;
+    public ?array $embedding = null;
 
     #[ORM\Column(type: Types::TEXT)]
     public string $content;

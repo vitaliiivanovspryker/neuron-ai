@@ -40,28 +40,20 @@ class ToolTest extends TestCase
     {
         $tool = Tool::make('test', 'Test tool');
 
-        $tool->setCallable(function () {
-            return 'test';
-        })->execute();
+        $tool->setCallable(fn() => 'test')->execute();
         $this->assertEquals('test', $tool->getResult());
 
-        $tool->setCallable(function () {
-            return ['test'];
-        })->execute();
+        $tool->setCallable(fn() => ['test'])->execute();
         $this->assertEquals('["test"]', $tool->getResult());
 
-        $tool->setCallable(function () {
-            return ['foo' => 'bar'];
-        })->execute();
+        $tool->setCallable(fn() => ['foo' => 'bar'])->execute();
         $this->assertEquals('{"foo":"bar"}', $tool->getResult());
 
-        $tool->setCallable(function () {
-            return new class () {
-                public function __toString(): string
-                {
-                    return 'test';
-                }
-            };
+        $tool->setCallable(fn() => new class () {
+            public function __toString(): string
+            {
+                return 'test';
+            }
         })->execute();
         $this->assertEquals('test', $tool->getResult());
     }
@@ -72,8 +64,6 @@ class ToolTest extends TestCase
 
         $this->expectException(ToolException::class);
 
-        $tool->setCallable(function () {
-            return new class () {};
-        })->execute();
+        $tool->setCallable(fn() => new class () {})->execute();
     }
 }
