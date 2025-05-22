@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use NeuronAI\RAG\Document;
 
 #[ORM\MappedSuperclass]
-abstract class DoctrineEmbeddingEntityBase extends Document
+class DoctrineEmbeddingEntityBase extends Document
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'integer')]
