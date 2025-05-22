@@ -7,6 +7,9 @@ namespace NeuronAI\Observability;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
+/**
+ * Credits: https://github.com/sixty-nine
+ */
 class LogObserver implements \SplObserver
 {
     public function __construct(
