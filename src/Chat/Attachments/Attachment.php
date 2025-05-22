@@ -8,10 +8,10 @@ class Attachment implements \JsonSerializable
 {
     use StaticConstructor;
 
-    const DOCUMENT = 'document';
-    const IMAGE = 'image';
-    const TYPE_URL = 'url';
-    const TYPE_BASE64 = 'base64';
+    public const DOCUMENT = 'document';
+    public const IMAGE = 'image';
+    public const TYPE_URL = 'url';
+    public const TYPE_BASE64 = 'base64';
 
     public function __construct(
         public string $type,
