@@ -49,7 +49,7 @@ trait HandleStream
             // https://github.com/ollama/ollama/blob/main/docs/api.md
 
             // Process regular content
-            $content = $line['message']['content']??'';
+            $content = $line['message']['content'] ?? '';
 
             yield $content;
         }

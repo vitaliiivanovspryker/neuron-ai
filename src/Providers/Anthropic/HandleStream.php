@@ -3,7 +3,6 @@
 namespace NeuronAI\Providers\Anthropic;
 
 use GuzzleHttp\Exception\GuzzleException;
-use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Exceptions\ProviderException;
 use Psr\Http\Message\StreamInterface;
 
@@ -77,7 +76,7 @@ trait HandleStream
             }
 
             // Process regular content
-            $content = $line['delta']['text']??'';
+            $content = $line['delta']['text'] ?? '';
 
             yield $content;
         }
@@ -100,7 +99,7 @@ trait HandleStream
                 'input' => '',
             ];
         } else {
-            if ($input = $line['delta']['partial_json']??null) {
+            if ($input = $line['delta']['partial_json'] ?? null) {
                 $toolCalls[$line['index']]['input'] .= $input;
             }
         }

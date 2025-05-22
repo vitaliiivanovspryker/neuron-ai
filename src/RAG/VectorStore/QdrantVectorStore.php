@@ -60,17 +60,15 @@ class QdrantVectorStore implements VectorStoreInterface
      */
     public function addDocuments(array $documents): void
     {
-        $points = \array_map(function ($document) {
-            return [
-                'id' => $document->id,
-                'payload' => [
-                    'content' => $document->content,
-                    'sourceType' => $document->sourceType,
-                    'sourceName' => $document->sourceName,
-                ],
-                'vector' => $document->embedding,
-            ];
-        }, $documents);
+        $points = \array_map(fn ($document) => [
+            'id' => $document->id,
+            'payload' => [
+                'content' => $document->content,
+                'sourceType' => $document->sourceType,
+                'sourceName' => $document->sourceName,
+            ],
+            'vector' => $document->embedding,
+        ], $documents);
 
         $this->client->put('points', [
             RequestOptions::JSON => [

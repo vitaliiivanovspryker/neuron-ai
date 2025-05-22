@@ -61,7 +61,7 @@ class CohereRerankerPostProcessorTest extends TestCase
         $this->assertEquals("Rome is the capital of Italy", $result[0]->content, "Rome should be the first result");
         $this->assertEquals("Paris is the capital of France", $result[1]->content, "Paris should be the second result");
         $this->assertEquals("Madrid is the capital of Spain", $result[2]->content, "Madrid should be the third result");
-        
+
         $this->assertEquals(0.9, $result[0]->score, "Score should match the mock response");
     }
 
@@ -111,4 +111,4 @@ class CohereRerankerPostProcessorTest extends TestCase
         $this->assertEquals("Rome is the capital of Italy", $result[0]->content, "Rome should be the first result");
         $this->assertEquals("Paris is the capital of France", $result[1]->content, "Paris should be the second result");
     }
-} 
+}

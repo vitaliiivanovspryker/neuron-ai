@@ -2,12 +2,12 @@
 
 namespace NeuronAI\Chat\Messages;
 
-use NeuronAI\Tools\Tool;
+use NeuronAI\Tools\ToolInterface;
 
 class ToolCallMessage extends AssistantMessage
 {
     /**
-     * @param array<Tool> $tools
+     * @param array<ToolInterface> $tools
      */
     public function __construct(
         protected array|string|int|float|null $content,
@@ -17,7 +17,7 @@ class ToolCallMessage extends AssistantMessage
     }
 
     /**
-     * @return array<Tool>
+     * @return array<ToolInterface>
      */
     public function getTools(): array
     {

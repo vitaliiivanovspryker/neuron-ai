@@ -3,3 +3,4 @@ vendor
 composer.lock
 *.cache
 .store
+.php-cs-fixer.cache

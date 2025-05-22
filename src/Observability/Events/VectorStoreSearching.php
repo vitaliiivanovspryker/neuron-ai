@@ -8,5 +8,6 @@ class VectorStoreSearching
 {
     public function __construct(
         public Message $question
-    ) {}
+    ) {
+    }
 }

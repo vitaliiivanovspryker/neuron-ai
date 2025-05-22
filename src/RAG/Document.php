@@ -21,7 +21,8 @@ class Document implements \JsonSerializable
 
     public function __construct(
         public string $content = '',
-    ) {}
+    ) {
+    }
 
     public function jsonSerialize(): array
     {

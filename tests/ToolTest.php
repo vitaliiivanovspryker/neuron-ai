@@ -30,39 +30,30 @@ class ToolTest extends TestCase
             ->addProperty(
                 new \NeuronAI\Tools\ToolProperty('age', 'integer', 'User age', true)
             )
-            ->setCallable(function () {});
+            ->setCallable(function (): void {});
 
-        $this->assertIsArray($tool->getRequiredProperties());
-        $this->assertEquals(['name', 'age'], $tool->getRequiredProperties());
+        $properties = $tool->getRequiredProperties();
+        $this->assertEquals(['name', 'age'], $properties);
     }
 
     public function test_tool_return_value()
     {
         $tool = Tool::make('test', 'Test tool');
 
-        $tool->setCallable(function () {
-            return 'test';
-        })->execute();
+        $tool->setCallable(fn () => 'test')->execute();
         $this->assertEquals('test', $tool->getResult());
 
-        $tool->setCallable(function () {
-            return ['test'];
-        })->execute();
+        $tool->setCallable(fn () => ['test'])->execute();
         $this->assertEquals('["test"]', $tool->getResult());
 
-        $tool->setCallable(function () {
-            return ['foo' => 'bar'];
-        })->execute();
+        $tool->setCallable(fn () => ['foo' => 'bar'])->execute();
         $this->assertEquals('{"foo":"bar"}', $tool->getResult());
 
-        $tool->setCallable(function () {
-            return new class
+        $tool->setCallable(fn () => new class () {
+            public function __toString(): string
             {
-                public function __toString(): string
-                {
-                    return 'test';
-                }
-            };
+                return 'test';
+            }
         })->execute();
         $this->assertEquals('test', $tool->getResult());
     }
@@ -73,8 +64,6 @@ class ToolTest extends TestCase
 
         $this->expectException(ToolException::class);
 
-        $tool->setCallable(function () {
-            return new class {};
-        })->execute();
+        $tool->setCallable(fn () => new class () {})->execute();
     }
 }

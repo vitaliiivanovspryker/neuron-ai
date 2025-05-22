@@ -52,7 +52,8 @@ class TavilySearchTool extends Tool
                 'search_query',
                 'string',
                 'The search query to perform web search.',
-                true),
+                true
+            ),
         )->addProperty(
             new ToolProperty(
                 'topic',
@@ -79,7 +80,7 @@ class TavilySearchTool extends Tool
         );
 
         $this->setCallable(
-            fn(
+            fn (
                 string $search_query,
                 ...$args
             ) => $this->search(
@@ -109,7 +110,7 @@ class TavilySearchTool extends Tool
 
         return [
             'answer' => $result['answer'],
-            'results' => \array_map(fn($item) => [
+            'results' => \array_map(fn ($item) => [
                 'title' => $item['title'],
                 'url' => $item['url'],
                 'content' => $item['content'],

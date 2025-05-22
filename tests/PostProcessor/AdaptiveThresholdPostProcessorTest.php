@@ -13,16 +13,16 @@ class AdaptiveThresholdPostProcessorTest extends TestCase
     {
         $doc1 = new Document();
         $doc1->score = 0.8;
-        
+
         $doc2 = new Document();
         $doc2->score = 0.3;
-        
+
         $doc3 = new Document();
         $doc3->score = 0.7;
-        
+
         $doc4 = new Document();
         $doc4->score = 0.4;
-        
+
         $doc5 = new Document();
         $doc5->score = 0.9;
 
@@ -31,7 +31,7 @@ class AdaptiveThresholdPostProcessorTest extends TestCase
         // Default multiplier = 0.6
         $processor = new AdaptiveThresholdPostProcessor();
         $question = new UserMessage('test question');
-        
+
         $result = $processor->process($question, $documents);
 
         // Median = 0.7, MAD = 0.3, threshold = 0.7 - 0.6 * 0.3 = 0.52
@@ -45,16 +45,16 @@ class AdaptiveThresholdPostProcessorTest extends TestCase
     {
         $doc1 = new Document();
         $doc1->score = 0.8;
-        
+
         $doc2 = new Document();
         $doc2->score = 0.3;
-        
+
         $doc3 = new Document();
         $doc3->score = 0.7;
-        
+
         $doc4 = new Document();
         $doc4->score = 0.4;
-        
+
         $doc5 = new Document();
         $doc5->score = 0.9;
 
@@ -63,7 +63,7 @@ class AdaptiveThresholdPostProcessorTest extends TestCase
         // Low multiplier = fewer documents retained (high precision)
         $processor = new AdaptiveThresholdPostProcessor(0.2);
         $question = new UserMessage('test question');
-        
+
         $result = $processor->process($question, $documents);
 
         // Median = 0.7, MAD = 0.3, threshold = 0.7 - 0.2 * 0.3 = 0.64
@@ -77,16 +77,16 @@ class AdaptiveThresholdPostProcessorTest extends TestCase
     {
         $doc1 = new Document();
         $doc1->score = 0.8;
-        
+
         $doc2 = new Document();
         $doc2->score = 0.3;
-        
+
         $doc3 = new Document();
         $doc3->score = 0.7;
-        
+
         $doc4 = new Document();
         $doc4->score = 0.4;
-        
+
         $doc5 = new Document();
         $doc5->score = 0.9;
 
@@ -95,7 +95,7 @@ class AdaptiveThresholdPostProcessorTest extends TestCase
         // Multiplier = 1.0 (high recall)
         $processor = new AdaptiveThresholdPostProcessor(1.0);
         $question = new UserMessage('test question');
-        
+
         $result = $processor->process($question, $documents);
 
         // Median = 0.7, MAD = 0.3, threshold = 0.7 - 1.0 * 0.2 = 0.5
@@ -110,16 +110,16 @@ class AdaptiveThresholdPostProcessorTest extends TestCase
     {
         $doc1 = new Document();
         $doc1->score = 0.8;
-        
+
         $doc2 = new Document();
         $doc2->score = 0.3;
-        
+
         $doc3 = new Document();
         $doc3->score = 0.7;
-        
+
         $doc4 = new Document();
         $doc4->score = 0.4;
-        
+
         $doc5 = new Document();
         $doc5->score = 0.9;
 
@@ -128,7 +128,7 @@ class AdaptiveThresholdPostProcessorTest extends TestCase
         // Higher multiplier = more documents retained
         $processor = new AdaptiveThresholdPostProcessor(2.0);
         $question = new UserMessage('test question');
-        
+
         $result = $processor->process($question, $documents);
 
         // Median = 0.7, MAD = 0.3, threshold = 0.7 - 2.0 * 0.3 = 0.1
@@ -145,7 +145,7 @@ class AdaptiveThresholdPostProcessorTest extends TestCase
 
         $processor = new AdaptiveThresholdPostProcessor(1.0);
         $question = new UserMessage('test question');
-        
+
         $result = $processor->process($question, $documents);
 
         // Should return the original array unchanged

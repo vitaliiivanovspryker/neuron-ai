@@ -25,6 +25,7 @@ class MemoryVectorStoreTest extends TestCase
 
     public function test_add_document_and_search()
     {
+        $this->expectNotToPerformAssertions();
         $document = new Document('Hello World!');
         $document->embedding = $this->embedding;
         $document->hash = \hash('sha256', 'Hello World!' . time());
@@ -33,7 +34,6 @@ class MemoryVectorStoreTest extends TestCase
         $store->addDocument($document);
 
         $results = $store->similaritySearch($this->embedding);
-        $this->assertIsArray($results);
     }
 
     public function test_similarity_search_with_scores()

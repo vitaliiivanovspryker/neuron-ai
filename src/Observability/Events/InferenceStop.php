@@ -9,5 +9,6 @@ class InferenceStop
     public function __construct(
         public Message $message,
         public Message $response
-    ) {}
+    ) {
+    }
 }

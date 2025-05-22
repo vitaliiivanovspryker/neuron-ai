@@ -2,7 +2,6 @@
 
 namespace NeuronAI\Chat\Messages;
 
-use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolInterface;
 
 class ToolCallResultMessage extends UserMessage

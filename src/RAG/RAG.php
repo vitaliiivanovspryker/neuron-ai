@@ -14,10 +14,10 @@ use NeuronAI\Observability\Events\VectorStoreResult;
 use NeuronAI\Observability\Events\VectorStoreSearching;
 use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
+use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\RAG\Embeddings\EmbeddingsProviderInterface;
 use NeuronAI\RAG\PostProcessor\PostProcessorInterface;
 use NeuronAI\RAG\VectorStore\VectorStoreInterface;
-use NeuronAI\SystemPrompt;
 
 /**
  * @method RAG withProvider(AIProviderInterface $provider)
@@ -87,9 +87,9 @@ class RAG extends Agent
      * Set the system message based on the context.
      *
      * @param array<Document> $documents
-     * @return RAG
+     * @return AgentInterface
      */
-    protected function setSystemMessage(array $documents): RAG
+    protected function setSystemMessage(array $documents): AgentInterface
     {
         $context = '';
         foreach ($documents as $document) {
@@ -104,8 +104,6 @@ class RAG extends Agent
     /**
      * Retrieve relevant documents from the vector store.
      *
-     * @param string $question
-     * @param int $k
      * @return array<Document>
      */
     private function searchDocuments(string $question): array
@@ -164,7 +162,6 @@ class RAG extends Agent
     }
 
     /**
-     * @param array<PostprocessorInterface> $postProcessors
      * @throws AgentException
      */
     public function setPostProcessors(array $postProcessors): RAG

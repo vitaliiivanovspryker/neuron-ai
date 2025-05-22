@@ -3,8 +3,6 @@
 namespace NeuronAI\Observability;
 
 use NeuronAI\AgentInterface;
-use NeuronAI\Chat\Messages\ToolCallMessage;
-use NeuronAI\Chat\Messages\ToolCallResultMessage;
 use NeuronAI\Observability\Events\InferenceStart;
 use NeuronAI\Observability\Events\InferenceStop;
 use NeuronAI\Observability\Events\MessageSaved;
@@ -18,7 +16,7 @@ trait HandleInferenceEvents
             return;
         }
 
-        $label = $this->getBaseClassName(get_class($data->message));
+        $label = $this->getBaseClassName($data->message::class);
 
         $this->segments[$this->getMessageId($data->message).'-save'] = $this->inspector
             ->startSegment(self::SEGMENT_TYPE.'-chathistory', "save( {$label} )")
@@ -49,7 +47,7 @@ trait HandleInferenceEvents
             return;
         }
 
-        $label = $this->getBaseClassName(get_class($data->message));
+        $label = $this->getBaseClassName($data->message::class);
 
         $this->segments[$this->getMessageId($data->message).'-inference'] = $this->inspector
             ->startSegment(self::SEGMENT_TYPE.'-inference', "inference( {$label} )")

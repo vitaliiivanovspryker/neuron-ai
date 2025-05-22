@@ -34,8 +34,8 @@ trait HandleStream
             // Catch usage when streaming
             $decoded = \json_decode($text, true);
             if (\is_array($decoded) && \array_key_exists('usage', $decoded)) {
-                $usage->inputTokens += $decoded['usage']['input_tokens']??0;
-                $usage->outputTokens += $decoded['usage']['output_tokens']??0;
+                $usage->inputTokens += $decoded['usage']['input_tokens'] ?? 0;
+                $usage->outputTokens += $decoded['usage']['output_tokens'] ?? 0;
                 continue;
             }
 

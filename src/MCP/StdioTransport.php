@@ -10,12 +10,14 @@ class StdioTransport implements McpTransportInterface
     /**
      * Create a new StdioTransport with the given configuration
      */
-    public function __construct(protected array $config) {}
+    public function __construct(protected array $config)
+    {
+    }
 
     /**
      * Connect to the MCP server by spawning the process
      */
-    public function connect() : void
+    public function connect(): void
     {
         $descriptorSpec = [
             0 => ["pipe", "r"],  // stdin
@@ -64,7 +66,7 @@ class StdioTransport implements McpTransportInterface
     /**
      * Send a request to the MCP server
      */
-    public function send($data) : void
+    public function send($data): void
     {
         if (!is_resource($this->process)) {
             throw new \Exception("Process is not running");
@@ -91,7 +93,7 @@ class StdioTransport implements McpTransportInterface
     /**
      * Receive a response from the MCP server
      */
-    public function receive() : array
+    public function receive(): array
     {
         if (!is_resource($this->process)) {
             throw new \Exception("Process is not running");
@@ -133,7 +135,7 @@ class StdioTransport implements McpTransportInterface
     /**
      * Disconnect from the MCP server
      */
-    public function disconnect() : void
+    public function disconnect(): void
     {
         if (is_resource($this->process)) {
             // Close all pipe handles

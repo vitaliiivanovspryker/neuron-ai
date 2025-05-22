@@ -40,7 +40,7 @@ class FileVectorStore implements VectorStoreInterface
     {
         $topItems = [];
 
-        foreach ($this->getLine($this->getFilePath()) as $index => $document) {
+        foreach ($this->getLine($this->getFilePath()) as $document) {
             $document = \json_decode($document, true);
 
             if (empty($document['embedding'])) {
@@ -50,7 +50,7 @@ class FileVectorStore implements VectorStoreInterface
 
             $topItems[] = compact('dist', 'document');
 
-            \usort($topItems, fn($a, $b) => $a['dist'] <=> $b['dist']);
+            \usort($topItems, fn ($a, $b) => $a['dist'] <=> $b['dist']);
 
             if (\count($topItems) > $this->topK) {
                 $topItems = \array_slice($topItems, 0, $this->topK, true);
@@ -80,7 +80,7 @@ class FileVectorStore implements VectorStoreInterface
     {
         \file_put_contents(
             $this->getFilePath(),
-            implode(PHP_EOL, \array_map(fn(array $vector) => \json_encode($vector), $vectors)).PHP_EOL,
+            implode(PHP_EOL, \array_map(fn (array $vector) => \json_encode($vector), $vectors)).PHP_EOL,
             FILE_APPEND
         );
     }

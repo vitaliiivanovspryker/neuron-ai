@@ -8,20 +8,16 @@ use NeuronAI\RAG\Document;
 class FixedThresholdPostProcessor implements PostProcessorInterface
 {
     /**
-     * The threshold value below which documents will be filtered out.
-     *
-     * @var float
-     */
-    protected float $threshold;
-
-    /**
      * Creates a post processor that filters documents based on a fixed threshold.
      *
      * @param float $threshold threshold value (documents with scores below this value will be filtered out)
      */
-    public function __construct(float $threshold = 0.5)
-    {
-        $this->threshold = $threshold;
+    public function __construct(
+        /**
+         * The threshold value below which documents will be filtered out.
+         */
+        protected float $threshold = 0.5
+    ) {
     }
 
     /**
@@ -33,8 +29,6 @@ class FixedThresholdPostProcessor implements PostProcessorInterface
      */
     public function process(Message $question, array $documents): array
     {
-        return \array_values(\array_filter($documents, function ($document) {
-            return $document->score >= $this->threshold;
-        }));
+        return \array_values(\array_filter($documents, fn ($document) => $document->score >= $this->threshold));
     }
 }

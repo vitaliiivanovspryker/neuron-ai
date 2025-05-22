@@ -2,7 +2,6 @@
 
 namespace NeuronAI\RAG\VectorStore;
 
-use NeuronAI\Exceptions\SimilarityCalculationException;
 use NeuronAI\Exceptions\VectorStoreException;
 use NeuronAI\RAG\Document;
 use NeuronAI\RAG\VectorStore\Search\SimilaritySearch;
@@ -12,7 +11,9 @@ class MemoryVectorStore implements VectorStoreInterface
     /** @var array<Document> */
     private array $documents = [];
 
-    public function __construct(protected int $topK = 4) {}
+    public function __construct(protected int $topK = 4)
+    {
+    }
 
     public function addDocument(Document $document): void
     {

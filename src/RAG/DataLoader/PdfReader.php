@@ -2,7 +2,6 @@
 
 namespace NeuronAI\RAG\DataLoader;
 
-use Closure;
 use NeuronAI\Exceptions\DataReaderException;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -93,7 +92,7 @@ class PdfReader implements ReaderInterface
             return explode(' ', $content, 2);
         };
 
-        $reducer = fn(array $carry, array $option): array => array_merge($carry, $option);
+        $reducer = fn (array $carry, array $option): array => array_merge($carry, $option);
 
         return array_reduce(array_map($mapper, $options), $reducer, []);
     }
@@ -123,6 +122,7 @@ class PdfReader implements ReaderInterface
         string $filePath,
         array $options = []
     ): string {
+        /** @phpstan-ignore new.static */
         $instance = new static();
 
         if (\array_key_exists('binPath', $options)) {

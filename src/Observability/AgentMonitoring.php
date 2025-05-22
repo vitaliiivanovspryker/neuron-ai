@@ -23,8 +23,8 @@ class AgentMonitoring implements \SplObserver
     use HandleInferenceEvents;
     use HandleStructuredEvents;
 
-    const SEGMENT_TYPE = 'neuron';
-    const SEGMENT_COLOR = '#506b9b';
+    public const SEGMENT_TYPE = 'neuron';
+    public const SEGMENT_COLOR = '#506b9b';
 
     /**
      * @var array<string, Segment>
@@ -68,9 +68,10 @@ class AgentMonitoring implements \SplObserver
     public function __construct(
         protected Inspector $inspector,
         protected bool $catch = true
-    ) {}
+    ) {
+    }
 
-    public function update(\SplSubject $subject, string $event = null, $data = null): void
+    public function update(\SplSubject $subject, ?string $event = null, mixed $data = null): void
     {
         if (!\is_null($event) && \array_key_exists($event, $this->methodsMap)) {
             $method = $this->methodsMap[$event];
@@ -98,7 +99,7 @@ class AgentMonitoring implements \SplObserver
         }
 
         $method = $this->getPrefix($event);
-        $class = get_class($agent);
+        $class = $agent::class;
 
         if ($this->inspector->needTransaction()) {
             $this->inspector->startTransaction($class)->setType('agent');
@@ -117,7 +118,7 @@ class AgentMonitoring implements \SplObserver
     public function stop(\NeuronAI\AgentInterface $agent, string $event, $data = null)
     {
         $method = $this->getPrefix($event);
-        $class = get_class($agent);
+        $class = $agent::class;
 
         if (\array_key_exists($class.$method, $this->segments)) {
             // End the last segment for the given method and agent class
@@ -143,17 +144,13 @@ class AgentMonitoring implements \SplObserver
         return [
             'Agent' => [
                 'instructions' => $agent->instructions(),
-                'provider' => get_class($agent->resolveProvider()),
+                'provider' => $agent->resolveProvider()::class,
             ],
-            'Tools' => \array_map(function (Tool $tool) {
-                return [
-                    'name' => $tool->getName(),
-                    'description' => $tool->getDescription(),
-                    'properties' => \array_map(function (ToolProperty $property) {
-                        return $property->jsonSerialize();
-                    }, $tool->getProperties()),
-                ];
-            }, $agent->getTools()??[]),
+            'Tools' => \array_map(fn (Tool $tool) => [
+                'name' => $tool->getName(),
+                'description' => $tool->getDescription(),
+                'properties' => \array_map(fn (ToolProperty $property) => $property->jsonSerialize(), $tool->getProperties()),
+            ], $agent->getTools()),
             //'Messages' => $agent->resolveChatHistory()->getMessages(),
         ];
     }

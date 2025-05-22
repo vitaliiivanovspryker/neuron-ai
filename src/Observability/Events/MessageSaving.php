@@ -6,5 +6,7 @@ use NeuronAI\Chat\Messages\Message;
 
 class MessageSaving
 {
-    public function __construct(public Message $message) {}
+    public function __construct(public Message $message)
+    {
+    }
 }

@@ -4,7 +4,6 @@ namespace NeuronAI\Tests;
 
 use NeuronAI\StructuredOutput\JsonSchema;
 use NeuronAI\StructuredOutput\SchemaProperty;
-use NeuronAI\Tests\Utils\Person;
 use NeuronAI\Tests\Utils\PersonWithAddress;
 use NeuronAI\Tests\Utils\PersonWithTags;
 use PHPUnit\Framework\TestCase;
@@ -13,7 +12,7 @@ class JsonSchemaTest extends TestCase
 {
     public function test_all_properties_required()
     {
-        $class = new class {
+        $class = new class () {
             public string $firstName;
             public string $lastName;
         };
@@ -36,9 +35,9 @@ class JsonSchemaTest extends TestCase
     }
     public function test_with_nullable_properties()
     {
-        $class = new class {
+        $class = new class () {
             public string $firstName;
-            public ?string $lastName;
+            public ?string $lastName = null;
         };
 
         $schema = (new JsonSchema())->generate($class::class);
@@ -51,6 +50,7 @@ class JsonSchemaTest extends TestCase
                 ],
                 'lastName' => [
                     'type' => ['string', 'null'],
+                    'default' => null
                 ]
             ],
             'required' => ['firstName'],
@@ -60,7 +60,7 @@ class JsonSchemaTest extends TestCase
 
     public function test_with_default_value()
     {
-        $class = new class {
+        $class = new class () {
             public string $firstName;
             public ?string $lastName = 'last name';
         };
@@ -85,7 +85,7 @@ class JsonSchemaTest extends TestCase
 
     public function test_with_attribute()
     {
-        $class = new class {
+        $class = new class () {
             #[SchemaProperty(title: "The user first name", description: "The user first name")]
             public string $firstName;
         };
@@ -108,7 +108,7 @@ class JsonSchemaTest extends TestCase
 
     public function test_nullable_property_with_attribute()
     {
-        $class = new class {
+        $class = new class () {
             #[SchemaProperty(title: "The user first name", description: "The user first name", required: false)]
             public string $firstName;
         };

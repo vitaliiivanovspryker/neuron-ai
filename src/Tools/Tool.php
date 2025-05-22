@@ -19,9 +19,9 @@ class Tool implements ToolInterface
     protected array $properties = [];
 
     /**
-     * @var callable
+     * @var ?callable
      */
-    protected $callback;
+    protected $callback = null;
 
     /**
      * The arguments to pass in to the callback.
@@ -53,7 +53,8 @@ class Tool implements ToolInterface
     public function __construct(
         protected string $name,
         protected string $description,
-    ) {}
+    ) {
+    }
 
     public function getName(): string
     {
@@ -65,7 +66,8 @@ class Tool implements ToolInterface
         return $this->description;
     }
 
-    public function addProperty(ToolProperty $property): ToolInterface {
+    public function addProperty(ToolProperty $property): ToolInterface
+    {
         $this->properties[] = $property;
         return $this;
     }
@@ -99,7 +101,7 @@ class Tool implements ToolInterface
 
     public function setInputs(?array $inputs): self
     {
-        $this->inputs = $inputs??[];
+        $this->inputs = $inputs ?? [];
         return $this;
     }
 
@@ -131,7 +133,7 @@ class Tool implements ToolInterface
             return $this;
         }
 
-        if (is_object($result) && \method_exists($result, '__toString')) {
+        if (\method_exists($result, '__toString')) {
             $this->result = (string) $result;
             return $this;
         }
@@ -147,7 +149,7 @@ class Tool implements ToolInterface
      */
     public function execute(): void
     {
-        if (!isset($this->callback)) {
+        if (!is_callable($this->callback)) {
             throw new ToolCallableNotSet('No callback defined for execution.');
         }
 

@@ -32,7 +32,7 @@ class Gemini implements AIProviderInterface
      *
      * @var ?string
      */
-    protected ?string $system;
+    protected ?string $system = null;
 
     /**
      * The component responsible for mapping the NeuronAI Message to the AI provider format.
@@ -127,7 +127,7 @@ class Gemini implements AIProviderInterface
         }, $message['parts']);
 
         $result = new ToolCallMessage(
-            $message['content']??null,
+            $message['content'] ?? null,
             \array_filter($tools)
         );
         $result->setRole(Message::ROLE_MODEL);
