@@ -59,7 +59,7 @@ class McpConnector
                 new ToolProperty(
                     $name,
                     $input['type'],
-                    $input['description'],
+                    $input['description'] ?? '',
                     \in_array($name, $item['inputSchema']['required'] ?? [])
                 )
             );
