@@ -171,7 +171,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
             }
             if ($key === 'images') {
                 foreach ($message['images'] as $image) {
-                    $item->addImage(new Image($image['image'], $image['type'], $image['media_type'] ?? null));
+                    $item->addAttachment(new Image($image['image'], $image['type'], $image['media_type'] ?? null));
                 }
                 continue;
             }

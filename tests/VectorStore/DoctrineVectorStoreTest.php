@@ -22,6 +22,7 @@ class DoctrineVectorStoreTest extends TestCase
     private EntityManager $entityManager;
     private SchemaTool $schemaTool;
     private ClassMetadata $metadata;
+    private array $embeddingToSearch;
 
     protected function setUp(): void
     {

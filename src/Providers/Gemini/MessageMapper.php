@@ -65,7 +65,7 @@ class MessageMapper implements MessageMapperInterface
                     'mime_type' => $attachment->mediaType,
                 ]
             ],
-            default => throw new ProviderException('Invalid image type '.$image->type),
+            default => throw new ProviderException('Invalid image type '.$attachment->type),
         };
     }
 

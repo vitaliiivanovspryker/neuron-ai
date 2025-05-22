@@ -18,7 +18,7 @@ class VectorType extends Type
         // getName is deprecated since doctrine/dbal 2.13 see: https://github.com/doctrine/dbal/issues/4749
         // BUT it is the most stable way to check if the platform is PostgreSQLPlatform in a lot of doctrine versions
         // so we will use it and add a check for the class name in case it is removed in the future
-        if (method_exists($platform, 'getName') && ! \in_array($platform->getName(), SupportedDoctrineVectorStore::values())) {
+        if (! \in_array($platform->getName(), SupportedDoctrineVectorStore::values())) {
             throw Exception::notSupported('VECTORs not supported by Platform.');
         }
 

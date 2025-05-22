@@ -125,7 +125,7 @@ trait HandleStructured
         // Validate if the object fields respect the validation attributes
         // https://symfony.com/doc/current/validation.html#constraints
         $this->notify('structured-validating', new Validating($class, $json));
-        $loader = class_exists(AttributeLoader::class) ? new AttributeLoader() : new AnnotationLoader();
+        $loader = class_exists(AnnotationLoader::class) ? new AnnotationLoader() : new AttributeLoader();
         $violations = Validation::createValidatorBuilder()
             ->addLoader($loader)
             ->getValidator()

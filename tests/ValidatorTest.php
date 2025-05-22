@@ -9,8 +9,8 @@ use NeuronAI\Tests\Utils\PersonWithTags;
 use NeuronAI\Tests\Utils\Tag;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Mapping\Loader\AnnotationLoader;
-use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Mapping\Loader\AttributeLoader;
+use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validation;
 
 class ValidatorTest extends TestCase
@@ -21,7 +21,7 @@ class ValidatorTest extends TestCase
         $obj->firstName = 'John';
         $obj->lastName = 'Doe';
 
-        $loader = class_exists(AttributeLoader::class) ? new AttributeLoader() : new AnnotationLoader();
+        $loader = class_exists(AnnotationLoader::class) ? new AnnotationLoader() : new AttributeLoader();
         $violations = Validation::createValidatorBuilder()
             ->addLoader($loader)
             ->getValidator()
@@ -35,7 +35,7 @@ class ValidatorTest extends TestCase
         $obj = new Person();
         $obj->lastName = 'Doe';
 
-        $loader = class_exists(AttributeLoader::class) ? new AttributeLoader() : new AnnotationLoader();
+        $loader = class_exists(AnnotationLoader::class) ? new AnnotationLoader() : new AttributeLoader();
         $violations = Validation::createValidatorBuilder()
             ->addLoader($loader)
             ->getValidator()
@@ -57,7 +57,7 @@ class ValidatorTest extends TestCase
         $obj->address = new Address();
         $obj->address->city = 'Rome';
 
-        $loader = class_exists(AttributeLoader::class) ? new AttributeLoader() : new AnnotationLoader();
+        $loader = class_exists(AnnotationLoader::class) ? new AnnotationLoader() : new AttributeLoader();
         $violations = Validation::createValidatorBuilder()
             ->addLoader($loader)
             ->getValidator()
@@ -82,7 +82,7 @@ class ValidatorTest extends TestCase
         $tag->name = 'agent';
         $obj->tags = [$tag];
 
-        $loader = class_exists(AttributeLoader::class) ? new AttributeLoader() : new AnnotationLoader();
+        $loader = class_exists(AnnotationLoader::class) ? new AnnotationLoader() : new AttributeLoader();
         $violations = Validation::createValidatorBuilder()
             ->addLoader($loader)
             ->getValidator()
@@ -97,7 +97,7 @@ class ValidatorTest extends TestCase
         $obj->firstName = 'John';
         $obj->lastName = 'Doe';
 
-        $loader = class_exists(AttributeLoader::class) ? new AttributeLoader() : new AnnotationLoader();
+        $loader = class_exists(AnnotationLoader::class) ? new AnnotationLoader() : new AttributeLoader();
         $violations = Validation::createValidatorBuilder()
             ->addLoader($loader)
             ->getValidator()

@@ -133,7 +133,7 @@ class Tool implements ToolInterface
             return $this;
         }
 
-        if (is_object($result) && \method_exists($result, '__toString')) {
+        if (\method_exists($result, '__toString')) {
             $this->result = (string) $result;
             return $this;
         }
