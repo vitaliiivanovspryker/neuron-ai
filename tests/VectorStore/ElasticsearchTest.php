@@ -7,7 +7,7 @@ use Elastic\Elasticsearch\ClientBuilder;
 use NeuronAI\RAG\Document;
 use NeuronAI\RAG\VectorStore\ElasticsearchVectorStore;
 use NeuronAI\RAG\VectorStore\VectorStoreInterface;
-use NeuronAI\Tests\CheckOpenPort;
+use NeuronAI\Tests\Traits\CheckOpenPort;
 use PHPUnit\Framework\TestCase;
 
 class ElasticsearchTest extends TestCase

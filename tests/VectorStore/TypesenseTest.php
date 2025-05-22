@@ -5,7 +5,7 @@ namespace NeuronAI\Tests\VectorStore;
 use NeuronAI\RAG\Document;
 use NeuronAI\RAG\VectorStore\TypesenseVectorStore;
 use NeuronAI\RAG\VectorStore\VectorStoreInterface;
-use NeuronAI\Tests\CheckOpenPort;
+use NeuronAI\Tests\Traits\CheckOpenPort;
 use PHPUnit\Framework\TestCase;
 use Typesense\Client;
 

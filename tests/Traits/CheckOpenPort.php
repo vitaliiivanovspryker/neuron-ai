@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\Tests;
+namespace NeuronAI\Tests\Traits;
 
 trait CheckOpenPort
 {

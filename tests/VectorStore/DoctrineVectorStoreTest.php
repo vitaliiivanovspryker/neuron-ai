@@ -10,7 +10,7 @@ use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
 use NeuronAI\RAG\VectorStore\Doctrine\DoctrineVectorStore;
 use NeuronAI\RAG\VectorStore\Doctrine\VectorType;
-use NeuronAI\Tests\CheckOpenPort;
+use NeuronAI\Tests\Traits\CheckOpenPort;
 use NeuronAI\Tests\stubs\EntityVectorStub;
 use NeuronAI\Tests\Traits\NeedsDatabaseBootstrap;
 use PHPUnit\Framework\TestCase;
@@ -18,7 +18,6 @@ use PHPUnit\Framework\TestCase;
 class DoctrineVectorStoreTest extends TestCase
 {
     use CheckOpenPort;
-    use NeedsDatabaseBootstrap;
 
     private const TYPE_NAME = 'vector';
     private const EMBEDDING_SIZE = 3072;
@@ -32,6 +31,8 @@ class DoctrineVectorStoreTest extends TestCase
         if (!$this->isPortOpen('127.0.0.1', 3306)) {
             $this->markTestSkipped('Port 3306 is not open. Skipping test.');
         }
+
+        $this->bootstrapDatabase();
 
         if (!Type::hasType(self::TYPE_NAME)) {
             Type::addType(self::TYPE_NAME, VectorType::class);
@@ -62,6 +63,17 @@ class DoctrineVectorStoreTest extends TestCase
         $this->metadata = $this->entityManager->getClassMetadata(EntityVectorStub::class);
         $this->schemaTool->createSchema([$this->metadata]);
         $this->embeddingToSearch = json_decode(file_get_contents(__DIR__ . '/../stubs/hello-world.embeddings'), true);
+    }
+
+    protected function bootstrapDatabase()
+    {
+        $scriptPath = __DIR__ . '/../scripts/setup-test-db.php';
+
+        if (!file_exists($scriptPath)) {
+            throw new \RuntimeException("Bootstrap script not found at $scriptPath");
+        }
+
+        require_once $scriptPath;
     }
 
     /**
