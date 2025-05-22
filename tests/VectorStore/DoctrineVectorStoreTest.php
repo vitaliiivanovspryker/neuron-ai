@@ -12,7 +12,6 @@ use NeuronAI\RAG\VectorStore\Doctrine\DoctrineVectorStore;
 use NeuronAI\RAG\VectorStore\Doctrine\VectorType;
 use NeuronAI\Tests\Traits\CheckOpenPort;
 use NeuronAI\Tests\stubs\EntityVectorStub;
-use NeuronAI\Tests\Traits\NeedsDatabaseBootstrap;
 use PHPUnit\Framework\TestCase;
 
 class DoctrineVectorStoreTest extends TestCase
