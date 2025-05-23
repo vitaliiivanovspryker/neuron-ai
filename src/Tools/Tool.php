@@ -121,24 +121,10 @@ class Tool implements ToolInterface
         return $this->result;
     }
 
-    public function setResult(object|string|array $result): self
+    public function setResult(string|array $result): self
     {
-        if (is_string($result)) {
-            $this->result = $result;
-            return $this;
-        }
-
-        if (is_array($result)) {
-            $this->result = \json_encode($result);
-            return $this;
-        }
-
-        if (\method_exists($result, '__toString')) {
-            $this->result = (string) $result;
-            return $this;
-        }
-
-        throw new ToolException("Invalid tool result. Must be a string, array or object with __toString method.");
+        $this->result = is_array($result) ? \json_encode($result) : $result;
+        return $this;
     }
 
     /**

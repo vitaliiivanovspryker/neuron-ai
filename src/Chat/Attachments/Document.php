@@ -10,7 +10,7 @@ class Document extends Attachment
     public function __construct(
         string $document,
         AttachmentContentType $type = AttachmentContentType::URL,
-        $mediaType = null
+        ?string $mediaType = null
     ) {
         parent::__construct(
             AttachmentType::DOCUMENT,
