@@ -20,7 +20,9 @@ class RizaCodeInterpreter extends Tool
         parent::__construct(
             "execute_{$language}_code",
             "Execute {$language} scripts in a secure and isolated runtime environment."
-        )->addProperty(
+        );
+
+        $this->addProperty(
             new ToolProperty(
                 'code',
                 'string',

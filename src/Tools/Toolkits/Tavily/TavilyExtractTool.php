@@ -24,7 +24,8 @@ class TavilyExtractTool extends Tool
         parent::__construct(
             'url_reader',
             'Get the content of a URL in markdown format.'
-        )->addProperty(
+        );
+        $this->addProperty(
             new ToolProperty(
                 'url',
                 'string',
