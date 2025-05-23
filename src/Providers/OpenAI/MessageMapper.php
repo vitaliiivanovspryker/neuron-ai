@@ -47,7 +47,7 @@ class MessageMapper implements MessageMapperInterface
         if (is_string($payload['content']) && $attachments) {
             $payload['content'] = [
                 [
-                    'type' => 'text',
+                    'type' => 'input_text',
                     'text' => $payload['content'],
                 ],
             ];
@@ -70,16 +70,12 @@ class MessageMapper implements MessageMapperInterface
 
         return match($attachment->contentType) {
             AttachmentContentType::URL => [
-                'type' => 'image_url',
-                'image_url' => [
-                    'url' => $attachment->content,
-                ],
+                'type' => 'input_image',
+                'image_url' => $attachment->content,
             ],
             AttachmentContentType::BASE64 => [
-                'type' => 'image_url',
-                'image_url' => [
-                    'url' => 'data:'.$attachment->mediaType.';base64,'.$attachment->content,
-                ],
+                'type' => 'input_image',
+                'image_url' => 'data:'.$attachment->mediaType.';base64,'.$attachment->content,
             ]
         };
     }
