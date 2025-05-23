@@ -3,6 +3,8 @@
 namespace NeuronAI\Providers\Gemini;
 
 use NeuronAI\Chat\Attachments\Attachment;
+use NeuronAI\Chat\Enums\AttachmentContentType;
+use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
@@ -53,26 +55,25 @@ class MessageMapper implements MessageMapperInterface
     protected function mapAttachment(Attachment $attachment): array
     {
         return match($attachment->contentType) {
-            Attachment::TYPE_URL => [
+            AttachmentContentType::URL => [
                 'file_data' => [
                     'file_uri' => $attachment->content,
                     'mime_type' => $attachment->mediaType,
                 ],
             ],
-            Attachment::TYPE_BASE64 => [
+            AttachmentContentType::BASE64 => [
                 'inline_data' => [
                     'data' => $attachment->content,
                     'mime_type' => $attachment->mediaType,
                 ]
-            ],
-            default => throw new ProviderException('Invalid image type '.$attachment->type),
+            ]
         };
     }
 
     protected function mapToolCall(ToolCallMessage $message): void
     {
         $this->mapping[] = [
-            'role' => Message::ROLE_MODEL,
+            'role' => MessageRole::MODEL->value,
             'parts' => [
                 ...\array_map(fn (ToolInterface $tool) => [
                     'functionCall' => [
@@ -87,7 +88,7 @@ class MessageMapper implements MessageMapperInterface
     protected function mapToolsResult(ToolCallResultMessage $message): void
     {
         $this->mapping[] = [
-            'role' => Message::ROLE_USER,
+            'role' => MessageRole::USER->value,
             'parts' => \array_map(fn (ToolInterface $tool) => [
                 'functionResponse' => [
                     'name' => $tool->getName(),

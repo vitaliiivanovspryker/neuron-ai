@@ -2,8 +2,9 @@
 
 namespace NeuronAI\Providers\Ollama;
 
-use NeuronAI\Chat\Attachments\Attachment;
 use NeuronAI\Chat\Attachments\Image;
+use NeuronAI\Chat\Enums\AttachmentContentType;
+use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
@@ -61,10 +62,9 @@ class MessageMapper implements MessageMapperInterface
     protected function mapImage(Image $image): string
     {
         return match($image->contentType) {
-            Attachment::TYPE_BASE64 => $image->content,
+            AttachmentContentType::BASE64 => $image->content,
             // Transform url in base64 could be a security issue. So we raise an exception.
-            Image::TYPE_URL => throw new ProviderException('Ollama support only base64 image type.'),
-            default => throw new ProviderException('Invalid image type '.$image->type),
+            AttachmentContentType::URL => throw new ProviderException('Ollama support only base64 image type.'),
         };
     }
 
@@ -95,7 +95,7 @@ class MessageMapper implements MessageMapperInterface
     {
         foreach ($message->getTools() as $tool) {
             $this->mapping[] = [
-                'role' => Message::ROLE_TOOL,
+                'role' => MessageRole::TOOL->value,
                 'content' => $tool->getResult()
             ];
         }

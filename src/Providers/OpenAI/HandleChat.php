@@ -3,6 +3,7 @@
 namespace NeuronAI\Providers\OpenAI;
 
 use GuzzleHttp\Exception\GuzzleException;
+use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\Usage;
@@ -19,7 +20,7 @@ trait HandleChat
     {
         // Include the system prompt
         if (isset($this->system)) {
-            \array_unshift($messages, new Message(Message::ROLE_SYSTEM, $this->system));
+            \array_unshift($messages, new Message(MessageRole::SYSTEM, $this->system));
         }
 
         $json = [

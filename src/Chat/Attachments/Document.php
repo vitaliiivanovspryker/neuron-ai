@@ -2,15 +2,18 @@
 
 namespace NeuronAI\Chat\Attachments;
 
+use NeuronAI\Chat\Enums\AttachmentContentType;
+use NeuronAI\Chat\Enums\AttachmentType;
+
 class Document extends Attachment
 {
     public function __construct(
         string $document,
-        string $type = self::TYPE_URL,
+        AttachmentContentType $type = AttachmentContentType::URL,
         $mediaType = null
     ) {
         parent::__construct(
-            Attachment::DOCUMENT,
+            AttachmentType::DOCUMENT,
             $document,
             $type,
             $mediaType
