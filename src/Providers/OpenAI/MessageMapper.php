@@ -70,12 +70,16 @@ class MessageMapper implements MessageMapperInterface
 
         return match($attachment->contentType) {
             AttachmentContentType::URL => [
-                'type' => 'input_image',
-                'image_url' => $attachment->content,
+                'type' => 'image_url',
+                'image_url' => [
+                    'url' => $attachment->content,
+                ],
             ],
             AttachmentContentType::BASE64 => [
-                'type' => 'input_image',
-                'image_url' => 'data:'.$attachment->mediaType.';base64,'.$attachment->content,
+                'type' => 'image_url',
+                'image_url' => [
+                    'url' => 'data:'.$attachment->mediaType.';base64,'.$attachment->content,
+                ],
             ]
         };
     }
