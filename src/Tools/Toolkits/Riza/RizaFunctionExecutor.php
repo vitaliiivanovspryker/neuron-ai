@@ -34,6 +34,13 @@ class RizaFunctionExecutor extends Tool
                 'The input arguments to execute the function.',
                 false,
             )
+        )->addProperty(
+            new ToolProperty(
+                'env',
+                'array',
+                "Set of key-value pairs to add to the script's execution environment.",
+                false,
+            )
         )->setCallable($this);
 
         $this->client = new Client([
@@ -46,13 +53,17 @@ class RizaFunctionExecutor extends Tool
         ]);
     }
 
-    public function __invoke(string $code, array $input = [])
-    {
+    public function __invoke(
+        string $code,
+        array $input = [],
+        array $env = [],
+    ) {
         $result = $this->client->post('execute-function', [
             RequestOptions::JSON => [
                 'language' => $this->language,
                 'code' => $code,
                 'input' => $input,
+                'env' => $env,
             ]
         ])->getBody()->getContents();
 

@@ -27,6 +27,20 @@ class RizaCodeInterpreter extends Tool
                 'The code to execute.',
                 true,
             )
+        )->addProperty(
+            new ToolProperty(
+                'args',
+                'array',
+                "List of command line arguments to pass to the script (List o strings).",
+                false,
+            )
+        )->addProperty(
+            new ToolProperty(
+                'env',
+                'array',
+                "Set of key-value pairs to add to the script's execution environment.",
+                false,
+            )
         )->setCallable($this);
 
         $this->client = new Client([
@@ -39,12 +53,17 @@ class RizaCodeInterpreter extends Tool
         ]);
     }
 
-    public function __invoke(string $code)
-    {
+    public function __invoke(
+        string $code,
+        array $args = [],
+        array $env = [],
+    ) {
         $result = $this->client->post('execute', [
             RequestOptions::JSON => [
                 'language' => $this->language,
                 'code' => $code,
+                'args' => $args,
+                'env' => $env,
             ]
         ])->getBody()->getContents();
 
