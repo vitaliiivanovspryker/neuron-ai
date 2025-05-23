@@ -103,7 +103,7 @@ use NeuronAI\Observability\AgentMonitoring;
 
 // The Inspector instance in your application - https://inspector.dev/
 $inspector = new \Inspector\Inspector(
-    new \Inspector\Configuration('YOUR-INGESTION-KEY')
+    new \Inspector\Configuration('INSPECTOR_INGESTION_KEY')
 );
 
 $agent = YouTubeAgent::make()->observe(new AgentMonitoring($inspector));
@@ -341,7 +341,7 @@ class Person
 
 // The Inspector instance in your application - https://inspector.dev/
 $inspector = new \Inspector\Inspector(
-    new \Inspector\Configuration('YOUR-INGESTION-KEY')
+    new \Inspector\Configuration('INSPECTOR_INGESTION_KEY')
 );
 
 // Talk to the agent requiring the structured output
@@ -379,7 +379,7 @@ use NeuronAI\Observability\AgentMonitoring;
 
 // The Inspector instance in your application - https://inspector.dev/
 $inspector = new \Inspector\Inspector(
-    new \Inspector\Configuration('YOUR-INGESTION-KEY')
+    new \Inspector\Configuration('INSPECTOR_INGESTION_KEY')
 );
 
 // Attach monitoring to the Agent
