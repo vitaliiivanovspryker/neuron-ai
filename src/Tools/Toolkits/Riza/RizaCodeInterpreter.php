@@ -31,7 +31,7 @@ class RizaCodeInterpreter extends Tool
             new ToolProperty(
                 'args',
                 'array',
-                "List of command line arguments to pass to the script (List o strings).",
+                "List of command line arguments to pass to the script (List of strings).",
                 false,
             )
         )->addProperty(
