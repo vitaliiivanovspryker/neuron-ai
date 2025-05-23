@@ -11,7 +11,7 @@ class TavilySearchTool extends Tool
 {
     protected Client $client;
 
-    protected string $utl = 'https://api.tavily.com/';
+    protected string $baseUrl = 'https://api.tavily.com/';
 
     protected array $options = [
         'search_depth' => 'basic',
@@ -36,7 +36,7 @@ class TavilySearchTool extends Tool
 
         $this->initTool();
         $this->client = new Client([
-            'base_uri' => trim($this->utl, '/').'/',
+            'base_uri' => $this->baseUrl,
             'headers' => [
                 'Authorization' => 'Bearer '.$this->key,
                 'Content-Type' => 'application/json',
@@ -82,10 +82,10 @@ class TavilySearchTool extends Tool
         $this->setCallable(
             fn (
                 string $search_query,
-                ...$args
+                ...$arguments
             ) => $this->search(
                 $search_query,
-                ...$args
+                ...$arguments
             )
         );
     }
