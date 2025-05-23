@@ -22,8 +22,9 @@ class Attachment implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return \array_filter([
-            $this->type->value => $this->content,
-            'type' => $this->contentType->value,
+            'type' => $this->type->value,
+            'content' => $this->content,
+            'content_type' => $this->contentType->value,
             'media_type' => $this->mediaType,
         ]);
     }
