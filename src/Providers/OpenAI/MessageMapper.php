@@ -3,8 +3,8 @@
 namespace NeuronAI\Providers\OpenAI;
 
 use NeuronAI\Chat\Attachments\Attachment;
-use NeuronAI\Chat\Attachments\Document;
 use NeuronAI\Chat\Enums\AttachmentContentType;
+use NeuronAI\Chat\Enums\AttachmentType;
 use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
@@ -54,6 +54,10 @@ class MessageMapper implements MessageMapperInterface
         }
 
         foreach ($attachments as $attachment) {
+            if ($attachment->type === AttachmentType::DOCUMENT) {
+                throw new ProviderException('OpenAI does not support document attachments.');
+            }
+
             $payload['content'][] = $this->mapAttachment($attachment);
         }
 
@@ -64,10 +68,6 @@ class MessageMapper implements MessageMapperInterface
 
     protected function mapAttachment(Attachment $attachment): array
     {
-        if ($attachment instanceof Document) {
-            throw new ProviderException('Document attachments are not supported');
-        }
-
         return match($attachment->contentType) {
             AttachmentContentType::URL => [
                 'type' => 'image_url',

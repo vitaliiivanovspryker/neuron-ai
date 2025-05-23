@@ -2,8 +2,9 @@
 
 namespace NeuronAI\Providers\Ollama;
 
-use NeuronAI\Chat\Attachments\Image;
+use NeuronAI\Chat\Attachments\Attachment;
 use NeuronAI\Chat\Enums\AttachmentContentType;
+use NeuronAI\Chat\Enums\AttachmentType;
 use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
@@ -49,8 +50,12 @@ class MessageMapper implements MessageMapperInterface
         $attachments = $message->getAttachments();
 
         foreach ($attachments as $attachment) {
-            if ($attachment instanceof Image) {
-                $payload['images'][] = $this->mapImage($attachment);
+            if ($attachment instanceof Attachment) {
+                if ($attachment->type === AttachmentType::DOCUMENT) {
+                    throw new ProviderException('Ollama does not support document attachments.');
+                }
+
+                $payload['images'][] = $this->mapAttachment($attachment);
             }
         }
 
@@ -59,10 +64,10 @@ class MessageMapper implements MessageMapperInterface
         $this->mapping[] = $payload;
     }
 
-    protected function mapImage(Image $image): string
+    protected function mapAttachment(Attachment $attachment)
     {
-        return match($image->contentType) {
-            AttachmentContentType::BASE64 => $image->content,
+        return match($attachment->contentType) {
+            AttachmentContentType::BASE64 => $attachment->content,
             // Transform url in base64 could be a security issue. So we raise an exception.
             AttachmentContentType::URL => throw new ProviderException('Ollama support only base64 image type.'),
         };
