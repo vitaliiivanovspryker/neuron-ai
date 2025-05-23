@@ -99,7 +99,7 @@ reducing the effort for prompt engineering.
 Send a prompt to the agent to get a response from the underlying LLM:
 
 ```php
-new NeuronAI\Observability\AgentMonitoring;
+use NeuronAI\Observability\AgentMonitoring;
 
 // The Inspector instance in your application - https://inspector.dev/
 $inspector = new \Inspector\Inspector(
@@ -325,6 +325,7 @@ This guide covers a few strategies for getting structured outputs from the agent
 
 ```php
 use NeuronAI\StructuredOutput\SchemaProperty;
+use NeuronAI\Observability\AgentMonitoring;
 
 // Define the output structure with a PHP class, including validation constraints.
 class Person
@@ -336,12 +337,18 @@ class Person
     public string $preference;
 }
 
+// The Inspector instance in your application - https://inspector.dev/
+$inspector = new \Inspector\Inspector(
+    new \Inspector\Configuration('YOUR-INGESTION-KEY')
+);
 
 // Talk to the agent requiring the structured output
-$person = MyAgent::make()->structured(
-    new UserMessage("I'm John and I like pizza!"),
-    Person::class
-);
+$person = MyAgent::make()
+    ->observe(new AgentMonitoring($inspector))
+    ->structured(
+        new UserMessage("I'm John and I like pizza!"),
+        Person::class
+    );
 
 echo $person->name ' like '.$person->preference;
 // John like pizza
@@ -366,7 +373,7 @@ If the agent fires an error, you will be alerted in real-time. You can connect s
 Here is a code example in a legacy PHP script:
 
 ```php
-new NeuronAI\Observability\AgentMonitoring;
+use NeuronAI\Observability\AgentMonitoring;
 
 // The Inspector instance in your application - https://inspector.dev/
 $inspector = new \Inspector\Inspector(
