@@ -2,7 +2,6 @@
 
 namespace NeuronAI\Tests;
 
-use NeuronAI\Exceptions\ToolException;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolInterface;
 use PHPUnit\Framework\TestCase;
