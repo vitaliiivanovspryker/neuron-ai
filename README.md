@@ -99,7 +99,15 @@ reducing the effort for prompt engineering.
 Send a prompt to the agent to get a response from the underlying LLM:
 
 ```php
-$agent = YouTubeAgent::make();
+new NeuronAI\Observability\AgentMonitoring;
+
+// The Inspector instance in your application - https://inspector.dev/
+$inspector = new \Inspector\Inspector(
+    new \Inspector\Configuration('YOUR-INGESTION-KEY')
+);
+
+$agent = YouTubeAgent::make()->observe(new AgentMonitoring($inspector));
+
 
 $response = $agent->chat(new UserMessage("Hi, I'm Valerio. Who are you?"));
 echo $response->getContent();
@@ -360,16 +368,14 @@ Here is a code example in a legacy PHP script:
 ```php
 new NeuronAI\Observability\AgentMonitoring;
 
-// The Inspector instance in your application
+// The Inspector instance in your application - https://inspector.dev/
 $inspector = new \Inspector\Inspector(
-    new Configuration('YOUR-INGESTION-KEY')
+    new \Inspector\Configuration('YOUR-INGESTION-KEY')
 );
 
 // Attach monitoring to the Agent
 $response = MyAgent::make()
-    ->observe(
-        new AgentMonitoring($inspector)
-    )
+    ->observe(new AgentMonitoring($inspector))
     ->chat(...);
 ```
 
