@@ -2,15 +2,18 @@
 
 namespace NeuronAI\Chat\Attachments;
 
+use NeuronAI\Chat\Enums\AttachmentContentType;
+use NeuronAI\Chat\Enums\AttachmentType;
+
 class Image extends Attachment
 {
     public function __construct(
         string $image,
-        string $type = self::TYPE_URL,
+        AttachmentContentType $type = AttachmentContentType::URL,
         ?string $mediaType = null
     ) {
         parent::__construct(
-            Attachment::IMAGE,
+            AttachmentType::IMAGE,
             $image,
             $type,
             $mediaType

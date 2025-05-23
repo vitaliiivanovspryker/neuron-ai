@@ -3,34 +3,32 @@
 namespace NeuronAI\Chat\Messages;
 
 use NeuronAI\Chat\Attachments\Attachment;
+use NeuronAI\Chat\Enums\MessageRole;
 
 class Message implements \JsonSerializable
 {
-    public const ROLE_USER = 'user';
-    public const ROLE_ASSISTANT = 'assistant';
-    public const ROLE_MODEL = 'model';
-    public const ROLE_TOOL = 'tool';
-    public const ROLE_SYSTEM = 'system';
-    public const ROLE_DEVELOPER = 'developer';
-
     protected ?Usage $usage = null;
     protected array $attachments = [];
 
     protected array $meta = [];
 
     public function __construct(
-        protected string $role,
+        protected MessageRole $role,
         protected array|string|int|float|null $content = null
     ) {
     }
 
     public function getRole(): string
     {
-        return $this->role;
+        return $this->role->value;
     }
 
-    public function setRole(string $role): Message
+    public function setRole(MessageRole|string $role): Message
     {
+        if (!$role instanceof MessageRole) {
+            $role = MessageRole::from($role);
+        }
+
         $this->role = $role;
         return $this;
     }

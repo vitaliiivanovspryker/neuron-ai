@@ -3,6 +3,7 @@
 namespace NeuronAI\Providers\Gemini;
 
 use GuzzleHttp\Client;
+use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\HasGuzzleClient;
@@ -130,7 +131,7 @@ class Gemini implements AIProviderInterface
             $message['content'] ?? null,
             \array_filter($tools)
         );
-        $result->setRole(Message::ROLE_MODEL);
+        $result->setRole(MessageRole::MODEL);
 
         return $result;
     }

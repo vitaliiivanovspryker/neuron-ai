@@ -3,6 +3,7 @@
 namespace NeuronAI\Providers\Gemini;
 
 use GuzzleHttp\Exception\GuzzleException;
+use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\Message;
 
 trait HandleStructured
@@ -25,7 +26,7 @@ trait HandleStructured
         // So we try to work with a JSON mode in case the agent has some tools defined.
         if (!empty($this->tools)) {
             $last_message = \end($messages);
-            if ($last_message instanceof Message && $last_message->getRole() === Message::ROLE_USER) {
+            if ($last_message instanceof Message && $last_message->getRole() === MessageRole::USER->value) {
                 $last_message->setContent(
                     $last_message->getContent() . ' Respond using this JSON schema: '.\json_encode($response_format)
                 );

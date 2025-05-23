@@ -4,6 +4,8 @@ namespace NeuronAI\Providers\OpenAI;
 
 use NeuronAI\Chat\Attachments\Attachment;
 use NeuronAI\Chat\Attachments\Document;
+use NeuronAI\Chat\Enums\AttachmentContentType;
+use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
@@ -67,19 +69,18 @@ class MessageMapper implements MessageMapperInterface
         }
 
         return match($attachment->contentType) {
-            Attachment::TYPE_URL => [
+            AttachmentContentType::URL => [
                 'type' => 'image_url',
                 'image_url' => [
                     'url' => $attachment->content,
                 ],
             ],
-            Attachment::TYPE_BASE64 => [
+            AttachmentContentType::BASE64 => [
                 'type' => 'image_url',
                 'image_url' => [
                     'url' => 'data:'.$attachment->mediaType.';base64,'.$attachment->content,
                 ],
-            ],
-            default => throw new ProviderException('Invalid document type '.$attachment->contentType),
+            ]
         };
     }
 
@@ -101,7 +102,7 @@ class MessageMapper implements MessageMapperInterface
     {
         foreach ($message->getTools() as $tool) {
             $this->mapping[] = [
-                'role' => Message::ROLE_TOOL,
+                'role' => MessageRole::TOOL->value,
                 'tool_call_id' => $tool->getCallId(),
                 'content' => $tool->getResult()
             ];

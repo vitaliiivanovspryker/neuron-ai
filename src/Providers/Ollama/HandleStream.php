@@ -2,6 +2,7 @@
 
 namespace NeuronAI\Providers\Ollama;
 
+use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\Message;
 use Psr\Http\Message\StreamInterface;
 
@@ -11,7 +12,7 @@ trait HandleStream
     {
         // Include the system prompt
         if (isset($this->system)) {
-            \array_unshift($messages, new Message(Message::ROLE_SYSTEM, $this->system));
+            \array_unshift($messages, new Message(MessageRole::SYSTEM, $this->system));
         }
 
         $json = [
