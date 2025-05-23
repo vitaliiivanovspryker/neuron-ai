@@ -47,7 +47,7 @@ class MessageMapper implements MessageMapperInterface
         if (is_string($payload['content']) && $attachments) {
             $payload['content'] = [
                 [
-                    'type' => 'input_text',
+                    'type' => 'text',
                     'text' => $payload['content'],
                 ],
             ];
