@@ -7,12 +7,12 @@ trait StaticConstructor
     /**
      * Static constructor.
      *
-     * @param ...$args
+     * @param ...$arguments
      * @return static
      */
-    public static function make(...$args): static
+    public static function make(...$arguments): static
     {
         /** @phpstan-ignore new.static */
-        return new static(...$args);
+        return new static(...$arguments);
     }
 }

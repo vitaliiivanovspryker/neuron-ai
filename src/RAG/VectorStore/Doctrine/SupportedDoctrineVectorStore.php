@@ -12,7 +12,7 @@ abstract class SupportedDoctrineVectorStore
      */
     abstract public function getVectorAsString(array $vector): string;
 
-    abstract public function convertToDatabaseValueSQL(string $sqlExpr): string;
+    abstract public function convertToDatabaseValueSQL(string $sqlExpression): string;
 
     abstract public function addCustomisationsTo(EntityManagerInterface $entityManager): void;
 

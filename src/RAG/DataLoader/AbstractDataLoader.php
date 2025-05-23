@@ -8,10 +8,10 @@ abstract class AbstractDataLoader implements DataLoaderInterface
     protected string $separator = '.';
     protected int $wordOverlap = 0;
 
-    public static function for(...$args): static
+    public static function for(...$arguments): static
     {
         /** @phpstan-ignore new.static */
-        return new static(...$args);
+        return new static(...$arguments);
     }
 
     public function withMaxLength(int $maxLength): DataLoaderInterface
