@@ -178,8 +178,8 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
             }
             if ($key === 'attachments') {
                 foreach ($message['attachments'] as $attachment) {
-                    switch ($attachment['type']) {
-                        case AttachmentType::IMAGE->value:
+                    switch (AttachmentType::from($attachment['type'])) {
+                        case AttachmentType::IMAGE:
                             $item->addAttachment(
                                 new Image(
                                     $attachment['content'],
@@ -188,7 +188,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
                                 )
                             );
                             break;
-                        case AttachmentType::DOCUMENT->value:
+                        case AttachmentType::DOCUMENT:
                             $item->addAttachment(
                                 new Document(
                                     $attachment['content'],

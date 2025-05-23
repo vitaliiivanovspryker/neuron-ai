@@ -20,7 +20,9 @@ class RizaFunctionExecutor extends Tool
         parent::__construct(
             "execute_{$language}_function",
             "Execute {$language} function and get the result."
-        )->addProperty(
+        );
+
+        $this->addProperty(
             new ToolProperty(
                 'code',
                 'string',

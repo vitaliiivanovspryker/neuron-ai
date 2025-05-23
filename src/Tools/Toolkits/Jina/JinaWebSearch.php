@@ -20,7 +20,9 @@ class JinaWebSearch extends Tool
             'Use this tool to search the web for additional information '.
             (!empty($topics) ? 'about '.implode(', ', $topics).', or ' : '').
             'if the question is outside the scope of the context you have.'
-        )->addProperty(
+        );
+
+        $this->addProperty(
             new ToolProperty(
                 'search_query',
                 'string',
