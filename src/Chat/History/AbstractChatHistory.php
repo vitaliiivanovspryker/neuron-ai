@@ -3,6 +3,7 @@
 namespace NeuronAI\Chat\History;
 
 use NeuronAI\Chat\Attachments\Image;
+use NeuronAI\Chat\Enums\AttachmentContentType;
 use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
@@ -175,7 +176,13 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
             }
             if ($key === 'images') {
                 foreach ($message['images'] as $image) {
-                    $item->addAttachment(new Image($image['image'], $image['type'], $image['media_type'] ?? null));
+                    $item->addAttachment(
+                        new Image(
+                            $image['image'],
+                            AttachmentContentType::from($image['type']),
+                            $image['media_type'] ?? null
+                        )
+                    );
                 }
                 continue;
             }
