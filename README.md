@@ -109,7 +109,9 @@ $inspector = new \Inspector\Inspector(
 $agent = YouTubeAgent::make()->observe(new AgentMonitoring($inspector));
 
 
-$response = $agent->chat(new UserMessage("Hi, I'm Valerio. Who are you?"));
+$response = $agent->chat(
+    new UserMessage("Hi, I'm Valerio. Who are you?")
+);
 echo $response->getContent();
 // I'm a friendly YouTube assistant to help you summarize videos.
 
