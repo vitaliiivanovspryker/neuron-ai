@@ -272,6 +272,22 @@ class StateGraphTest extends TestCase
         $this->assertEquals($dot, $this->getComplexGraph()->toDot());
     }
 
+    public function test_to_mermaid(): void
+    {
+        $dot = <<<MERMAID
+        graph TD;
+          START --> a & c;
+          a --> b & d;
+          b --> END;
+          c --> a;
+          d --> e;
+          e --> END;
+        
+        MERMAID;
+
+        $this->assertEquals($dot, $this->getComplexGraph()->toMermaid());
+    }
+
     private function getSimpleGraph(): StateGraph
     {
         return (new StateGraph())

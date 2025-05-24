@@ -170,10 +170,51 @@ class StateGraph
     }
 
     /**
-     * Export the graph to Graphwiz format
+     * Export the graph in Graphwiz format
      * @see https://graphviz.org/doc/info/lang.html
      */
     public function toDot(): string
+    {
+        return $this->exportToGraph(
+            static function (string $from, array $to, callable $normalize): string {
+                $destination = count($to) === 1
+                    ? $normalize($to[0])
+                    : sprintf('{%s}', implode(',', array_map(fn($node) => $normalize($node), $to)));
+
+                return sprintf("  %s -> %s", $normalize($from), $destination);
+            },
+            static fn (array $edges): string => sprintf("digraph G {\n%s\n}", implode(PHP_EOL, $edges))
+        );
+    }
+
+    /**
+     * Export the graph in Mermaid format.
+     * @see https://mermaid.js.org
+     */
+    public function toMermaid(): string
+    {
+        return $this->exportToGraph(
+            static function (string $from, array $to, callable $normalize): string {
+                $destination = count($to) === 1
+                    ? $normalize($to[0])
+                    : implode(' & ', array_map(fn($node) => $normalize($node), $to));
+
+                return sprintf("  %s --> %s;", $normalize($from), $destination);
+            },
+            static fn (array $edges): string => sprintf("graph TD;\n%s\n", implode(PHP_EOL, $edges))
+        );
+    }
+
+    /**
+     * Internal function used to serialize the graph to Dot or Mermaid format.
+     * @param callable(string,string[],callable(string): string): string $serializeEdges
+     * @param callable(string[]): string $serializeGraph
+     * @return string
+     */
+    private function exportToGraph(
+        callable $serializeEdges,
+        callable $serializeGraph,
+    ): string
     {
         $edges = [];
 
@@ -189,14 +230,10 @@ class StateGraph
                 continue;
             }
 
-            $destination = count($to) === 1
-                ? $normalize($to[0])
-                : sprintf('{%s}', implode(',', array_map(fn($node) => $normalize($node), $to)));
-
-            $edges[] = sprintf("  %s -> %s", $normalize($from), $destination);
+            $edges[] = $serializeEdges($from, $to, $normalize);
         }
 
-        return sprintf("digraph G {\n%s\n}", implode(PHP_EOL, $edges));
+        return $serializeGraph($edges);
     }
 
     /**
