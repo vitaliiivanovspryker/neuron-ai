@@ -52,7 +52,7 @@ trait HandleChat
             $response->setUsage(
                 new Usage(
                     $result['usageMetadata']['promptTokenCount'],
-                    $result['usageMetadata']['candidatesTokenCount']
+                    $result['usageMetadata']['candidatesTokenCount'] ?? $result['usageMetadata']['promptTokensDetails'][0]['tokenCount'] ?? 0
                 )
             );
         }
