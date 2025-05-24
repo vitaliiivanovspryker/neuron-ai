@@ -3,7 +3,6 @@
 namespace NeuronAI\Providers\OpenAI;
 
 use GuzzleHttp\Client;
-use NeuronAI\Providers\OpenAI\OpenAI;
 
 class AzureOpenAI extends OpenAI
 {
