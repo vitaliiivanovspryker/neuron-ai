@@ -306,7 +306,7 @@ class StateGraph
     }
 
     /**
-     * Internal utility function used by to compile the graph.
+     * Internal utility function used to compile the graph.
      * @param bool[] $evaluated
      * @param string[] $executionList
      */
