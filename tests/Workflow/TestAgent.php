@@ -3,12 +3,8 @@
 namespace NeuronAI\Tests\Workflow;
 
 use NeuronAI\Agent;
-use NeuronAI\AgentInterface;
-use NeuronAI\Chat\History\AbstractChatHistory;
+use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\Message;
-use NeuronAI\Observability\Events\InferenceStart;
-use NeuronAI\Providers\AIProviderInterface;
-use NeuronAI\Tools\ToolInterface;
 
 class TestAgent extends Agent
 {
@@ -21,7 +17,7 @@ class TestAgent extends Agent
     {
         $this->notify('test', "Evaluate {$this->data}");
 
-        return new Message(Message::ROLE_ASSISTANT, $this->data);
+        return new Message(MessageRole::ASSISTANT, $this->data);
     }
 
     // public function stream(Message|array $messages): \Generator

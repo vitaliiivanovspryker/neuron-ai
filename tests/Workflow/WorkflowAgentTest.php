@@ -5,6 +5,7 @@ namespace NeuronAI\Tests\Workflow;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use NeuronAI\Agent;
+use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Providers\Ollama\Ollama;
@@ -43,7 +44,7 @@ class WorkflowAgentTest extends TestCase
         $reply = $agent->chat(new UserMessage('hello'));
 
         $this->assertInstanceOf(Message::class, $reply);
-        $this->assertEquals(Message::ROLE_ASSISTANT, $reply->getRole());
+        $this->assertEquals(MessageRole::ASSISTANT->value, $reply->getRole());
         $this->assertEquals('b', $reply->getContent());
 
         $records = $handler->getRecords();
@@ -106,7 +107,7 @@ class WorkflowAgentTest extends TestCase
 
         $agent2 = Agent::make()
             ->withProvider($provider)
-            ->withInstructions('You are an AI agent specialized in giving the current time')
+            ->withInstructions('You are an AI agent specialized in giving the current time for a given timezone. Always use the tool get_time_and_date.')
             ->addTool($timeTool);
 
         $graph = (new StateGraph())
