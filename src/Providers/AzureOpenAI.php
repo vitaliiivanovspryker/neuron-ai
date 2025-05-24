@@ -16,6 +16,7 @@ class AzureOpenAI extends OpenAI
         protected array $parameters = [],
     ) {
         $this->setBaseUrl();
+
         $this->client = new Client([
             'base_uri' => $this->baseUri,
             'query'    => [
