@@ -313,33 +313,28 @@ class StateGraph
     private function pathExists(string $from, string $to, callable $successorFunction): bool
     {
         $visited = [];
+        $queue = new \SplQueue();
+        $queue->enqueue($from);
 
-        foreach (array_keys($this->nodes) as $node) {
-            $visited[$node] = false;
-        }
+        while (!$queue->isEmpty()) {
+            $node = $queue->dequeue();
 
-        $q = new \SplQueue();
-        $q->enqueue($from);
+            if ($node === $to) {
+                return true; // Path found
+            }
 
-        $visited[$from] = true;
+            if (!isset($visited[$node])) {
+                $visited[$node] = true;
 
-        while (!$q->isEmpty()) {
-            /** @var string */
-            $node = $q->dequeue();
-
-            foreach ($successorFunction($node) as $successor) {
-                if ($successor === $to) {
-                    return true;
-                }
-
-                if (!$visited[$successor]) {
-                    $q->enqueue($successor);
-                    $visited[$successor] = true;
+                foreach ($successorFunction($node) as $successor) {
+                    if (!isset($visited[$successor])) {
+                        $queue->enqueue($successor);
+                    }
                 }
             }
         }
 
-        return false;
+        return false; // No path found
     }
 
     /**
