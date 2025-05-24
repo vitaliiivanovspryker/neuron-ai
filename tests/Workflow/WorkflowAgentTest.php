@@ -68,6 +68,10 @@ class WorkflowAgentTest extends TestCase
         // TODO: remove this line if you have the requirements installed
         $this->markTestSkipped('This test requires an Ollama server with the qwen2.5:3b model installed');
 
+        /**
+         * If the test is skipped, phpstan will complain...
+         * @phpstan-ignore deadCode.unreachable
+         */
         $handler = new TestHandler();
 
         $provider = new Ollama(

@@ -11,7 +11,7 @@ class WorkflowAgent extends Agent
     /** @var string[] */
     private array $executionList;
 
-    /** @var array<event:string,observer:\SplObserver>[] */
+    /** @var array{event:string,observer:\SplObserver}[] */
     private array $observers = [];
 
     /** @var array<string,Message[]> */
@@ -48,7 +48,7 @@ class WorkflowAgent extends Agent
         return $lastReply;
     }
 
-    public function observe(\SplObserver $observer, string $event = "*"): self
+    public function observe(\SplObserver $observer, string $event = "*"): Agent
     {
         $this->observers[] = [
             'event' => $event,
