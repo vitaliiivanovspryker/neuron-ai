@@ -3,6 +3,7 @@
 namespace NeuronAI\Providers\Gemini;
 
 use GuzzleHttp\Exception\GuzzleException;
+use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\Usage;
 
@@ -43,7 +44,7 @@ trait HandleChat
         if (\array_key_exists('functionCall', $content['parts'][0]) && !empty($content['parts'][0]['functionCall'])) {
             $response = $this->createToolCallMessage($content);
         } else {
-            $response = new Message($content['role'], $content['parts'][0]['text'] ?? '');
+            $response = new Message(MessageRole::from($content['role']), $content['parts'][0]['text'] ?? '');
         }
 
         // Attach the usage for the current interaction
@@ -51,7 +52,7 @@ trait HandleChat
             $response->setUsage(
                 new Usage(
                     $result['usageMetadata']['promptTokenCount'],
-                    $result['usageMetadata']['candidatesTokenCount']
+                    $result['usageMetadata']['candidatesTokenCount'] ?? $result['usageMetadata']['promptTokensDetails'][0]['tokenCount'] ?? 0
                 )
             );
         }

@@ -74,7 +74,7 @@ class DocumentSplitter
 
             if ($currentChunkLength + \strlen($separator.$word) <= $maxLength || $currentChunk === []) {
                 $currentChunk[] = $word;
-                $currentChunkLength = self::calcChunkLength($currentChunk, $separator);
+                $currentChunkLength = self::calculateChunkLength($currentChunk, $separator);
             } else {
                 // Add the chunk with overlap
                 $chunks[] = \implode($separator, $currentChunk);
@@ -86,7 +86,7 @@ class DocumentSplitter
                 // Start a new chunk with overlap words
                 $currentChunk = [...$overlapWords, $word];
                 $currentChunk[0] = \trim($currentChunk[0]);
-                $currentChunkLength = self::calcChunkLength($currentChunk, $separator);
+                $currentChunkLength = self::calculateChunkLength($currentChunk, $separator);
             }
         }
 
@@ -100,7 +100,7 @@ class DocumentSplitter
     /**
      * @param  array<string>  $currentChunk
      */
-    private static function calcChunkLength(array $currentChunk, string $separator): int
+    private static function calculateChunkLength(array $currentChunk, string $separator): int
     {
         return \array_sum(\array_map('strlen', $currentChunk)) + \count($currentChunk) * \strlen($separator) - 1;
     }

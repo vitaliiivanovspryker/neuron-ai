@@ -2,7 +2,11 @@
 
 namespace NeuronAI\Chat\History;
 
+use NeuronAI\Chat\Attachments\Document;
 use NeuronAI\Chat\Attachments\Image;
+use NeuronAI\Chat\Enums\AttachmentContentType;
+use NeuronAI\Chat\Enums\AttachmentType;
+use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
@@ -118,10 +122,13 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     protected function unserializeMessage(array $message): Message
     {
-        $item = match ($message['role']) {
-            Message::ROLE_ASSISTANT => new AssistantMessage($message['content'] ?? ''),
-            Message::ROLE_USER => new UserMessage($message['content'] ?? ''),
-            default => new Message($message['role'], $message['content'] ?? '')
+        $messageRole = MessageRole::from($message['role']);
+        $messageContent = $message['content'] ?? null;
+
+        $item = match ($messageRole) {
+            MessageRole::ASSISTANT => new AssistantMessage($messageContent),
+            MessageRole::USER => new UserMessage($messageContent),
+            default => new Message($messageRole, $messageContent)
         };
 
         $this->unserializeMeta($message, $item);
@@ -169,9 +176,29 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
                 );
                 continue;
             }
-            if ($key === 'images') {
-                foreach ($message['images'] as $image) {
-                    $item->addAttachment(new Image($image['image'], $image['type'], $image['media_type'] ?? null));
+            if ($key === 'attachments') {
+                foreach ($message['attachments'] as $attachment) {
+                    switch (AttachmentType::from($attachment['type'])) {
+                        case AttachmentType::IMAGE:
+                            $item->addAttachment(
+                                new Image(
+                                    $attachment['content'],
+                                    AttachmentContentType::from($attachment['content_type']),
+                                    $attachment['media_type'] ?? null
+                                )
+                            );
+                            break;
+                        case AttachmentType::DOCUMENT:
+                            $item->addAttachment(
+                                new Document(
+                                    $attachment['content'],
+                                    AttachmentContentType::from($attachment['content_type']),
+                                    $attachment['media_type'] ?? null
+                                )
+                            );
+                            break;
+                    }
+
                 }
                 continue;
             }

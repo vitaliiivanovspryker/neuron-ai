@@ -9,6 +9,7 @@ use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use NeuronAI\Chat\Attachments\Document;
 use NeuronAI\Chat\Attachments\Image;
+use NeuronAI\Chat\Enums\AttachmentContentType;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Providers\Anthropic\Anthropic;
 use PHPUnit\Framework\TestCase;
@@ -73,7 +74,7 @@ class AnthropicTest extends TestCase
         $message = (new UserMessage('Describe this image'))
             ->addAttachment(new Image(
                 image: 'base64_encoded_image_data',
-                type: 'base64',
+                type: AttachmentContentType::BASE64,
                 mediaType: 'image/png'
             ));
 
@@ -176,7 +177,7 @@ class AnthropicTest extends TestCase
         $message = (new UserMessage('Describe this document'))
             ->addAttachment(new Document(
                 document: 'base64_encoded_document_data',
-                type: 'base64',
+                type: AttachmentContentType::BASE64,
                 mediaType: 'pdf'
             ));
 

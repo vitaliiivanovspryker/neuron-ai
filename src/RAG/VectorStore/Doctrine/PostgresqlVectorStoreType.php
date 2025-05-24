@@ -11,9 +11,9 @@ class PostgresqlVectorStoreType extends SupportedDoctrineVectorStore
         return '['.$this->stringListOf($vector).']';
     }
 
-    public function convertToDatabaseValueSQL(string $sqlExpr): string
+    public function convertToDatabaseValueSQL(string $sqlExpression): string
     {
-        return $sqlExpr;
+        return $sqlExpression;
     }
 
     public function addCustomisationsTo(EntityManagerInterface $entityManager): void

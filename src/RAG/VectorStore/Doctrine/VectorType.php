@@ -71,9 +71,9 @@ class VectorType extends Type
         return SupportedDoctrineVectorStore::fromPlatform($platform)->getVectorAsString($value);
     }
 
-    public function convertToDatabaseValueSQL(mixed $sqlExpr, AbstractPlatform $platform): string
+    public function convertToDatabaseValueSQL(mixed $sqlExpression, AbstractPlatform $platform): string
     {
-        return SupportedDoctrineVectorStore::fromPlatform($platform)->convertToDatabaseValueSQL($sqlExpr);
+        return SupportedDoctrineVectorStore::fromPlatform($platform)->convertToDatabaseValueSQL($sqlExpression);
     }
 
     public function canRequireSQLConversion(): bool

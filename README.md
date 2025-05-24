@@ -1,5 +1,7 @@
+# Create Full-Featured AI Agents As Standalone Components In Any PHP Application
+
 [![Latest Stable Version](https://poser.pugx.org/inspector-apm/neuron-ai/v/stable)](https://packagist.org/packages/inspector-apm/neuron-ai)
-[![License](https://poser.pugx.org/inspector-apm/neuron-ai/license)](//packagist.org/packages/inspector-apm/neuron-ai)
+[![Total Downloads](http://poser.pugx.org/inspector-apm/neuron-ai/downloads)](https://packagist.org/packages/inspector-apm/neuron-ai)
 
 > Before moving on, support the community giving a GitHub star ⭐️. Thank you!
 
@@ -97,9 +99,19 @@ reducing the effort for prompt engineering.
 Send a prompt to the agent to get a response from the underlying LLM:
 
 ```php
-$agent = YouTubeAgent::make();
+use NeuronAI\Observability\AgentMonitoring;
 
-$response = $agent->chat(new UserMessage("Hi, I'm Valerio. Who are you?"));
+// The Inspector instance in your application - https://inspector.dev/
+$inspector = new \Inspector\Inspector(
+    new \Inspector\Configuration('INSPECTOR_INGESTION_KEY')
+);
+
+$agent = YouTubeAgent::make()->observe(new AgentMonitoring($inspector));
+
+
+$response = $agent->chat(
+    new UserMessage("Hi, I'm Valerio. Who are you?")
+);
 echo $response->getContent();
 // I'm a friendly YouTube assistant to help you summarize videos.
 
@@ -315,6 +327,7 @@ This guide covers a few strategies for getting structured outputs from the agent
 
 ```php
 use NeuronAI\StructuredOutput\SchemaProperty;
+use NeuronAI\Observability\AgentMonitoring;
 
 // Define the output structure with a PHP class, including validation constraints.
 class Person
@@ -326,12 +339,18 @@ class Person
     public string $preference;
 }
 
+// The Inspector instance in your application - https://inspector.dev/
+$inspector = new \Inspector\Inspector(
+    new \Inspector\Configuration('INSPECTOR_INGESTION_KEY')
+);
 
 // Talk to the agent requiring the structured output
-$person = MyAgent::make()->structured(
-    new UserMessage("I'm John and I like pizza!"),
-    Person::class
-);
+$person = MyAgent::make()
+    ->observe(new AgentMonitoring($inspector))
+    ->structured(
+        new UserMessage("I'm John and I like pizza!"),
+        Person::class
+    );
 
 echo $person->name ' like '.$person->preference;
 // John like pizza
@@ -356,18 +375,16 @@ If the agent fires an error, you will be alerted in real-time. You can connect s
 Here is a code example in a legacy PHP script:
 
 ```php
-new NeuronAI\Observability\AgentMonitoring;
+use NeuronAI\Observability\AgentMonitoring;
 
-// The Inspector instance in your application
+// The Inspector instance in your application - https://inspector.dev/
 $inspector = new \Inspector\Inspector(
-    new Configuration('YOUR-INGESTION-KEY')
+    new \Inspector\Configuration('INSPECTOR_INGESTION_KEY')
 );
 
 // Attach monitoring to the Agent
 $response = MyAgent::make()
-    ->observe(
-        new AgentMonitoring($inspector)
-    )
+    ->observe(new AgentMonitoring($inspector))
     ->chat(...);
 ```
 

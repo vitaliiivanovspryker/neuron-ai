@@ -7,9 +7,9 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
-use NeuronAI\Chat\Attachments\Attachment;
 use NeuronAI\Chat\Attachments\Document;
 use NeuronAI\Chat\Attachments\Image;
+use NeuronAI\Chat\Enums\AttachmentContentType;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Exceptions\ProviderException;
 use NeuronAI\Providers\OpenAI\OpenAI;
@@ -110,7 +110,7 @@ class OpenAITest extends TestCase
         $provider = (new OpenAI('', 'gpt-4o'))->setClient($client);
 
         $message = (new UserMessage('Describe this image'))
-            ->addAttachment(new Image('base_64_encoded_image', Attachment::TYPE_BASE64, 'image/jpeg'));
+            ->addAttachment(new Image('base_64_encoded_image', AttachmentContentType::BASE64, 'image/jpeg'));
 
         $response = $provider->chat([$message]);
 
@@ -172,7 +172,7 @@ class OpenAITest extends TestCase
         $provider = (new OpenAI('', 'gpt-4o'))->setClient($client);
 
         $message = (new UserMessage('Describe this document'))
-            ->addAttachment(new Image('base_64_encoded_document', Attachment::TYPE_BASE64, 'application/pdf'));
+            ->addAttachment(new Image('base_64_encoded_document', AttachmentContentType::BASE64, 'application/pdf'));
 
         $response = $provider->chat([$message]);
 

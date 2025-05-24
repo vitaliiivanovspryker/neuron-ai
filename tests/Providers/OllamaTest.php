@@ -7,8 +7,8 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
-use NeuronAI\Chat\Attachments\Attachment;
 use NeuronAI\Chat\Attachments\Image;
+use NeuronAI\Chat\Enums\AttachmentContentType;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Exceptions\ProviderException;
 use NeuronAI\Providers\Ollama\Ollama;
@@ -75,7 +75,7 @@ class OllamaTest extends TestCase
         ))->setClient($client);
 
         $message = (new UserMessage('Describe this image'))
-            ->addAttachment(new Image('base_64_encoded_image', Attachment::TYPE_BASE64));
+            ->addAttachment(new Image('base_64_encoded_image', AttachmentContentType::BASE64));
 
         $response = $provider->chat([$message]);
 

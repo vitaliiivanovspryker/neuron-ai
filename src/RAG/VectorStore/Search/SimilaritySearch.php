@@ -6,31 +6,31 @@ use NeuronAI\Exceptions\VectorStoreException;
 
 class SimilaritySearch
 {
-    public static function cosine(array $vec1, array $vec2): float|int
+    public static function cosine(array $vector1, array $vector2): float|int
     {
-        if (\count($vec1) !== \count($vec2)) {
+        if (\count($vector1) !== \count($vector2)) {
             throw new VectorStoreException('Vectors must have the same length to apply cosine similarity.');
         }
 
         $dotProduct = 0.0;
-        $mag1 = 0.0;
-        $mag2 = 0.0;
+        $magnitude1 = 0.0;
+        $magnitude2 = 0.0;
 
-        foreach ($vec1 as $key => $value) {
-            if (isset($vec2[$key])) {
-                $dotProduct += $value * $vec2[$key];
+        foreach ($vector1 as $key => $value) {
+            if (isset($vector2[$key])) {
+                $dotProduct += $value * $vector2[$key];
             }
-            $mag1 += $value ** 2;
+            $magnitude1 += $value ** 2;
         }
 
-        foreach ($vec2 as $value) {
-            $mag2 += $value ** 2;
+        foreach ($vector2 as $value) {
+            $magnitude2 += $value ** 2;
         }
 
-        if ($mag1 === 0.0 || $mag2 === 0.0) {
+        if ($magnitude1 === 0.0 || $magnitude2 === 0.0) {
             return 0.0;
         }
 
-        return 1 - $dotProduct / (sqrt($mag1) * sqrt($mag2));
+        return 1 - $dotProduct / (sqrt($magnitude1) * sqrt($magnitude2));
     }
 }

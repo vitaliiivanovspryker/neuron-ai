@@ -3,7 +3,9 @@
 namespace NeuronAI\Providers\Ollama;
 
 use NeuronAI\Chat\Attachments\Attachment;
-use NeuronAI\Chat\Attachments\Image;
+use NeuronAI\Chat\Enums\AttachmentContentType;
+use NeuronAI\Chat\Enums\AttachmentType;
+use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
@@ -48,9 +50,11 @@ class MessageMapper implements MessageMapperInterface
         $attachments = $message->getAttachments();
 
         foreach ($attachments as $attachment) {
-            if ($attachment instanceof Image) {
-                $payload['images'][] = $this->mapImage($attachment);
+            if ($attachment->type === AttachmentType::DOCUMENT) {
+                throw new ProviderException('Ollama does not support document attachments.');
             }
+
+            $payload['images'][] = $this->mapAttachment($attachment);
         }
 
         unset($payload['attachments']);
@@ -58,13 +62,12 @@ class MessageMapper implements MessageMapperInterface
         $this->mapping[] = $payload;
     }
 
-    protected function mapImage(Image $image): string
+    protected function mapAttachment(Attachment $attachment)
     {
-        return match($image->contentType) {
-            Attachment::TYPE_BASE64 => $image->content,
+        return match ($attachment->contentType) {
+            AttachmentContentType::BASE64 => $attachment->content,
             // Transform url in base64 could be a security issue. So we raise an exception.
-            Image::TYPE_URL => throw new ProviderException('Ollama support only base64 image type.'),
-            default => throw new ProviderException('Invalid image type '.$image->type),
+            AttachmentContentType::URL => throw new ProviderException('Ollama support only base64 image type.'),
         };
     }
 
@@ -95,7 +98,7 @@ class MessageMapper implements MessageMapperInterface
     {
         foreach ($message->getTools() as $tool) {
             $this->mapping[] = [
-                'role' => Message::ROLE_TOOL,
+                'role' => MessageRole::TOOL->value,
                 'content' => $tool->getResult()
             ];
         }

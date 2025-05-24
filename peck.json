@@ -1,0 +1,17 @@
+{
+    "preset": "base",
+    "ignore": {
+        "words": [
+            "php", "typesense", "embeddings", "reranks", "deserialize", "serialize", "unserialize",
+            "substring", "utils", "args", "cognesy", "mcp", "knn", "observability", "deserializer",
+            "deserialized", "serialized", "reranked", "reranker","deserializing", "unhandled",
+            "num", "customisations", "vec", "postprocessors", "postprocessor", "nn", "spl", "toolkits",
+            "splitter", "aos", "js", "favicon", "img", "mixins", "scss", "webfont", "fontawesome",
+            "cname",
+
+            "ollama", "llm", "openai", "anthropic", "azure", "google", "huggingface", "jina", "tavily",
+            "pinecone", "qdrant", "dql", "deepseek"
+        ],
+        "paths": []
+    }
+}

@@ -3,6 +3,8 @@
 namespace NeuronAI\Providers\Anthropic;
 
 use NeuronAI\Chat\Attachments\Attachment;
+use NeuronAI\Chat\Enums\AttachmentContentType;
+use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
@@ -63,22 +65,21 @@ class MessageMapper implements MessageMapperInterface
     protected function mapAttachment(Attachment $attachment): array
     {
         return match($attachment->contentType) {
-            Attachment::TYPE_URL => [
-                'type' => $attachment->type,
+            AttachmentContentType::URL => [
+                'type' => $attachment->type->value,
                 'source' => [
                     'type' => 'url',
                     'url' => $attachment->content,
                 ],
             ],
-            Attachment::TYPE_BASE64 => [
-                'type' => $attachment->type,
+            AttachmentContentType::BASE64 => [
+                'type' => $attachment->type->value,
                 'source' => [
                     'type' => 'base64',
                     'media_type' => $attachment->mediaType,
                     'data' => $attachment->content,
                 ],
             ],
-            default => throw new ProviderException('Invalid document type '.$attachment->contentType),
         };
     }
 
@@ -99,7 +100,7 @@ class MessageMapper implements MessageMapperInterface
     protected function mapToolsResult(ToolCallResultMessage $message): void
     {
         $this->mapping[] = [
-            'role' => Message::ROLE_USER,
+            'role' => MessageRole::USER,
             'content' => \array_map(fn (ToolInterface $tool) => [
                 'type' => 'tool_result',
                 'tool_use_id' => $tool->getCallId(),

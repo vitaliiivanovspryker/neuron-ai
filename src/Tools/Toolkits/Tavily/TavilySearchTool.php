@@ -11,7 +11,7 @@ class TavilySearchTool extends Tool
 {
     protected Client $client;
 
-    protected string $utl = 'https://api.tavily.com/';
+    protected string $url = 'https://api.tavily.com/';
 
     protected array $options = [
         'search_depth' => 'basic',
@@ -24,7 +24,7 @@ class TavilySearchTool extends Tool
      * @param array $topics Explicit the topics you want to force the Agent to perform web search.
      */
     public function __construct(
-        protected string $key,
+        string $key,
         protected array $topics = [],
     ) {
         parent::__construct(
@@ -35,10 +35,11 @@ class TavilySearchTool extends Tool
         );
 
         $this->initTool();
+
         $this->client = new Client([
-            'base_uri' => trim($this->utl, '/').'/',
+            'base_uri' => trim($this->url, '/').'/',
             'headers' => [
-                'Authorization' => 'Bearer '.$this->key,
+                'Authorization' => 'Bearer '.$key,
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
             ]
@@ -79,18 +80,10 @@ class TavilySearchTool extends Tool
             )
         );
 
-        $this->setCallable(
-            fn (
-                string $search_query,
-                ...$args
-            ) => $this->search(
-                $search_query,
-                ...$args
-            )
-        );
+        $this->setCallable($this);
     }
 
-    protected function search(
+    public function __invoke(
         string $search_query,
         string $topic = 'general',
         string $time_range = 'day',

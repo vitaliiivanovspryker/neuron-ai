@@ -3,7 +3,9 @@
 namespace NeuronAI\Providers\OpenAI;
 
 use NeuronAI\Chat\Attachments\Attachment;
-use NeuronAI\Chat\Attachments\Document;
+use NeuronAI\Chat\Enums\AttachmentContentType;
+use NeuronAI\Chat\Enums\AttachmentType;
+use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
@@ -52,6 +54,10 @@ class MessageMapper implements MessageMapperInterface
         }
 
         foreach ($attachments as $attachment) {
+            if ($attachment->type === AttachmentType::DOCUMENT) {
+                throw new ProviderException('OpenAI does not support document attachments.');
+            }
+
             $payload['content'][] = $this->mapAttachment($attachment);
         }
 
@@ -62,24 +68,19 @@ class MessageMapper implements MessageMapperInterface
 
     protected function mapAttachment(Attachment $attachment): array
     {
-        if ($attachment instanceof Document) {
-            throw new ProviderException('Document attachments are not supported');
-        }
-
         return match($attachment->contentType) {
-            Attachment::TYPE_URL => [
+            AttachmentContentType::URL => [
                 'type' => 'image_url',
                 'image_url' => [
                     'url' => $attachment->content,
                 ],
             ],
-            Attachment::TYPE_BASE64 => [
+            AttachmentContentType::BASE64 => [
                 'type' => 'image_url',
                 'image_url' => [
                     'url' => 'data:'.$attachment->mediaType.';base64,'.$attachment->content,
                 ],
-            ],
-            default => throw new ProviderException('Invalid document type '.$attachment->contentType),
+            ]
         };
     }
 
@@ -101,7 +102,7 @@ class MessageMapper implements MessageMapperInterface
     {
         foreach ($message->getTools() as $tool) {
             $this->mapping[] = [
-                'role' => Message::ROLE_TOOL,
+                'role' => MessageRole::TOOL->value,
                 'tool_call_id' => $tool->getCallId(),
                 'content' => $tool->getResult()
             ];
