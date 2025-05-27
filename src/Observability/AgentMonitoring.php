@@ -102,7 +102,7 @@ class AgentMonitoring implements \SplObserver
         $class = $agent::class;
 
         if ($this->inspector->needTransaction()) {
-            $this->inspector->startTransaction($class.'::'.$method)->setType('neuron');
+            $this->inspector->startTransaction($class.'::'.$method)->setType('ai-agent');
         } elseif ($this->inspector->canAddSegments()) {
             $key = $class.$method;
 
