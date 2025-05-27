@@ -20,8 +20,6 @@ trait HandleChat
      *
      * @param Message|array $messages
      * @return Message
-     * @throws MissingCallbackParameter
-     * @throws ToolCallableNotSet
      * @throws \Throwable
      */
     public function chat(Message|array $messages): Message
