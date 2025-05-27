@@ -51,12 +51,12 @@ class ChromaVectorStore implements VectorStoreInterface
         $result = [];
         for ($i = 0; $i < $size; $i++) {
             $document = new Document();
-            $document->id = $response['ids'][$i]??null;
+            $document->id = $response['ids'][$i] ?? null;
             $document->embedding = $response['embeddings'][$i];
             $document->content = $response['documents'][$i];
-            $document->sourceType = $response['metadatas'][$i]['sourceType']??null;
-            $document->sourceName = $response['metadatas'][$i]['sourceName']??null;
-            $document->chunkNumber = $response['metadatas'][$i]['chunkNumber']??null;
+            $document->sourceType = $response['metadatas'][$i]['sourceType'] ?? null;
+            $document->sourceName = $response['metadatas'][$i]['sourceName'] ?? null;
+            $document->chunkNumber = $response['metadatas'][$i]['chunkNumber'] ?? null;
             $document->score = $response['distances'][$i];
             $result[] = $document;
         }
