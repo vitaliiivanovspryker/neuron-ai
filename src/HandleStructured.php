@@ -49,19 +49,19 @@ trait HandleStructured
 
         $error = '';
         do {
-            // If something goes wrong, retry informing the model about the error
-            if (!empty(trim($error))) {
-                $correctionMessage = new UserMessage(
-                    "There was a problem in your previous response that generated the following errors".
-                    PHP_EOL.PHP_EOL.'- '.$error.PHP_EOL.PHP_EOL.
-                    "Try to generate the correct JSON structure based on the provided schema."
-                );
-                $this->fillChatHistory($correctionMessage);
-            }
-
-            $messages = $this->resolveChatHistory()->getMessages();
-
             try {
+                // If something goes wrong, retry informing the model about the error
+                if (!empty(trim($error))) {
+                    $correctionMessage = new UserMessage(
+                        "There was a problem in your previous response that generated the following errors".
+                        PHP_EOL.PHP_EOL.'- '.$error.PHP_EOL.PHP_EOL.
+                        "Try to generate the correct JSON structure based on the provided schema."
+                    );
+                    $this->fillChatHistory($correctionMessage);
+                }
+
+                $messages = $this->resolveChatHistory()->getMessages();
+
                 $last = clone $this->resolveChatHistory()->getLastMessage();
                 $this->notify(
                     'inference-start',
@@ -101,7 +101,7 @@ trait HandleStructured
             "The LLM wasn't able to generate a structured response for the class {$class}."
         );
         $this->notify('error', new AgentError($exception));
-        throw $exception;
+        throw new AgentException($exception->getMessage(), $exception->getCode(), $exception);
     }
 
     protected function processResponse(

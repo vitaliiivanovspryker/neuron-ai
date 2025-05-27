@@ -114,11 +114,14 @@ class OpenAI implements AIProviderInterface
 
     protected function createToolCallMessage(array $message): Message
     {
-        $tools = \array_map(fn (array $item) => $this->findTool($item['function']['name'])
-            ->setInputs(
-                \json_decode($item['function']['arguments'], true)
-            )
-            ->setCallId($item['id']), $message['tool_calls']);
+        $tools = \array_map(
+            fn (array $item) => $this->findTool($item['function']['name'])
+                ->setInputs(
+                    \json_decode($item['function']['arguments'], true)
+                )
+                ->setCallId($item['id']),
+            $message['tool_calls']
+        );
 
         $result = new ToolCallMessage(
             $message['content'],

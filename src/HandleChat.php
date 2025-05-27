@@ -4,6 +4,7 @@ namespace NeuronAI;
 
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
+use NeuronAI\Exceptions\AgentException;
 use NeuronAI\Observability\Events\AgentError;
 use NeuronAI\Observability\Events\MessageSaved;
 use NeuronAI\Observability\Events\MessageSaving;
@@ -60,7 +61,7 @@ trait HandleChat
             return $response;
         } catch (\Throwable $exception) {
             $this->notify('error', new AgentError($exception));
-            throw $exception;
+            throw new AgentException($exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 }
