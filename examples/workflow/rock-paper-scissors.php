@@ -1,16 +1,17 @@
-<?php 
+<?php
+
 
 /**
  * Rock-Paper-Scissors Game Workflow Example.
- * 
+ *
  * This example demonstrates a simple rock-paper-scissors game using NeuronAI's workflow capabilities.
- * 
+ *
  * Contributed by: [Peter Ivanov](https://github.com/peter-mw)
- * 
+ *
  * Usage:
- * 
+ *
  *   php  examples/workflow/rock-paper-scissors.php
- * 
+ *
  * TODO:
  * You must uncomment and adapt one of the provider sections below to use either OpenAI or Ollama.
  * You may also use other providers supported by NeuronAI.
@@ -36,7 +37,7 @@ use NeuronAI\Workflow\WorkflowAgent;
 // ----- OLLAMA provider
 // $provider = new \NeuronAI\Providers\Ollama\Ollama(
 //     url: 'http://localhost:11434/api',  // TODO: adapt to match your Ollama server URL
-//     model: 'qwen2.5:3b',                // TODO: Adapt to match your Ollama model 
+//     model: 'qwen2.5:3b',                // TODO: Adapt to match your Ollama model
 // );
 
 if (!isset($provider)) {
@@ -120,4 +121,3 @@ $reply = $workflowAgent->chat(new UserMessage("Determine the winner."));
 
 echo "Game Result:\n";
 echo $reply->getContent() . "\n";
-

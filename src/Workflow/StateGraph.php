@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace NeuronAI\Workflow;
 
@@ -179,7 +181,7 @@ class StateGraph
             static function (string $from, array $to, callable $normalize): string {
                 $destination = count($to) === 1
                     ? $normalize($to[0])
-                    : sprintf('{%s}', implode(',', array_map(fn($node) => $normalize($node), $to)));
+                    : sprintf('{%s}', implode(',', array_map(fn ($node) => $normalize($node), $to)));
 
                 return sprintf("  %s -> %s", $normalize($from), $destination);
             },
@@ -197,7 +199,7 @@ class StateGraph
             static function (string $from, array $to, callable $normalize): string {
                 $destination = count($to) === 1
                     ? $normalize($to[0])
-                    : implode(' & ', array_map(fn($node) => $normalize($node), $to));
+                    : implode(' & ', array_map(fn ($node) => $normalize($node), $to));
 
                 return sprintf("  %s --> %s;", $normalize($from), $destination);
             },
@@ -214,11 +216,10 @@ class StateGraph
     private function exportToGraph(
         callable $serializeEdges,
         callable $serializeGraph,
-    ): string
-    {
+    ): string {
         $edges = [];
 
-        $normalize = static fn(string $node) =>
+        $normalize = static fn (string $node) =>
             match ($node) {
                 self::START_NODE => 'START',
                 self::END_NODE => 'END',
@@ -307,7 +308,7 @@ class StateGraph
 
     /**
      * Depth First Traversal of the graph given the $successorFunction to find a node successors.
-     * 
+     *
      * @param callable(string): string[] $successorFunction
      */
     private function pathExists(string $from, string $to, callable $successorFunction): bool

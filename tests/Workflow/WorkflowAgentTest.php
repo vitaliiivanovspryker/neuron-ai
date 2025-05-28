@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace NeuronAI\Tests\Workflow;
 
@@ -57,10 +59,10 @@ class WorkflowAgentTest extends TestCase
 
     /**
      * This test checks if chaining two agents works.
-     * 
+     *
      * The first agent has a tool to retrive a (hard-coded) timezone for a location.
      * The second agent has a tool to retrieve the date and time for a timezone.
-     * 
+     *
      * When asking "What time is it in Paris/France" the two tools must have been called.
      */
     public function test_with_real_agents(): void
@@ -100,7 +102,7 @@ class WorkflowAgentTest extends TestCase
                 )
             )
             ->setCallable(
-                fn(string $timezone) => (new \DateTimeImmutable("now", new \DateTimeZone($timezone)))->format('Y-m-d H:i:s')
+                fn (string $timezone) => (new \DateTimeImmutable("now", new \DateTimeZone($timezone)))->format('Y-m-d H:i:s')
             );
 
 
@@ -133,7 +135,7 @@ class WorkflowAgentTest extends TestCase
         //     echo $record['message'] . ' - ' . json_encode($record['context']) . PHP_EOL . PHP_EOL;
         // }
 
-        $list = array_filter($records, fn($record) => $record->message === 'tool-called');
+        $list = array_filter($records, fn ($record) => $record->message === 'tool-called');
 
         $this->assertCount(2, $list);
     }

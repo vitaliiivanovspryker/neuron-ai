@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace NeuronAI\Workflow;
 
@@ -61,7 +63,7 @@ class WorkflowAgent extends Agent
     private function getPayload(string $node, Message|array $messages): array
     {
         // Always add the original query
-        $input = is_array($messages) ? $messages : [$messages];;
+        $input = is_array($messages) ? $messages : [$messages];
 
         // Add the replies of all the predecessors
         foreach ($this->graph->getPredecessors($node) as $predecessor) {
