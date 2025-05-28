@@ -34,7 +34,6 @@ class MeilisearchVectorStore implements VectorStoreInterface
                 ]
             ]);
         }
-
     }
 
     public function addDocument(Document $document): void
