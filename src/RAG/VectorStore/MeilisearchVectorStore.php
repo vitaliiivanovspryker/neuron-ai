@@ -11,7 +11,7 @@ class MeilisearchVectorStore implements VectorStoreInterface
     protected Client $client;
 
     public function __construct(
-        protected string $apiKey,
+        protected string $key,
         protected string $indexUid,
         protected string $host = 'http://localhost:7700',
         protected int $topK = 5,
