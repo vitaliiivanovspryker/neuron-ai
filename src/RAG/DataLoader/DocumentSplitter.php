@@ -21,6 +21,10 @@ class DocumentSplitter
             if (empty($document->hash)) {
                 $document->hash = \hash('sha256', $text);
             }
+
+            if (empty($document->id)) {
+                $document->id = \uniqid();
+            }
             return [$document];
         }
 
@@ -33,6 +37,7 @@ class DocumentSplitter
         foreach ($chunks as $chunk) {
             $newDocument = new Document($chunk);
             $newDocument->hash = \hash('sha256', $chunk);
+            $newDocument->id = \uniqid();
             $newDocument->sourceType = $document->sourceType;
             $newDocument->sourceName = $document->sourceName;
             $newDocument->chunkNumber = $chunkNumber;

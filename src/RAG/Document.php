@@ -28,11 +28,11 @@ class Document implements \JsonSerializable
     {
         return [
             'id' => $this->id,
+            'hash' => $this->hash,
             'content' => $this->content,
             'embedding' => $this->embedding,
             'sourceType' => $this->sourceType,
             'sourceName' => $this->sourceName,
-            'hash' => $this->hash,
             'chunkNumber' => $this->chunkNumber,
             'score' => $this->score,
         ];
