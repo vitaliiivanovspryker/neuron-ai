@@ -20,7 +20,7 @@ class MeilisearchVectorStore implements VectorStoreInterface
             'base_uri' => trim($this->host, '/').'/indexes/'.$this->indexUid.'/',
             'headers' => [
                 'Content-Type' => 'application/json',
-                'Authorization' => "Bearer {$this->apiKey}",
+                'Authorization' => "Bearer {$this->key}",
             ]
         ]);
 
