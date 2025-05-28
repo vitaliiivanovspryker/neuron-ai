@@ -10,8 +10,6 @@ use NeuronAI\Observability\Events\MessageSaved;
 use NeuronAI\Observability\Events\MessageSaving;
 use NeuronAI\Observability\Events\InferenceStart;
 use NeuronAI\Observability\Events\InferenceStop;
-use NeuronAI\Exceptions\MissingCallbackParameter;
-use NeuronAI\Exceptions\ToolCallableNotSet;
 
 trait HandleChat
 {
