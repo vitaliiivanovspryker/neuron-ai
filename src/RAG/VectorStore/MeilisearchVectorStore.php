@@ -11,7 +11,7 @@ class MeilisearchVectorStore implements VectorStoreInterface
     protected Client $client;
 
     public function __construct(
-        protected string $apiKey,
+        protected string $key,
         protected string $indexUid,
         protected string $host = 'http://localhost:7700',
         protected int $topK = 5,
@@ -76,10 +76,10 @@ class MeilisearchVectorStore implements VectorStoreInterface
 
         return \array_map(function (array $item) {
             $document = new Document();
-            $document->id = $item['id']??null;
+            $document->id = $item['id'] ?? null;
             $document->content = $item['content'];
-            $document->sourceType = $item['sourceType']??null;
-            $document->sourceName = $item['sourceName']??null;
+            $document->sourceType = $item['sourceType'] ?? null;
+            $document->sourceName = $item['sourceName'] ?? null;
             $document->embedding = $item['_vectors']['default']['embeddings'];
             $document->score = $item['_rankingScore'];
             return $document;
