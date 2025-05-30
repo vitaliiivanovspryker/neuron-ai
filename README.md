@@ -101,7 +101,7 @@ Send a prompt to the agent to get a response from the underlying LLM:
 ```php
 use NeuronAI\Observability\AgentMonitoring;
 
-// The Inspector instance in your application - https://inspector.dev/
+// https://docs.neuron-ai.dev/advanced/observability
 $inspector = new \Inspector\Inspector(
     new \Inspector\Configuration('INSPECTOR_INGESTION_KEY')
 );
@@ -339,7 +339,7 @@ class Person
     public string $preference;
 }
 
-// The Inspector instance in your application - https://inspector.dev/
+// https://docs.neuron-ai.dev/advanced/observability
 $inspector = new \Inspector\Inspector(
     new \Inspector\Configuration('INSPECTOR_INGESTION_KEY')
 );
@@ -377,7 +377,7 @@ Here is a code example in a legacy PHP script:
 ```php
 use NeuronAI\Observability\AgentMonitoring;
 
-// The Inspector instance in your application - https://inspector.dev/
+// https://docs.neuron-ai.dev/advanced/observability
 $inspector = new \Inspector\Inspector(
     new \Inspector\Configuration('INSPECTOR_INGESTION_KEY')
 );
