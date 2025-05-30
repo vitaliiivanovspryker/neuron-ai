@@ -11,16 +11,16 @@ class MeilisearchVectorStore implements VectorStoreInterface
     protected Client $client;
 
     public function __construct(
-        protected string $key,
         protected string $indexUid,
         protected string $host = 'http://localhost:7700',
+        ?string $key = null,
         protected int $topK = 5,
     ) {
         $this->client = new Client([
             'base_uri' => trim($this->host, '/').'/indexes/'.$this->indexUid.'/',
             'headers' => [
                 'Content-Type' => 'application/json',
-                'Authorization' => "Bearer {$this->key}",
+                ...(!is_null($key) ? ['Authorization' => "Bearer {$key}"] : [])
             ]
         ]);
 
