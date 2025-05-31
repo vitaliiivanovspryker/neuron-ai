@@ -103,7 +103,8 @@ trait HandleStream
                     $toolCalls[$index]['type'] = 'function';
                 }
             } else {
-                if ($arguments = $call['function']['arguments'] ?? null) {
+                $arguments = $call['function']['arguments'] ?? null;
+                if ($arguments !== null) {
                     $toolCalls[$index]['function']['arguments'] .= $arguments;
                 }
             }
