@@ -107,15 +107,6 @@ jobs:
                   postgres-password: 'postgres'
                   postgres-db: 'neuron_ai_test'
 
-            -  name: Test pgvector
-               env:
-                  PGPASSWORD: postgres
-               run: |
-                  psql -h localhost -U postgres -d neuron_ai_test -c 'CREATE EXTENSION vector;'
-#                  psql -h localhost -U postgres -d neuron_ai_test -c 'CREATE TABLE items (id bigserial PRIMARY KEY, embedding vector(3));'
-#                  psql -h localhost -U postgres -d neuron_ai_test -c "INSERT INTO items (embedding) VALUES ('[1,2,3]');"
-#                  psql -h localhost -U postgres -d neuron_ai_test -c 'SELECT * FROM items;'
-
             - name: Install PHP dependencies
               run: composer update --${{ matrix.dependency-version }} --no-interaction --no-progress --ansi
 
