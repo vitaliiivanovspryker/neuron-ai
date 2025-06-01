@@ -48,11 +48,11 @@ class DoctrineVectorStoreTest extends TestCase
 
         $connection = DriverManager::getConnection([
             'dbname'   => 'neuron_ai_test',
-            'user'     => 'root',
-            'password' => '',
+            'user'     => 'postgres',
+            'password' => 'postgres',
             'host'     => '127.0.0.1',
-            'port'     => 3306,
-            'driver'   => 'pdo_mysql',
+            'port'     => 5432,
+            'driver'   => 'pdo_pgsql',
         ], $config);
 
         $platform = $connection->getDatabasePlatform();

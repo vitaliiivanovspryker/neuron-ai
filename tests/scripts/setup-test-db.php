@@ -1,12 +1,12 @@
 <?php
 
 $host = '127.0.0.1';
-$port = 3306;
-$user = 'root';
-$password = '';
+$port = 5432;
+$user = 'postgres';
+$password = 'postgres';
 $database = 'neuron_ai_test';
 
-$pdo = new PDO("mysql:host=$host;port=$port", $user, $password, [
+$pdo = new PDO("pgsql:host=$host;port=$port", $user, $password, [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 ]);
 
