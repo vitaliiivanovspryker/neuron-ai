@@ -7,6 +7,7 @@ use NeuronAI\Observability\Events\AgentError;
 use NeuronAI\Observability\Events\ToolCalled;
 use NeuronAI\Observability\Events\ToolCalling;
 use NeuronAI\Chat\Messages\ToolCallMessage;
+use NeuronAI\Observability\Observable;
 
 class Agent implements AgentInterface
 {
@@ -17,6 +18,7 @@ class Agent implements AgentInterface
     use HandleChat;
     use HandleStream;
     use HandleStructured;
+    use Observable;
 
     /**
      * The system instructions.
@@ -24,11 +26,6 @@ class Agent implements AgentInterface
      * @var string
      */
     protected string $instructions = 'Your are a helpful and friendly AI agent built with Neuron AI PHP framework.';
-
-    /**
-     * @var array<string, array<\SplObserver>>
-     */
-    private array $observers = [];
 
     protected function executeTools(ToolCallMessage $toolCallMessage): ToolCallResultMessage
     {
@@ -57,50 +54,5 @@ class Agent implements AgentInterface
     public function instructions(): string
     {
         return $this->instructions;
-    }
-
-    private function initEventGroup(string $event = "*"): void
-    {
-        if (!isset($this->observers[$event])) {
-            $this->observers[$event] = [];
-        }
-    }
-
-    private function getEventObservers(string $event = "*"): array
-    {
-        $this->initEventGroup($event);
-        $group = $this->observers[$event];
-        $all = $this->observers["*"] ?? [];
-
-        return \array_merge($group, $all);
-    }
-
-    public function observe(\SplObserver $observer, string $event = "*"): self
-    {
-        $this->attach($observer, $event);
-        return $this;
-    }
-
-    public function attach(\SplObserver $observer, string $event = "*"): void
-    {
-        $this->initEventGroup($event);
-        $this->observers[$event][] = $observer;
-    }
-
-    public function detach(\SplObserver $observer, string $event = "*"): void
-    {
-        foreach ($this->getEventObservers($event) as $key => $s) {
-            if ($s === $observer) {
-                unset($this->observers[$event][$key]);
-            }
-        }
-    }
-
-    public function notify(string $event = "*", $data = null): void
-    {
-        // Broadcasting the '$event' event";
-        foreach ($this->getEventObservers($event) as $observer) {
-            $observer->update($this, $event, $data);
-        }
     }
 }
