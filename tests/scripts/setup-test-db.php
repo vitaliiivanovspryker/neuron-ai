@@ -15,7 +15,7 @@ $exists = $stmt->fetch();
 
 if (!$exists) {
     echo "🛠️  Database '$database' does not exist, creating...\n";
-    $pdo->exec("CREATE DATABASE `$database` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
+    $pdo->exec("CREATE DATABASE $database WITH ENCODING = 'UTF8'");
     echo "✅ Database '$database' created successfully.\n";
 } else {
     echo "✅ Database '$database' already exists. Everything is ready.\n";
