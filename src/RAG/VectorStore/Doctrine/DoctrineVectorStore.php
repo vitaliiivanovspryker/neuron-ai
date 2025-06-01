@@ -75,8 +75,7 @@ class DoctrineVectorStore implements VectorStoreInterface
     }
 
     /**
-     * @throws ORMException
-     * @throws Exception
+     * @param Document $document
      */
     private function persistDocument(Document $document): void
     {

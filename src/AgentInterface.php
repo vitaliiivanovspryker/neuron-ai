@@ -25,7 +25,7 @@ interface AgentInterface extends \SplSubject
 
     public function resolveChatHistory(): AbstractChatHistory;
 
-    public function observe(\SplObserver $observer, string $event = "*"): AgentInterface;
+    public function observe(\SplObserver $observer, string $event = "*"): \SplObserver;
 
     public function chat(Message|array $messages): Message;
 

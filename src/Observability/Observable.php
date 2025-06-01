@@ -31,7 +31,7 @@ trait Observable
         return \array_merge($group, $all);
     }
 
-    public function observe(SplObserver $observer, string $event = "*"): AgentInterface
+    public function observe(SplObserver $observer, string $event = "*"): self
     {
         $this->attach($observer, $event);
         return $this;

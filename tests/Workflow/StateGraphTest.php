@@ -259,7 +259,7 @@ class StateGraphTest extends TestCase
 
     public function test_to_dot(): void
     {
-        $dot = <<<DOT
+        $dot = str_replace(["\r\n", "\n"], PHP_EOL, <<<DOT
         digraph G {
           START -> {a,c}
           a -> {b,d}
@@ -268,14 +268,14 @@ class StateGraphTest extends TestCase
           d -> e
           e -> END
         }
-        DOT;
+        DOT);
 
         $this->assertEquals($dot, $this->getComplexGraph()->toDot());
     }
 
     public function test_to_mermaid(): void
     {
-        $dot = <<<MERMAID
+        $dot = str_replace(["\r\n", "\n"], PHP_EOL, <<<MERMAID
         graph TD;
           START --> a & c;
           a --> b & d;
@@ -284,7 +284,7 @@ class StateGraphTest extends TestCase
           d --> e;
           e --> END;
 
-        MERMAID;
+        MERMAID);
 
         $this->assertEquals($dot, $this->getComplexGraph()->toMermaid());
     }

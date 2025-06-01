@@ -39,13 +39,13 @@ class WorkflowTest extends TestCase
 
         $handler = new TestHandler();
 
-        $agent = Workflow::make($graph);
-        $agent->observe(
+        $workflow = Workflow::make($graph);
+        $workflow->observe(
             new LogObserver(new Logger('my_logger', [$handler])),
             'test',
         );
 
-        $reply = $agent->execute(new UserMessage('hello'));
+        $reply = $workflow->execute(new UserMessage('hello'));
 
         $this->assertEquals(MessageRole::ASSISTANT->value, $reply->getRole());
         $this->assertEquals('b', $reply->getContent());

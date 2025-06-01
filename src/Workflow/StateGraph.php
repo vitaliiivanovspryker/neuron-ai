@@ -201,7 +201,7 @@ class StateGraph
 
                 return sprintf("  %s -> %s", $normalize($from), $destination);
             },
-            static fn (array $edges): string => sprintf("digraph G {\n%s\n}", implode(PHP_EOL, $edges))
+            static fn (array $edges): string => sprintf("digraph G {".PHP_EOL."%s".PHP_EOL."}", implode(PHP_EOL, $edges))
         );
     }
 
@@ -219,7 +219,7 @@ class StateGraph
 
                 return sprintf("  %s --> %s;", $normalize($from), $destination);
             },
-            static fn (array $edges): string => sprintf("graph TD;\n%s\n", implode(PHP_EOL, $edges))
+            static fn (array $edges): string => sprintf("graph TD;".PHP_EOL."%s".PHP_EOL, implode(PHP_EOL, $edges))
         );
     }
 
