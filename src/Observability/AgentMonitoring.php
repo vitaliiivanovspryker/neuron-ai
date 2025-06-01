@@ -84,6 +84,7 @@ class AgentMonitoring implements \SplObserver
         if ($this->catch) {
             $error = $this->inspector->reportException($data->exception, !$data->unhandled);
             if ($data->exception instanceof RequestException) {
+                // @phpstan-ignore-next-line
                 $error->message = $data->exception->getResponse()->getBody()->getContents();
             }
             if ($data->unhandled) {
