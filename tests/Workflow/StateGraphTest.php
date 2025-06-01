@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace NeuronAI\Tests;
+namespace NeuronAI\Tests\Workflow;
 
 use NeuronAI\Exceptions\StateGraphError;
-use NeuronAI\Tests\Workflow\TestAgent;
 use NeuronAI\Workflow\StateGraph;
 use PHPUnit\Framework\TestCase;
 
@@ -284,7 +283,7 @@ class StateGraphTest extends TestCase
           c --> a;
           d --> e;
           e --> END;
-        
+
         MERMAID;
 
         $this->assertEquals($dot, $this->getComplexGraph()->toMermaid());

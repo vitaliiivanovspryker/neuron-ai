@@ -8,17 +8,16 @@ use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use NeuronAI\Agent;
 use NeuronAI\Chat\Enums\MessageRole;
-use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Providers\Ollama\Ollama;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Workflow\StateGraph;
-use NeuronAI\Workflow\WorkflowAgent;
+use NeuronAI\Workflow\Workflow;
 use PHPUnit\Framework\TestCase;
 use NeuronAI\Observability\LogObserver;
 
-class WorkflowAgentTest extends TestCase
+class WorkflowTest extends TestCase
 {
     /**
      * This test checks if the evaluation of a state graph properly works.
@@ -37,7 +36,7 @@ class WorkflowAgentTest extends TestCase
 
         $handler = new TestHandler();
 
-        $agent = WorkflowAgent::make($graph);
+        $agent = Workflow::make($graph);
         $agent->observe(
             new LogObserver(new Logger('my_logger', [$handler])),
             'test',
@@ -45,7 +44,6 @@ class WorkflowAgentTest extends TestCase
 
         $reply = $agent->chat(new UserMessage('hello'));
 
-        $this->assertInstanceOf(Message::class, $reply);
         $this->assertEquals(MessageRole::ASSISTANT->value, $reply->getRole());
         $this->assertEquals('b', $reply->getContent());
 
@@ -123,7 +121,7 @@ class WorkflowAgentTest extends TestCase
             ->addEdge('a', 'b')
             ->addEdge('b', StateGraph::END_NODE);
 
-        $reply = WorkflowAgent::make($graph)
+        $reply = Workflow::make($graph)
             ->observe(new LogObserver(new Logger('my_logger', [$handler])))
             ->chat(new UserMessage('What time is it in Paris/France'));
 

@@ -6,6 +6,7 @@ namespace NeuronAI\Workflow;
 
 use NeuronAI\AgentInterface;
 use NeuronAI\Exceptions\StateGraphError;
+use SplQueue;
 
 class StateGraph
 {
@@ -27,6 +28,9 @@ class StateGraph
         $this->edges[self::END_NODE] = [];
     }
 
+    /**
+     * @throws StateGraphError
+     */
     public function addNode(string $name, AgentInterface $node): self
     {
         if ($this->nodeExists($name)) {
@@ -38,6 +42,9 @@ class StateGraph
         return $this;
     }
 
+    /**
+     * @throws StateGraphError
+     */
     public function addEdge(string $from, string $to): self
     {
         if ($to === self::START_NODE) {
@@ -62,7 +69,9 @@ class StateGraph
         return $this;
     }
 
-    /** @return string[] */
+    /**
+     * @return string[]
+     */
     public function getNodeNames(): array
     {
         return array_keys($this->nodes);
@@ -89,14 +98,20 @@ class StateGraph
         return $node;
     }
 
-    /** @return string[] */
+    /**
+     * @return string[]
+     * @throws StateGraphError
+     */
     public function getSuccessors(string $node): array
     {
         $this->assertNodeExists($node);
         return $this->edges[$node];
     }
 
-    /** @return string[] */
+    /**
+     * @return string[]
+     * @throws StateGraphError
+     */
     public function getPredecessors(string $node): array
     {
         $this->assertNodeExists($node);
@@ -126,6 +141,7 @@ class StateGraph
      * Get a list of node names to evaluate to get from the start node to the end node.
      *
      * @return string[]
+     * @throws StateGraphError
      */
     public function compile(): array
     {
@@ -137,22 +153,22 @@ class StateGraph
             throw new StateGraphError('The graph contains cycles');
         }
 
-        /** @var array<string> */
+        /** @var array<string> $executionList*/
         $executionList = [];
 
-        /** @var array<string, bool> */
+        /** @var array<string, bool> $evaluated*/
         $evaluated = [];
 
         foreach (array_keys($this->nodes) as $node) {
             $evaluated[$node] = false;
         }
 
-        $q = new \SplQueue();
+        $q = new SplQueue();
         $q->enqueue(self::START_NODE);
         $evaluated[self::START_NODE] = true;
 
         while (!$q->isEmpty()) {
-            /** @var string */
+            /** @var string $node */
             $node = $q->dequeue();
 
             if ($node !== self::END_NODE) {
@@ -281,7 +297,7 @@ class StateGraph
      *
      * @param bool[] $visited
      * @param bool[] $stack
-     * @return bool
+     * @throws StateGraphError
      */
     private function isCyclicNode(string $node, array &$visited, array &$stack): bool
     {
@@ -309,12 +325,12 @@ class StateGraph
     /**
      * Depth First Traversal of the graph given the $successorFunction to find a node successors.
      *
-     * @param callable(string): string[] $successorFunction
+     * @phpstan-param callable(string): string[] $successorFunction
      */
     private function pathExists(string $from, string $to, callable $successorFunction): bool
     {
         $visited = [];
-        $queue = new \SplQueue();
+        $queue = new SplQueue();
         $queue->enqueue($from);
 
         while (!$queue->isEmpty()) {
@@ -342,6 +358,7 @@ class StateGraph
      * Internal utility function used to compile the graph.
      * @param bool[] $evaluated
      * @param string[] $executionList
+     * @throws StateGraphError
      */
     private function evaluateNode(string $node, array &$evaluated, array &$executionList): void
     {
@@ -359,6 +376,9 @@ class StateGraph
         $executionList[] = $node;
     }
 
+    /**
+     * @throws StateGraphError
+     */
     private function assertNodeExists(string $name): void
     {
         if (!$this->nodeExists($name)) {

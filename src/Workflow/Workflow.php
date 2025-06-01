@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace NeuronAI\Workflow;
 
-use NeuronAI\Agent;
-use NeuronAI\AgentInterface;
 use NeuronAI\Chat\Messages\Message;
+use NeuronAI\Observability\Observable;
+use NeuronAI\StaticConstructor;
+use SplSubject;
 
-class WorkflowAgent extends Agent
+class Workflow implements SplSubject
 {
+    use StaticConstructor;
+    use Observable;
+
     /** @var string[] */
     private array $executionList;
-
-    /** @var array{event:string,observer:\SplObserver}[] */
-    private array $observers = [];
 
     /** @var array<string,Message[]> */
     private array $replies = [];
@@ -39,7 +40,7 @@ class WorkflowAgent extends Agent
             $agent = $this->graph->getNode($node);
             $input = $this->getPayload($node, $messages);
 
-            $this->attachObservers($agent);
+//            $this->attachObservers($agent);
 
             $lastReply = $agent->chat($input);
             $this->replies[$node] = [$lastReply];
@@ -48,16 +49,6 @@ class WorkflowAgent extends Agent
         $this->notify('pipeline-end');
 
         return $lastReply;
-    }
-
-    public function observe(\SplObserver $observer, string $event = "*"): Agent
-    {
-        $this->observers[] = [
-            'event' => $event,
-            'observer' => $observer,
-        ];
-
-        return parent::observe($observer, $event);
     }
 
     private function getPayload(string $node, Message|array $messages): array
@@ -73,10 +64,10 @@ class WorkflowAgent extends Agent
         return $input;
     }
 
-    private function attachObservers(AgentInterface $agent): void
-    {
-        foreach ($this->observers as $observer) {
-            $agent->observe($observer['observer'], $observer['event']);
-        }
-    }
+//    private function attachObservers(AgentInterface $agent): void
+//    {
+//        foreach ($this->observers as $observer) {
+//            $agent->observe($observer['observer'], $observer['event']);
+//        }
+//    }
 }

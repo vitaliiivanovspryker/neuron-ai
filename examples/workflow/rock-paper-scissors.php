@@ -26,7 +26,7 @@ use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Workflow\StateGraph;
-use NeuronAI\Workflow\WorkflowAgent;
+use NeuronAI\Workflow\Workflow;
 
 // ----- OPENAI provider
 // $provider = new OpenAI(
@@ -116,7 +116,7 @@ $graph = (new StateGraph())
     ->addEdge('determine_winner', StateGraph::END_NODE);
 
 // Create the workflow agent and process the game
-$workflowAgent = WorkflowAgent::make($graph);
+$workflowAgent = Workflow::make($graph);
 $reply = $workflowAgent->chat(new UserMessage("Determine the winner."));
 
 echo "Game Result:\n";
