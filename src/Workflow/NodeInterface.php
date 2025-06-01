@@ -2,7 +2,6 @@
 
 namespace NeuronAI\Workflow;
 
-use NeuronAI\AgentInterface;
 use NeuronAI\Chat\Messages\Message;
 
 interface NodeInterface extends \SplSubject

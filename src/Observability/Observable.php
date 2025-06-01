@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NeuronAI\Observability;
 
-use NeuronAI\AgentInterface;
 use SplObserver;
 
 trait Observable

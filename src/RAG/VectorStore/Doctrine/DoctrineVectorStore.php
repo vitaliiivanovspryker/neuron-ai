@@ -4,8 +4,6 @@ namespace NeuronAI\RAG\VectorStore\Doctrine;
 
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Exception\ORMException;
-use Exception;
 use NeuronAI\RAG\Document;
 use NeuronAI\RAG\VectorStore\VectorStoreInterface;
 
