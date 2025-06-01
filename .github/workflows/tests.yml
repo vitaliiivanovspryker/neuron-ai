@@ -103,4 +103,4 @@ jobs:
                   echo "Typesense healthcheck elapsed: ${elapsed}s"
 
             - name: Unit Tests
-              run: vendor/bin/phpunit --colors=always
+              run: vendor/bin/phpunit --colors=always --display-warnings
