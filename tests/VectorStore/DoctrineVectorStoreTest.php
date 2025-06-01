@@ -27,7 +27,7 @@ class DoctrineVectorStoreTest extends TestCase
 
     protected function setUp(): void
     {
-        if (!$this->isPortOpen('127.0.0.1', 3306)) {
+        if (!$this->isPortOpen('127.0.0.1', 5432)) {
             $this->markTestSkipped('Port 3306 is not open. Skipping test.');
         }
         try {
