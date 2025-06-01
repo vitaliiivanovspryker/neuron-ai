@@ -19,12 +19,13 @@
 
 declare(strict_types=1);
 
-require_once __DIR__.'/../../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 use NeuronAI\Agent;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
+use NeuronAI\Workflow\AgentNode;
 use NeuronAI\Workflow\StateGraph;
 use NeuronAI\Workflow\Workflow;
 
@@ -106,18 +107,22 @@ $determineWinnerAgent = Agent::make()
     ->addTool($determineWinnerTool);
 
 // Build the workflow graph
-$graph = (new StateGraph())
-    ->addNode('player1', $player1Agent)
-    ->addNode('player2', $player2Agent)
-    ->addNode('determine_winner', $determineWinnerAgent)
-    ->addEdge(StateGraph::START_NODE, 'player1')
-    ->addEdge('player1', 'player2')
-    ->addEdge('player2', 'determine_winner')
-    ->addEdge('determine_winner', StateGraph::END_NODE);
+try {
+    $graph = (new StateGraph())
+        ->addNode('player1', AgentNode::make($player1Agent))
+        ->addNode('player2', AgentNode::make($player2Agent))
+        ->addNode('determine_winner', AgentNode::make($determineWinnerAgent))
+        ->addEdge(StateGraph::START_NODE, 'player1')
+        ->addEdge('player1', 'player2')
+        ->addEdge('player2', 'determine_winner')
+        ->addEdge('determine_winner', StateGraph::END_NODE);
 
-// Create the workflow agent and process the game
-$workflowAgent = Workflow::make($graph);
-$reply = $workflowAgent->chat(new UserMessage("Determine the winner."));
+    // Create the workflow agent and process the game
+    $workflowAgent = Workflow::make($graph);
+    $reply = $workflowAgent->execute(new UserMessage("Determine the winner."));
 
-echo "Game Result:\n";
-echo $reply->getContent() . "\n";
+    echo "Game Result:\n";
+    echo $reply->getContent() . "\n";
+} catch (\NeuronAI\Exceptions\StateGraphError $e) {
+    echo "Something went wrong: {$e->getMessage()}\n";
+}

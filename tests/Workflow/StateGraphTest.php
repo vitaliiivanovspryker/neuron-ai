@@ -25,7 +25,7 @@ class StateGraphTest extends TestCase
 
         $this->assertFalse($graph->nodeExists($nodeName));
 
-        $graph->addNode($nodeName, new TestAgent());
+        $graph->addNode($nodeName, new TestNode());
 
         $this->assertTrue($graph->nodeExists($nodeName));
     }
@@ -35,8 +35,8 @@ class StateGraphTest extends TestCase
         $nodeName = 'foo';
         $this->expectException(StateGraphError::class);
         $graph = new StateGraph();
-        $graph->addNode($nodeName, new TestAgent());
-        $graph->addNode($nodeName, new TestAgent());
+        $graph->addNode($nodeName, new TestNode());
+        $graph->addNode($nodeName, new TestNode());
     }
 
     public function test_add_edge(): void
@@ -49,7 +49,7 @@ class StateGraphTest extends TestCase
 
         $this->assertContains(StateGraph::END_NODE, $graph->getSuccessors(StateGraph::START_NODE));
 
-        $graph->addNode('foo', new TestAgent());
+        $graph->addNode('foo', new TestNode());
         $graph->addEdge(StateGraph::START_NODE, 'foo');
         $graph->addEdge('foo', StateGraph::END_NODE);
 
@@ -60,7 +60,7 @@ class StateGraphTest extends TestCase
 
     public function test_get_node(): void
     {
-        $agent = new TestAgent('foobar');
+        $agent = new TestNode('foobar');
         $graph = (new StateGraph())->addNode('a', $agent);
         $this->assertEquals($agent, $graph->getNode('a'));
     }
@@ -114,7 +114,7 @@ class StateGraphTest extends TestCase
         $this->expectException(StateGraphError::class);
         $graph = new StateGraph();
         $graph
-            ->addNode('a', new TestAgent())
+            ->addNode('a', new TestNode())
             ->addEdge('a', StateGraph::START_NODE);
     }
 
@@ -123,7 +123,7 @@ class StateGraphTest extends TestCase
         $this->expectException(StateGraphError::class);
         $graph = new StateGraph();
         $graph
-            ->addNode('a', new TestAgent())
+            ->addNode('a', new TestNode())
             ->addEdge(StateGraph::END_NODE, 'a');
     }
 
@@ -132,7 +132,7 @@ class StateGraphTest extends TestCase
         $this->expectException(StateGraphError::class);
         $graph = new StateGraph();
         $graph
-            ->addNode('a', new TestAgent())
+            ->addNode('a', new TestNode())
             ->addEdge('a', 'a');
     }
 
@@ -149,7 +149,7 @@ class StateGraphTest extends TestCase
     {
         $graph = $this->getAcyclicGraph();
         $graph
-            ->addNode('d', new TestAgent())
+            ->addNode('d', new TestNode())
             ->addEdge('c', 'd');
 
         $this->assertTrue($graph->nodeDependsOn(StateGraph::END_NODE, StateGraph::START_NODE));
@@ -167,12 +167,12 @@ class StateGraphTest extends TestCase
 
         $graph = new StateGraph();
         $graph
-            ->addNode('a', new TestAgent())
-            ->addNode('b', new TestAgent())
-            ->addNode('c', new TestAgent())
-            ->addNode('d', new TestAgent())
-            ->addNode('e', new TestAgent())
-            ->addNode('f', new TestAgent())
+            ->addNode('a', new TestNode())
+            ->addNode('b', new TestNode())
+            ->addNode('c', new TestNode())
+            ->addNode('d', new TestNode())
+            ->addNode('e', new TestNode())
+            ->addNode('f', new TestNode())
             ->addEdge('a', 'b')
             ->addEdge('b', 'c')
             ->addEdge('d', 'a')
@@ -197,11 +197,11 @@ class StateGraphTest extends TestCase
         $graph = new StateGraph();
         $this->assertFalse($graph->isStartConnectedToEnd());
 
-        $graph->addNode('foo', new TestAgent());
+        $graph->addNode('foo', new TestNode());
         $graph->addEdge(StateGraph::START_NODE, 'foo');
         $this->assertFalse($graph->isStartConnectedToEnd());
 
-        $graph->addNode('bar', new TestAgent());
+        $graph->addNode('bar', new TestNode());
         $graph->addEdge(StateGraph::START_NODE, 'bar');
         $this->assertFalse($graph->isStartConnectedToEnd());
 
@@ -226,15 +226,15 @@ class StateGraphTest extends TestCase
         $this->assertEquals(['a', 'c', 'b'], $executionList);
 
         $graph = (new StateGraph())
-            ->addNode('a', new TestAgent())
-            ->addNode('b', new TestAgent())
+            ->addNode('a', new TestNode())
+            ->addNode('b', new TestNode())
             ->addEdge(StateGraph::START_NODE, 'a')
             ->addEdge(StateGraph::START_NODE, 'b')
             ->addEdge('a', StateGraph::END_NODE);
 
         $this->assertEquals(['a'], $graph->compile());
 
-        $graph->addNode('c', new TestAgent())->addEdge('b', 'c');
+        $graph->addNode('c', new TestNode())->addEdge('b', 'c');
 
         $this->assertEquals(['a'], $graph->compile());
 
@@ -292,7 +292,7 @@ class StateGraphTest extends TestCase
     private function getSimpleGraph(): StateGraph
     {
         return (new StateGraph())
-            ->addNode('a', new TestAgent())
+            ->addNode('a', new TestNode())
             ->addEdge(StateGraph::START_NODE, 'a')
             ->addEdge('a', StateGraph::END_NODE);
     }
@@ -300,9 +300,9 @@ class StateGraphTest extends TestCase
     private function getDiamondGraph(): StateGraph
     {
         return (new StateGraph())
-            ->addNode('a', new TestAgent())
-            ->addNode('b', new TestAgent())
-            ->addNode('c', new TestAgent())
+            ->addNode('a', new TestNode())
+            ->addNode('b', new TestNode())
+            ->addNode('c', new TestNode())
             ->addEdge(StateGraph::START_NODE, 'a')
             ->addEdge(StateGraph::START_NODE, 'c')
             ->addEdge('a', 'b')
@@ -313,9 +313,9 @@ class StateGraphTest extends TestCase
     private function getAcyclicGraph(): StateGraph
     {
         return (new StateGraph())
-            ->addNode('a', new TestAgent())
-            ->addNode('b', new TestAgent())
-            ->addNode('c', new TestAgent())
+            ->addNode('a', new TestNode())
+            ->addNode('b', new TestNode())
+            ->addNode('c', new TestNode())
             ->addEdge(StateGraph::START_NODE, 'a')
             ->addEdge(StateGraph::START_NODE, 'c')
             ->addEdge('a', 'b')
@@ -327,9 +327,9 @@ class StateGraphTest extends TestCase
     private function getAcyclicGraph2(): StateGraph
     {
         return (new StateGraph())
-            ->addNode('a', new TestAgent())
-            ->addNode('b', new TestAgent())
-            ->addNode('c', new TestAgent())
+            ->addNode('a', new TestNode())
+            ->addNode('b', new TestNode())
+            ->addNode('c', new TestNode())
             ->addEdge(StateGraph::START_NODE, 'a')
             ->addEdge(StateGraph::START_NODE, 'c')
             ->addEdge('a', 'b')
@@ -341,9 +341,9 @@ class StateGraphTest extends TestCase
     private function getCyclicGraph(): StateGraph
     {
         return (new StateGraph())
-            ->addNode('a', new TestAgent())
-            ->addNode('b', new TestAgent())
-            ->addNode('c', new TestAgent())
+            ->addNode('a', new TestNode())
+            ->addNode('b', new TestNode())
+            ->addNode('c', new TestNode())
             ->addEdge(StateGraph::START_NODE, 'a')
             ->addEdge('a', 'b')
             ->addEdge('b', 'c')
@@ -354,11 +354,11 @@ class StateGraphTest extends TestCase
     private function getComplexGraph(): StateGraph
     {
         return (new StateGraph())
-            ->addNode('a', new TestAgent())
-            ->addNode('b', new TestAgent())
-            ->addNode('c', new TestAgent())
-            ->addNode('d', new TestAgent())
-            ->addNode('e', new TestAgent())
+            ->addNode('a', new TestNode())
+            ->addNode('b', new TestNode())
+            ->addNode('c', new TestNode())
+            ->addNode('d', new TestNode())
+            ->addNode('e', new TestNode())
             ->addEdge(StateGraph::START_NODE, 'a')
             ->addEdge(StateGraph::START_NODE, 'c')
             ->addEdge('c', 'a')

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NeuronAI\Workflow;
 
-use NeuronAI\AgentInterface;
 use NeuronAI\Exceptions\StateGraphError;
 use SplQueue;
 
@@ -14,7 +13,7 @@ class StateGraph
 
     public const END_NODE = '__end__';
 
-    /** @var array<string, AgentInterface|null> */
+    /** @var array<string, NodeInterface|null> */
     private array $nodes = [];
 
     /** @var array<string, string[]> */
@@ -31,7 +30,7 @@ class StateGraph
     /**
      * @throws StateGraphError
      */
-    public function addNode(string $name, AgentInterface $node): self
+    public function addNode(string $name, NodeInterface $node): self
     {
         if ($this->nodeExists($name)) {
             throw new StateGraphError("Node already exists: $name");
@@ -79,8 +78,9 @@ class StateGraph
 
     /**
      * Get the agent attached to a node.
+     * @throws StateGraphError
      */
-    public function getNode(string $name): AgentInterface
+    public function getNode(string $name): NodeInterface
     {
         $this->assertNodeExists($name);
 
@@ -92,7 +92,7 @@ class StateGraph
             throw new StateGraphError('END node is not attached to an agent');
         }
 
-        /** @var AgentInterface $node */
+        /** @var NodeInterface $node */
         $node = $this->nodes[$name];
 
         return $node;
@@ -269,6 +269,9 @@ class StateGraph
         return $this->pathExists($node, $dependency, [$this, 'getPredecessors']);
     }
 
+    /**
+     * @throws StateGraphError
+     */
     public function isCyclic(): bool
     {
         $visited = [];

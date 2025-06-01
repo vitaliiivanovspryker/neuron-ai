@@ -9,9 +9,11 @@ use Monolog\Logger;
 use NeuronAI\Agent;
 use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\UserMessage;
+use NeuronAI\Exceptions\StateGraphError;
 use NeuronAI\Providers\Ollama\Ollama;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
+use NeuronAI\Workflow\AgentNode;
 use NeuronAI\Workflow\StateGraph;
 use NeuronAI\Workflow\Workflow;
 use PHPUnit\Framework\TestCase;
@@ -21,13 +23,14 @@ class WorkflowTest extends TestCase
 {
     /**
      * This test checks if the evaluation of a state graph properly works.
+     * @throws StateGraphError
      */
     public function test_agent_call_order(): void
     {
         $graph = (new StateGraph())
-            ->addNode('a', new TestAgent('a'))
-            ->addNode('b', new TestAgent('b'))
-            ->addNode('c', new TestAgent('c'))
+            ->addNode('a', new TestNode('a'))
+            ->addNode('b', new TestNode('b'))
+            ->addNode('c', new TestNode('c'))
             ->addEdge(StateGraph::START_NODE, 'a')
             ->addEdge('a', 'b')
             ->addEdge('a', 'c')
@@ -42,7 +45,7 @@ class WorkflowTest extends TestCase
             'test',
         );
 
-        $reply = $agent->chat(new UserMessage('hello'));
+        $reply = $agent->execute(new UserMessage('hello'));
 
         $this->assertEquals(MessageRole::ASSISTANT->value, $reply->getRole());
         $this->assertEquals('b', $reply->getContent());
@@ -115,16 +118,15 @@ class WorkflowTest extends TestCase
             ->addTool($timeTool);
 
         $graph = (new StateGraph())
-            ->addNode('a', $agent1)
-            ->addNode('b', $agent2)
+            ->addNode('a', AgentNode::make($agent1))
+            ->addNode('b', AgentNode::make($agent2))
             ->addEdge(StateGraph::START_NODE, 'a')
             ->addEdge('a', 'b')
             ->addEdge('b', StateGraph::END_NODE);
 
-        $reply = Workflow::make($graph)
+        Workflow::make($graph)
             ->observe(new LogObserver(new Logger('my_logger', [$handler])))
-            ->chat(new UserMessage('What time is it in Paris/France'));
-
+            ->execute(new UserMessage('What time is it in Paris/France'));
 
         $records = $handler->getRecords();
 

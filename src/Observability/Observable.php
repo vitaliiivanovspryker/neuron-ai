@@ -30,7 +30,7 @@ trait Observable
         return \array_merge($group, $all);
     }
 
-    public function observe(SplObserver $observer, string $event = "*"): self
+    public function observe(SplObserver $observer, string $event = "*"): static
     {
         $this->attach($observer, $event);
         return $this;

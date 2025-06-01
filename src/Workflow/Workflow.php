@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NeuronAI\Workflow;
 
 use NeuronAI\Chat\Messages\Message;
+use NeuronAI\Exceptions\StateGraphError;
 use NeuronAI\Observability\Observable;
 use NeuronAI\StaticConstructor;
 use SplSubject;
@@ -20,17 +21,23 @@ class Workflow implements SplSubject
     /** @var array<string,Message[]> */
     private array $replies = [];
 
+    /**
+     * @throws StateGraphError
+     */
     public function __construct(
         private readonly StateGraph $graph,
     ) {
         $this->executionList = $graph->compile();
     }
 
-    public function chat(Message|array $messages): Message
+    /**
+     * @throws StateGraphError
+     */
+    public function execute(Message|array $messages): Message
     {
         $lastReply = null;
 
-        $this->notify('pipeline-start');
+        $this->notify('workflow-start');
 
         foreach ($this->graph->getNodeNames() as $node) {
             $this->replies[$node] = [];
@@ -40,17 +47,20 @@ class Workflow implements SplSubject
             $agent = $this->graph->getNode($node);
             $input = $this->getPayload($node, $messages);
 
-//            $this->attachObservers($agent);
+            $this->attachObservers($agent);
 
-            $lastReply = $agent->chat($input);
+            $lastReply = $agent->execute($input);
             $this->replies[$node] = [$lastReply];
         }
 
-        $this->notify('pipeline-end');
+        $this->notify('workflow-end');
 
         return $lastReply;
     }
 
+    /**
+     * @throws StateGraphError
+     */
     private function getPayload(string $node, Message|array $messages): array
     {
         // Always add the original query
@@ -64,10 +74,12 @@ class Workflow implements SplSubject
         return $input;
     }
 
-//    private function attachObservers(AgentInterface $agent): void
-//    {
-//        foreach ($this->observers as $observer) {
-//            $agent->observe($observer['observer'], $observer['event']);
-//        }
-//    }
+    private function attachObservers(NodeInterface $node): void
+    {
+        foreach ($this->observers as $event => $observers) {
+            foreach ($observers as $observer) {
+                $node->observe($observer, $event);
+            }
+        }
+    }
 }
