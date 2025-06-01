@@ -24,17 +24,8 @@ use NeuronAI\RAG\VectorStore\VectorStoreInterface;
  */
 class RAG extends Agent
 {
-    /**
-     * @var VectorStoreInterface
-     */
-    protected VectorStoreInterface $store;
-
-    /**
-     * The embeddings provider.
-     *
-     * @var EmbeddingsProviderInterface
-     */
-    protected EmbeddingsProviderInterface $embeddingsProvider;
+    use ResolveVectorStore;
+    use ResolveEmbeddingProvider;
 
     /**
      * @var array<PostprocessorInterface>
@@ -108,8 +99,8 @@ class RAG extends Agent
      */
     private function searchDocuments(string $question): array
     {
-        $docs = $this->vectorStore()->similaritySearch(
-            $this->embeddings()->embedText($question)
+        $docs = $this->resolveVectorStore()->similaritySearch(
+            $this->resolveEmbeddingsProvider()->embedText($question)
         );
 
         $retrievedDocs = [];
@@ -140,28 +131,6 @@ class RAG extends Agent
         return $documents;
     }
 
-    public function setEmbeddingsProvider(EmbeddingsProviderInterface $provider): RAG
-    {
-        $this->embeddingsProvider = $provider;
-        return $this;
-    }
-
-    protected function embeddings(): EmbeddingsProviderInterface
-    {
-        return $this->embeddingsProvider;
-    }
-
-    public function setVectorStore(VectorStoreInterface $store): RAG
-    {
-        $this->store = $store;
-        return $this;
-    }
-
-    protected function vectorStore(): VectorStoreInterface
-    {
-        return $this->store;
-    }
-
     /**
      * Feed the vector store with documents.
      *
@@ -170,8 +139,8 @@ class RAG extends Agent
      */
     public function addDocuments(array $documents): void
     {
-        $this->vectorStore()->addDocuments(
-            $this->embeddings()->embedDocuments($documents)
+        $this->resolveVectorStore()->addDocuments(
+            $this->resolveEmbeddingsProvider()->embedDocuments($documents)
         );
     }
 
