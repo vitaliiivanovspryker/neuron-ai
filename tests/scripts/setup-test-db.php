@@ -10,7 +10,7 @@ $pdo = new PDO("pgsql:host=$host;port=$port", $user, $password, [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 ]);
 
-$stmt = $pdo->query("SELECT {$pdo->quote($database)} FROM pg_database");
+$stmt = $pdo->query("SELECT datname FROM pg_database WHERE datname = '{{$pdo->quote($database)}}'");
 $exists = $stmt->fetch();
 
 if (!$exists) {
