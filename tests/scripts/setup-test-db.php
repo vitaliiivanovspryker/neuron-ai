@@ -10,7 +10,7 @@ $pdo = new PDO("pgsql:host=$host;port=$port", $user, $password, [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 ]);
 
-$stmt = $pdo->query("SHOW DATABASES LIKE " . $pdo->quote($database));
+$stmt = $pdo->query("SELECT {$pdo->quote($database)} FROM pg_database");
 $exists = $stmt->fetch();
 
 if (!$exists) {
