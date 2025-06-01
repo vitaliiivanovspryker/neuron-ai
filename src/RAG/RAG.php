@@ -15,9 +15,7 @@ use NeuronAI\Observability\Events\VectorStoreSearching;
 use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
 use NeuronAI\Providers\AIProviderInterface;
-use NeuronAI\RAG\Embeddings\EmbeddingsProviderInterface;
 use NeuronAI\RAG\PostProcessor\PostProcessorInterface;
-use NeuronAI\RAG\VectorStore\VectorStoreInterface;
 
 /**
  * @method RAG withProvider(AIProviderInterface $provider)
