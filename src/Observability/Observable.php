@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NeuronAI\Observability;
 
+use NeuronAI\AgentInterface;
 use SplObserver;
 
 trait Observable
@@ -30,7 +31,7 @@ trait Observable
         return \array_merge($group, $all);
     }
 
-    public function observe(SplObserver $observer, string $event = "*"): static
+    public function observe(SplObserver $observer, string $event = "*"): AgentInterface
     {
         $this->attach($observer, $event);
         return $this;
