@@ -9,18 +9,18 @@ on:
 jobs:
     ci:
         runs-on: ${{ matrix.os }}
-        services:
-            postgres:
-                image: postgres
-                env:
-                    POSTGRES_PASSWORD: postgres
-                ports:
-                    - 5432:5432
-                options: >-
-                    --health-cmd pg_isready
-                    --health-interval 10s
-                    --health-timeout 5s
-                    --health-retries 5
+#        services:
+#            postgres:
+#                image: postgres
+#                env:
+#                    POSTGRES_PASSWORD: postgres
+#                ports:
+#                    - 5432:5432
+#                options: >-
+#                    --health-cmd pg_isready
+#                    --health-interval 10s
+#                    --health-timeout 5s
+#                    --health-retries 5
         strategy:
             matrix:
                 os: [ubuntu-latest]
@@ -97,15 +97,6 @@ jobs:
                   end_time=$(date +%s)
                   elapsed=$((end_time - start_time))
                   echo "Typesense healthcheck elapsed: ${elapsed}s"
-
-#            - name: Install Postgres with Vector extension
-#              uses: cpunion/setup-pgvector@main
-#              with:
-#                  postgres-version: '17'
-#                  pgvector-version: '0.8.0'
-#                  postgres-user: 'postgres'
-#                  postgres-password: 'postgres'
-#                  postgres-db: 'neuron_ai_test'
 
             - name: Install PHP dependencies
               run: composer update --${{ matrix.dependency-version }} --no-interaction --no-progress --ansi
