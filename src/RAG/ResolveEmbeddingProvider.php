@@ -7,7 +7,7 @@ use NeuronAI\RAG\Embeddings\EmbeddingsProviderInterface;
 trait ResolveEmbeddingProvider
 {
     /**
-     * The embeddings provider.
+     * The embeddings provider of the RAG system.
      *
      * @var EmbeddingsProviderInterface
      */

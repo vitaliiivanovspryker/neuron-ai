@@ -7,6 +7,8 @@ use NeuronAI\RAG\VectorStore\VectorStoreInterface;
 trait ResolveVectorStore
 {
     /**
+     * The vector store of the RAG system.
+     *
      * @var VectorStoreInterface
      */
     protected VectorStoreInterface $store;
