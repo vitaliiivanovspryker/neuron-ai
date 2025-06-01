@@ -108,8 +108,9 @@ class RAG extends Agent
      */
     private function searchDocuments(string $question): array
     {
-        $embedding = $this->embeddings()->embedText($question);
-        $docs = $this->vectorStore()->similaritySearch($embedding);
+        $docs = $this->vectorStore()->similaritySearch(
+            $this->embeddings()->embedText($question)
+        );
 
         $retrievedDocs = [];
 
@@ -159,6 +160,19 @@ class RAG extends Agent
     protected function vectorStore(): VectorStoreInterface
     {
         return $this->store;
+    }
+
+    /**
+     * Feed the vector store with documents.
+     *
+     * @param array<Document> $documents
+     * @return void
+     */
+    public function addDocuments(array $documents): void
+    {
+        $this->vectorStore()->addDocuments(
+            $this->embeddings()->embedDocuments($documents)
+        );
     }
 
     /**

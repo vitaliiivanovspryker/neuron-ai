@@ -101,7 +101,7 @@ Send a prompt to the agent to get a response from the underlying LLM:
 ```php
 use NeuronAI\Observability\AgentMonitoring;
 
-// The Inspector instance in your application - https://inspector.dev/
+// https://docs.neuron-ai.dev/advanced/observability
 $inspector = new \Inspector\Inspector(
     new \Inspector\Configuration('INSPECTOR_INGESTION_KEY')
 );
@@ -283,7 +283,7 @@ use NeuronAI\Providers\Anthropic\Anthropic;
 use NeuronAI\RAG\Embeddings\EmbeddingsProviderInterface;
 use NeuronAI\RAG\Embeddings\VoyageEmbeddingProvider;
 use NeuronAI\RAG\RAG;
-use NeuronAI\RAG\VectorStore\PineconeVectoreStore;
+use NeuronAI\RAG\VectorStore\PineconeVectorStore;
 use NeuronAI\RAG\VectorStore\VectorStoreInterface;
 
 class MyChatBot extends RAG
@@ -306,7 +306,7 @@ class MyChatBot extends RAG
 
     public function vectorStore(): VectorStoreInterface
     {
-        return new PineconeVectoreStore(
+        return new PineconeVectorStore(
             key: 'PINECONE_API_KEY',
             indexUrl: 'PINECONE_INDEX_URL'
         );
@@ -339,7 +339,7 @@ class Person
     public string $preference;
 }
 
-// The Inspector instance in your application - https://inspector.dev/
+// https://docs.neuron-ai.dev/advanced/observability
 $inspector = new \Inspector\Inspector(
     new \Inspector\Configuration('INSPECTOR_INGESTION_KEY')
 );
@@ -377,7 +377,7 @@ Here is a code example in a legacy PHP script:
 ```php
 use NeuronAI\Observability\AgentMonitoring;
 
-// The Inspector instance in your application - https://inspector.dev/
+// https://docs.neuron-ai.dev/advanced/observability
 $inspector = new \Inspector\Inspector(
     new \Inspector\Configuration('INSPECTOR_INGESTION_KEY')
 );

@@ -32,7 +32,7 @@ class McpConnector
     }
 
     /**
-     * Convert the list of tools from the MCP server in Neuron compatible objects.
+     * Convert the list of tools from the MCP server to Neuron compatible entities.
      */
     protected function createTool(array $item): ToolInterface
     {

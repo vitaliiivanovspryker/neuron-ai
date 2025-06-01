@@ -4,13 +4,12 @@ namespace NeuronAI;
 
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
+use NeuronAI\Exceptions\AgentException;
 use NeuronAI\Observability\Events\AgentError;
 use NeuronAI\Observability\Events\MessageSaved;
 use NeuronAI\Observability\Events\MessageSaving;
 use NeuronAI\Observability\Events\InferenceStart;
 use NeuronAI\Observability\Events\InferenceStop;
-use NeuronAI\Exceptions\MissingCallbackParameter;
-use NeuronAI\Exceptions\ToolCallableNotSet;
 
 trait HandleChat
 {
@@ -19,8 +18,6 @@ trait HandleChat
      *
      * @param Message|array $messages
      * @return Message
-     * @throws MissingCallbackParameter
-     * @throws ToolCallableNotSet
      * @throws \Throwable
      */
     public function chat(Message|array $messages): Message
@@ -60,7 +57,7 @@ trait HandleChat
             return $response;
         } catch (\Throwable $exception) {
             $this->notify('error', new AgentError($exception));
-            throw $exception;
+            throw new AgentException($exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 }

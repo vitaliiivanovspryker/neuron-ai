@@ -102,7 +102,7 @@ class AgentMonitoring implements \SplObserver
         $class = $agent::class;
 
         if ($this->inspector->needTransaction()) {
-            $this->inspector->startTransaction($class)->setType('agent');
+            $this->inspector->startTransaction($class.'::'.$method)->setType('ai-agent');
         } elseif ($this->inspector->canAddSegments()) {
             $key = $class.$method;
 
@@ -123,14 +123,16 @@ class AgentMonitoring implements \SplObserver
         if (\array_key_exists($class.$method, $this->segments)) {
             // End the last segment for the given method and agent class
             foreach (\array_reverse($this->segments, true) as $key => $value) {
-                if ($this->getPrefix($key) === $class.$method) {
+                if ($key === $class.$method) {
                     $value->setContext($this->getContext($agent))->end();
                     unset($this->segments[$key]);
                     break;
                 }
             }
         } elseif ($this->inspector->canAddSegments()) {
-            $this->inspector->transaction()->setContext($this->getContext($agent));
+            $this->inspector->transaction()
+                ->setContext($this->getContext($agent))
+                ->setResult('success');
         }
     }
 
