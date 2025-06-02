@@ -69,6 +69,9 @@ class MeilisearchVectorStore implements VectorStoreInterface
                 'limit' => min($this->topK, 20),
                 'retrieveVectors' => true,
                 'showRankingScore' => true,
+                'hybrid' => [
+                    'semanticRatio' => 1.0
+                ],
             ]
         ])->getBody()->getContents();
 
