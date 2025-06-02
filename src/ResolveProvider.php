@@ -13,7 +13,16 @@ trait ResolveProvider
      */
     protected AIProviderInterface $provider;
 
+    /**
+     * @deprecated
+     */
     public function withProvider(AIProviderInterface $provider): AgentInterface
+    {
+        $this->provider = $provider;
+        return $this;
+    }
+
+    public function setAiProvider(AIProviderInterface $provider): AgentInterface
     {
         $this->provider = $provider;
         return $this;
