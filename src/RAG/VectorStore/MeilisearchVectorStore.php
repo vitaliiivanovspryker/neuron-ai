@@ -71,7 +71,8 @@ class MeilisearchVectorStore implements VectorStoreInterface
                 'retrieveVectors' => true,
                 'showRankingScore' => true,
                 'hybrid' => [
-                    'semanticRatio' => 1.0
+                    'semanticRatio' => 1.0,
+                    'embedder' => 'default',
                 ],
             ]
         ])->getBody()->getContents();
