@@ -50,8 +50,8 @@ composer require inspector-apm/neuron-ai
 
 ## Create an Agent
 
-Neuron provides you with the Agent class you can extend to inherit the main features of the framework,
-and create fully functional agents. This class automatically manages some advanced mechanisms for you such as memory,
+Neuron provides you with the Agent class you can extend to inherit the main features of the framework
+and create fully functional agents. This class automatically manages some advanced mechanisms for you, such as memory,
 tools and function calls, up to the RAG systems. You can go deeper into these aspects in the [documentation](https://docs.neuron-ai.dev).
 In the meantime, let's create the first agent, extending the `NeuronAI\Agent` class:
 
