@@ -13,7 +13,7 @@ class Document implements \JsonSerializable
 
     public string $sourceName = 'manual';
 
-    public string $hash = '';
+    public ?string $hash = null;
 
     public int $chunkNumber = 0;
 

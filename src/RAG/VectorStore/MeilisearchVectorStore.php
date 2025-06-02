@@ -47,6 +47,7 @@ class MeilisearchVectorStore implements VectorStoreInterface
             RequestOptions::JSON => \array_map(function (Document $document) {
                 return [
                     'id' => $document->id,
+                    'hash' => $document->hash,
                     'content' => $document->content,
                     'sourceType' => $document->sourceType,
                     'sourceName' => $document->sourceName,
@@ -80,6 +81,7 @@ class MeilisearchVectorStore implements VectorStoreInterface
         return \array_map(function (array $item) {
             $document = new Document();
             $document->id = $item['id'] ?? null;
+            $document->hash = $item['hash'] ?? null;
             $document->content = $item['content'];
             $document->sourceType = $item['sourceType'] ?? null;
             $document->sourceName = $item['sourceName'] ?? null;
