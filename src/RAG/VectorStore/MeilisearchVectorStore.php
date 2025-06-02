@@ -14,6 +14,7 @@ class MeilisearchVectorStore implements VectorStoreInterface
         string $indexUid,
         string $host = 'http://localhost:7700',
         ?string $key = null,
+        protected string $embedder = 'default',
         protected int $topK = 5,
     ) {
         $this->client = new Client([
@@ -72,7 +73,7 @@ class MeilisearchVectorStore implements VectorStoreInterface
                 'showRankingScore' => true,
                 'hybrid' => [
                     'semanticRatio' => 1.0,
-                    'embedder' => 'default',
+                    'embedder' => $this->embedder,
                 ],
             ]
         ])->getBody()->getContents();
