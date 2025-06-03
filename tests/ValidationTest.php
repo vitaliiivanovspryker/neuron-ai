@@ -269,7 +269,7 @@ class ValidationTest extends TestCase
     public function test_equal_to_validation()
     {
         $class = new class () {
-            #[EqualTo(compareTo: 'test')]
+            #[EqualTo(reference: 'test')]
             public string $name = 'test';
         };
         $class = new $class();
@@ -285,7 +285,7 @@ class ValidationTest extends TestCase
     public function test_not_equal_to_validation()
     {
         $class = new class () {
-            #[NotEqualTo(compareTo: 'test')]
+            #[NotEqualTo(reference: 'test')]
             public string $name = 'test';
         };
         $class = new $class();

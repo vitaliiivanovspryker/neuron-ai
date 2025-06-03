@@ -12,7 +12,7 @@ class GreaterThanEqual extends AbstractValidationRule
     public function validate(string $name, mixed $value, array &$violations)
     {
         if (is_null($this->reference) || $value < $this->reference) {
-            $violations[] = $this->buildMessage($name, 'must be greater than {compare}', ['compare' => get_debug_type($this->reference)]);
+            $violations[] = $this->buildMessage($name, 'must be greater than {compare}', ['compare' => \get_debug_type($this->reference)]);
         }
     }
 }
