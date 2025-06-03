@@ -61,7 +61,7 @@ class RAG extends Agent
     protected function retrieval(Message $question): void
     {
         $this->notify('rag-vectorstore-searching', new VectorStoreSearching($question));
-        $documents = $this->searchDocuments($question->getContent());
+        $documents = $this->retrieveDocuments($question);
         $this->notify('rag-vectorstore-result', new VectorStoreResult($question, $documents));
 
         $documents = $this->applyPostProcessors($question, $documents);
@@ -108,10 +108,10 @@ class RAG extends Agent
      *
      * @return array<Document>
      */
-    private function searchDocuments(string $question): array
+    public function retrieveDocuments(Message $question): array
     {
         $docs = $this->resolveVectorStore()->similaritySearch(
-            $this->resolveEmbeddingsProvider()->embedText($question)
+            $this->resolveEmbeddingsProvider()->embedText($question->getContent())
         );
 
         $retrievedDocs = [];
