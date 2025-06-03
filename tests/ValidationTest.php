@@ -4,6 +4,7 @@ namespace NeuronAI\Tests;
 
 use NeuronAI\StructuredOutput\Validation\Rules\ArrayOf;
 use NeuronAI\StructuredOutput\Validation\Rules\Count;
+use NeuronAI\StructuredOutput\Validation\Rules\Email;
 use NeuronAI\StructuredOutput\Validation\Rules\IsNull;
 use NeuronAI\StructuredOutput\Validation\Rules\Length;
 use NeuronAI\StructuredOutput\Validation\Rules\NotBlank;
@@ -237,5 +238,21 @@ class ValidationTest extends TestCase
         $class->tags = ['x', 'x'];
         $violations = Validator::validate($class);
         $this->assertCount(1, $violations);
+    }
+
+    public function test_email_validation()
+    {
+        $class = new class () {
+            #[Email]
+            public string $email = 'test';
+        };
+        $class = new $class();
+
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $class->email = 'info@email.com';
+        $violations = Validator::validate($class);
+        $this->assertCount(0, $violations);
     }
 }
