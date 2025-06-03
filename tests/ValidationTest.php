@@ -162,4 +162,9 @@ class ValidationTest extends TestCase
         $violations = Validator::validate($class);
         $this->assertCount(1, $violations);
     }
+
+    public function test_count_validation()
+    {
+
+    }
 }
