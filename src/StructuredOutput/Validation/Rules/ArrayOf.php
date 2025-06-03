@@ -55,6 +55,6 @@ class ArrayOf extends AbstractValidationRule
             }
         }
 
-        $violations[] = $this->buildMessage($name, \str_replace('{type}', $this->type, $this->message));
+        $violations[] = $this->buildMessage($name, $this->message, ['type' => $this->type]);
     }
 }
