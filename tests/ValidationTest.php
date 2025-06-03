@@ -119,7 +119,7 @@ class ValidationTest extends TestCase
 
     public function test_length_validation()
     {
-        $class = new class {
+        $class = new class () {
             #[Length(exactly: 10)]
             public string $name;
         };
@@ -136,7 +136,7 @@ class ValidationTest extends TestCase
         $violations = Validator::validate($class);
         $this->assertCount(0, $violations);
 
-        $class = new class {
+        $class = new class () {
             #[Length(min: 1)]
             public string $name = 'x';
         };
@@ -149,7 +149,7 @@ class ValidationTest extends TestCase
         $violations = Validator::validate($class);
         $this->assertCount(1, $violations);
 
-        $class = new class {
+        $class = new class () {
             #[Length(max: 1)]
             public string $name = 'x';
         };

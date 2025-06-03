@@ -9,7 +9,8 @@ class Length extends AbstractValidationRule
         protected ?int $exactly = null,
         protected ?int $min = null,
         protected ?int $max = null,
-    ) {}
+    ) {
+    }
 
     public function validate(string $name, mixed $value, array &$violations)
     {
