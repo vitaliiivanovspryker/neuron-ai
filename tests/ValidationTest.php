@@ -301,7 +301,7 @@ class ValidationTest extends TestCase
     public function test_greater_than_validation()
     {
         $class = new class () {
-            #[GreaterThan(compareTo: 30)]
+            #[GreaterThan(reference: 30)]
             public int $age;
         };
         $class = new $class();
@@ -325,7 +325,7 @@ class ValidationTest extends TestCase
     public function test_greater_than_equal_validation()
     {
         $class = new class () {
-            #[GreaterThanEqual(compareTo: 30)]
+            #[GreaterThanEqual(reference: 30)]
             public int $age;
         };
         $class = new $class();
@@ -349,7 +349,7 @@ class ValidationTest extends TestCase
     public function test_lower_than_validation()
     {
         $class = new class () {
-            #[LowerThan(compareTo: 30)]
+            #[LowerThan(reference: 30)]
             public int $age;
         };
         $class = new $class();
@@ -373,7 +373,7 @@ class ValidationTest extends TestCase
     public function test_lower_than_equal_validation()
     {
         $class = new class () {
-            #[LowerThanEqual(compareTo: 30)]
+            #[LowerThanEqual(reference: 30)]
             public int $age;
         };
         $class = new $class();
