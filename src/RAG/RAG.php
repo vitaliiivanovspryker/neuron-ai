@@ -60,16 +60,7 @@ class RAG extends Agent
 
     protected function retrieval(Message $question): void
     {
-        $this->notify('rag-vectorstore-searching', new VectorStoreSearching($question));
-        $documents = $this->searchDocuments($question->getContent());
-        $this->notify('rag-vectorstore-result', new VectorStoreResult($question, $documents));
-
-        $documents = $this->applyPostProcessors($question, $documents);
-
-        $originalInstructions = $this->instructions();
-        $this->notify('rag-instructions-changing', new InstructionsChanging($originalInstructions));
-        $this->setSystemMessage($documents);
-        $this->notify('rag-instructions-changed', new InstructionsChanged($originalInstructions, $this->instructions()));
+        $this->withDocumentsContext($this->retrieveDocuments($question));
     }
 
     /**
@@ -78,16 +69,35 @@ class RAG extends Agent
      * @param array<Document> $documents
      * @return AgentInterface
      */
-    protected function setSystemMessage(array $documents): AgentInterface
+    public function withDocumentsContext(array $documents): AgentInterface
     {
-        $context = '';
+        $beginContextDelimiter = PHP_EOL.PHP_EOL.'# EXTRA INFORMATION AND CONTEXT'.PHP_EOL;
+
+        $originalInstructions = $this->instructions();
+        $this->notify('rag-instructions-changing', new InstructionsChanging($originalInstructions));
+
+        // Remove the old context
+        $newInstructions = preg_replace('/'.$beginContextDelimiter.'.*/s', '', $originalInstructions);
+
+        // Add the new context
+        $newInstructions .= $beginContextDelimiter;
+
         foreach ($documents as $document) {
-            $context .= $document->content.' ';
+            $newInstructions .= $document->content.PHP_EOL;
         }
 
-        return $this->withInstructions(
-            $this->instructions().PHP_EOL.PHP_EOL."# EXTRA INFORMATION AND CONTEXT".PHP_EOL.$context
-        );
+        $this->withInstructions($newInstructions);
+        $this->notify('rag-instructions-changed', new InstructionsChanged($originalInstructions, $this->instructions()));
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use withDocumentsContext instead.
+     */
+    protected function setSystemMessage(array $documents): AgentInterface
+    {
+        return $this->withDocumentsContext($documents);
     }
 
     /**
@@ -95,10 +105,12 @@ class RAG extends Agent
      *
      * @return array<Document>
      */
-    private function searchDocuments(string $question): array
+    public function retrieveDocuments(Message $question): array
     {
+        $this->notify('rag-vectorstore-searching', new VectorStoreSearching($question));
+
         $docs = $this->resolveVectorStore()->similaritySearch(
-            $this->resolveEmbeddingsProvider()->embedText($question)
+            $this->resolveEmbeddingsProvider()->embedText($question->getContent())
         );
 
         $retrievedDocs = [];
@@ -108,7 +120,11 @@ class RAG extends Agent
             $retrievedDocs[\md5($doc->content)] = $doc;
         }
 
-        return \array_values($retrievedDocs);
+        $retrievedDocs = \array_values($retrievedDocs);
+
+        $this->notify('rag-vectorstore-result', new VectorStoreResult($question, $retrievedDocs));
+
+        return $this->applyPostProcessors($question, $retrievedDocs);
     }
 
     /**
