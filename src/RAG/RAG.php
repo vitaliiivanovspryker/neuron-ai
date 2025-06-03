@@ -78,7 +78,7 @@ class RAG extends Agent
         $originalInstructions = $this->instructions();
         $this->notify('rag-instructions-changing', new InstructionsChanging($originalInstructions));
 
-        // Remove the old context to avoid infinite growing
+        // Remove the old context to avoid infinite grow
         $newInstructions = preg_replace('/'.$beginContextDelimiter.'.*/s', '', $originalInstructions);
 
         // Add the new context
