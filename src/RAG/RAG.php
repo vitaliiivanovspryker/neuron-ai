@@ -60,7 +60,9 @@ class RAG extends Agent
 
     protected function retrieval(Message $question): void
     {
-        $this->withDocumentsContext($this->retrieveDocuments($question));
+        $this->withDocumentsContext(
+            $this->retrieveDocuments($question)
+        );
     }
 
     /**
