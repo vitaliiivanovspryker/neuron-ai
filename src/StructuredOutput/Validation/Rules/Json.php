@@ -2,6 +2,8 @@
 
 namespace NeuronAI\StructuredOutput\Validation\Rules;
 
+use NeuronAI\StructuredOutput\StructuredOutputException;
+
 #[\Attribute(\Attribute::TARGET_PROPERTY | \Attribute::IS_REPEATABLE)]
 class Json extends AbstractValidationRule
 {
@@ -14,7 +16,7 @@ class Json extends AbstractValidationRule
         }
 
         if (!\is_scalar($value) && !$value instanceof \Stringable) {
-            throw new \Exception('Cannot validate a non-scalar value.');
+            throw new StructuredOutputException('Cannot validate a non-scalar value.');
         }
 
         $value = (string) $value;

@@ -2,6 +2,8 @@
 
 namespace NeuronAI\StructuredOutput\Validation\Rules;
 
+use NeuronAI\StructuredOutput\StructuredOutputException;
+
 #[\Attribute(\Attribute::TARGET_PROPERTY | \Attribute::IS_REPEATABLE)]
 class Count extends AbstractValidationRule
 {
@@ -19,7 +21,7 @@ class Count extends AbstractValidationRule
         }
 
         if (null === $this->min && null === $this->max) {
-            throw new \Exception('Either option "min" or "max" must be given for validation rule "Length"');
+            throw new StructuredOutputException('Either option "min" or "max" must be given for validation rule "Length"');
         }
 
         if (is_null($value) && ($this->min > 0 || $this->exactly > 0)) {
@@ -28,7 +30,7 @@ class Count extends AbstractValidationRule
         }
 
         if (!\is_array($value) && !$value instanceof \Countable) {
-            throw new \Exception($name. ' must be an array or a Countable object');
+            throw new StructuredOutputException($name. ' must be an array or a Countable object');
         }
 
 
