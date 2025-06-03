@@ -35,7 +35,8 @@ class ArrayOf extends AbstractValidationRule
     public function __construct(
         protected string $type,
         protected bool $allowEmpty = false,
-    ) {}
+    ) {
+    }
 
     public function validate(string $name, mixed $value, array &$violations)
     {
