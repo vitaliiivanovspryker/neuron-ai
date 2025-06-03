@@ -12,6 +12,7 @@ use NeuronAI\StructuredOutput\Validation\Rules\IPAddress;
 use NeuronAI\StructuredOutput\Validation\Rules\IsFalse;
 use NeuronAI\StructuredOutput\Validation\Rules\IsNull;
 use NeuronAI\StructuredOutput\Validation\Rules\IsTrue;
+use NeuronAI\StructuredOutput\Validation\Rules\Json;
 use NeuronAI\StructuredOutput\Validation\Rules\Length;
 use NeuronAI\StructuredOutput\Validation\Rules\LowerThan;
 use NeuronAI\StructuredOutput\Validation\Rules\LowerThanEqual;
@@ -445,6 +446,22 @@ class ValidationTest extends TestCase
         $this->assertCount(0, $violations);
 
         $class->ip = '127.0.0';
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+    }
+
+    public function test_json_validation()
+    {
+        $class = new class () {
+            #[Json]
+            public string $json = '{}';
+        };
+        $class = new $class();
+
+        $violations = Validator::validate($class);
+        $this->assertCount(0, $violations);
+
+        $class->json = 'invalid json';
         $violations = Validator::validate($class);
         $this->assertCount(1, $violations);
     }

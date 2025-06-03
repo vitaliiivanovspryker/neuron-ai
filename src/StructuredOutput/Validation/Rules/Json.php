@@ -1,0 +1,26 @@
+<?php
+
+namespace NeuronAI\StructuredOutput\Validation\Rules;
+
+#[\Attribute(\Attribute::TARGET_PROPERTY | \Attribute::IS_REPEATABLE)]
+class Json extends AbstractValidationRule
+{
+    protected string $message = '{name} must be a valid JSON string';
+
+    public function validate(string $name, mixed $value, array &$violations)
+    {
+        if (null === $value || '' === $value) {
+            return;
+        }
+
+        if (!\is_scalar($value) && !$value instanceof \Stringable) {
+            throw new \Exception('Cannot validate a non-scalar value.');
+        }
+
+        $value = (string) $value;
+
+        if (!json_validate($value)) {
+            $violations[] = $this->buildMessage($name, $this->message);
+        }
+    }
+}
