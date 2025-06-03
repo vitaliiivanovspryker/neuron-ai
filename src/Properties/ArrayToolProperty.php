@@ -57,7 +57,7 @@ class ArrayToolProperty implements ToolPropertyInterface
                 'type' => $property->getType(),
             ];
 
-            if ($property instanceof BasicToolProperty && !empty($property->getEnum())) {
+            if ($property instanceof ToolProperty && !empty($property->getEnum())) {
                 $carry[$property->getName()]['enum'] = $property->getEnum();
             }
 

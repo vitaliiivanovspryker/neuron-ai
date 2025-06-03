@@ -145,7 +145,7 @@ You can add the ability to perform concrete tasks to your Agent with an array of
 
 ```php
 use NeuronAI\Agent;
-use NeuronAI\Properties\BasicToolProperty;
+use NeuronAI\Properties\ToolProperty;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\Anthropic\Anthropic;
 use NeuronAI\SystemPrompt;
@@ -184,7 +184,7 @@ class YouTubeAgent extends Agent
                 'get_transcription',
                 'Retrieve the transcription of a youtube video.',
             )->addProperty(
-                new BasicToolProperty(
+                new ToolProperty(
                     name: 'video_url',
                     type: 'string',
                     description: 'The URL of the YouTube video.',
@@ -209,7 +209,7 @@ Instead of implementing tools manually, you can connect tools exposed by an MCP 
 ```php
 use NeuronAI\Agent;
 use NeuronAI\MCP\McpConnector;
-use NeuronAI\Properties\BasicToolProperty;
+use NeuronAI\Properties\ToolProperty;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\Anthropic\Anthropic;
 use NeuronAI\Tools\Tool;
@@ -250,7 +250,7 @@ class YouTubeAgent extends Agent
                 'get_transcription',
                 'Retrieve the transcription of a youtube video.',
             )->addProperty(
-                new BasicToolProperty(
+                new ToolProperty(
                     name: 'video_url',
                     type: 'string',
                     description: 'The URL of the YouTube video.',

@@ -5,7 +5,7 @@ namespace NeuronAI\Tools\Toolkits\Jina;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use NeuronAI\Exceptions\ToolException;
-use NeuronAI\Properties\BasicToolProperty;
+use NeuronAI\Properties\ToolProperty;
 use NeuronAI\Tools\Tool;
 
 class JinaUrlReader extends Tool
@@ -20,7 +20,7 @@ class JinaUrlReader extends Tool
         );
 
         $this->addProperty(
-            new BasicToolProperty(
+            new ToolProperty(
                 'url',
                 'string',
                 'The URL to read.',

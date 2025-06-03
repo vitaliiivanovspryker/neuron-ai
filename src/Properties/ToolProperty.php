@@ -2,7 +2,7 @@
 
 namespace NeuronAI\Properties;
 
-class BasicToolProperty implements ToolPropertyInterface
+class ToolProperty implements ToolPropertyInterface
 {
     public function __construct(
         protected string $name,
