@@ -20,9 +20,6 @@ use NeuronAI\StructuredOutput\Deserializer;
 use NeuronAI\StructuredOutput\JsonExtractor;
 use NeuronAI\StructuredOutput\JsonSchema;
 use NeuronAI\StructuredOutput\Validation\Validator;
-use Symfony\Component\Validator\ConstraintViolation;
-use Symfony\Component\Validator\Mapping\Loader\AnnotationLoader;
-use Symfony\Component\Validator\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Validator\Validation;
 
 trait HandleStructured
