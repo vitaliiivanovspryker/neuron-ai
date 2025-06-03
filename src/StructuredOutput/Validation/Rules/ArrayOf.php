@@ -1,0 +1,60 @@
+<?php
+
+namespace NeuronAI\StructuredOutput\Validation\Rules;
+
+#[\Attribute(\Attribute::TARGET_PROPERTY | \Attribute::IS_REPEATABLE)]
+class ArrayOf extends AbstractValidationRule
+{
+    protected string $message = '{name} must be an array of {type}';
+
+    private const VALIDATION_FUNCTIONS = [
+        'boolean' => 'is_bool',
+        'integer' => 'is_int',
+        'float' => 'is_float',
+        'numeric' => 'is_numeric',
+        'string' => 'is_string',
+        'scalar' => 'is_scalar',
+        'array' => 'is_array',
+        'iterable' => 'is_iterable',
+        'countable' => 'is_countable',
+        'object' => 'is_object',
+        'null' => 'is_null',
+        'alnum' => 'ctype_alnum',
+        'alpha' => 'ctype_alpha',
+        'cntrl' => 'ctype_cntrl',
+        'digit' => 'ctype_digit',
+        'graph' => 'ctype_graph',
+        'lower' => 'ctype_lower',
+        'print' => 'ctype_print',
+        'punct' => 'ctype_punct',
+        'space' => 'ctype_space',
+        'upper' => 'ctype_upper',
+        'xdigit' => 'ctype_xdigit',
+    ];
+
+    public function __construct(protected string $type)
+    {
+    }
+
+    public function validate(string $name, mixed $value, array &$violations)
+    {
+        if (!is_array($value)) {
+            $violations[] = $this->buildMessage($name, $this->message);
+            return;
+        }
+
+        foreach ($value as $item) {
+            $type = strtolower($this->type);
+
+            if (isset(self::VALIDATION_FUNCTIONS[$type]) && self::VALIDATION_FUNCTIONS[$type]($item)) {
+                return;
+            }
+
+            if ($item instanceof $this->type) {
+                return;
+            }
+        }
+
+        $violations[] = $this->buildMessage($name, \str_replace('{type}', $this->type, $this->message));
+    }
+}
