@@ -3,7 +3,7 @@
 namespace NeuronAI\StructuredOutput\Validation\Rules;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY | \Attribute::IS_REPEATABLE)]
-class NotNull extends AbstractValidationRule
+class IsNotNull extends AbstractValidationRule
 {
     protected string $message = '{name} must not be null';
 

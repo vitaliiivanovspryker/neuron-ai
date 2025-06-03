@@ -18,7 +18,7 @@ use NeuronAI\StructuredOutput\Validation\Rules\LowerThan;
 use NeuronAI\StructuredOutput\Validation\Rules\LowerThanEqual;
 use NeuronAI\StructuredOutput\Validation\Rules\NotBlank;
 use NeuronAI\StructuredOutput\Validation\Rules\NotEqualTo;
-use NeuronAI\StructuredOutput\Validation\Rules\NotNull;
+use NeuronAI\StructuredOutput\Validation\Rules\IsNotNull;
 use NeuronAI\StructuredOutput\Validation\Rules\Url;
 use NeuronAI\StructuredOutput\Validation\Validator;
 use NeuronAI\Tests\stubs\Person;
@@ -46,7 +46,7 @@ class ValidationTest extends TestCase
     public function test_not_null_validation()
     {
         $class = new class () {
-            #[NotNull]
+            #[IsNotNull]
             public string $name;
         };
         $class = new $class();
