@@ -32,9 +32,10 @@ class ArrayOf extends AbstractValidationRule
         'xdigit' => 'ctype_xdigit',
     ];
 
-    public function __construct(protected string $type)
-    {
-    }
+    public function __construct(
+        protected string $type,
+        protected bool $allowEmpty = false,
+    ) {}
 
     public function validate(string $name, mixed $value, array &$violations)
     {
@@ -43,18 +44,29 @@ class ArrayOf extends AbstractValidationRule
             return;
         }
 
-        foreach ($value as $item) {
-            $type = strtolower($this->type);
+        if (!$this->allowEmpty && empty($value)) {
+            $violations[] = $this->buildMessage($name, $this->message, ['type' => $this->type]);
+            return;
+        }
 
+        $type = strtolower($this->type);
+
+        $error = false;
+        foreach ($value as $item) {
             if (isset(self::VALIDATION_FUNCTIONS[$type]) && self::VALIDATION_FUNCTIONS[$type]($item)) {
-                return;
+                continue;
             }
 
             if ($item instanceof $this->type) {
-                return;
+                continue;
             }
+
+            $error = true;
+            break;
         }
 
-        $violations[] = $this->buildMessage($name, $this->message, ['type' => $this->type]);
+        if ($error) {
+            $violations[] = $this->buildMessage($name, $this->message, ['type' => $this->type]);
+        }
     }
 }

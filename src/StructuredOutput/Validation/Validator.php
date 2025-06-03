@@ -26,7 +26,7 @@ class Validator
 
             // Get the value of the property
             $name = $property->getName();
-            $value = $property->getValue($obj);
+            $value = $property->isInitialized($obj) ? $property->getValue($obj) : null;
 
             // Apply all the validation rules to the value
             foreach ($attributes as $attribute) {
