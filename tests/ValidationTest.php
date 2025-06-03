@@ -21,7 +21,7 @@ use NeuronAI\StructuredOutput\Validation\Rules\NotEqualTo;
 use NeuronAI\StructuredOutput\Validation\Rules\NotNull;
 use NeuronAI\StructuredOutput\Validation\Rules\Url;
 use NeuronAI\StructuredOutput\Validation\Validator;
-use NeuronAI\Tests\Utils\Person;
+use NeuronAI\Tests\stubs\Person;
 use PHPUnit\Framework\TestCase;
 
 class ValidationTest extends TestCase

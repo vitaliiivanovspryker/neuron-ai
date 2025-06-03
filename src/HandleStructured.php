@@ -16,11 +16,10 @@ use NeuronAI\Observability\Events\InferenceStop;
 use NeuronAI\Exceptions\AgentException;
 use NeuronAI\Observability\Events\Validated;
 use NeuronAI\Observability\Events\Validating;
-use NeuronAI\StructuredOutput\Deserializer;
+use NeuronAI\StructuredOutput\Deserializer\Deserializer;
 use NeuronAI\StructuredOutput\JsonExtractor;
 use NeuronAI\StructuredOutput\JsonSchema;
 use NeuronAI\StructuredOutput\Validation\Validator;
-use Symfony\Component\Validator\Validation;
 
 trait HandleStructured
 {
@@ -117,7 +116,7 @@ trait HandleStructured
 
         // Deserialize the JSON response from the LLM into an instance of the response model
         $this->notify('structured-deserializing', new Deserializing($class));
-        $obj = (new Deserializer())->fromJson($json, $class);
+        $obj = Deserializer::fromJson($json, $class);
         $this->notify('structured-deserialized', new Deserialized($class));
 
         // Validate if the object fields respect the validation attributes

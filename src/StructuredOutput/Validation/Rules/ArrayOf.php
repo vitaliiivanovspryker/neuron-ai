@@ -42,13 +42,17 @@ class ArrayOf extends AbstractValidationRule
 
     public function validate(string $name, mixed $value, array &$violations)
     {
-        if (!is_array($value)) {
-            $violations[] = $this->buildMessage($name, $this->message);
+        if ($this->allowEmpty && empty($value)) {
             return;
         }
 
         if (!$this->allowEmpty && empty($value)) {
             $violations[] = $this->buildMessage($name, $this->message, ['type' => $this->type]);
+            return;
+        }
+
+        if (!is_array($value)) {
+            $violations[] = $this->buildMessage($name, $this->message);
             return;
         }
 

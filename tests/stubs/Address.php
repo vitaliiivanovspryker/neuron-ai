@@ -1,9 +1,9 @@
 <?php
 
-namespace NeuronAI\Tests\Utils;
+namespace NeuronAI\Tests\stubs;
 
 use NeuronAI\StructuredOutput\SchemaProperty;
-use Symfony\Component\Validator\Constraints\NotBlank;
+use NeuronAI\StructuredOutput\Validation\Rules\NotBlank;
 
 class Address
 {
