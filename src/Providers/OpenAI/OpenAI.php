@@ -6,10 +6,10 @@ use GuzzleHttp\Client;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\HasGuzzleClient;
-use NeuronAI\Properties\ArrayProperty;
-use NeuronAI\Properties\BasicProperty;
-use NeuronAI\Properties\ObjectProperty;
-use NeuronAI\Properties\PropertyInterface;
+use NeuronAI\Properties\ArrayToolProperty;
+use NeuronAI\Properties\BasicToolProperty;
+use NeuronAI\Properties\ObjectToolProperty;
+use NeuronAI\Properties\ToolPropertyInterface;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Providers\MessageMapperInterface;
@@ -90,17 +90,17 @@ class OpenAI implements AIProviderInterface
                 ]
             ];
 
-            $properties = \array_reduce($tool->getProperties(), function (array $carry, PropertyInterface $property) {
+            $properties = \array_reduce($tool->getProperties(), function (array $carry, ToolPropertyInterface $property) {
                 $carry[$property->getName()] = [
                     'description' => $property->getDescription(),
                     'type' => $property->getType(),
                 ];
 
-                if ($property instanceof BasicProperty && !empty($property->getEnum())) {
+                if ($property instanceof BasicToolProperty && !empty($property->getEnum())) {
                     $carry[$property->getName()]['enum'] = $property->getEnum();
                 }
 
-                if ($property instanceof ArrayProperty && !empty($property->getItems())) {
+                if ($property instanceof ArrayToolProperty && !empty($property->getItems())) {
                     $carry[$property->getName()]['items'] = [
                         'type' => 'object',
                         'properties' =>  $property->makeItems(),
@@ -108,7 +108,7 @@ class OpenAI implements AIProviderInterface
                     ];
                 }
 
-                if ($property instanceof ObjectProperty && !empty($property->getItems())) {
+                if ($property instanceof ObjectToolProperty && !empty($property->getItems())) {
                     $carry[$property->getName()]['properties'] = $property->makeItems();
                     $carry[$property->getName()]['required'] = $property->getRequiredProperties();
                 }

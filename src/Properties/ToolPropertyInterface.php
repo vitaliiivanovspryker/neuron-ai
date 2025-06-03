@@ -2,7 +2,7 @@
 
 namespace NeuronAI\Properties;
 
-interface PropertyInterface extends \JsonSerializable
+interface ToolPropertyInterface extends \JsonSerializable
 {
     /**
      * @return string

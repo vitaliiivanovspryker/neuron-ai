@@ -2,7 +2,7 @@
 
 namespace NeuronAI\Tools;
 
-use NeuronAI\Properties\PropertyInterface;
+use NeuronAI\Properties\ToolPropertyInterface;
 
 interface ToolInterface extends \JsonSerializable
 {
@@ -19,7 +19,7 @@ interface ToolInterface extends \JsonSerializable
     /**
      * Add a Property with a name, type, description, and optional required constraint.
      */
-    public function addProperty(PropertyInterface $property): ToolInterface;
+    public function addProperty(ToolPropertyInterface $property): ToolInterface;
 
     /**
      * Get the Properties schema.

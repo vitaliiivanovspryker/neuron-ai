@@ -5,7 +5,7 @@ namespace NeuronAI\Tools;
 use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
 use NeuronAI\Exceptions\ToolException;
-use NeuronAI\Properties\PropertyInterface;
+use NeuronAI\Properties\ToolPropertyInterface;
 use NeuronAI\StaticConstructor;
 
 class Tool implements ToolInterface
@@ -15,7 +15,7 @@ class Tool implements ToolInterface
     /**
      * The list of callback function arguments.
      *
-     * @var array<PropertyInterface>
+     * @var array<ToolPropertyInterface>
      */
     protected array $properties = [];
 
@@ -67,7 +67,7 @@ class Tool implements ToolInterface
         return $this->description;
     }
 
-    public function addProperty(PropertyInterface $property): ToolInterface
+    public function addProperty(ToolPropertyInterface $property): ToolInterface
     {
         $this->properties[] = $property;
         return $this;
@@ -80,7 +80,7 @@ class Tool implements ToolInterface
 
     public function getRequiredProperties(): array
     {
-        return \array_reduce($this->properties, function ($carry, PropertyInterface $property) {
+        return \array_reduce($this->properties, function ($carry, ToolPropertyInterface $property) {
             if ($property->isRequired()) {
                 $carry[] = $property->getName();
             }

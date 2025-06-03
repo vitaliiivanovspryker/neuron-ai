@@ -5,7 +5,7 @@ namespace NeuronAI\Tools\Toolkits\Tavily;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use NeuronAI\Exceptions\ToolException;
-use NeuronAI\Properties\BasicProperty;
+use NeuronAI\Properties\BasicToolProperty;
 use NeuronAI\Tools\Tool;
 
 class TavilyExtractTool extends Tool
@@ -26,7 +26,7 @@ class TavilyExtractTool extends Tool
             'Get the content of a URL in markdown format.'
         );
         $this->addProperty(
-            new BasicProperty(
+            new BasicToolProperty(
                 'url',
                 'string',
                 'The URL to read.',
