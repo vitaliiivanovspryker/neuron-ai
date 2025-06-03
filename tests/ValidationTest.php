@@ -8,7 +8,9 @@ use NeuronAI\StructuredOutput\Validation\Rules\Email;
 use NeuronAI\StructuredOutput\Validation\Rules\EqualTo;
 use NeuronAI\StructuredOutput\Validation\Rules\GreaterThan;
 use NeuronAI\StructuredOutput\Validation\Rules\GreaterThanEqual;
+use NeuronAI\StructuredOutput\Validation\Rules\IsFalse;
 use NeuronAI\StructuredOutput\Validation\Rules\IsNull;
+use NeuronAI\StructuredOutput\Validation\Rules\IsTrue;
 use NeuronAI\StructuredOutput\Validation\Rules\Length;
 use NeuronAI\StructuredOutput\Validation\Rules\LowerThan;
 use NeuronAI\StructuredOutput\Validation\Rules\LowerThanEqual;
@@ -388,5 +390,45 @@ class ValidationTest extends TestCase
         $class->age = 31;
         $violations = Validator::validate($class);
         $this->assertCount(1, $violations);
+    }
+
+    public function test_is_false_validation()
+    {
+        $class = new class () {
+            #[IsFalse]
+            public bool $completed;
+        };
+        $class = new $class();
+
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $class->completed = false;
+        $violations = Validator::validate($class);
+        $this->assertCount(0, $violations);
+
+        $class->completed = true;
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+    }
+
+    public function test_is_true_validation()
+    {
+        $class = new class () {
+            #[IsTrue]
+            public bool $completed;
+        };
+        $class = new $class();
+
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $class->completed = false;
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $class->completed = true;
+        $violations = Validator::validate($class);
+        $this->assertCount(0, $violations);
     }
 }
