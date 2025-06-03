@@ -60,14 +60,7 @@ class RAG extends Agent
 
     protected function retrieval(Message $question): void
     {
-        $this->notify('rag-vectorstore-searching', new VectorStoreSearching($question));
-        $documents = $this->retrieveDocuments($question);
-        $this->notify('rag-vectorstore-result', new VectorStoreResult($question, $documents));
-
-        $originalInstructions = $this->instructions();
-        $this->notify('rag-instructions-changing', new InstructionsChanging($originalInstructions));
-        $this->withDocumentsContext($documents);
-        $this->notify('rag-instructions-changed', new InstructionsChanged($originalInstructions, $this->instructions()));
+        $this->withDocumentsContext($this->retrieveDocuments($question));
     }
 
     /**
@@ -80,8 +73,11 @@ class RAG extends Agent
     {
         $beginContextDelimiter = PHP_EOL.PHP_EOL.'# EXTRA INFORMATION AND CONTEXT'.PHP_EOL;
 
+        $originalInstructions = $this->instructions();
+        $this->notify('rag-instructions-changing', new InstructionsChanging($originalInstructions));
+
         // Remove the old context
-        $newInstructions = preg_replace('/'.$beginContextDelimiter.'.*/s', '', $this->instructions());
+        $newInstructions = preg_replace('/'.$beginContextDelimiter.'.*/s', '', $originalInstructions);
 
         // Add the new context
         $newInstructions .= $beginContextDelimiter;
@@ -90,7 +86,10 @@ class RAG extends Agent
             $newInstructions .= $document->content.PHP_EOL;
         }
 
-        return $this->withInstructions($newInstructions);
+        $this->withInstructions($newInstructions);
+        $this->notify('rag-instructions-changed', new InstructionsChanged($originalInstructions, $this->instructions()));
+
+        return $this;
     }
 
     /**
@@ -108,6 +107,8 @@ class RAG extends Agent
      */
     public function retrieveDocuments(Message $question): array
     {
+        $this->notify('rag-vectorstore-searching', new VectorStoreSearching($question));
+
         $docs = $this->resolveVectorStore()->similaritySearch(
             $this->resolveEmbeddingsProvider()->embedText($question->getContent())
         );
@@ -120,6 +121,8 @@ class RAG extends Agent
         }
 
         $retrievedDocs = \array_values($retrievedDocs);
+
+        $this->notify('rag-vectorstore-result', new VectorStoreResult($question, $retrievedDocs));
 
         return $this->applyPostProcessors($question, $retrievedDocs);
     }
