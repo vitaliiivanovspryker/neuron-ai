@@ -6,5 +6,4 @@ use NeuronAI\Exceptions\NeuronException;
 
 class McpException extends NeuronException
 {
-
 }
