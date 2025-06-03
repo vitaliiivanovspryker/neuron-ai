@@ -2,6 +2,8 @@
 
 namespace NeuronAI\StructuredOutput\Validation\Rules;
 
+use NeuronAI\StructuredOutput\Validation\Validator;
+
 #[\Attribute(\Attribute::TARGET_PROPERTY | \Attribute::IS_REPEATABLE)]
 class ArrayOf extends AbstractValidationRule
 {
@@ -59,7 +61,10 @@ class ArrayOf extends AbstractValidationRule
             }
 
             if ($item instanceof $this->type) {
-                continue;
+                // It's like a recursive call.
+                if (empty(Validator::validate($item))) {
+                    continue;
+                }
             }
 
             $error = true;

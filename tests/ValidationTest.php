@@ -3,12 +3,14 @@
 namespace NeuronAI\Tests;
 
 use NeuronAI\StructuredOutput\Validation\Rules\ArrayOf;
+use NeuronAI\StructuredOutput\Validation\Rules\Count;
 use NeuronAI\StructuredOutput\Validation\Rules\IsNull;
 use NeuronAI\StructuredOutput\Validation\Rules\Length;
 use NeuronAI\StructuredOutput\Validation\Rules\NotBlank;
 use NeuronAI\StructuredOutput\Validation\Rules\NotNull;
 use NeuronAI\StructuredOutput\Validation\Rules\Url;
 use NeuronAI\StructuredOutput\Validation\Validator;
+use NeuronAI\Tests\Utils\Person;
 use PHPUnit\Framework\TestCase;
 
 class ValidationTest extends TestCase
@@ -117,6 +119,25 @@ class ValidationTest extends TestCase
         $this->assertCount(0, $violations);
     }
 
+    public function test_array_of_nested_validation()
+    {
+        $class = new class () {
+            #[ArrayOf(type: Person::class)]
+            public array $people;
+        };
+        $class = new $class();
+
+        $class->people = [new Person()];
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $person = new Person();
+        $person->firstName = 'test';
+        $class->people = [$person];
+        $violations = Validator::validate($class);
+        $this->assertCount(0, $violations);
+    }
+
     public function test_length_validation()
     {
         $class = new class () {
@@ -135,6 +156,10 @@ class ValidationTest extends TestCase
         $class->name = 'xxxxxxxxxx';
         $violations = Validator::validate($class);
         $this->assertCount(0, $violations);
+
+        $class->name = 'xxxxxxxxxxx';
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
 
         $class = new class () {
             #[Length(min: 1)]
@@ -165,6 +190,52 @@ class ValidationTest extends TestCase
 
     public function test_count_validation()
     {
+        $class = new class () {
+            #[Count(exactly: 10)]
+            public array $tags;
+        };
+        $class = new $class();
 
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $class->tags = ['x'];
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+
+        $class->tags = range(1, 10);
+        $violations = Validator::validate($class);
+        $this->assertCount(0, $violations);
+
+        $class->tags = range(1, 11);
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $class = new class () {
+            #[Count(min: 1)]
+            public array $tags = ['x'];
+        };
+        $class = new $class();
+
+        $violations = Validator::validate($class);
+        $this->assertCount(0, $violations);
+
+        $class->tags = [];
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $class = new class () {
+            #[Count(max: 1)]
+            public array $tags = ['x'];
+        };
+        $class = new $class();
+
+        $violations = Validator::validate($class);
+        $this->assertCount(0, $violations);
+
+        $class->tags = ['x', 'x'];
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
     }
 }

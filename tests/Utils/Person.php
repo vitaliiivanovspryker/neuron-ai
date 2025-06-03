@@ -2,11 +2,11 @@
 
 namespace NeuronAI\Tests\Utils;
 
-use Symfony\Component\Validator\Constraints as Assert;
+use NeuronAI\StructuredOutput\Validation\Rules\NotBlank;
 
 class Person
 {
-    #[Assert\NotBlank()]
+    #[NotBlank]
     public string $firstName;
     public string $lastName;
 }
