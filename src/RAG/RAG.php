@@ -68,7 +68,7 @@ class RAG extends Agent
 
         $originalInstructions = $this->instructions();
         $this->notify('rag-instructions-changing', new InstructionsChanging($originalInstructions));
-        $this->setSystemMessage($documents);
+        $this->withDocumentsContext($documents);
         $this->notify('rag-instructions-changed', new InstructionsChanged($originalInstructions, $this->instructions()));
     }
 
@@ -78,7 +78,7 @@ class RAG extends Agent
      * @param array<Document> $documents
      * @return AgentInterface
      */
-    protected function setSystemMessage(array $documents): AgentInterface
+    public function withDocumentsContext(array $documents): AgentInterface
     {
         $beginContextDelimiter = PHP_EOL.PHP_EOL.'# EXTRA INFORMATION AND CONTEXT'.PHP_EOL;
 
@@ -93,6 +93,14 @@ class RAG extends Agent
         }
 
         return $this->withInstructions($newInstructions);
+    }
+
+    /**
+     * @deprecated Use withDocumentsContext instead.
+     */
+    protected function setSystemMessage(array $documents): AgentInterface
+    {
+        return $this->withDocumentsContext($documents);
     }
 
     /**
