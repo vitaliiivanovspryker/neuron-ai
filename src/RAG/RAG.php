@@ -64,8 +64,6 @@ class RAG extends Agent
         $documents = $this->retrieveDocuments($question);
         $this->notify('rag-vectorstore-result', new VectorStoreResult($question, $documents));
 
-        $documents = $this->applyPostProcessors($question, $documents);
-
         $originalInstructions = $this->instructions();
         $this->notify('rag-instructions-changing', new InstructionsChanging($originalInstructions));
         $this->withDocumentsContext($documents);
@@ -121,7 +119,9 @@ class RAG extends Agent
             $retrievedDocs[\md5($doc->content)] = $doc;
         }
 
-        return \array_values($retrievedDocs);
+        $retrievedDocs = \array_values($retrievedDocs);
+
+        return $this->applyPostProcessors($question, $retrievedDocs);
     }
 
     /**
