@@ -8,6 +8,7 @@ use NeuronAI\StructuredOutput\Validation\Rules\Email;
 use NeuronAI\StructuredOutput\Validation\Rules\EqualTo;
 use NeuronAI\StructuredOutput\Validation\Rules\GreaterThan;
 use NeuronAI\StructuredOutput\Validation\Rules\GreaterThanEqual;
+use NeuronAI\StructuredOutput\Validation\Rules\IPAddress;
 use NeuronAI\StructuredOutput\Validation\Rules\IsFalse;
 use NeuronAI\StructuredOutput\Validation\Rules\IsNull;
 use NeuronAI\StructuredOutput\Validation\Rules\IsTrue;
@@ -430,5 +431,21 @@ class ValidationTest extends TestCase
         $class->completed = true;
         $violations = Validator::validate($class);
         $this->assertCount(0, $violations);
+    }
+
+    public function test_ip_address_validation()
+    {
+        $class = new class () {
+            #[IPAddress]
+            public string $ip = '127.0.0.1';
+        };
+        $class = new $class();
+
+        $violations = Validator::validate($class);
+        $this->assertCount(0, $violations);
+
+        $class->ip = '127.0.0';
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
     }
 }
