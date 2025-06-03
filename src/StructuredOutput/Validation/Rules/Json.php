@@ -19,7 +19,9 @@ class Json extends AbstractValidationRule
 
         $value = (string) $value;
 
-        if (!json_validate($value)) {
+        try {
+            json_decode($value, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
             $violations[] = $this->buildMessage($name, $this->message);
         }
     }

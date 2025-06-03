@@ -19,6 +19,7 @@ use NeuronAI\Observability\Events\Validating;
 use NeuronAI\StructuredOutput\Deserializer;
 use NeuronAI\StructuredOutput\JsonExtractor;
 use NeuronAI\StructuredOutput\JsonSchema;
+use NeuronAI\StructuredOutput\Validation\Validator;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Mapping\Loader\AnnotationLoader;
 use Symfony\Component\Validator\Mapping\Loader\AttributeLoader;
@@ -125,20 +126,12 @@ trait HandleStructured
         // Validate if the object fields respect the validation attributes
         // https://symfony.com/doc/current/validation.html#constraints
         $this->notify('structured-validating', new Validating($class, $json));
-        $loader = class_exists(AnnotationLoader::class) ? new AnnotationLoader() : new AttributeLoader();
-        $violations = Validation::createValidatorBuilder()
-            ->addLoader($loader)
-            ->getValidator()
-            ->validate($obj);
 
-        if ($violations->count() > 0) {
-            $errorMessages = [];
-            /** @var ConstraintViolation $violation */
-            foreach ($violations as $violation) {
-                $errorMessages[] = $violation->getPropertyPath().': '.$violation->getMessage();
-            }
-            $this->notify('structured-validated', new Validated($class, $json, $errorMessages));
-            throw new AgentException(PHP_EOL.'- '.implode(PHP_EOL.'- ', $errorMessages));
+        $violations = Validator::validate($obj);
+
+        if (\count($violations) > 0) {
+            $this->notify('structured-validated', new Validated($class, $json, $violations));
+            throw new AgentException(PHP_EOL.'- '.implode(PHP_EOL.'- ', $violations));
         }
         $this->notify('structured-validated', new Validated($class, $json));
 
