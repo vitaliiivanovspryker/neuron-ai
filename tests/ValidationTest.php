@@ -6,9 +6,14 @@ use NeuronAI\StructuredOutput\Validation\Rules\ArrayOf;
 use NeuronAI\StructuredOutput\Validation\Rules\Count;
 use NeuronAI\StructuredOutput\Validation\Rules\Email;
 use NeuronAI\StructuredOutput\Validation\Rules\EqualTo;
+use NeuronAI\StructuredOutput\Validation\Rules\GreaterThan;
+use NeuronAI\StructuredOutput\Validation\Rules\GreaterThanEqual;
 use NeuronAI\StructuredOutput\Validation\Rules\IsNull;
 use NeuronAI\StructuredOutput\Validation\Rules\Length;
+use NeuronAI\StructuredOutput\Validation\Rules\LowerThan;
+use NeuronAI\StructuredOutput\Validation\Rules\LowerThanEqual;
 use NeuronAI\StructuredOutput\Validation\Rules\NotBlank;
+use NeuronAI\StructuredOutput\Validation\Rules\NotEqualTo;
 use NeuronAI\StructuredOutput\Validation\Rules\NotNull;
 use NeuronAI\StructuredOutput\Validation\Rules\Url;
 use NeuronAI\StructuredOutput\Validation\Validator;
@@ -269,6 +274,118 @@ class ValidationTest extends TestCase
         $this->assertCount(0, $violations);
 
         $class->name = 'test2';
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+    }
+
+    public function test_not_equal_to_validation()
+    {
+        $class = new class () {
+            #[NotEqualTo(compareTo: 'test')]
+            public string $name = 'test';
+        };
+        $class = new $class();
+
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $class->name = 'test2';
+        $violations = Validator::validate($class);
+        $this->assertCount(0, $violations);
+    }
+
+    public function test_greater_than_validation()
+    {
+        $class = new class () {
+            #[GreaterThan(compareTo: 30)]
+            public int $age;
+        };
+        $class = new $class();
+
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $class->age = 29;
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $class->age = 30;
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $class->age = 31;
+        $violations = Validator::validate($class);
+        $this->assertCount(0, $violations);
+    }
+
+    public function test_greater_than_equal_validation()
+    {
+        $class = new class () {
+            #[GreaterThanEqual(compareTo: 30)]
+            public int $age;
+        };
+        $class = new $class();
+
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $class->age = 29;
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $class->age = 30;
+        $violations = Validator::validate($class);
+        $this->assertCount(0, $violations);
+
+        $class->age = 31;
+        $violations = Validator::validate($class);
+        $this->assertCount(0, $violations);
+    }
+
+    public function test_lower_than_validation()
+    {
+        $class = new class () {
+            #[LowerThan(compareTo: 30)]
+            public int $age;
+        };
+        $class = new $class();
+
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $class->age = 29;
+        $violations = Validator::validate($class);
+        $this->assertCount(0, $violations);
+
+        $class->age = 30;
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $class->age = 31;
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+    }
+
+    public function test_lower_than_equal_validation()
+    {
+        $class = new class () {
+            #[LowerThanEqual(compareTo: 30)]
+            public int $age;
+        };
+        $class = new $class();
+
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $class->age = 29;
+        $violations = Validator::validate($class);
+        $this->assertCount(0, $violations);
+
+        $class->age = 30;
+        $violations = Validator::validate($class);
+        $this->assertCount(0, $violations);
+
+        $class->age = 31;
         $violations = Validator::validate($class);
         $this->assertCount(1, $violations);
     }
