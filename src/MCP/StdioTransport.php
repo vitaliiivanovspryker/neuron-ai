@@ -48,7 +48,7 @@ class StdioTransport implements McpTransportInterface
         );
 
         if (!is_resource($this->process)) {
-            throw new \Exception("Failed to start the MCP server process");
+            throw new McpException("Failed to start the MCP server process");
         }
 
         // Configure pipes for binary data
@@ -59,7 +59,7 @@ class StdioTransport implements McpTransportInterface
         $status = proc_get_status($this->process);
         if (!$status['running']) {
             $error = stream_get_contents($this->pipes[2]);
-            throw new \Exception("Process failed to start: " . $error);
+            throw new McpException("Process failed to start: " . $error);
         }
     }
 
@@ -69,22 +69,22 @@ class StdioTransport implements McpTransportInterface
     public function send($data): void
     {
         if (!is_resource($this->process)) {
-            throw new \Exception("Process is not running");
+            throw new McpException("Process is not running");
         }
 
         $status = proc_get_status($this->process);
         if (!$status['running']) {
-            throw new \Exception("MCP server process is not running");
+            throw new McpException("MCP server process is not running");
         }
 
         $jsonData = json_encode($data);
         if ($jsonData === false) {
-            throw new \Exception("Failed to encode request data to JSON");
+            throw new McpException("Failed to encode request data to JSON");
         }
 
         $bytesWritten = fwrite($this->pipes[0], $jsonData . "\n");
         if ($bytesWritten === false || $bytesWritten < strlen($jsonData) + 1) {
-            throw new \Exception("Failed to write complete request to MCP server");
+            throw new McpException("Failed to write complete request to MCP server");
         }
 
         fflush($this->pipes[0]);
@@ -96,7 +96,7 @@ class StdioTransport implements McpTransportInterface
     public function receive(): array
     {
         if (!is_resource($this->process)) {
-            throw new \Exception("Process is not running");
+            throw new McpException("Process is not running");
         }
 
         // Set stream to non-blocking mode
@@ -110,7 +110,7 @@ class StdioTransport implements McpTransportInterface
         while (time() - $startTime < $timeout) {
             $status = proc_get_status($this->process);
             if (!$status['running']) {
-                throw new \Exception("MCP server process has terminated unexpectedly");
+                throw new McpException("MCP server process has terminated unexpectedly");
             }
 
             $chunk = fread($this->pipes[1], 4096);
@@ -129,7 +129,7 @@ class StdioTransport implements McpTransportInterface
             usleep(10000); // 10ms
         }
 
-        throw new \Exception("Timeout waiting for response from MCP server");
+        throw new McpException("Timeout waiting for response from MCP server");
     }
 
     /**
