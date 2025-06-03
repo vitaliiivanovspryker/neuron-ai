@@ -9,7 +9,8 @@ class NotBlank extends AbstractValidationRule
 
     public function __construct(
         protected bool $allowNull = false
-    ) {}
+    ) {
+    }
 
     public function validate(string $name, mixed $value, array &$violations): void
     {

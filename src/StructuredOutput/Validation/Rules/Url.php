@@ -9,7 +9,7 @@ class Url extends AbstractValidationRule
 
     public function validate(string $name, mixed $value, array &$violations)
     {
-        if (filter_var($value, FILTER_VALIDATE_URL) === FALSE) {
+        if (filter_var($value, FILTER_VALIDATE_URL) === false) {
             $violations[] = $this->buildMessage($name, $this->message);
         }
     }
