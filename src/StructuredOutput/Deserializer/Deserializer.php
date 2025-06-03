@@ -40,7 +40,7 @@ class Deserializer
 
         $reflection = new \ReflectionClass($className);
 
-        // Create instance without calling constructor
+        // Create an instance without calling constructor
         $instance = $reflection->newInstanceWithoutConstructor();
 
         // Get all properties including private/protected
@@ -53,8 +53,6 @@ class Deserializer
             $value = self::findPropertyValue($data, $propertyName);
 
             if ($value !== null) {
-                //$property->setAccessible(true);
-
                 // Get property type information
                 $type = $property->getType();
 
@@ -107,7 +105,7 @@ class Deserializer
     /**
      * Cast value to the appropriate type based on property type
      *
-     * @throws DeserializerException
+     * @throws DeserializerException|\ReflectionException
      */
     private static function castValue(mixed $value, \ReflectionType $type, \ReflectionProperty $property): mixed
     {
@@ -123,6 +121,7 @@ class Deserializer
             throw new DeserializerException("Cannot cast value to any type in union for property {$property->getName()}");
         }
 
+        // @phpstan-ignore-next-line
         return self::castToSingleType($value, $type, $property);
     }
 

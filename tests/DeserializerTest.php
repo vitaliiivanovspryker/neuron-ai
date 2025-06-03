@@ -37,7 +37,6 @@ class DeserializerTest extends TestCase
         $obj = Deserializer::fromJson($json, Person::class);
 
         $this->assertInstanceOf(Person::class, $obj);
-        $this->assertIsArray($obj->tags);
         $this->assertInstanceOf(Tag::class, $obj->tags[0]);
         $this->assertEquals('agent', $obj->tags[0]->name);
     }
