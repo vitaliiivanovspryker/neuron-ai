@@ -15,14 +15,14 @@ class ValidationTest extends TestCase
 {
     public function test_not_blank_validation()
     {
-        $class = new class {
+        $class = new class () {
             #[NotBlank(false)]
             public string $name;
         };
         $violations = Validator::validate(new $class());
         $this->assertCount(1, $violations);
 
-        $class = new class {
+        $class = new class () {
             #[NotBlank(true)]
             public string $name;
         };
@@ -32,7 +32,7 @@ class ValidationTest extends TestCase
 
     public function test_not_null_validation()
     {
-        $class = new class {
+        $class = new class () {
             #[NotNull]
             public string $name;
         };
@@ -48,7 +48,7 @@ class ValidationTest extends TestCase
 
     public function test_is_null_validation()
     {
-        $class = new class {
+        $class = new class () {
             #[IsNull]
             public ?string $name;
         };
@@ -68,7 +68,7 @@ class ValidationTest extends TestCase
 
     public function test_url_validation()
     {
-        $class = new class {
+        $class = new class () {
             #[Url]
             public string $url = 'test';
         };
@@ -84,7 +84,7 @@ class ValidationTest extends TestCase
 
     public function test_array_of_validation()
     {
-        $class = new class {
+        $class = new class () {
             #[ArrayOf(type: 'string')]
             public array $tags = [];
         };
@@ -93,7 +93,7 @@ class ValidationTest extends TestCase
         $violations = Validator::validate($class);
         $this->assertCount(1, $violations);
 
-        $class = new class {
+        $class = new class () {
             #[ArrayOf(type: 'string', allowEmpty: true)]
             public array $tags = [];
         };
@@ -102,7 +102,7 @@ class ValidationTest extends TestCase
         $violations = Validator::validate($class);
         $this->assertCount(0, $violations);
 
-        $class = new class {
+        $class = new class () {
             #[ArrayOf(type: 'string')]
             public array $tags;
         };
