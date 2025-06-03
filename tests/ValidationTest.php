@@ -4,6 +4,7 @@ namespace NeuronAI\Tests;
 
 use NeuronAI\StructuredOutput\Validation\Rules\ArrayOf;
 use NeuronAI\StructuredOutput\Validation\Rules\IsNull;
+use NeuronAI\StructuredOutput\Validation\Rules\Length;
 use NeuronAI\StructuredOutput\Validation\Rules\NotBlank;
 use NeuronAI\StructuredOutput\Validation\Rules\NotNull;
 use NeuronAI\StructuredOutput\Validation\Rules\Url;
@@ -114,5 +115,51 @@ class ValidationTest extends TestCase
         $class->tags = ['test'];
         $violations = Validator::validate($class);
         $this->assertCount(0, $violations);
+    }
+
+    public function test_length_validation()
+    {
+        $class = new class {
+            #[Length(exactly: 10)]
+            public string $name;
+        };
+        $class = new $class();
+
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $class->name = 'xxxxx';
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $class->name = 'xxxxxxxxxx';
+        $violations = Validator::validate($class);
+        $this->assertCount(0, $violations);
+
+        $class = new class {
+            #[Length(min: 1)]
+            public string $name = 'x';
+        };
+        $class = new $class();
+
+        $violations = Validator::validate($class);
+        $this->assertCount(0, $violations);
+
+        $class->name = '';
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
+
+        $class = new class {
+            #[Length(max: 1)]
+            public string $name = 'x';
+        };
+        $class = new $class();
+
+        $violations = Validator::validate($class);
+        $this->assertCount(0, $violations);
+
+        $class->name = 'xx';
+        $violations = Validator::validate($class);
+        $this->assertCount(1, $violations);
     }
 }
