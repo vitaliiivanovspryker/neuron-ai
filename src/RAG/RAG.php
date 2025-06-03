@@ -80,14 +80,19 @@ class RAG extends Agent
      */
     protected function setSystemMessage(array $documents): AgentInterface
     {
-        $context = '';
+        $beginContextDelimiter = PHP_EOL.PHP_EOL.'# EXTRA INFORMATION AND CONTEXT'.PHP_EOL;
+
+        // Remove the old context
+        $newInstructions = preg_replace('/'.$beginContextDelimiter.'.*/s', '', $this->instructions());
+
+        // Add the new context
+        $newInstructions .= $beginContextDelimiter;
+
         foreach ($documents as $document) {
-            $context .= $document->content.' ';
+            $newInstructions .= $document->content.PHP_EOL;
         }
 
-        return $this->withInstructions(
-            $this->instructions().PHP_EOL.PHP_EOL."# EXTRA INFORMATION AND CONTEXT".PHP_EOL.$context
-        );
+        return $this->withInstructions($newInstructions);
     }
 
     /**
