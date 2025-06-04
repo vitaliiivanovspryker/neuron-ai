@@ -20,7 +20,7 @@ class MySQLSelectTool extends Tool
                 'query',
                 'string',
                 'The SELECT query you want to run against the database',
-            true
+                true
             )
         )->setCallable($this);
     }
