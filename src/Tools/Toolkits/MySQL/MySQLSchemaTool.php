@@ -289,18 +289,26 @@ class MySQLSchemaTool extends Tool
 
     protected function getConstraints(): array
     {
+        $whereClause = "WHERE CONSTRAINT_SCHEMA = DATABASE() AND CONSTRAINT_TYPE IN ('UNIQUE')";
+        $params = [];
+
+        // Add table filtering if specific tables are requested
+        if ($this->tables !== null && !empty($this->tables)) {
+            $placeholders = str_repeat('?,', count($this->tables) - 1) . '?';
+            $whereClause .= " AND TABLE_NAME IN ($placeholders)";
+            $params = $this->tables;
+        }
+
         $stmt = $this->pdo->prepare("
             SELECT
                 CONSTRAINT_NAME,
                 TABLE_NAME,
-                CONSTRAINT_TYPE,
-                CHECK_CLAUSE
+                CONSTRAINT_TYPE
             FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
-            WHERE CONSTRAINT_SCHEMA = DATABASE()
-                AND CONSTRAINT_TYPE IN ('CHECK', 'UNIQUE')
+            $whereClause
         ");
 
-        $stmt->execute();
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
