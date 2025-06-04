@@ -105,7 +105,7 @@ class Tool implements ToolInterface
         return $this;
     }
 
-    public function getCallId(): string
+    public function getCallId(): ?string
     {
         return $this->callId;
     }
