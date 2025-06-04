@@ -7,6 +7,8 @@ namespace NeuronAI\Workflow;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Exceptions\StateGraphError;
 use NeuronAI\Observability\Events\WorkflowEnd;
+use NeuronAI\Observability\Events\WorkflowNodeEnd;
+use NeuronAI\Observability\Events\WorkflowNodeStart;
 use NeuronAI\Observability\Events\WorkflowStart;
 use NeuronAI\Observability\Observable;
 use NeuronAI\StaticConstructor;
@@ -51,8 +53,12 @@ class Workflow implements SplSubject
 
             $this->attachObservers($node);
 
+            $this->notify('workflow-node-start', new WorkflowNodeStart($item, $input));
+
             $lastReply = $node->execute($input);
             $this->replies[$item] = [$lastReply];
+
+            $this->notify('workflow-node-end', new WorkflowNodeEnd($item, $lastReply));
         }
 
         $this->notify('workflow-end', new WorkflowEnd($lastReply));
