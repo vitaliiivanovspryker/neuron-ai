@@ -43,14 +43,14 @@ class Workflow implements SplSubject
             $this->replies[$node] = [];
         }
 
-        foreach ($this->executionList as $node) {
-            $agent = $this->graph->getNode($node);
-            $input = $this->getPayload($node, $messages);
+        foreach ($this->executionList as $item) {
+            $node = $this->graph->getNode($item);
+            $input = $this->getPayload($item, $messages);
 
-            $this->attachObservers($agent);
+            $this->attachObservers($node);
 
-            $lastReply = $agent->execute($input);
-            $this->replies[$node] = [$lastReply];
+            $lastReply = $node->execute($input);
+            $this->replies[$item] = [$lastReply];
         }
 
         $this->notify('workflow-end');
