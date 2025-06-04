@@ -6,21 +6,20 @@ use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 use PDO;
 
-class MySQLSelectTool extends Tool
+class MySQLWriteTool extends Tool
 {
     public function __construct(protected PDO $pdo)
     {
         parent::__construct(
-            'execute_select_query',
-            'Use this tool only to run SELECT query against the database.
-            This the tool to use only to gather information from the database.'
+            'execute_write_query',
+            'Use this tool to perform write operations against the database (INSERT, UPDATE, DELETE).'
         );
 
         $this->addProperty(
             new ToolProperty(
                 'query',
                 'string',
-                'The SELECT query you want to run against the database.',
+                'The write query you want to run against the database.',
                 true
             )
         )->setCallable($this);
@@ -28,8 +27,10 @@ class MySQLSelectTool extends Tool
 
     public function __invoke(string $query)
     {
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = $this->pdo->prepare($query)->execute();
+
+        return $result
+            ? "The query has been executed successfully."
+            : "I'm sorry, there was an error executing the query.";
     }
 }
