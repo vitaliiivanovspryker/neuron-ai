@@ -10,7 +10,7 @@ use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Providers\MessageMapperInterface;
 use NeuronAI\Tools\ToolInterface;
-use NeuronAI\Tools\ToolProperty;
+use NeuronAI\Tools\ToolPropertyInterface;
 
 class Ollama implements AIProviderInterface
 {
@@ -70,7 +70,7 @@ class Ollama implements AIProviderInterface
                 ],
             ];
 
-            $properties = \array_reduce($tool->getProperties(), function (array $carry, ToolProperty $property) {
+            $properties = \array_reduce($tool->getProperties(), function (array $carry, ToolPropertyInterface $property) {
                 $carry[$property->getName()] = [
                     'type' => $property->getType(),
                     'description' => $property->getDescription(),

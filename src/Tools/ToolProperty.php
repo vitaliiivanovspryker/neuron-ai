@@ -2,8 +2,13 @@
 
 namespace NeuronAI\Tools;
 
-class ToolProperty implements \JsonSerializable
+class ToolProperty implements ToolPropertyInterface
 {
+    public const TP_INTEGER = 'int';
+    public const TP_STRING = 'string';
+    public const TP_NUMBER = 'number';
+    public const TP_NULLABLE = 'null';
+
     public function __construct(
         protected string $name,
         protected string|array $type,
@@ -11,6 +16,7 @@ class ToolProperty implements \JsonSerializable
         protected bool $required = false,
         protected array $enum = [],
     ) {
+        $this->ensureTypeValidation($type);
     }
 
     /**
@@ -50,5 +56,28 @@ class ToolProperty implements \JsonSerializable
     public function getEnum(): array
     {
         return $this->enum;
+    }
+
+    private function ensureTypeValidation(string|array $type): void
+    {
+        $types = is_array($type) ? $type : [$type];
+        $validTypes = [
+            self::TP_INTEGER,
+            self::TP_STRING,
+            self::TP_NUMBER,
+            self::TP_NULLABLE
+        ];
+
+        foreach ($types as $type) {
+            if (!in_array($type, $validTypes, true)) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'The type "%s" is not valid. Valid types are: %s',
+                        $type,
+                        implode(', ', $validTypes)
+                    )
+                );
+            }
+        }
     }
 }

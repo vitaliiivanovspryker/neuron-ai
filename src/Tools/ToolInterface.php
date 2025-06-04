@@ -17,7 +17,7 @@ interface ToolInterface extends \JsonSerializable
     /**
      * Add a Property with a name, type, description, and optional required constraint.
      */
-    public function addProperty(ToolProperty $property): ToolInterface;
+    public function addProperty(ToolPropertyInterface $property): ToolInterface;
 
     /**
      * Get the Properties schema.

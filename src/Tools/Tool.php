@@ -14,7 +14,7 @@ class Tool implements ToolInterface
     /**
      * The list of callback function arguments.
      *
-     * @var array<ToolProperty>
+     * @var array<ToolPropertyInterface>
      */
     protected array $properties = [];
 
@@ -66,7 +66,7 @@ class Tool implements ToolInterface
         return $this->description;
     }
 
-    public function addProperty(ToolProperty $property): ToolInterface
+    public function addProperty(ToolPropertyInterface $property): ToolInterface
     {
         $this->properties[] = $property;
         return $this;
@@ -79,7 +79,7 @@ class Tool implements ToolInterface
 
     public function getRequiredProperties(): array
     {
-        return \array_reduce($this->properties, function ($carry, ToolProperty $property) {
+        return \array_reduce($this->properties, function ($carry, ToolPropertyInterface $property) {
             if ($property->isRequired()) {
                 $carry[] = $property->getName();
             }

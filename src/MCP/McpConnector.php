@@ -3,9 +3,9 @@
 namespace NeuronAI\MCP;
 
 use NeuronAI\StaticConstructor;
+use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolInterface;
-use NeuronAI\Tools\ToolProperty;
 
 class McpConnector
 {
