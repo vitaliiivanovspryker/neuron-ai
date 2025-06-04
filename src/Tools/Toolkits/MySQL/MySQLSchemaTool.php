@@ -34,7 +34,7 @@ class MySQLSchemaTool extends Tool
 
     protected function formatForLLM(array $structure): string
     {
-        $output = "# Database Schema Analysis\n\n";
+        $output = "# MySQL Database Schema Analysis\n\n";
         $output .= "This database contains " . \count($structure['tables']) . " tables with the following structure:\n\n";
 
         // Tables overview
@@ -108,7 +108,7 @@ class MySQLSchemaTool extends Tool
         }
 
         // Query generation guidelines
-        $output .= "## SQL Query Generation Guidelines\n\n";
+        $output .= "## MySQL Query Generation Guidelines\n\n";
         $output .= "**Best Practices for this database**:\n";
         $output .= "1. Always use table aliases for better readability\n";
         $output .= "2. Prefer indexed columns in WHERE clauses for better performance\n";
