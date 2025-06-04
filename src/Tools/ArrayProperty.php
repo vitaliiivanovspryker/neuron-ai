@@ -4,10 +4,7 @@ namespace NeuronAI\Tools;
 
 class ArrayProperty implements ToolPropertyInterface
 {
-    /**
-     * @var string
-     */
-    protected string $type = 'array';
+    protected PropertyType $type = PropertyType::ARRAY;
 
     /**
      * @param string $name
@@ -32,7 +29,7 @@ class ArrayProperty implements ToolPropertyInterface
             'name' => $this->name,
             'description' => $this->description,
             'type' => $this->type,
-            'items' => $this->makeItems(),
+            'items' => $this->makeItemsSchema(),
             'required' => $this->required,
         ];
     }
@@ -47,15 +44,12 @@ class ArrayProperty implements ToolPropertyInterface
         }, $this->items)));
     }
 
-    /**
-     * @return mixed
-     */
-    public function makeItems()
+    public function makeItemsSchema(): array
     {
         return \array_reduce($this->items, function (array $carry, ToolPropertyInterface $property) {
             $carry[$property->getName()] = [
                 'description' => $property->getDescription(),
-                'type' => $property->getType(),
+                'type' => $property->getType()->value,
             ];
 
             if ($property instanceof ToolProperty && !empty($property->getEnum())) {
@@ -65,13 +59,13 @@ class ArrayProperty implements ToolPropertyInterface
             if ($property instanceof ArrayProperty && !empty($property->getItems())) {
                 $carry[$property->getName()]['items'] = [
                     'type' => 'object',
-                    'properties' =>  $property->makeItems(),
+                    'properties' =>  $property->makeItemsSchema(),
                     'required' => $property->getRequiredProperties(),
                 ];
             }
 
             if ($property instanceof ObjectProperty && !empty($property->getItems())) {
-                $carry[$property->getName()]['properties'] = $property->makeItems();
+                $carry[$property->getName()]['properties'] = $property->makeItemsSchema();
                 $carry[$property->getName()]['required'] = $property->getRequiredProperties();
             }
 
@@ -96,9 +90,9 @@ class ArrayProperty implements ToolPropertyInterface
     }
 
     /**
-     * @return string|array
+     * @return PropertyType|array
      */
-    public function getType(): string|array
+    public function getType(): PropertyType|array
     {
         return $this->type;
     }

@@ -103,13 +103,13 @@ class OpenAI implements AIProviderInterface
                 if ($property instanceof ArrayProperty && !empty($property->getItems())) {
                     $carry[$property->getName()]['items'] = [
                         'type' => 'object',
-                        'properties' =>  $property->makeItems(),
+                        'properties' =>  $property->makeItemsSchema(),
                         'required' => $property->getRequiredProperties(),
                     ];
                 }
 
                 if ($property instanceof ObjectProperty && !empty($property->getItems())) {
-                    $carry[$property->getName()]['properties'] = $property->makeItems();
+                    $carry[$property->getName()]['properties'] = $property->makeItemsSchema();
                     $carry[$property->getName()]['required'] = $property->getRequiredProperties();
                 }
 

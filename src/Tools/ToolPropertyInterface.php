@@ -12,7 +12,7 @@ interface ToolPropertyInterface extends \JsonSerializable
     /**
      * @return string|array
      */
-    public function getType(): string|array;
+    public function getType(): PropertyType|array;
 
     /**
      * @return string
