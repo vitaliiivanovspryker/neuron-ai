@@ -6,7 +6,7 @@ use NeuronAI\Workflow\Workflow;
 
 class WorkflowStart
 {
-    public function __construct(protected Workflow $workflow)
+    public function __construct(protected array $executionList)
     {
     }
 }

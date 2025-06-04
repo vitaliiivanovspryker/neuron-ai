@@ -39,7 +39,7 @@ class Workflow implements SplSubject
     {
         $lastReply = null;
 
-        $this->notify('workflow-start', new WorkflowStart($this));
+        $this->notify('workflow-start', new WorkflowStart($this->executionList));
 
         foreach ($this->graph->getNodeNames() as $node) {
             $this->replies[$node] = [];
@@ -55,7 +55,7 @@ class Workflow implements SplSubject
             $this->replies[$item] = [$lastReply];
         }
 
-        $this->notify('workflow-end', new WorkflowEnd($this));
+        $this->notify('workflow-end', new WorkflowEnd($lastReply));
 
         return $lastReply;
     }
