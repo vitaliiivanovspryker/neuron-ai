@@ -140,7 +140,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
     {
         $tools = \array_map(fn (array $tool) => Tool::make($tool['name'], $tool['description'])
             ->setInputs($tool['inputs'])
-            ->setCallId($tool['callId']), $message['tools']);
+            ->setCallId($tool['callId']??null), $message['tools']);
 
         $item = new ToolCallMessage($message['content'], $tools);
 

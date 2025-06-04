@@ -22,6 +22,7 @@ class AgentMonitoring implements \SplObserver
     use HandleRagEvents;
     use HandleInferenceEvents;
     use HandleStructuredEvents;
+    use HandleWorkflowEvents;
 
     public const SEGMENT_TYPE = 'neuron';
     public const SEGMENT_COLOR = '#506b9b';
@@ -33,6 +34,8 @@ class AgentMonitoring implements \SplObserver
 
     protected array $methodsMap = [
         'error' => 'reportError',
+        'workflow-start' => 'workflowStart',
+        'workflow-end' => 'workflowEnd',
         'chat-start' => 'start',
         'chat-stop' => 'stop',
         'stream-start' => 'start',

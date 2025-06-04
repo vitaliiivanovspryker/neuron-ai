@@ -110,7 +110,7 @@ class Tool implements ToolInterface
         return $this->callId;
     }
 
-    public function setCallId(string $callId): self
+    public function setCallId(?string $callId): self
     {
         $this->callId = $callId;
         return $this;
