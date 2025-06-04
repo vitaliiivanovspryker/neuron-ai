@@ -20,7 +20,7 @@ class ObjectProperty implements ToolPropertyInterface
             'name' => $this->name,
             'description' => $this->description,
             'type' => $this->type,
-            'properties' => $this->makeItemsSchema(),
+            'properties' => $this->getJsonSchema(),
             'required' => $this->required,
         ];
     }
@@ -32,33 +32,24 @@ class ObjectProperty implements ToolPropertyInterface
         }, $this->properties)));
     }
 
-    public function makeItemsSchema(): array
+    public function getJsonSchema(): array
     {
-        return \array_reduce($this->properties, function (array $carry, ToolPropertyInterface $property) {
-            $carry[$property->getName()] = [
-                'description' => $property->getDescription(),
-                'type' => $property->getType()->value,
-            ];
+        $schema = [
+            'type' => $this->type->value,
+            'description' => $this->description,
+        ];
 
-            if ($property instanceof ToolProperty && !empty($property->getEnum())) {
-                $carry[$property->getName()]['enum'] = $property->getEnum();
-            }
-
-            if ($property instanceof ArrayProperty && !empty($property->getItems())) {
-                $carry[$property->getName()]['items'] = [
-                    'type' => 'object',
-                    'properties' => $property->makeItemsSchema(),
-                    'required' => $property->getRequiredProperties(),
-                ];
-            }
-
-            if ($property instanceof ObjectProperty && !empty($property->getItems())) {
-                $carry[$property->getName()]['properties'] = $property->makeItemsSchema();
-                $carry[$property->getName()]['required'] = $property->getRequiredProperties();
-            }
-
+        $properties = \array_reduce($this->properties, function (array $carry, ToolPropertyInterface $property) {
+            $carry[$property->getName()] = $property->getJsonSchema();
             return $carry;
         }, []);
+
+        if (!empty($properties)) {
+            $schema['properties'] = $properties;
+            $schema['required'] = $this->getRequiredProperties();
+        }
+
+        return $schema;
     }
 
     public function isRequired(): bool

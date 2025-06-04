@@ -10,7 +10,6 @@ use NeuronAI\HasGuzzleClient;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Providers\MessageMapperInterface;
-use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\ToolPropertyInterface;
 
@@ -87,15 +86,7 @@ class Gemini implements AIProviderInterface
             ];
 
             $properties = \array_reduce($tool->getProperties(), function (array $carry, ToolPropertyInterface $property) {
-                $carry[$property->getName()] = [
-                    'description' => $property->getDescription(),
-                    'type' => $property->getType()->value,
-                ];
-
-                if ($property instanceof ToolProperty && !empty($property->getEnum())) {
-                    $carry[$property->getName()]['enum'] = $property->getEnum();
-                }
-
+                $carry[$property->getName()] = $property->getJsonSchema();
                 return $carry;
             }, []);
 

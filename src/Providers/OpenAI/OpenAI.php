@@ -9,9 +9,6 @@ use NeuronAI\HasGuzzleClient;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Providers\MessageMapperInterface;
-use NeuronAI\Tools\ArrayProperty;
-use NeuronAI\Tools\ObjectProperty;
-use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\ToolPropertyInterface;
 
@@ -74,7 +71,7 @@ class OpenAI implements AIProviderInterface
         return $this->messageMapper;
     }
 
-    public function generateToolsPayload(): array
+    protected function generateToolsPayload(): array
     {
         return \array_map(function (ToolInterface $tool) {
             $payload = [
@@ -91,28 +88,7 @@ class OpenAI implements AIProviderInterface
             ];
 
             $properties = \array_reduce($tool->getProperties(), function (array $carry, ToolPropertyInterface $property) {
-                $carry[$property->getName()] = [
-                    'description' => $property->getDescription(),
-                    'type' => $property->getType()->value,
-                ];
-
-                if ($property instanceof ToolProperty && !empty($property->getEnum())) {
-                    $carry[$property->getName()]['enum'] = $property->getEnum();
-                }
-
-                if ($property instanceof ArrayProperty && !empty($property->getItems())) {
-                    $carry[$property->getName()]['items'] = [
-                        'type' => 'object',
-                        'properties' =>  $property->makeItemsSchema(),
-                        'required' => $property->getRequiredProperties(),
-                    ];
-                }
-
-                if ($property instanceof ObjectProperty && !empty($property->getItems())) {
-                    $carry[$property->getName()]['properties'] = $property->makeItemsSchema();
-                    $carry[$property->getName()]['required'] = $property->getRequiredProperties();
-                }
-
+                $carry[$property->getName()] = $property->getJsonSchema();
                 return $carry;
             }, []);
 

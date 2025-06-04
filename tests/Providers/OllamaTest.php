@@ -12,6 +12,9 @@ use NeuronAI\Chat\Enums\AttachmentContentType;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Exceptions\ProviderException;
 use NeuronAI\Providers\Ollama\Ollama;
+use NeuronAI\Tools\PropertyType;
+use NeuronAI\Tools\Tool;
+use NeuronAI\Tools\ToolProperty;
 use PHPUnit\Framework\TestCase;
 
 class OllamaTest extends TestCase
@@ -122,5 +125,41 @@ class OllamaTest extends TestCase
 
         $this->expectException(ProviderException::class);
         $provider->chat([$message]);
+    }
+
+    public function test_tools_payload()
+    {
+        $toolPayload = (new Ollama(
+            url: '',
+            model: 'llama3.2',
+        ))->setTools([
+            Tool::make('tool', 'description')
+                ->addProperty(
+                    new ToolProperty(
+                        'prop',
+                        PropertyType::STRING,
+                        'description',
+                        true
+                    )
+                )
+        ])->generateToolsPayload();
+
+        $this->assertSame([
+            'type' => 'function',
+            'function' => [
+                'name' => 'tool',
+                'description' => 'description',
+                'parameters' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'prop' => [
+                            'type' => 'string',
+                            'description' => 'description',
+                        ]
+                    ],
+                    'required' => ['prop'],
+                ]
+            ]
+        ], $toolPayload[0]);
     }
 }

@@ -12,6 +12,10 @@ use NeuronAI\Chat\Attachments\Image;
 use NeuronAI\Chat\Enums\AttachmentContentType;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Providers\Anthropic\Anthropic;
+use NeuronAI\Tools\ObjectProperty;
+use NeuronAI\Tools\PropertyType;
+use NeuronAI\Tools\Tool;
+use NeuronAI\Tools\ToolProperty;
 use PHPUnit\Framework\TestCase;
 
 class AnthropicTest extends TestCase
@@ -259,5 +263,83 @@ class AnthropicTest extends TestCase
         ];
 
         $this->assertSame($expectedResponse, json_decode($request['request']->getBody()->getContents(), true));
+    }
+
+    public function test_tools_payload()
+    {
+        $toolPayload = (new Anthropic('', 'claude-3-7-sonnet-latest'))
+            ->setTools([
+                Tool::make('tool', 'description')
+                    ->addProperty(
+                        new ToolProperty(
+                            'prop',
+                            PropertyType::STRING,
+                            'description',
+                            true
+                        )
+                    )
+            ])
+            ->generateToolsPayload();
+
+        $this->assertSame([
+            'name' => 'tool',
+            'description' => 'description',
+            'input_schema' => [
+                'type' => 'object',
+                'properties' => [
+                    'prop' => [
+                        'type' => 'string',
+                        'description' => 'description',
+                    ]
+                ],
+                'required' => ['prop'],
+            ]
+        ], $toolPayload[0]);
+    }
+
+    public function test_tools_payload_with_object_properties()
+    {
+        $toolPayload = (new Anthropic('', 'claude-3-7-sonnet-latest'))
+            ->setTools([
+                Tool::make('tool', 'description')
+                    ->addProperty(
+                        new ObjectProperty(
+                            'obj_prop',
+                            'description',
+                            false,
+                            [
+                                new ToolProperty(
+                                    'simple_prop',
+                                    PropertyType::STRING,
+                                    'description',
+                                    true
+                                )
+                            ]
+                        )
+                    )
+            ])
+            ->generateToolsPayload();
+
+        $this->assertSame([
+            'name' => 'tool',
+            'description' => 'description',
+            'input_schema' => [
+                'type' => 'object',
+                'properties' => [
+                    'obj_prop' => [
+                        'type' => 'object',
+                        'description' => 'description',
+                        'properties' => [
+                            'simple_prop' => [
+                                'type' => 'string',
+                                'description' => 'description',
+                            ]
+                        ],
+                        'required' => ['simple_prop']
+                    ]
+                ],
+                'required' => [],
+            ]
+        ], $toolPayload[0]);
     }
 }

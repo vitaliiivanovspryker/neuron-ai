@@ -21,7 +21,7 @@ class ToolProperty implements ToolPropertyInterface
         return [
             'name' => $this->name,
             'description' => $this->description,
-            'type' => $this->type,
+            'type' => $this->type->value,
             'enum' => $this->enum,
             'required' => $this->required,
         ];
@@ -50,5 +50,19 @@ class ToolProperty implements ToolPropertyInterface
     public function getEnum(): array
     {
         return $this->enum;
+    }
+
+    public function getJsonSchema(): array
+    {
+        $schema = [
+            'type' => $this->type->value,
+            'description' => $this->description,
+        ];
+
+        if (!empty($this->enum)) {
+            $schema['enum'] = $this->enum;
+        }
+
+        return $schema;
     }
 }
