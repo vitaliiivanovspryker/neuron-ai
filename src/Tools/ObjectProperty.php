@@ -20,8 +20,7 @@ class ObjectProperty implements ToolPropertyInterface
         protected string $description,
         protected bool   $required = false,
         protected array  $properties = [],
-    )
-    {
+    ) {
     }
 
     /**

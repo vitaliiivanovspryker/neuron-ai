@@ -20,7 +20,8 @@ class ArrayProperty implements ToolPropertyInterface
         protected string $description,
         protected bool $required = false,
         protected array $items = [],
-    ) {}
+    ) {
+    }
 
     /**
      * @return array
