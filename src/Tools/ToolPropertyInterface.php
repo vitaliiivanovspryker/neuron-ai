@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\Properties;
+namespace NeuronAI\Tools;
 
 interface ToolPropertyInterface extends \JsonSerializable
 {

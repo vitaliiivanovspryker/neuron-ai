@@ -2,8 +2,8 @@
 
 namespace NeuronAI\MCP;
 
-use NeuronAI\Properties\ToolProperty;
 use NeuronAI\StaticConstructor;
+use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolInterface;
 

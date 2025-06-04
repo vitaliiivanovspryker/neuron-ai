@@ -2,8 +2,6 @@
 
 namespace NeuronAI\Tools;
 
-use NeuronAI\Properties\ToolPropertyInterface;
-
 interface ToolInterface extends \JsonSerializable
 {
     /**

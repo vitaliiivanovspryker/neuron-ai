@@ -6,14 +6,14 @@ use GuzzleHttp\Client;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\HasGuzzleClient;
-use NeuronAI\Properties\ArrayToolProperty;
-use NeuronAI\Properties\ToolProperty;
-use NeuronAI\Properties\ObjectToolProperty;
-use NeuronAI\Properties\ToolPropertyInterface;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Providers\MessageMapperInterface;
+use NeuronAI\Tools\ArrayProperty;
+use NeuronAI\Tools\ObjectProperty;
+use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Tools\ToolInterface;
+use NeuronAI\Tools\ToolPropertyInterface;
 
 class OpenAI implements AIProviderInterface
 {
@@ -100,7 +100,7 @@ class OpenAI implements AIProviderInterface
                     $carry[$property->getName()]['enum'] = $property->getEnum();
                 }
 
-                if ($property instanceof ArrayToolProperty && !empty($property->getItems())) {
+                if ($property instanceof ArrayProperty && !empty($property->getItems())) {
                     $carry[$property->getName()]['items'] = [
                         'type' => 'object',
                         'properties' =>  $property->makeItems(),
@@ -108,7 +108,7 @@ class OpenAI implements AIProviderInterface
                     ];
                 }
 
-                if ($property instanceof ObjectToolProperty && !empty($property->getItems())) {
+                if ($property instanceof ObjectProperty && !empty($property->getItems())) {
                     $carry[$property->getName()]['properties'] = $property->makeItems();
                     $carry[$property->getName()]['required'] = $property->getRequiredProperties();
                 }

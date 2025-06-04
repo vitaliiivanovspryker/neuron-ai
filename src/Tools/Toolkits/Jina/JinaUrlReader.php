@@ -5,7 +5,7 @@ namespace NeuronAI\Tools\Toolkits\Jina;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use NeuronAI\Exceptions\ToolException;
-use NeuronAI\Properties\ToolProperty;
+use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Tools\Tool;
 
 class JinaUrlReader extends Tool

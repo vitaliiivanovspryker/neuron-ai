@@ -2,7 +2,7 @@
 
 namespace NeuronAI\Tests;
 
-use NeuronAI\Properties\ToolProperty;
+use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolInterface;
 use PHPUnit\Framework\TestCase;

@@ -1,28 +1,26 @@
 <?php
 
-namespace NeuronAI\Properties;
+namespace NeuronAI\Tools;
 
-class ObjectToolProperty implements ToolPropertyInterface
+class ArrayProperty implements ToolPropertyInterface
 {
     /**
      * @var string
      */
-    protected string $type = 'object';
+    protected string $type = 'array';
 
     /**
      * @param string $name
      * @param string $description
      * @param bool $required
-     * @param array $properties
+     * @param array $items
      */
     public function __construct(
         protected string $name,
         protected string $description,
-        protected bool   $required = false,
-        protected array  $properties = [],
-    )
-    {
-    }
+        protected bool $required = false,
+        protected array $items = [],
+    ) {}
 
     /**
      * @return array
@@ -33,7 +31,7 @@ class ObjectToolProperty implements ToolPropertyInterface
             'name' => $this->name,
             'description' => $this->description,
             'type' => $this->type,
-            'properties' => $this->makeItems(),
+            'items' => $this->makeItems(),
             'required' => $this->required,
         ];
     }
@@ -45,7 +43,7 @@ class ObjectToolProperty implements ToolPropertyInterface
     {
         return array_values(\array_filter(\array_map(function (ToolPropertyInterface $property) {
             return $property->isRequired() ? $property->getName() : null;
-        }, $this->properties)));
+        }, $this->items)));
     }
 
     /**
@@ -53,7 +51,7 @@ class ObjectToolProperty implements ToolPropertyInterface
      */
     public function makeItems()
     {
-        return \array_reduce($this->properties, function (array $carry, ToolPropertyInterface $property) {
+        return \array_reduce($this->items, function (array $carry, ToolPropertyInterface $property) {
             $carry[$property->getName()] = [
                 'description' => $property->getDescription(),
                 'type' => $property->getType(),
@@ -63,15 +61,15 @@ class ObjectToolProperty implements ToolPropertyInterface
                 $carry[$property->getName()]['enum'] = $property->getEnum();
             }
 
-            if ($property instanceof ArrayToolProperty && !empty($property->getItems())) {
+            if ($property instanceof ArrayProperty && !empty($property->getItems())) {
                 $carry[$property->getName()]['items'] = [
                     'type' => 'object',
-                    'properties' => $property->makeItems(),
+                    'properties' =>  $property->makeItems(),
                     'required' => $property->getRequiredProperties(),
                 ];
             }
 
-            if ($property instanceof ObjectToolProperty && !empty($property->getItems())) {
+            if ($property instanceof ObjectProperty && !empty($property->getItems())) {
                 $carry[$property->getName()]['properties'] = $property->makeItems();
                 $carry[$property->getName()]['required'] = $property->getRequiredProperties();
             }
@@ -117,6 +115,6 @@ class ObjectToolProperty implements ToolPropertyInterface
      */
     public function getItems(): array
     {
-        return $this->properties;
+        return $this->items;
     }
 }

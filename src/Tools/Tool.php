@@ -5,7 +5,6 @@ namespace NeuronAI\Tools;
 use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
 use NeuronAI\Exceptions\ToolException;
-use NeuronAI\Properties\ToolPropertyInterface;
 use NeuronAI\StaticConstructor;
 
 class Tool implements ToolInterface

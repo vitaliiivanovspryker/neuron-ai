@@ -6,12 +6,12 @@ use GuzzleHttp\Client;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\HasGuzzleClient;
-use NeuronAI\Properties\ToolProperty;
-use NeuronAI\Properties\ToolPropertyInterface;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Providers\MessageMapperInterface;
+use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Tools\ToolInterface;
+use NeuronAI\Tools\ToolPropertyInterface;
 
 class Anthropic implements AIProviderInterface
 {

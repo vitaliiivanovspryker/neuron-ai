@@ -7,8 +7,8 @@ use Inspector\Inspector;
 use Inspector\Models\Segment;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Observability\Events\AgentError;
-use NeuronAI\Properties\ToolPropertyInterface;
 use NeuronAI\Tools\Tool;
+use NeuronAI\Tools\ToolPropertyInterface;
 
 /**
  * Trace your AI agent execution flow to detect errors and performance bottlenecks in real-time.
