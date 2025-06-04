@@ -7,7 +7,7 @@
 
 [**Video Tutorial**](https://www.youtube.com/watch?v=fJSX8wWIDO8)
 
-[![Neuron & Inspector](./docs/img/youtube.png)](https://www.youtube.com/watch?v=fJSX8wWIDO8)
+[![Neuron & Inspector](./docs/images/youtube.avif)](https://www.youtube.com/watch?v=fJSX8wWIDO8)
 
 ---
 
