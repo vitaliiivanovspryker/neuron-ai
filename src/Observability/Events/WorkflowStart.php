@@ -4,7 +4,7 @@ namespace NeuronAI\Observability\Events;
 
 class WorkflowStart
 {
-    public function __construct(protected array $executionList)
+    public function __construct(public array $executionList)
     {
     }
 }
