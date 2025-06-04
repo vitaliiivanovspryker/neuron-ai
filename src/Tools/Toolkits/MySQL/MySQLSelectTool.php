@@ -2,6 +2,7 @@
 
 namespace NeuronAI\Tools\Toolkits\MySQL;
 
+use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 use PDO;
@@ -26,7 +27,7 @@ class MySQLSelectTool extends Tool
         $this->addProperty(
             new ToolProperty(
                 'query',
-                'string',
+                PropertyType::STRING,
                 'The SELECT query you want to run against the database.',
                 true
             )

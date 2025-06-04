@@ -2,6 +2,7 @@
 
 namespace NeuronAI\Tools\Toolkits\MySQL;
 
+use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 use PDO;
@@ -18,7 +19,7 @@ class MySQLWriteTool extends Tool
         $this->addProperty(
             new ToolProperty(
                 'query',
-                'string',
+                PropertyType::STRING,
                 'The write query you want to run against the MySQL database (INSERT, UPDATE, DELETE).',
                 true
             )

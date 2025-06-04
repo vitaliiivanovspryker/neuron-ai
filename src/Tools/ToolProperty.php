@@ -6,14 +6,11 @@ class ToolProperty implements ToolPropertyInterface
 {
     public function __construct(
         protected string $name,
-        protected array|PropertyType $type,
+        protected PropertyType $type,
         protected string $description,
         protected bool $required = false,
         protected array $enum = [],
     ) {
-        if (is_array($this->type)) {
-            array_walk($this->type, fn ($item) => ($item instanceof PropertyType) ?: throw new \Exception("The type {$item} is not a valid property type."));
-        }
     }
 
     /**
@@ -40,7 +37,7 @@ class ToolProperty implements ToolPropertyInterface
         return $this->name;
     }
 
-    public function getType(): PropertyType|array
+    public function getType(): PropertyType
     {
         return $this->type;
     }

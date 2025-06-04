@@ -4,6 +4,7 @@ namespace NeuronAI\Tools\Toolkits\Jina;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
+use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Tools\Tool;
 
@@ -25,7 +26,7 @@ class JinaWebSearch extends Tool
         $this->addProperty(
             new ToolProperty(
                 'search_query',
-                'string',
+                PropertyType::STRING,
                 'The search query to perform web search.',
                 true
             )

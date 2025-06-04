@@ -72,7 +72,7 @@ class Ollama implements AIProviderInterface
 
             $properties = \array_reduce($tool->getProperties(), function (array $carry, ToolPropertyInterface $property) {
                 $carry[$property->getName()] = [
-                    'type' => $property->getType(),
+                    'type' => $property->getType()->value,
                     'description' => $property->getDescription(),
                 ];
 

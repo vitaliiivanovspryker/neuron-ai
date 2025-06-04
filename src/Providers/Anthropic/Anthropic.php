@@ -85,7 +85,7 @@ class Anthropic implements AIProviderInterface
         return \array_map(function (ToolInterface $tool) {
             $properties = \array_reduce($tool->getProperties(), function ($carry, ToolPropertyInterface $property) {
                 $carry[$property->getName()] = [
-                    'type' => $property->getType(),
+                    'type' => $property->getType()->value,
                     'description' => $property->getDescription(),
                 ];
 

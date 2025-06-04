@@ -6,12 +6,6 @@ class ArrayProperty implements ToolPropertyInterface
 {
     protected PropertyType $type = PropertyType::ARRAY;
 
-    /**
-     * @param string $name
-     * @param string $description
-     * @param bool $required
-     * @param array $items
-     */
     public function __construct(
         protected string $name,
         protected string $description,
@@ -20,9 +14,6 @@ class ArrayProperty implements ToolPropertyInterface
     ) {
     }
 
-    /**
-     * @return array
-     */
     public function jsonSerialize(): array
     {
         return [
@@ -34,9 +25,6 @@ class ArrayProperty implements ToolPropertyInterface
         ];
     }
 
-    /**
-     * @return array
-     */
     public function getRequiredProperties(): array
     {
         return array_values(\array_filter(\array_map(function (ToolPropertyInterface $property) {
@@ -73,41 +61,26 @@ class ArrayProperty implements ToolPropertyInterface
         }, []);
     }
 
-    /**
-     * @return bool
-     */
     public function isRequired(): bool
     {
         return $this->required;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return PropertyType|array
-     */
-    public function getType(): PropertyType|array
+    public function getType(): PropertyType
     {
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @return array
-     */
     public function getItems(): array
     {
         return $this->items;

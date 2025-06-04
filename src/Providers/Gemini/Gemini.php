@@ -89,7 +89,7 @@ class Gemini implements AIProviderInterface
             $properties = \array_reduce($tool->getProperties(), function (array $carry, ToolPropertyInterface $property) {
                 $carry[$property->getName()] = [
                     'description' => $property->getDescription(),
-                    'type' => $property->getType(),
+                    'type' => $property->getType()->value,
                 ];
 
                 if ($property instanceof ToolProperty && !empty($property->getEnum())) {
