@@ -4,7 +4,7 @@ namespace NeuronAI\Tools;
 
 enum PropertyType: string
 {
-    case INTEGER = 'int';
+    case INTEGER = 'integer';
     case STRING = 'string';
     case NUMBER = 'number';
     case NULL = 'null';
