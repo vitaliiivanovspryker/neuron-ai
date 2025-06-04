@@ -19,6 +19,7 @@ class MySQLToolkit implements ToolkitInterface
         return [
             MySQLSchemaTool::make($this->pdo),
             MySQLSelectTool::make($this->pdo),
+            MySQLWriteTool::make($this->pdo),
         ];
     }
 }
