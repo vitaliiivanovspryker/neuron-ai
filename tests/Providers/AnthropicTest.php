@@ -267,7 +267,19 @@ class AnthropicTest extends TestCase
 
     public function test_tools_payload()
     {
-        $toolPayload = (new Anthropic('', 'claude-3-7-sonnet-latest'))
+        $sentRequests = [];
+        $history = Middleware::history($sentRequests);
+        $mockHandler = new MockHandler([
+            new Response(
+                status: 200,
+                body: '{"model": "claude-3-7-sonnet-latest","role": "assistant","stop_reason": "end_turn","content":[{"type": "text","text": "Understood."}],"usage": {"input_tokens": 50,"output_tokens": 10}}',
+            ),
+        ]);
+        $stack = HandlerStack::create($mockHandler);
+        $stack->push($history);
+
+        $client = new Client(['handler' => $stack]);
+        $provider = (new Anthropic('', 'claude-3-7-sonnet-latest'))
             ->setTools([
                 Tool::make('tool', 'description')
                     ->addProperty(
@@ -279,27 +291,57 @@ class AnthropicTest extends TestCase
                         )
                     )
             ])
-            ->generateToolsPayload();
+            ->setClient($client);
 
-        $this->assertSame([
-            'name' => 'tool',
-            'description' => 'description',
-            'input_schema' => [
-                'type' => 'object',
-                'properties' => [
-                    'prop' => [
-                        'type' => 'string',
-                        'description' => 'description',
-                    ]
+        $provider->chat([new UserMessage('Hi')]);
+
+        $request = $sentRequests[0];
+
+        $expectedResponse = [
+            'model' => 'claude-3-7-sonnet-latest',
+            'max_tokens' => 8192,
+            'messages' => [
+                [
+                    'role' => 'user',
+                    'content' => 'Hi',
                 ],
-                'required' => ['prop'],
+            ],
+            'tools' => [
+                [
+                    'name' => 'tool',
+                    'description' => 'description',
+                    'input_schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'prop' => [
+                                'type' => 'string',
+                                'description' => 'description',
+                            ]
+                        ],
+                        'required' => ['prop'],
+                    ]
+                ]
             ]
-        ], $toolPayload[0]);
+        ];
+
+        $this->assertSame($expectedResponse, json_decode($request['request']->getBody()->getContents(), true));
     }
 
     public function test_tools_payload_with_object_properties()
     {
-        $toolPayload = (new Anthropic('', 'claude-3-7-sonnet-latest'))
+        $sentRequests = [];
+        $history = Middleware::history($sentRequests);
+        $mockHandler = new MockHandler([
+            new Response(
+                status: 200,
+                body: '{"model": "claude-3-7-sonnet-latest","role": "assistant","stop_reason": "end_turn","content":[{"type": "text","text": "Understood."}],"usage": {"input_tokens": 50,"output_tokens": 10}}',
+            ),
+        ]);
+        $stack = HandlerStack::create($mockHandler);
+        $stack->push($history);
+
+        $client = new Client(['handler' => $stack]);
+        $provider = (new Anthropic('', 'claude-3-7-sonnet-latest'))
             ->setTools([
                 Tool::make('tool', 'description')
                     ->addProperty(
@@ -318,28 +360,46 @@ class AnthropicTest extends TestCase
                         )
                     )
             ])
-            ->generateToolsPayload();
+            ->setClient($client);
 
-        $this->assertSame([
-            'name' => 'tool',
-            'description' => 'description',
-            'input_schema' => [
-                'type' => 'object',
-                'properties' => [
-                    'obj_prop' => [
+        $provider->chat([new UserMessage('Hi')]);
+
+        $request = $sentRequests[0];
+
+        $expectedResponse = [
+            'model' => 'claude-3-7-sonnet-latest',
+            'max_tokens' => 8192,
+            'messages' => [
+                [
+                    'role' => 'user',
+                    'content' => 'Hi',
+                ],
+            ],
+            'tools' => [
+                [
+                    'name' => 'tool',
+                    'description' => 'description',
+                    'input_schema' => [
                         'type' => 'object',
-                        'description' => 'description',
                         'properties' => [
-                            'simple_prop' => [
-                                'type' => 'string',
+                            'obj_prop' => [
+                                'type' => 'object',
                                 'description' => 'description',
+                                'properties' => [
+                                    'simple_prop' => [
+                                        'type' => 'string',
+                                        'description' => 'description',
+                                    ]
+                                ],
+                                'required' => ['simple_prop']
                             ]
                         ],
-                        'required' => ['simple_prop']
+                        'required' => [],
                     ]
-                ],
-                'required' => [],
+                ]
             ]
-        ], $toolPayload[0]);
+        ];
+
+        $this->assertSame($expectedResponse, json_decode($request['request']->getBody()->getContents(), true));
     }
 }

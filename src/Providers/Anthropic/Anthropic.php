@@ -5,7 +5,7 @@ namespace NeuronAI\Providers\Anthropic;
 use GuzzleHttp\Client;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
-use NeuronAI\HasGuzzleClient;
+use NeuronAI\Providers\HasGuzzleClient;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\HandleWithTools;
 use NeuronAI\Providers\MessageMapperInterface;
@@ -79,7 +79,7 @@ class Anthropic implements AIProviderInterface
         return $this->messageMapper;
     }
 
-    public function generateToolsPayload(): array
+    protected function generateToolsPayload(): array
     {
         return \array_map(function (ToolInterface $tool) {
             $properties = \array_reduce($tool->getProperties(), function ($carry, ToolPropertyInterface $property) {

@@ -2,6 +2,7 @@
 
 namespace NeuronAI\Providers;
 
+use GuzzleHttp\Client;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Tools\ToolInterface;
 
@@ -41,4 +42,6 @@ interface AIProviderInterface
     public function stream(array|string $messages, callable $executeToolsCallback): \Generator;
 
     public function structured(array $messages, string $class, array $response_schema): Message;
+
+    public function setClient(Client $client): AIProviderInterface;
 }

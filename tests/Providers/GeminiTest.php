@@ -245,7 +245,17 @@ class GeminiTest extends TestCase
 
     public function test_tools_payload()
     {
-        $toolPayload = (new Gemini('', 'gemini-2.0-flash'))
+        $sentRequests = [];
+        $history = Middleware::history($sentRequests);
+        $mockHandler = new MockHandler([
+            new Response(status: 200, body: $this->body),
+        ]);
+        $stack = HandlerStack::create($mockHandler);
+        $stack->push($history);
+
+        $client = new Client(['handler' => $stack]);
+
+        $provider = (new Gemini('', 'gemini-2.0-flash'))
             ->setTools([
                 Tool::make('tool', 'description')
                     ->addProperty(
@@ -256,21 +266,45 @@ class GeminiTest extends TestCase
                             true
                         )
                     )
-            ])->generateToolsPayload();
+            ])
+            ->setClient($client);
 
-        $this->assertSame([
-            'name' => 'tool',
-            'description' => 'description',
-            'parameters' => [
-                'type' => 'object',
-                'properties' => [
-                    'prop' => [
-                        'type' => 'string',
-                        'description' => 'description',
-                    ]
+        $response = $provider->chat([new UserMessage('Hi')]);
+
+        // Ensure we sent one request
+        $this->assertCount(1, $sentRequests);
+        $request = $sentRequests[0];
+
+        // Ensure we have sent the expected request payload.
+        $expectedRequest = [
+            'contents' => [
+                [
+                    'role' => 'user',
+                    'parts' => [
+                        ['text' => 'Hi'],
+                    ],
                 ],
-                'required' => ['prop'],
+            ],
+            'tools' => [
+                'functionDeclarations' => [
+                    [
+                        'name' => 'tool',
+                        'description' => 'description',
+                        'parameters' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'prop' => [
+                                    'type' => 'string',
+                                    'description' => 'description',
+                                ]
+                            ],
+                            'required' => ['prop'],
+                        ]
+                    ]
+                ]
             ]
-        ], $toolPayload['functionDeclarations'][0]);
+        ];
+
+        $this->assertSame($expectedRequest, json_decode($request['request']->getBody()->getContents(), true));
     }
 }

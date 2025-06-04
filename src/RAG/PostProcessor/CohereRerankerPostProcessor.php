@@ -5,12 +5,11 @@ namespace NeuronAI\RAG\PostProcessor;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use NeuronAI\Chat\Messages\Message;
-use NeuronAI\HasGuzzleClient;
 use NeuronAI\RAG\Document;
 
 class CohereRerankerPostProcessor implements PostProcessorInterface
 {
-    use HasGuzzleClient;
+    protected Client $client;
 
     public function __construct(
         string $key,
@@ -45,5 +44,11 @@ class CohereRerankerPostProcessor implements PostProcessorInterface
             $document->score = $item['relevance_score'];
             return $document;
         }, $result['results']);
+    }
+
+    public function setClient(Client $client): PostProcessorInterface
+    {
+        $this->client = $client;
+        return $this;
     }
 }

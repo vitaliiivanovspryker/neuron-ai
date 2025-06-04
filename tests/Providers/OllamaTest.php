@@ -129,7 +129,17 @@ class OllamaTest extends TestCase
 
     public function test_tools_payload()
     {
-        $toolPayload = (new Ollama(
+        $sentRequests = [];
+        $history = Middleware::history($sentRequests);
+        $mockHandler = new MockHandler([
+            new Response(status: 200, body: $this->body),
+        ]);
+        $stack = HandlerStack::create($mockHandler);
+        $stack->push($history);
+
+        $client = new Client(['handler' => $stack]);
+
+        $provider = (new Ollama(
             url: '',
             model: 'llama3.2',
         ))->setTools([
@@ -142,24 +152,45 @@ class OllamaTest extends TestCase
                         true
                     )
                 )
-        ])->generateToolsPayload();
+        ])->setClient($client);
 
-        $this->assertSame([
-            'type' => 'function',
-            'function' => [
-                'name' => 'tool',
-                'description' => 'description',
-                'parameters' => [
-                    'type' => 'object',
-                    'properties' => [
-                        'prop' => [
-                            'type' => 'string',
-                            'description' => 'description',
+        $response = $provider->chat([new UserMessage('Hi')]);
+
+        // Ensure we sent one request
+        $this->assertCount(1, $sentRequests);
+        $request = $sentRequests[0];
+
+        // Ensure we have sent the expected request payload.
+        $expectedRequest = [
+            'stream' => false,
+            'model' => 'llama3.2',
+            'messages' => [
+                [
+                    'role' => 'user',
+                    'content' => 'Hi',
+                ],
+            ],
+            'tools' => [
+                [
+                    'type' => 'function',
+                    'function' => [
+                        'name' => 'tool',
+                        'description' => 'description',
+                        'parameters' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'prop' => [
+                                    'type' => 'string',
+                                    'description' => 'description',
+                                ]
+                            ],
+                            'required' => ['prop'],
                         ]
-                    ],
-                    'required' => ['prop'],
+                    ]
                 ]
             ]
-        ], $toolPayload[0]);
+        ];
+
+        $this->assertSame($expectedRequest, json_decode($request['request']->getBody()->getContents(), true));
     }
 }
