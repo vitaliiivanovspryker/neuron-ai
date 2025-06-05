@@ -12,11 +12,9 @@ class ZepToolkit implements ToolkitInterface
 
     public function tools(): array
     {
-        return [];
-    }
-
-    public function getContext()
-    {
-
+        return [
+            ZepGetMemoryTool::make($this->key),
+            ZepAddMemoryTool::make($this->key),
+        ];
     }
 }
