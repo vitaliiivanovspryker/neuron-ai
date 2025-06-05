@@ -2,29 +2,22 @@
 
 namespace NeuronAI\Tools\Toolkits\Zep;
 
-use GuzzleHttp\Client;
 use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 
 class ZepGetMemoryTool extends Tool
 {
-    protected Client $client;
-
-    protected string $url = 'https://api.getzep.com/api/v2';
+    use HandleZepClient;
 
     public function __construct(
         protected string $key,
         protected string $user_id,
         protected ?string $session_id = null,
     ) {
-        if (is_null($this->session_id)) {
-            $this->session_id = \uniqid();
-        }
-
         parent::__construct(
             'get_memory',
-            'Retrieves the memory for the current Zep session.'
+            'Retrieves relevant information from the user memory.'
         );
 
         $this->addProperty(
@@ -37,40 +30,18 @@ class ZepGetMemoryTool extends Tool
             )
         )->setCallable($this);
 
-        $this->client = new Client([
-            'base_uri' => \trim($this->url, '/').'/',
-            'headers' => [
-                'Authorization' => "Api-Key {$this->key}",
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-            ]
-        ]);
-
         $this->init();
     }
 
-    protected function init()
+    public function __invoke(string $type): array
     {
-        // Create the user if it doesn't exist
-        try {
-            $this->client->get('users/'.$this->user_id);
-        } catch (\Exception $exception) {
-            $this->client->post('users', ['user_id' => $this->user_id]);
-        }
+        $response = $this->client->get('sessions/'.$this->session_id.'/memory')
+            ->getBody()->getContents();
 
-        // Create the session if it doesn't exist
-        try {
-            $this->client->get('sessions/'.$this->session_id);
-        } catch (\Exception $exception) {
-            $this->client->post('sessions', [
-                'session_id' => $this->session_id,
-                'user_id' => $this->user_id,
-            ]);
-        }
-    }
-
-    public function __invoke(string $type)
-    {
-
+        return \json_decode($response, true)['type'] ?? match ($type) {
+            'context' => ['context' => 'No context available'],
+            'messages' => ['messages' => 'No messages available'],
+            'relevant_facts' => ['relevant_facts' => 'No relevant facts available'],
+        };
     }
 }
