@@ -17,7 +17,8 @@ class ZepAddToGraphTool extends Tool
     ) {
         parent::__construct(
             'add_knowledge_graph_data',
-            'Searches the knowledge graph for relevant facts or nodes.'
+            'Add relevant information to the knowledge graph for long term memory.
+            Look for facts, news or any relevant information in the conversation that you think is important to store for future use.'
         );
 
         $this->addProperty(
