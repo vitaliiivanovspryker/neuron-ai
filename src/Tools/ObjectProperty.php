@@ -72,7 +72,7 @@ class ObjectProperty implements ToolPropertyInterface
         return $this->description;
     }
 
-    public function getItems(): array
+    public function getProperties(): array
     {
         return $this->properties;
     }

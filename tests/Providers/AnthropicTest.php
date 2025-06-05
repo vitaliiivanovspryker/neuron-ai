@@ -426,32 +426,31 @@ class AnthropicTest extends TestCase
                             'array_prop',
                             'description for array_prop',
                             true,
-                            [
-                                new ObjectProperty(
-                                    'obj_prop',
-                                    'description for obj_prop',
-                                    true,
-                                    [
-                                        new ToolProperty(
-                                            'simple_prop_a',
-                                            PropertyType::STRING,
-                                            'description for a',
-                                            true
-                                        ),
-                                        new ToolProperty(
-                                            'simple_prop_b',
-                                            PropertyType::INTEGER,
-                                            'description for b',
-                                            false
-                                        ),
-                                        new ToolProperty(
-                                            'simple_prop_c',
-                                            PropertyType::NUMBER,
-                                            'description for c',
-                                        ),
-                                    ]
-                                )
-                            ]
+
+                            new ObjectProperty(
+                                'obj_prop',
+                                'description for obj_prop',
+                                true,
+                                [
+                                    new ToolProperty(
+                                        'simple_prop_a',
+                                        PropertyType::STRING,
+                                        'description for a',
+                                        true
+                                    ),
+                                    new ToolProperty(
+                                        'simple_prop_b',
+                                        PropertyType::INTEGER,
+                                        'description for b',
+                                        false
+                                    ),
+                                    new ToolProperty(
+                                        'simple_prop_c',
+                                        PropertyType::NUMBER,
+                                        'description for c',
+                                    ),
+                                ]
+                            )
                         )
                     )
             ])
@@ -481,25 +480,23 @@ class AnthropicTest extends TestCase
                                 'type' => 'array',
                                 'description' => 'description for array_prop',
                                 'items' => [
-                                    'obj_prop' => [
-                                        'type' => 'object',
-                                        'description' => 'description for obj_prop',
-                                        'properties' => [
-                                            'simple_prop_a' => [
-                                                'type' => 'string',
-                                                'description' => 'description for a',
-                                            ],
-                                            'simple_prop_b' => [
-                                                'type' => 'integer',
-                                                'description' => 'description for b',
-                                            ],
-                                            'simple_prop_c' => [
-                                                'type' => 'number',
-                                                'description' => 'description for c',
-                                            ]
+                                    'type' => 'object',
+                                    'description' => 'description for obj_prop',
+                                    'properties' => [
+                                        'simple_prop_a' => [
+                                            'type' => 'string',
+                                            'description' => 'description for a',
                                         ],
-                                        'required' => ['simple_prop_a']
-                                    ]
+                                        'simple_prop_b' => [
+                                            'type' => 'integer',
+                                            'description' => 'description for b',
+                                        ],
+                                        'simple_prop_c' => [
+                                            'type' => 'number',
+                                            'description' => 'description for c',
+                                        ]
+                                    ],
+                                    'required' => ['simple_prop_a']
                                 ],
                             ]
                         ],
