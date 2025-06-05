@@ -41,7 +41,7 @@ class ZepAddToGraphTool extends Tool
         $this->initClient()->createUser();
     }
 
-    public function __invoke(string $data, string $type): array
+    public function __invoke(string $data, string $type): string
     {
         $response = $this->client->post('graph', [
             RequestOptions::JSON => [
