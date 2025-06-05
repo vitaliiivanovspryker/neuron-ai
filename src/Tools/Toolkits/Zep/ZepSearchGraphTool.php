@@ -16,7 +16,7 @@ class ZepSearchGraphTool extends Tool
 
     public function __construct(
         protected string $key,
-        protected int $user_id
+        protected string $user_id
     ) {
         parent::__construct(
             'search_knowledge_graph',
