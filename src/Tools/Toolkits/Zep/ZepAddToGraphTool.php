@@ -16,7 +16,7 @@ class ZepAddToGraphTool extends Tool
         protected string $user_id
     ) {
         parent::__construct(
-            'search_knowledge_graph',
+            'add_knowledge_graph_data',
             'Searches the knowledge graph for relevant facts or nodes.'
         );
 
