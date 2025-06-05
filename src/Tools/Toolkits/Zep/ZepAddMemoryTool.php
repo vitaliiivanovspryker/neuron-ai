@@ -18,7 +18,8 @@ class ZepAddMemoryTool extends Tool
     ) {
         parent::__construct(
             'add_memory',
-            'Tool to add relevant messages to the users memories. You can use this tool multiple times to add multiple messages.'
+            'Tool to add relevant messages to the users memories.
+            You can use this tool multiple times to add multiple messages.'
         );
 
         $this->addProperty(
