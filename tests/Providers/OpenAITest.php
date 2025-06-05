@@ -287,13 +287,11 @@ class OpenAITest extends TestCase
                             'array_prop',
                             'description',
                             false,
-                            [
-                                new ToolProperty(
-                                    'simple_prop',
-                                    PropertyType::STRING,
-                                    'description',
-                                )
-                            ]
+                            new ToolProperty(
+                                'simple_prop',
+                                PropertyType::STRING,
+                                'description',
+                            )
                         )
                     )
             ])
@@ -327,14 +325,8 @@ class OpenAITest extends TestCase
                                     'type' => 'array',
                                     'description' => 'description',
                                     'items' => [
-                                        'type' => 'object',
-                                        'properties' => [
-                                            'simple_prop' => [
-                                                'type' => 'string',
-                                                'description' => 'description',
-                                            ]
-                                        ],
-                                        'required' => []
+                                        'type' => 'string',
+                                        'description' => 'description',
                                     ]
                                 ]
                             ],
