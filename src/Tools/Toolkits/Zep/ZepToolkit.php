@@ -22,7 +22,7 @@ class ZepToolkit implements ToolkitInterface
     public function tools(): array
     {
         return [
-            ZepGetMemoryTool::make($this->key, $this->user_id, $this->session_id),
+            ZepGetSessionTool::make($this->key, $this->user_id, $this->session_id),
             ZepAddMemoryTool::make($this->key, $this->user_id, $this->session_id),
         ];
     }

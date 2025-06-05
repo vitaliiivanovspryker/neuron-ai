@@ -18,7 +18,7 @@ class ZepAddMemoryTool extends Tool
     ) {
         parent::__construct(
             'add_memory',
-            'Tool to add relevant messages to the users memories.
+            'Tool to add relevant messages to the users session.
             You can use this tool multiple times to add multiple messages.'
         );
 
@@ -38,7 +38,7 @@ class ZepAddMemoryTool extends Tool
             )
         )->setCallable($this);
 
-        $this->init();
+        $this->initClient()->createUser()->createSession();
     }
 
     public function __invoke(string $role_type, string $content): string
