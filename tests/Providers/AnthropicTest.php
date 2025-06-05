@@ -426,7 +426,6 @@ class AnthropicTest extends TestCase
                             'array_prop',
                             'description for array_prop',
                             true,
-
                             new ObjectProperty(
                                 'obj_prop',
                                 'description for obj_prop',
