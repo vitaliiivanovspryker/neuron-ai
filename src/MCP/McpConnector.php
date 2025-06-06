@@ -52,7 +52,7 @@ class McpConnector
                 return $response;
             }
 
-            throw new \Exception("Tool response format not supported: {$response['type']}");
+            throw new McpException("Tool response format not supported: {$response['type']}");
         });
 
         foreach ($item['inputSchema']['properties'] as $name => $input) {
