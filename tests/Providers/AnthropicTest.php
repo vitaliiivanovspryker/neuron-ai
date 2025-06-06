@@ -12,6 +12,7 @@ use NeuronAI\Chat\Attachments\Image;
 use NeuronAI\Chat\Enums\AttachmentContentType;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Providers\Anthropic\Anthropic;
+use NeuronAI\Tests\stubs\Color;
 use NeuronAI\Tools\ArrayProperty;
 use NeuronAI\Tools\ObjectProperty;
 use NeuronAI\Tools\PropertyType;
@@ -347,10 +348,10 @@ class AnthropicTest extends TestCase
                 Tool::make('tool', 'description')
                     ->addProperty(
                         new ObjectProperty(
-                            'obj_prop',
-                            'description',
-                            false,
-                            [
+                            name: 'obj_prop',
+                            description: 'description',
+                            required: false,
+                            properties: [
                                 new ToolProperty(
                                     'simple_prop',
                                     PropertyType::STRING,
@@ -404,6 +405,82 @@ class AnthropicTest extends TestCase
         $this->assertSame($expectedResponse, json_decode($request['request']->getBody()->getContents(), true));
     }
 
+    public function test_tools_payload_with_object_mapped_class()
+    {
+        $sentRequests = [];
+        $history = Middleware::history($sentRequests);
+        $mockHandler = new MockHandler([
+            new Response(
+                status: 200,
+                body: '{"model": "claude-3-7-sonnet-latest","role": "assistant","stop_reason": "end_turn","content":[{"type": "text","text": "Understood."}],"usage": {"input_tokens": 50,"output_tokens": 10}}',
+            ),
+        ]);
+        $stack = HandlerStack::create($mockHandler);
+        $stack->push($history);
+
+        $client = new Client(['handler' => $stack]);
+        $provider = (new Anthropic('', 'claude-3-7-sonnet-latest'))
+            ->setTools([
+                Tool::make('tool', 'description')
+                    ->addProperty(
+                        new ObjectProperty(
+                            name: 'color',
+                            description: 'Description for color',
+                            required: true,
+                            class: Color::class
+                        )
+                    )
+            ])
+            ->setClient($client);
+
+        $provider->chat([new UserMessage('Hi')]);
+
+        $request = $sentRequests[0];
+
+        $expectedResponse = [
+            'model' => 'claude-3-7-sonnet-latest',
+            'max_tokens' => 8192,
+            'messages' => [
+                [
+                    'role' => 'user',
+                    'content' => 'Hi',
+                ],
+            ],
+            'tools' => [
+                [
+                    'name' => 'tool',
+                    'description' => 'description',
+                    'input_schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'color' => [
+                                'type' => 'object',
+                                'description' => 'Description for color',
+                                'properties' => [
+                                    'r' => [
+                                        'type' => 'number',
+                                        'description' => 'The RED',
+                                    ],
+                                    'g' => [
+                                        'type' => 'number',
+                                        'description' => 'The GREEN',
+                                    ],
+                                    'b' => [
+                                        'type' => 'number',
+                                        'description' => 'The BLUE',
+                                    ]
+                                ],
+                                'required' => ["r", "g", "b"],]
+                        ],
+                        'required' => ["color"],
+                    ]
+                ]
+            ]
+        ];
+
+        $this->assertSame($expectedResponse, json_decode($request['request']->getBody()->getContents(), true));
+    }
+
     public function test_tools_payload_with_object_array_properties()
     {
         $sentRequests = [];
@@ -427,10 +504,10 @@ class AnthropicTest extends TestCase
                             'description for array_prop',
                             true,
                             new ObjectProperty(
-                                'obj_prop',
-                                'description for obj_prop',
-                                true,
-                                [
+                                name: 'obj_prop',
+                                description: 'description for obj_prop',
+                                required: true,
+                                properties: [
                                     new ToolProperty(
                                         'simple_prop_a',
                                         PropertyType::STRING,
