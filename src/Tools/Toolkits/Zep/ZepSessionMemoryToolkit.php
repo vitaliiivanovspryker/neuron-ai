@@ -5,7 +5,7 @@ namespace NeuronAI\Tools\Toolkits\Zep;
 use NeuronAI\StaticConstructor;
 use NeuronAI\Tools\Toolkits\ToolkitInterface;
 
-class ZepSessionMemory implements ToolkitInterface
+class ZepSessionMemoryToolkit implements ToolkitInterface
 {
     use StaticConstructor;
 
