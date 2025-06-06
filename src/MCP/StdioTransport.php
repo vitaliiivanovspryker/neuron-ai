@@ -104,11 +104,12 @@ class StdioTransport implements McpTransportInterface
 
         $response = "";
         $startTime = time();
-        $timeout = 30; // 30 seconds timeout
+        $timeout = 30; // 30-second timeout
 
         // Keep reading until we get a complete JSON response or timeout
         while (time() - $startTime < $timeout) {
             $status = proc_get_status($this->process);
+
             if (!$status['running']) {
                 throw new McpException("MCP server process has terminated unexpectedly");
             }
