@@ -73,25 +73,35 @@ class RAG extends Agent
      */
     public function withDocumentsContext(array $documents): AgentInterface
     {
-        $beginContextDelimiter = PHP_EOL.PHP_EOL.'# EXTRA INFORMATION AND CONTEXT'.PHP_EOL;
-
         $originalInstructions = $this->instructions();
         $this->notify('rag-instructions-changing', new InstructionsChanging($originalInstructions));
 
         // Remove the old context to avoid infinite grow
-        $newInstructions = preg_replace('/'.$beginContextDelimiter.'.*/s', '', $originalInstructions);
+        $newInstructions = $this->removeDelimitedContent($originalInstructions);
 
-        // Add the new context
-        $newInstructions .= $beginContextDelimiter;
-
+        $newInstructions .= '<EXTRA-CONTEXT>';
         foreach ($documents as $document) {
-            $newInstructions .= $document->content.PHP_EOL;
+            $newInstructions .= $document->content.PHP_EOL.PHP_EOL;
         }
+        $newInstructions .= '</EXTRA-CONTEXT>';
 
-        $this->withInstructions($newInstructions);
+        $this->withInstructions(\trim($newInstructions));
         $this->notify('rag-instructions-changed', new InstructionsChanged($originalInstructions, $this->instructions()));
 
         return $this;
+    }
+
+    protected function removeDelimitedContent(string $text, string $openTag = '<EXTRA-CONTEXT>', string $closeTag = '</EXTRA-CONTEXT>'): string
+    {
+        // Escape special regex characters in the tags
+        $escapedOpenTag = \preg_quote($openTag, '/');
+        $escapedCloseTag = \preg_quote($closeTag, '/');
+
+        // Create the regex pattern to match content between tags
+        $pattern = '/' . $escapedOpenTag . '.*?' . $escapedCloseTag . '/s';
+
+        // Remove all occurrences of the delimited content
+        return \preg_replace($pattern, '', $text);
     }
 
     /**
