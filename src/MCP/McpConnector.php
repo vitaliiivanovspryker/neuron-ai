@@ -44,6 +44,11 @@ class McpConnector
             description: $item['description'] ?? ''
         )->setCallable(function (...$arguments) use ($item) {
             $response = call_user_func($this->client->callTool(...), $item['name'], $arguments);
+
+            if (\array_key_exists('error', $response)) {
+                throw new McpException($response['error']['message']);
+            }
+
             $response = $response['result']['content'][0];
 
             if ($response['type'] === 'text') {
@@ -88,8 +93,10 @@ class McpConnector
                     required: $required
                 );
             }
+
+            $tool->addProperty($property);
         }
 
-        return $tool->addProperty($property);
+        return $tool;
     }
 }
