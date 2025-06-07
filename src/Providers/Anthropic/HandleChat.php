@@ -2,7 +2,6 @@
 
 namespace NeuronAI\Providers\Anthropic;
 
-use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Promise\PromiseInterface;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;

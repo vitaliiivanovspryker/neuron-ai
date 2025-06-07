@@ -29,6 +29,6 @@ class ProductTool extends Tool
                 'The second number of the product.',
                 true
             )
-        )->setCallable(fn ($a, $b) => $a*$b);
+        )->setCallable(fn ($a, $b) => $a * $b);
     }
 }
