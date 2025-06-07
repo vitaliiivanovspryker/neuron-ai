@@ -2,6 +2,7 @@
 
 namespace NeuronAI;
 
+use GuzzleHttp\Promise\PromiseInterface;
 use NeuronAI\Chat\History\AbstractChatHistory;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Providers\AIProviderInterface;
@@ -28,6 +29,8 @@ interface AgentInterface extends \SplSubject
     public function observe(\SplObserver $observer, string $event = "*"): self;
 
     public function chat(Message|array $messages): Message;
+
+    public function chatAsync(Message|array $messages): PromiseInterface;
 
     public function stream(Message|array $messages): \Generator;
 
