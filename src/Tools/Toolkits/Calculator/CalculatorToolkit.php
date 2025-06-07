@@ -10,7 +10,9 @@ class CalculatorToolkit implements ToolkitInterface
     {
         return [
             SumTool::make(),
+            SubtractTool::make(),
             ProductTool::make(),
+            DivideTool::make(),
         ];
     }
 }
