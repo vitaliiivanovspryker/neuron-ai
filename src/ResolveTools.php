@@ -47,10 +47,22 @@ trait ResolveTools
             if ($tool instanceof ToolkitInterface) {
                 if ($kitGuidelines = $tool->guidelines()) {
                     $name = (new \ReflectionClass($tool))->getShortName();
-                    $guidelines[] = '# '.$name.PHP_EOL.$kitGuidelines;
+                    $kitGuidelines = '# '.$name.PHP_EOL.$kitGuidelines;
                 }
 
                 $tools = \array_merge($tools, $tool->tools());
+
+                if ($kitGuidelines) {
+                    $kitGuidelines .= PHP_EOL.implode(
+                        PHP_EOL.'- ',
+                        \array_map(
+                            fn ($tool) => "{$tool->getName()}: {$tool->getDescription()}",
+                            $tools
+                        )
+                    );
+
+                    $guidelines[] = $kitGuidelines;
+                }
             }
         }
 

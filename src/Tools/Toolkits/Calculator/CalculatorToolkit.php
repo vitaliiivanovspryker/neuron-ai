@@ -8,7 +8,7 @@ class CalculatorToolkit extends AbstractToolkit
 {
     public function guidelines(): ?string
     {
-        return "This toolkit allows you to perform mathematical operations. You can also use this functions to solve
+        return "These tools allow you to perform mathematical operations. You can also use this functions to solve
         e mathematical expression executing smaller operations step by step to calculate the final result.";
     }
 

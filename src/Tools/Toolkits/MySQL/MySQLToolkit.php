@@ -11,6 +11,13 @@ class MySQLToolkit extends AbstractToolkit
     {
     }
 
+    public function guidelines(): ?string
+    {
+        return "These tools allow you to learn the database structure,
+        getting detailed information about tables, columns, relationships, and constraints
+        to generate and execute precise and efficient SQL queries.";
+    }
+
     public function provide(): array
     {
         return [
