@@ -65,11 +65,11 @@ trait ResolveTools
     /**
      * Add tools.
      *
-     * @param ToolInterface|array $tool
+     * @param ToolInterface|ToolkitInterface|array $tool
      * @return AgentInterface
      * @throws AgentException
      */
-    public function addTool(ToolInterface|array $tool): AgentInterface
+    public function addTool(ToolInterface|ToolkitInterface|array $tool): AgentInterface
     {
         $tool = \is_array($tool) ? $tool : [$tool];
 
