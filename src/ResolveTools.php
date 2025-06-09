@@ -46,7 +46,8 @@ trait ResolveTools
         foreach ($this->getTools() as $tool) {
             if ($tool instanceof ToolkitInterface) {
                 if ($kitGuidelines = $tool->guidelines()) {
-                    $guidelines[] = '# '.$tool::class.PHP_EOL.$kitGuidelines;
+                    $name = (new \ReflectionClass($tool))->getShortName();
+                    $guidelines[] = '# '.$name.PHP_EOL.$kitGuidelines;
                 }
 
                 $tools = \array_merge($tools, $tool->tools());
