@@ -56,7 +56,7 @@ trait ResolveTools
 
         if (!empty($guidelines)) {
             $this->withInstructions(
-                $this->instructions().PHP_EOL.'<TOOLS-GUIDELINES>'.PHP_EOL.implode(PHP_EOL, $guidelines).PHP_EOL.'</TOOLS-GUIDELINES>'
+                $this->instructions().PHP_EOL.'<TOOLS-GUIDELINES>'.PHP_EOL.implode(PHP_EOL.PHP_EOL, $guidelines).PHP_EOL.'</TOOLS-GUIDELINES>'
             );
         }
 
