@@ -401,5 +401,4 @@ Learn more about Observability in the [documentation](https://docs.neuron-ai.dev
 
 **[Go to the official documentation](https://neuron.inspector.dev/)**
 
-<!-- GitAds-Verify: C59O2O14A6T9SECJVQUPHNYP7XINGNK1 -->
 
