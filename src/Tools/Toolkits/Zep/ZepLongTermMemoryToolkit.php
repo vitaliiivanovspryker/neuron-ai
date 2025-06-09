@@ -2,9 +2,7 @@
 
 namespace NeuronAI\Tools\Toolkits\Zep;
 
-use NeuronAI\StaticConstructor;
 use NeuronAI\Tools\Toolkits\AbstractToolkit;
-use NeuronAI\Tools\Toolkits\ToolkitInterface;
 
 class ZepLongTermMemoryToolkit extends AbstractToolkit
 {

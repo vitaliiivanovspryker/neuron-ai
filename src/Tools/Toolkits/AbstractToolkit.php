@@ -28,6 +28,6 @@ abstract class AbstractToolkit implements ToolkitInterface
 
     public function tools(): array
     {
-        return \array_filter($this->tools(), fn(ToolInterface $tool) => in_array($tool::class, $this->exclude));
+        return \array_filter($this->tools(), fn (ToolInterface $tool) => in_array($tool::class, $this->exclude));
     }
 }

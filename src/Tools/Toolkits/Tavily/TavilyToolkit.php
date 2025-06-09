@@ -2,10 +2,8 @@
 
 namespace NeuronAI\Tools\Toolkits\Tavily;
 
-use NeuronAI\StaticConstructor;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\Toolkits\AbstractToolkit;
-use NeuronAI\Tools\Toolkits\ToolkitInterface;
 
 class TavilyToolkit extends AbstractToolkit
 {

@@ -2,7 +2,6 @@
 
 namespace NeuronAI\Tools\Toolkits\Calculator;
 
-use NeuronAI\Exceptions\ToolException;
 use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;

@@ -2,9 +2,7 @@
 
 namespace NeuronAI\Tools\Toolkits\MySQL;
 
-use NeuronAI\StaticConstructor;
 use NeuronAI\Tools\Toolkits\AbstractToolkit;
-use NeuronAI\Tools\Toolkits\ToolkitInterface;
 use PDO;
 
 class MySQLToolkit extends AbstractToolkit

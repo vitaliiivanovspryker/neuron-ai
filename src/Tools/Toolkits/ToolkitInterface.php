@@ -2,7 +2,6 @@
 
 namespace NeuronAI\Tools\Toolkits;
 
-use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolInterface;
 
 interface ToolkitInterface
