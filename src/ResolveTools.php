@@ -59,6 +59,7 @@ trait ResolveTools
             );
         }
 
+        $this->tools = $tools;
         return $tools;
     }
 
