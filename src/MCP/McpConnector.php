@@ -3,6 +3,8 @@
 namespace NeuronAI\MCP;
 
 use NeuronAI\StaticConstructor;
+use NeuronAI\Tools\ArrayProperty;
+use NeuronAI\Tools\ObjectProperty;
 use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Tools\Tool;
@@ -42,6 +44,11 @@ class McpConnector
             description: $item['description'] ?? ''
         )->setCallable(function (...$arguments) use ($item) {
             $response = call_user_func($this->client->callTool(...), $item['name'], $arguments);
+
+            if (\array_key_exists('error', $response)) {
+                throw new McpException($response['error']['message']);
+            }
+
             $response = $response['result']['content'][0];
 
             if ($response['type'] === 'text') {
@@ -56,14 +63,38 @@ class McpConnector
         });
 
         foreach ($item['inputSchema']['properties'] as $name => $input) {
-            $tool->addProperty(
-                new ToolProperty(
-                    $name,
-                    PropertyType::from($input['type']),
-                    $input['description'] ?? '',
-                    \in_array($name, $item['inputSchema']['required'] ?? [])
-                )
-            );
+            $required = \in_array($name, $item['inputSchema']['required'] ?? []);
+
+            if ($input['type'] === PropertyType::ARRAY->value && isset($input['items']['enum'])) {
+                $property = new ToolProperty(
+                    name: $name,
+                    type: PropertyType::ARRAY,
+                    description: $input['description'] ?? '',
+                    required: $required,
+                    enum: $input['items']['enum']
+                );
+            } elseif ($input['type'] === PropertyType::ARRAY->value) {
+                $property = new ArrayProperty(
+                    name: $name,
+                    description: $input['description'] ?? '',
+                    required: $required
+                );
+            } elseif ($input['type'] === PropertyType::OBJECT->value) {
+                $property = new ObjectProperty(
+                    name: $name,
+                    description: $input['description'] ?? '',
+                    required: $required
+                );
+            } else {
+                $property = new ToolProperty(
+                    name: $name,
+                    type: PropertyType::from($input['type']),
+                    description: $input['description'] ?? '',
+                    required: $required
+                );
+            }
+
+            $tool->addProperty($property);
         }
 
         return $tool;
