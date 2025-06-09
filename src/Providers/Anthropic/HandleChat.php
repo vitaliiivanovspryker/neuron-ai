@@ -57,31 +57,5 @@ trait HandleChat
 
                 return $response;
             });
-
-        // https://docs.anthropic.com/claude/reference/messages_post
-        /*$result = $this->client->post('messages', compact('json'))
-            ->getBody()->getContents();
-
-        $result = \json_decode($result, true);
-
-        $content = \end($result['content']);
-
-        if ($content['type'] === 'tool_use') {
-            $response = $this->createToolCallMessage($content);
-        } else {
-            $response = new AssistantMessage($content['text']);
-        }
-
-        // Attach the usage for the current interaction
-        if (\array_key_exists('usage', $result)) {
-            $response->setUsage(
-                new Usage(
-                    $result['usage']['input_tokens'],
-                    $result['usage']['output_tokens']
-                )
-            );
-        }
-
-        return $response;*/
     }
 }
