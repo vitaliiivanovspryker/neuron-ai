@@ -28,10 +28,13 @@ trait HandleChat
 
     public function chatAsync(Message|array $messages): PromiseInterface
     {
-
         $this->notify('chat-start');
 
         $this->fillChatHistory($messages);
+
+        $this->notify('tools-bootstrapping');
+        $tools = $this->bootstrapTools();
+        $this->notify('tools-bootstrapped');
 
         $this->notify(
             'inference-start',
@@ -40,7 +43,7 @@ trait HandleChat
 
         return $this->resolveProvider()
             ->systemPrompt($this->instructions())
-            ->setTools($this->tools())
+            ->setTools($tools)
             ->chatAsync(
                 $this->resolveChatHistory()->getMessages()
             )->then(function (Message $response) {

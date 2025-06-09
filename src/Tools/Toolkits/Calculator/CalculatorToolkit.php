@@ -2,9 +2,9 @@
 
 namespace NeuronAI\Tools\Toolkits\Calculator;
 
-use NeuronAI\Tools\Toolkits\ToolkitInterface;
+use NeuronAI\Tools\Toolkits\AbstractToolkit;
 
-class CalculatorToolkit implements ToolkitInterface
+class CalculatorToolkit extends AbstractToolkit
 {
     public function tools(): array
     {

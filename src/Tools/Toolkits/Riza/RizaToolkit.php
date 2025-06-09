@@ -4,9 +4,10 @@ namespace NeuronAI\Tools\Toolkits\Riza;
 
 use NeuronAI\StaticConstructor;
 use NeuronAI\Tools\Tool;
+use NeuronAI\Tools\Toolkits\AbstractToolkit;
 use NeuronAI\Tools\Toolkits\ToolkitInterface;
 
-class RizaToolkit implements ToolkitInterface
+class RizaToolkit extends AbstractToolkit
 {
     use StaticConstructor;
 

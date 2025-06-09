@@ -4,20 +4,21 @@ namespace NeuronAI;
 
 use NeuronAI\Exceptions\AgentException;
 use NeuronAI\Tools\ToolInterface;
+use NeuronAI\Tools\Toolkits\ToolkitInterface;
 
 trait ResolveTools
 {
     /**
      * Registered tools.
      *
-     * @var array<ToolInterface>
+     * @var ToolInterface[]
      */
     protected array $tools = [];
 
     /**
      * Get the list of tools.
      *
-     * @return array<ToolInterface>
+     * @return ToolInterface[]
      */
     protected function tools(): array
     {
@@ -25,7 +26,7 @@ trait ResolveTools
     }
 
     /**
-     * @return array<ToolInterface>
+     * @return ToolInterface[]
      */
     public function getTools(): array
     {
@@ -35,10 +36,38 @@ trait ResolveTools
     }
 
     /**
+     * @return ToolInterface[]
+     */
+    public function bootstrapTools(): array
+    {
+        $tools = [];
+        $guidelines = [];
+
+        foreach ($this->getTools() as $tool) {
+            if ($tool instanceof ToolkitInterface) {
+                if ($kitGuidelines = $tool->guidelines()) {
+                    $guidelines[] = '# '.$tool::class.PHP_EOL.$kitGuidelines;
+                }
+
+                $tools = \array_merge($tools, $tool->tools());
+            }
+        }
+
+        if (!empty($guidelines)) {
+            $this->withInstructions(
+                $this->instructions().PHP_EOL.'<TOOLS-GUIDELINES>'.implode(PHP_EOL, $guidelines).'</TOOLS-GUIDELINES>'
+            );
+        }
+
+        return $tools;
+    }
+
+    /**
      * Add tools.
      *
      * @param ToolInterface|array $tool
      * @return AgentInterface
+     * @throws AgentException
      */
     public function addTool(ToolInterface|array $tool): AgentInterface
     {
