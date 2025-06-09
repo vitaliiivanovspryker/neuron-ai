@@ -11,8 +11,9 @@ class CalculatorToolkit implements ToolkitInterface
         return [
             SumTool::make(),
             SubtractTool::make(),
-            ProductTool::make(),
+            MultiplyTool::make(),
             DivideTool::make(),
+            ExponentiateTool::make(),
         ];
     }
 }

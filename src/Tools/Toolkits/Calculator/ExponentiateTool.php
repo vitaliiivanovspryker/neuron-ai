@@ -6,29 +6,31 @@ use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 
-class ProductTool extends Tool
+class ExponentiateTool extends Tool
 {
     public function __construct()
     {
         parent::__construct(
-            'multiply_numbers',
-            'Calculate the product of two numbers',
+            'exponentiate',
+            'Raise first number to the power of the second number and return the result.'
         );
 
         $this->addProperty(
             new ToolProperty(
                 'a',
                 PropertyType::NUMBER,
-                'The first number of the product.',
+                'Base.',
                 true
             )
         )->addProperty(
             new ToolProperty(
                 'b',
                 PropertyType::NUMBER,
-                'The second number of the product.',
+                'Exponential.',
                 true
             )
-        )->setCallable(fn ($a, $b) => $a * $b);
+        )->setCallable(
+            fn (int|float $a, int|float $b) => ['operation' => $this->name, 'result' => pow($a, $b)]
+        );
     }
 }

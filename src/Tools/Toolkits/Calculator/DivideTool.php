@@ -2,6 +2,7 @@
 
 namespace NeuronAI\Tools\Toolkits\Calculator;
 
+use NeuronAI\Exceptions\ToolException;
 use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
@@ -12,7 +13,7 @@ class DivideTool extends Tool
     {
         parent::__construct(
             'divide_numbers',
-            'Calculate the division between two numbers',
+            'Divide first number by second and return the result.',
         );
 
         $this->addProperty(
@@ -29,6 +30,11 @@ class DivideTool extends Tool
                 'The denominator of the division.',
                 true
             )
-        )->setCallable(fn ($a, $b) => $a / $b);
+        )->setCallable(function (int|float $a, int|float $b) {
+            if ($b === 0) {
+                return ['operation' => 'division', 'error' => 'Division by zero is not allowed.'];
+            }
+            return $a / $b;
+        });
     }
 }

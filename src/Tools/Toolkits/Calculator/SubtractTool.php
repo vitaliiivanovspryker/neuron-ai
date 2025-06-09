@@ -11,8 +11,8 @@ class SubtractTool extends Tool
     public function __construct()
     {
         parent::__construct(
-            'subtract_numbers',
-            'Calculate the subtraction between two numbers',
+            'subtract',
+            'Calculate the subtraction between two numbers and return the result',
         );
 
         $this->addProperty(
@@ -29,6 +29,8 @@ class SubtractTool extends Tool
                 'The second number of the subtraction.',
                 true
             )
-        )->setCallable(fn ($a, $b) => $a - $b);
+        )->setCallable(
+            fn (int|float $a, int|float $b) => ['operation' => $this->name, 'result' => $a - $b]
+        );
     }
 }
