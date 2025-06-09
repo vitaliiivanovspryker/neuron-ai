@@ -8,8 +8,6 @@ use NeuronAI\Tools\Toolkits\ToolkitInterface;
 
 class ZepLongTermMemoryToolkit extends AbstractToolkit
 {
-    use StaticConstructor;
-
     public function __construct(
         protected string $key,
         protected string $user_id,

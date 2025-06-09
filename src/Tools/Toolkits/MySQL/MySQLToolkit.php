@@ -9,8 +9,6 @@ use PDO;
 
 class MySQLToolkit extends AbstractToolkit
 {
-    use StaticConstructor;
-
     public function __construct(protected PDO $pdo)
     {
     }

@@ -2,10 +2,13 @@
 
 namespace NeuronAI\Tools\Toolkits;
 
+use NeuronAI\StaticConstructor;
 use NeuronAI\Tools\ToolInterface;
 
 abstract class AbstractToolkit implements ToolkitInterface
 {
+    use StaticConstructor;
+
     protected array $exclude;
 
     public function guidelines(): ?string

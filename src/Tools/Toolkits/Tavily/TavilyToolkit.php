@@ -9,8 +9,6 @@ use NeuronAI\Tools\Toolkits\ToolkitInterface;
 
 class TavilyToolkit extends AbstractToolkit
 {
-    use StaticConstructor;
-
     public function __construct(protected string $key)
     {
     }
