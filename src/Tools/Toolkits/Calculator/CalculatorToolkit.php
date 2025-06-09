@@ -12,7 +12,7 @@ class CalculatorToolkit extends AbstractToolkit
         e mathematical expression executing smaller operations step by step to calculate the final result.";
     }
 
-    public function tools(): array
+    public function provide(): array
     {
         return [
             SumTool::make(),

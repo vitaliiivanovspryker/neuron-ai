@@ -12,7 +12,7 @@ class ZepLongTermMemoryToolkit extends AbstractToolkit
     ) {
     }
 
-    public function tools(): array
+    public function provide(): array
     {
         return [
             ZepSearchGraphTool::make($this->key, $this->user_id),

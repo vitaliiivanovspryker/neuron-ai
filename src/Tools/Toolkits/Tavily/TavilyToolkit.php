@@ -14,7 +14,7 @@ class TavilyToolkit extends AbstractToolkit
     /**
      * @return array<Tool>
      */
-    public function tools(): array
+    public function provide(): array
     {
         return [
             new TavilyExtractTool($this->key),

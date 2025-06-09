@@ -14,7 +14,7 @@ class RizaToolkit extends AbstractToolkit
     /**
      * @return array<Tool>
      */
-    public function tools(): array
+    public function provide(): array
     {
         return [
             new RizaCodeInterpreter($this->key),

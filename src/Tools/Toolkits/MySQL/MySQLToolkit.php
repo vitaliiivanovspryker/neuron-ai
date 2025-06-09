@@ -11,7 +11,7 @@ class MySQLToolkit extends AbstractToolkit
     {
     }
 
-    public function tools(): array
+    public function provide(): array
     {
         return [
             MySQLSchemaTool::make($this->pdo),

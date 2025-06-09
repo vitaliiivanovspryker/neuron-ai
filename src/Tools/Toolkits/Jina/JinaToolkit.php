@@ -14,7 +14,7 @@ class JinaToolkit extends AbstractToolkit
     /**
      * @return array<Tool>
      */
-    public function tools(): array
+    public function provide(): array
     {
         return [
             new JinaWebSearch($this->key),
