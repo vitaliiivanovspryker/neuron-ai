@@ -9,7 +9,7 @@ abstract class AbstractToolkit implements ToolkitInterface
 {
     use StaticConstructor;
 
-    protected array $exclude;
+    protected array $exclude = [];
 
     public function guidelines(): ?string
     {
