@@ -74,8 +74,8 @@ trait ResolveTools
         $tool = \is_array($tool) ? $tool : [$tool];
 
         foreach ($tool as $t) {
-            if (! $t instanceof ToolInterface) {
-                throw new AgentException('Tool must be an instance of ToolInterface');
+            if (! $t instanceof ToolInterface && ! $t instanceof ToolkitInterface) {
+                throw new AgentException('Tool must be an instance of ToolInterface or ToolkitInterface');
             }
             $this->tools[] = $t;
         }
