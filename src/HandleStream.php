@@ -10,6 +10,7 @@ use NeuronAI\Exceptions\AgentException;
 use NeuronAI\Observability\Events\AgentError;
 use NeuronAI\Observability\Events\MessageSaved;
 use NeuronAI\Observability\Events\MessageSaving;
+use NeuronAI\Observability\Events\ToolsBootstrapped;
 
 trait HandleStream
 {
@@ -20,11 +21,9 @@ trait HandleStream
 
             $this->fillChatHistory($messages);
 
-            if (empty($this->tools)) {
-                $this->notify('tools-bootstrapping');
-                $this->bootstrapToolkits();
-                $this->notify('tools-bootstrapped');
-            }
+            $this->notify('tools-bootstrapping');
+            $this->bootstrapToolkits();
+            $this->notify('tools-bootstrapped', new ToolsBootstrapped($this->getTools()));
 
             $stream = $this->resolveProvider()
                 ->systemPrompt($this->instructions())
