@@ -53,7 +53,7 @@ trait ResolveTools
             return $this->toolBootstrapCache;
         }
 
-        $this->notify('toolkits-bootstrapping');
+        $this->notify('tools-bootstrapping');
 
         foreach ($this->getTools() as $tool) {
             if ($tool instanceof ToolkitInterface) {
@@ -91,7 +91,7 @@ trait ResolveTools
             );
         }
 
-        $this->notify('toolkits-bootstrapped', new ToolsBootstrapped($this->toolBootstrapCache));
+        $this->notify('tools-bootstrapped', new ToolsBootstrapped($this->toolBootstrapCache));
 
         return $this->toolBootstrapCache;
     }
