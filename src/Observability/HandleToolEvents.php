@@ -7,6 +7,29 @@ use NeuronAI\Observability\Events\ToolCalling;
 
 trait HandleToolEvents
 {
+    public function toolsBootstrapping(\NeuronAI\AgentInterface $agent, string $event, $data)
+    {
+        if (!$this->inspector->canAddSegments()) {
+            return;
+        }
+
+        $this->segments[get_class($agent).'_tools_bootstrap'] = $this->inspector
+            ->startSegment(
+                self::SEGMENT_TYPE.'-tool-bootstrap',
+                "toolsBootstrap()"
+            )
+            ->setColor(self::SEGMENT_COLOR);
+    }
+
+    public function toolsBootstrapped(\NeuronAI\AgentInterface $agent, string $event, $data)
+    {
+        if (\array_key_exists(get_class($agent).'_tools_bootstrap', $this->segments)) {
+            $this->segments[get_class($agent).'_tools_bootstrap']
+                ->addContext('Tools', \array_map())
+                ->end();
+        }
+    }
+
     public function toolCalling(\NeuronAI\AgentInterface $agent, string $event, ToolCalling $data)
     {
         if (!$this->inspector->canAddSegments()) {
@@ -14,7 +37,10 @@ trait HandleToolEvents
         }
 
         $this->segments[$data->tool->getName()] = $this->inspector
-            ->startSegment(self::SEGMENT_TYPE.'-tool-call', "toolCall({$data->tool->getName()})")
+            ->startSegment(
+                self::SEGMENT_TYPE.'-tool-call',
+                "toolCall( {$data->tool->getName()} )"
+            )
             ->setColor(self::SEGMENT_COLOR);
     }
 

@@ -22,7 +22,7 @@ trait HandleStream
 
             if (empty($this->tools)) {
                 $this->notify('tools-bootstrapping');
-                $this->bootstrapTools();
+                $this->bootstrapToolkits();
                 $this->notify('tools-bootstrapped');
             }
 

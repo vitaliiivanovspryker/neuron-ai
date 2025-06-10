@@ -35,7 +35,13 @@ trait ResolveTools
             : $this->tools;
     }
 
-    public function bootstrapTools(): void
+    /**
+     * If toolkits have already bootstrapped, this function
+     * just traverses the array of tools without any action.
+     *
+     * @return void
+     */
+    public function bootstrapToolkits(): void
     {
         $tools = [];
         $guidelines = [];
@@ -47,8 +53,10 @@ trait ResolveTools
                     $kitGuidelines = '# '.$name.PHP_EOL.$kitGuidelines;
                 }
 
+                // Merge the tools
                 $tools = \array_merge($tools, $tool->tools());
 
+                // Add guidelines to the system prompt
                 if ($kitGuidelines) {
                     $kitGuidelines .= PHP_EOL.implode(
                         PHP_EOL.'- ',
@@ -60,6 +68,8 @@ trait ResolveTools
 
                     $guidelines[] = $kitGuidelines;
                 }
+            } else {
+                $tools[] = $tool;
             }
         }
 

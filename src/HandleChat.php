@@ -11,6 +11,7 @@ use NeuronAI\Observability\Events\MessageSaved;
 use NeuronAI\Observability\Events\MessageSaving;
 use NeuronAI\Observability\Events\InferenceStart;
 use NeuronAI\Observability\Events\InferenceStop;
+use NeuronAI\Observability\Events\ToolsBootstrapped;
 
 trait HandleChat
 {
@@ -32,11 +33,9 @@ trait HandleChat
 
         $this->fillChatHistory($messages);
 
-        if (empty($this->tools)) {
-            $this->notify('tools-bootstrapping');
-            $this->bootstrapTools();
-            $this->notify('tools-bootstrapped');
-        }
+        $this->notify('tools-bootstrapping');
+        $this->bootstrapToolkits();
+        $this->notify('tools-bootstrapped', new ToolsBootstrapped($this->getTools()));
 
         $this->notify(
             'inference-start',
