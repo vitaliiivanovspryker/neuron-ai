@@ -64,35 +64,22 @@ class McpConnector
 
         foreach ($item['inputSchema']['properties'] as $name => $input) {
             $required = \in_array($name, $item['inputSchema']['required'] ?? []);
+            $types = \is_array($input['type']) ?  $input['type'] : [$input['type']];
 
-            if ($input['type'] === PropertyType::ARRAY->value && isset($input['items']['enum'])) {
-                $property = new ToolProperty(
-                    name: $name,
-                    type: PropertyType::ARRAY,
-                    description: $input['description'] ?? '',
-                    required: $required,
-                    enum: $input['items']['enum']
-                );
-            } elseif ($input['type'] === PropertyType::ARRAY->value) {
-                $property = new ArrayProperty(
-                    name: $name,
-                    description: $input['description'] ?? '',
-                    required: $required
-                );
-            } elseif ($input['type'] === PropertyType::OBJECT->value) {
-                $property = new ObjectProperty(
-                    name: $name,
-                    description: $input['description'] ?? '',
-                    required: $required
-                );
-            } else {
-                $property = new ToolProperty(
-                    name: $name,
-                    type: PropertyType::from($input['type']),
-                    description: $input['description'] ?? '',
-                    required: $required
-                );
+            foreach ($types as $type) {
+                try {
+                    $type = PropertyType::from($type);
+                    break;
+                } catch (\Throwable $e) {}
             }
+
+            $property = new ToolProperty(
+                name: $name,
+                type: $type??PropertyType::STRING,
+                description: $input['description'] ?? '',
+                required: $required,
+                enum: $input['items']['enum']??[]
+            );
 
             $tool->addProperty($property);
         }
