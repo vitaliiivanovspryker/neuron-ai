@@ -3,8 +3,6 @@
 namespace NeuronAI\MCP;
 
 use NeuronAI\StaticConstructor;
-use NeuronAI\Tools\ArrayProperty;
-use NeuronAI\Tools\ObjectProperty;
 use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Tools\Tool;
@@ -64,21 +62,22 @@ class McpConnector
 
         foreach ($item['inputSchema']['properties'] as $name => $input) {
             $required = \in_array($name, $item['inputSchema']['required'] ?? []);
-            $types = \is_array($input['type']) ?  $input['type'] : [$input['type']];
+            $types = \is_array($input['type']) ? $input['type'] : [$input['type']];
 
             foreach ($types as $type) {
                 try {
                     $type = PropertyType::from($type);
                     break;
-                } catch (\Throwable $e) {}
+                } catch (\Throwable $e) {
+                }
             }
 
             $property = new ToolProperty(
                 name: $name,
-                type: $type??PropertyType::STRING,
+                type: $type ?? PropertyType::STRING,
                 description: $input['description'] ?? '',
                 required: $required,
-                enum: $input['items']['enum']??[]
+                enum: $input['items']['enum'] ?? []
             );
 
             $tool->addProperty($property);
