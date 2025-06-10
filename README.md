@@ -65,7 +65,7 @@ use NeuronAI\SystemPrompt;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\Anthropic\Anthropic;
 
-class YouTubeAgent extends Agent
+class DataAnalystAgent extends Agent
 {
     public function provider(): AIProviderInterface
     {
@@ -78,7 +78,9 @@ class YouTubeAgent extends Agent
     public function instructions(): string
     {
         return new SystemPrompt(
-            background: ["You are a math passionate."],
+            background: [
+                "You are a data analyst expert expert in creating reports from SQL databases."
+            ]
         );
     }
 }
@@ -101,7 +103,7 @@ $inspector = new \Inspector\Inspector(
     new \Inspector\Configuration('INSPECTOR_INGESTION_KEY')
 );
 
-$agent = YouTubeAgent::make()->observe(new AgentMonitoring($inspector));
+$agent = DataAnalystAgent::make()->observe(new AgentMonitoring($inspector));
 
 
 $response = $agent->chat(
@@ -134,7 +136,7 @@ Supported providers:
 
 <a name="tools">
 
-## Tools & Function Calls
+## Tools & Toolkits
 
 You can add abilities to your agent to perform concrete tasks:
 
@@ -164,7 +166,9 @@ class DataAnalystAgent extends Agent
     public function instructions(): string
     {
         return new SystemPrompt(
-            background: ["You are a data analyst."],
+            background: [
+                "You are a data analyst expert expert in creating reports from SQL databases."
+            ]
         );
     }
 
