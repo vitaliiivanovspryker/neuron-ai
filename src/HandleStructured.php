@@ -14,7 +14,6 @@ use NeuronAI\Observability\Events\Extracting;
 use NeuronAI\Observability\Events\InferenceStart;
 use NeuronAI\Observability\Events\InferenceStop;
 use NeuronAI\Exceptions\AgentException;
-use NeuronAI\Observability\Events\ToolsBootstrapped;
 use NeuronAI\Observability\Events\Validated;
 use NeuronAI\Observability\Events\Validating;
 use NeuronAI\StructuredOutput\Deserializer\Deserializer;
@@ -41,9 +40,7 @@ trait HandleStructured
 
         $this->fillChatHistory($messages);
 
-        $this->notify('tools-bootstrapping');
-        $this->bootstrapToolkits();
-        $this->notify('tools-bootstrapped', new ToolsBootstrapped($this->getTools()));
+        $tools = $this->bootstrapTools();
 
         // Get the JSON schema from the response model
         $class ??= $this->getOutputClass();
@@ -71,7 +68,7 @@ trait HandleStructured
                 );
                 $response = $this->resolveProvider()
                     ->systemPrompt($this->instructions())
-                    ->setTools($this->getTools())
+                    ->setTools($tools)
                     ->structured($messages, $class, $schema);
                 $this->notify(
                     'inference-stop',

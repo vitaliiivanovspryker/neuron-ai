@@ -4,10 +4,12 @@ namespace NeuronAI\Observability;
 
 use NeuronAI\Observability\Events\ToolCalled;
 use NeuronAI\Observability\Events\ToolCalling;
+use NeuronAI\Observability\Events\ToolsBootstrapped;
+use NeuronAI\Tools\ToolInterface;
 
 trait HandleToolEvents
 {
-    public function toolsBootstrapping(\NeuronAI\AgentInterface $agent, string $event, $data)
+    public function toolsBootstrapping(\NeuronAI\AgentInterface $agent, string $event, mixed $data)
     {
         if (!$this->inspector->canAddSegments()) {
             return;
@@ -15,17 +17,17 @@ trait HandleToolEvents
 
         $this->segments[get_class($agent).'_tools_bootstrap'] = $this->inspector
             ->startSegment(
-                self::SEGMENT_TYPE.'-tool-bootstrap',
+                self::SEGMENT_TYPE.'-tools-bootstrap',
                 "toolsBootstrap()"
             )
             ->setColor(self::SEGMENT_COLOR);
     }
 
-    public function toolsBootstrapped(\NeuronAI\AgentInterface $agent, string $event, $data)
+    public function toolsBootstrapped(\NeuronAI\AgentInterface $agent, string $event, ToolsBootstrapped $data)
     {
         if (\array_key_exists(get_class($agent).'_tools_bootstrap', $this->segments)) {
             $this->segments[get_class($agent).'_tools_bootstrap']
-                ->addContext('Tools', \array_map())
+                ->addContext('Tools', \array_map(fn (ToolInterface $tool) => $tool->getName(), $data->tools))
                 ->end();
         }
     }

@@ -7,6 +7,7 @@ use NeuronAI\Chat\History\AbstractChatHistory;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Tools\ToolInterface;
+use NeuronAI\Tools\Toolkits\ToolkitInterface;
 
 interface AgentInterface extends \SplSubject
 {
@@ -18,7 +19,7 @@ interface AgentInterface extends \SplSubject
 
     public function instructions(): string;
 
-    public function addTool(ToolInterface $tool): AgentInterface;
+    public function addTool(ToolInterface|ToolkitInterface|array $tools): AgentInterface;
 
     public function getTools(): array;
 

@@ -3,6 +3,7 @@
 namespace NeuronAI;
 
 use NeuronAI\Exceptions\AgentException;
+use NeuronAI\Observability\Events\ToolsBootstrapped;
 use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\Toolkits\ToolkitInterface;
 
@@ -22,7 +23,7 @@ trait ResolveTools
      */
     protected function tools(): array
     {
-        return $this->tools;
+        return [];
     }
 
     /**
@@ -30,21 +31,24 @@ trait ResolveTools
      */
     public function getTools(): array
     {
-        return empty($this->tools)
-            ? $this->tools()
-            : $this->tools;
+        $agentTools = $this->tools();
+        $runtimeTools = $this->tools;
+
+        return \array_merge($runtimeTools, $agentTools);
     }
 
     /**
      * If toolkits have already bootstrapped, this function
      * just traverses the array of tools without any action.
      *
-     * @return void
+     * @return ToolInterface[]
      */
-    public function bootstrapToolkits(): void
+    public function bootstrapTools(): array
     {
         $tools = [];
         $guidelines = [];
+
+        $this->notify('toolkits-bootstrapping');
 
         foreach ($this->getTools() as $tool) {
             if ($tool instanceof ToolkitInterface) {
@@ -69,6 +73,7 @@ trait ResolveTools
                     $guidelines[] = $kitGuidelines;
                 }
             } else {
+                // If the item is a simple tool, add to the list as it is
                 $tools[] = $tool;
             }
         }
@@ -80,23 +85,25 @@ trait ResolveTools
             );
         }
 
-        $this->tools = $tools;
+        $this->notify('toolkits-bootstrapped', new ToolsBootstrapped($tools));
+
+        return $tools;
     }
 
     /**
      * Add tools.
      *
-     * @param ToolInterface|ToolkitInterface|array $tool
+     * @param ToolInterface|ToolkitInterface|array $tools
      * @return AgentInterface
      * @throws AgentException
      */
-    public function addTool(ToolInterface|ToolkitInterface|array $tool): AgentInterface
+    public function addTool(ToolInterface|ToolkitInterface|array $tools): AgentInterface
     {
-        $tool = \is_array($tool) ? $tool : [$tool];
+        $tools = \is_array($tools) ? $tools : [$tools];
 
-        foreach ($tool as $t) {
+        foreach ($tools as $t) {
             if (! $t instanceof ToolInterface && ! $t instanceof ToolkitInterface) {
-                throw new AgentException('Tool must be an instance of ToolInterface or ToolkitInterface');
+                throw new AgentException('Tools must be an instance of ToolInterface or ToolkitInterface');
             }
             $this->tools[] = $t;
         }
