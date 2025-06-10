@@ -35,10 +35,7 @@ trait ResolveTools
             : $this->tools;
     }
 
-    /**
-     * @return ToolInterface[]
-     */
-    public function bootstrapTools(): array
+    public function bootstrapTools(): void
     {
         $tools = [];
         $guidelines = [];
@@ -74,7 +71,6 @@ trait ResolveTools
         }
 
         $this->tools = $tools;
-        return $tools;
     }
 
     /**

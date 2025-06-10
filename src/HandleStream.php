@@ -20,13 +20,15 @@ trait HandleStream
 
             $this->fillChatHistory($messages);
 
-            $this->notify('tools-bootstrapping');
-            $tools = $this->bootstrapTools();
-            $this->notify('tools-bootstrapped');
+            if (empty($this->tools)) {
+                $this->notify('tools-bootstrapping');
+                $this->bootstrapTools();
+                $this->notify('tools-bootstrapped');
+            }
 
             $stream = $this->resolveProvider()
                 ->systemPrompt($this->instructions())
-                ->setTools($tools)
+                ->setTools($this->getTools())
                 ->stream(
                     $this->resolveChatHistory()->getMessages(),
                     function (ToolCallMessage $toolCallMessage) {

@@ -32,9 +32,11 @@ trait HandleChat
 
         $this->fillChatHistory($messages);
 
-        $this->notify('tools-bootstrapping');
-        $tools = $this->bootstrapTools();
-        $this->notify('tools-bootstrapped');
+        if (empty($this->tools)) {
+            $this->notify('tools-bootstrapping');
+            $this->bootstrapTools();
+            $this->notify('tools-bootstrapped');
+        }
 
         $this->notify(
             'inference-start',
@@ -43,7 +45,7 @@ trait HandleChat
 
         return $this->resolveProvider()
             ->systemPrompt($this->instructions())
-            ->setTools($tools)
+            ->setTools($this->getTools())
             ->chatAsync(
                 $this->resolveChatHistory()->getMessages()
             )->then(function (Message $response) {
