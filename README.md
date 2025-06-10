@@ -334,8 +334,20 @@ Learn more about Structured Output on the [documentation](https://docs.neuron-ai
 
 ## Monitoring
 
-Neuron offers a built-in integration with [Inspector.dev](https://inspector.dev) to monitor the behavior of your agents
-and detect unexpected errors in real time.
+Integrating AI Agents into your application you’re not working only with functions and deterministic code,
+you program your agent also influencing probability distributions. Same input ≠ output.
+That means reproducibility, versioning, and debugging become real problems.
+
+Many of the Agents you build with NeuronAI will contain multiple steps with multiple invocations of LLM calls,
+tool usage, access to external memories, etc. As these applications get more and more complex, it becomes crucial
+to be able to inspect what exactly your agent is doing and why.
+
+Why is the model taking certain decisions? What data is the model reacting to? Prompting is not programming
+in the common sense. No static types, small changes break output, long prompts cost latency,
+and no two models behave exactly the same with the same prompt.
+
+The Inspector team designed NeuronAI with built-in observability features, so you can monitor AI agents were running,
+helping you maintain production-grade implementations with confidence.
 
 You have to install the Inspector package based on your development environment. We provide integration packages
 for [PHP](https://github.com/inspector-apm/inspector-php), [Laravel](https://github.com/inspector-apm/inspector-laravel),
