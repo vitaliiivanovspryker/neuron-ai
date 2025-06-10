@@ -16,7 +16,7 @@ trait ResolveTools
      */
     protected array $tools = [];
 
-    protected array $toolBootstrapCache = [];
+    protected array $toolsBootstrapCache = [];
 
     /**
      * Get the list of tools.
@@ -49,8 +49,8 @@ trait ResolveTools
     {
         $guidelines = [];
 
-        if (!empty($this->toolBootstrapCache)) {
-            return $this->toolBootstrapCache;
+        if (!empty($this->toolsBootstrapCache)) {
+            return $this->toolsBootstrapCache;
         }
 
         $this->notify('tools-bootstrapping');
@@ -64,7 +64,7 @@ trait ResolveTools
 
                 // Merge the tools
                 $innerTools = $tool->tools();
-                $this->toolBootstrapCache = \array_merge($this->toolBootstrapCache, $innerTools);
+                $this->toolsBootstrapCache = \array_merge($this->toolsBootstrapCache, $innerTools);
 
                 // Add guidelines to the system prompt
                 if ($kitGuidelines) {
@@ -80,7 +80,7 @@ trait ResolveTools
                 }
             } else {
                 // If the item is a simple tool, add to the list as it is
-                $this->toolBootstrapCache[] = $tool;
+                $this->toolsBootstrapCache[] = $tool;
             }
         }
 
@@ -91,9 +91,9 @@ trait ResolveTools
             );
         }
 
-        $this->notify('tools-bootstrapped', new ToolsBootstrapped($this->toolBootstrapCache));
+        $this->notify('tools-bootstrapped', new ToolsBootstrapped($this->toolsBootstrapCache));
 
-        return $this->toolBootstrapCache;
+        return $this->toolsBootstrapCache;
     }
 
     /**
@@ -115,7 +115,7 @@ trait ResolveTools
         }
 
         // Empty the cache for the next turn.
-        $this->toolBootstrapCache = [];
+        $this->toolsBootstrapCache = [];
 
         return $this;
     }
