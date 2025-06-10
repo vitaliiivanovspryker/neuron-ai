@@ -149,7 +149,7 @@ class Tool implements ToolInterface
             }
         }
 
-        // Deserialize if there is an object property with class definition
+        // If there is an object property with class definition, deserialize the tool input into class instances
         $parameters = array_map(function (ToolPropertyInterface $property) {
             // Find the corresponding input
             $inputs = $this->getInputs()[$property->getName()];
