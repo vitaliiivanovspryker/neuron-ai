@@ -45,7 +45,7 @@ trait ResolveTools
      */
     public function bootstrapTools(): array
     {
-        $tools = [];
+        $bootstrapped = [];
         $guidelines = [];
 
         $this->notify('toolkits-bootstrapping');
@@ -58,7 +58,7 @@ trait ResolveTools
                 }
 
                 // Merge the tools
-                $tools = \array_merge($tools, $tool->tools());
+                $bootstrapped = \array_merge($bootstrapped, $tool->tools());
 
                 // Add guidelines to the system prompt
                 if ($kitGuidelines) {
@@ -66,7 +66,7 @@ trait ResolveTools
                         PHP_EOL.'- ',
                         \array_map(
                             fn ($tool) => "{$tool->getName()}: {$tool->getDescription()}",
-                            $tools
+                            $tool->tools()
                         )
                     );
 
@@ -74,7 +74,7 @@ trait ResolveTools
                 }
             } else {
                 // If the item is a simple tool, add to the list as it is
-                $tools[] = $tool;
+                $bootstrapped[] = $tool;
             }
         }
 
@@ -85,9 +85,9 @@ trait ResolveTools
             );
         }
 
-        $this->notify('toolkits-bootstrapped', new ToolsBootstrapped($tools));
+        $this->notify('toolkits-bootstrapped', new ToolsBootstrapped($bootstrapped));
 
-        return $tools;
+        return $bootstrapped;
     }
 
     /**
