@@ -58,8 +58,8 @@ trait ResolveTools
                 }
 
                 // Merge the tools
-                $tools = $tool->tools();
-                $bootstrapped = \array_merge($bootstrapped, $tools);
+                $innerTools = $tool->tools();
+                $bootstrapped = \array_merge($bootstrapped, $innerTools);
 
                 // Add guidelines to the system prompt
                 if ($kitGuidelines) {
@@ -67,7 +67,7 @@ trait ResolveTools
                         PHP_EOL.'- ',
                         \array_map(
                             fn ($tool) => "{$tool->getName()}: {$tool->getDescription()}",
-                            $tools
+                            $innerTools
                         )
                     );
 
