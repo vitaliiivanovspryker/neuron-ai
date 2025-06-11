@@ -25,7 +25,7 @@ class SystemPrompt implements \Stringable
         }
 
         if (!empty($this->toolsUsage)) {
-            $prompt .= PHP_EOL . PHP_EOL . "# CRITICAL TOOLS USAGE RULES" . PHP_EOL . " - " . implode(PHP_EOL . " - ", $this->toolsUsage);
+            $prompt .= PHP_EOL . PHP_EOL . "# TOOLS USAGE RULES" . PHP_EOL . " - " . implode(PHP_EOL . " - ", $this->toolsUsage);
         }
 
         return $prompt;
