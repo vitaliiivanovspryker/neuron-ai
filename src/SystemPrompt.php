@@ -31,12 +31,7 @@ class SystemPrompt implements \Stringable
 
         if (!empty($this->toolsUsage)) {
             $prompt .= PHP_EOL . PHP_EOL . "# CRITICAL TOOLS USAGE RULES" . PHP_EOL
-                . " - " . implode(PHP_EOL . " - ", [
-                    ...$this->toolsUsage,
-                    "When using tools, provide ONLY valid JSON parameters",
-                    "Do NOT add any comments, explanations, or text outside the tool call.",
-                    "The JSON must be pure, perfectly valid and deserializable."
-                ]);
+                . " - " . implode(PHP_EOL . " - ", $this->toolsUsage);
         }
 
         return $prompt;
