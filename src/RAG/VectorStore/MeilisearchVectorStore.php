@@ -4,7 +4,6 @@ namespace NeuronAI\RAG\VectorStore;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
-use NeuronAI\RAG\Document;
 
 class MeilisearchVectorStore implements VectorStoreInterface
 {

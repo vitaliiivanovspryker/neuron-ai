@@ -2,7 +2,6 @@
 
 namespace NeuronAI\RAG\DataLoader;
 
-use NeuronAI\RAG\Document;
 use NeuronAI\RAG\VectorStore\DocumentModelInterface;
 
 class FileDataLoader extends AbstractDataLoader

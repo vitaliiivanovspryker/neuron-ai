@@ -4,7 +4,6 @@ namespace NeuronAI\RAG\VectorStore;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
-use NeuronAI\RAG\Document;
 
 class ChromaVectorStore implements VectorStoreInterface
 {
@@ -78,7 +77,7 @@ class ChromaVectorStore implements VectorStoreInterface
     }
 
     /**
-     * @param array<Document> $documents
+     * @param DocumentModelInterface[] $documents
      * @return array
      */
     protected function mapDocuments(array $documents): array
@@ -91,13 +90,13 @@ class ChromaVectorStore implements VectorStoreInterface
 
         ];
         foreach ($documents as $document) {
-            $payload['ids'][] = $document->id;
-            $payload['documents'][] = $document->content;
-            $payload['embeddings'][] = $document->embedding;
+            $payload['ids'][] = $document->getId();
+            $payload['documents'][] = $document->getContent();
+            $payload['embeddings'][] = $document->getEmbedding();
             $payload['metadatas'][] = [
-                'sourceType' => $document->sourceType,
-                'sourceName' => $document->sourceName,
-                'chunkNumber' => $document->chunkNumber,
+                'sourceType' => $document->getSourceType(),
+                'sourceName' => $document->getSourceName(),
+                ...$document->getCustomFields(),
             ];
         }
 
