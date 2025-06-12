@@ -26,7 +26,12 @@ class RAG extends Agent
     use ResolveEmbeddingProvider;
 
     /**
-     * @var array<PostprocessorInterface>
+     * The default document model.
+     */
+    protected string $documentModel = Document::class;
+
+    /**
+     * @var PostprocessorInterface[]
      */
     protected array $postProcessors = [];
 
@@ -108,15 +113,16 @@ class RAG extends Agent
     {
         $this->notify('rag-vectorstore-searching', new VectorStoreSearching($question));
 
-        $docs = $this->resolveVectorStore()->similaritySearch(
-            $this->resolveEmbeddingsProvider()->embedText($question->getContent())
+        $documents = $this->resolveVectorStore()->similaritySearch(
+            $this->resolveEmbeddingsProvider()->embedText($question->getContent()),
+            $this->documentModel
         );
 
         $retrievedDocs = [];
 
-        foreach ($docs as $doc) {
+        foreach ($documents as $document) {
             //md5 for removing duplicates
-            $retrievedDocs[\md5($doc->content)] = $doc;
+            $retrievedDocs[\md5($document->content)] = $document;
         }
 
         $retrievedDocs = \array_values($retrievedDocs);

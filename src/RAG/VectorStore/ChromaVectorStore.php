@@ -30,7 +30,7 @@ class ChromaVectorStore implements VectorStoreInterface
         ]);
     }
 
-    public function addDocument(Document $document): void
+    public function addDocument(DocumentModelInterface $document): void
     {
         $this->addDocuments([$document]);
     }
@@ -42,7 +42,7 @@ class ChromaVectorStore implements VectorStoreInterface
         ])->getBody()->getContents();
     }
 
-    public function similaritySearch(array $embedding): iterable
+    public function similaritySearch(array $embedding, string $documentModel): iterable
     {
         $response = $this->getClient()->post('query', [
             RequestOptions::JSON => [
@@ -57,14 +57,20 @@ class ChromaVectorStore implements VectorStoreInterface
         $size = \count($response['distances']);
         $result = [];
         for ($i = 0; $i < $size; $i++) {
-            $document = new Document();
-            $document->id = $response['ids'][$i] ?? null;
+            $document = new $documentModel();
+            $document->id = $response['ids'][$i] ?? \uniqid();
             $document->embedding = $response['embeddings'][$i];
             $document->content = $response['documents'][$i];
             $document->sourceType = $response['metadatas'][$i]['sourceType'] ?? null;
             $document->sourceName = $response['metadatas'][$i]['sourceName'] ?? null;
-            $document->chunkNumber = $response['metadatas'][$i]['chunkNumber'] ?? null;
             $document->score = $response['distances'][$i];
+
+            // Load custom fields
+            $customFields = \array_intersect_key($response['metadatas'][$i], $document->getCustomFields());
+            foreach ($customFields as $fieldName => $value) {
+                $document->{$fieldName} = $value;
+            }
+
             $result[] = $document;
         }
 

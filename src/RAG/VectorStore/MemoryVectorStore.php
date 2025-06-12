@@ -8,14 +8,16 @@ use NeuronAI\RAG\VectorStore\Search\SimilaritySearch;
 
 class MemoryVectorStore implements VectorStoreInterface
 {
-    /** @var array<Document> */
+    /**
+     * @var DocumentModelInterface[]
+     */
     private array $documents = [];
 
     public function __construct(protected int $topK = 4)
     {
     }
 
-    public function addDocument(Document $document): void
+    public function addDocument(DocumentModelInterface $document): void
     {
         $this->documents[] = $document;
     }
@@ -25,12 +27,12 @@ class MemoryVectorStore implements VectorStoreInterface
         $this->documents = \array_merge($this->documents, $documents);
     }
 
-    public function similaritySearch(array $embedding): array
+    public function similaritySearch(array $embedding, string $documentModel): array
     {
         $distances = [];
 
         foreach ($this->documents as $index => $document) {
-            if ($document->embedding === null) {
+            if (empty($document->embedding)) {
                 throw new VectorStoreException("Document with the following content has no embedding: {$document->content}");
             }
             $dist = $this->cosineSimilarity($embedding, $document->embedding);
