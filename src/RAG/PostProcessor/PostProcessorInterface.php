@@ -3,7 +3,7 @@
 namespace NeuronAI\RAG\PostProcessor;
 
 use NeuronAI\Chat\Messages\Message;
-use NeuronAI\RAG\VectorStore\DocumentModelInterface;
+use NeuronAI\RAG\DocumentModelInterface;
 
 interface PostProcessorInterface
 {

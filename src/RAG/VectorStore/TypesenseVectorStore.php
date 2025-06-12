@@ -3,6 +3,7 @@
 namespace NeuronAI\RAG\VectorStore;
 
 use Http\Client\Exception;
+use NeuronAI\RAG\DocumentModelInterface;
 use Typesense\Client;
 use Typesense\Exceptions\ObjectNotFound;
 use Typesense\Exceptions\TypesenseClientError;

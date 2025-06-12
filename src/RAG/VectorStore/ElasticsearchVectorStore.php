@@ -7,6 +7,7 @@ use Elastic\Elasticsearch\Exception\ServerResponseException;
 use NeuronAI\RAG\Document;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\Response\Elasticsearch;
+use NeuronAI\RAG\DocumentModelInterface;
 
 class ElasticsearchVectorStore implements VectorStoreInterface
 {

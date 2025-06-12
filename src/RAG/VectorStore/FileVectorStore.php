@@ -3,6 +3,7 @@
 namespace NeuronAI\RAG\VectorStore;
 
 use NeuronAI\Exceptions\VectorStoreException;
+use NeuronAI\RAG\DocumentModelInterface;
 use NeuronAI\RAG\VectorStore\Search\SimilaritySearch;
 
 class FileVectorStore implements VectorStoreInterface

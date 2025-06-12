@@ -2,7 +2,7 @@
 
 namespace NeuronAI\RAG;
 
-use NeuronAI\RAG\VectorStore\DocumentModelInterface;
+use NeuronAI\RAG\DocumentModelInterface;
 
 abstract class AbstractDocumentModel implements DocumentModelInterface
 {
@@ -50,6 +50,12 @@ abstract class AbstractDocumentModel implements DocumentModelInterface
     public function getScore(): float
     {
         return $this->score;
+    }
+
+    public function setScore(float $score): DocumentModelInterface
+    {
+        $this->score = $score;
+        return $this;
     }
 
     public function getCustomFields(): array

@@ -3,6 +3,7 @@
 namespace NeuronAI\RAG\VectorStore;
 
 use NeuronAI\Exceptions\VectorStoreException;
+use NeuronAI\RAG\DocumentModelInterface;
 use NeuronAI\RAG\VectorStore\Search\SimilaritySearch;
 
 class MemoryVectorStore implements VectorStoreInterface
@@ -32,9 +33,9 @@ class MemoryVectorStore implements VectorStoreInterface
 
         foreach ($this->documents as $index => $document) {
             if (empty($document->embedding)) {
-                throw new VectorStoreException("Document with the following content has no embedding: {$document->content}");
+                throw new VectorStoreException("Document with the following content has no embedding: {$document->getContent()}");
             }
-            $dist = $this->cosineSimilarity($embedding, $document->embedding);
+            $dist = $this->cosineSimilarity($embedding, $document->getEmbedding());
             $distances[$index] = $dist;
         }
 
@@ -44,7 +45,7 @@ class MemoryVectorStore implements VectorStoreInterface
 
         return \array_reduce($topKIndices, function ($carry, $index) use ($distances) {
             $document = $this->documents[$index];
-            $document->score = 1 - $distances[$index];
+            $document->setScore(1 - $distances[$index]);
             $carry[] = $document;
             return $carry;
         }, []);

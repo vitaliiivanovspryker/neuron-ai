@@ -1,6 +1,6 @@
 <?php
 
-namespace NeuronAI\RAG\VectorStore;
+namespace NeuronAI\RAG;
 
 interface DocumentModelInterface extends \JsonSerializable
 {
@@ -15,6 +15,8 @@ interface DocumentModelInterface extends \JsonSerializable
     public function getSourceName(): string;
 
     public function getScore(): float;
+
+    public function setScore(float $score): DocumentModelInterface;
 
     public function getCustomFields(): array;
 }

@@ -16,7 +16,7 @@ use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\RAG\PostProcessor\PostProcessorInterface;
-use NeuronAI\RAG\VectorStore\DocumentModelInterface;
+use NeuronAI\RAG\DocumentModelInterface;
 
 /**
  * @method RAG withProvider(AIProviderInterface $provider)

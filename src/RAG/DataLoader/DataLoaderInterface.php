@@ -2,7 +2,7 @@
 
 namespace NeuronAI\RAG\DataLoader;
 
-use NeuronAI\RAG\VectorStore\DocumentModelInterface;
+use NeuronAI\RAG\DocumentModelInterface;
 
 interface DataLoaderInterface
 {

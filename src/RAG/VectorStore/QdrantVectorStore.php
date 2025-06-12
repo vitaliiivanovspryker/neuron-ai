@@ -5,6 +5,7 @@ namespace NeuronAI\RAG\VectorStore;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
+use NeuronAI\RAG\DocumentModelInterface;
 
 class QdrantVectorStore implements VectorStoreInterface
 {

@@ -4,6 +4,7 @@ namespace NeuronAI\RAG\VectorStore;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
+use NeuronAI\RAG\DocumentModelInterface;
 
 class ChromaVectorStore implements VectorStoreInterface
 {

@@ -4,7 +4,7 @@ namespace NeuronAI\RAG\PostProcessor;
 
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\RAG\Document;
-use NeuronAI\RAG\VectorStore\DocumentModelInterface;
+use NeuronAI\RAG\DocumentModelInterface;
 
 class FixedThresholdPostProcessor implements PostProcessorInterface
 {

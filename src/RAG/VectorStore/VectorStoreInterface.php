@@ -2,6 +2,8 @@
 
 namespace NeuronAI\RAG\VectorStore;
 
+use NeuronAI\RAG\DocumentModelInterface;
+
 interface VectorStoreInterface
 {
     public function addDocument(DocumentModelInterface $document): void;

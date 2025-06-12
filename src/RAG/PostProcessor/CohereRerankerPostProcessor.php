@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\RAG\Document;
-use NeuronAI\RAG\VectorStore\DocumentModelInterface;
+use NeuronAI\RAG\DocumentModelInterface;
 
 class CohereRerankerPostProcessor implements PostProcessorInterface
 {
@@ -49,7 +49,7 @@ class CohereRerankerPostProcessor implements PostProcessorInterface
 
         return \array_map(function ($item) use ($documents) {
             $document = $documents[$item['index']];
-            $document->score = $item['relevance_score'];
+            $document->setScore($item['relevance_score']);
             return $document;
         }, $result['results']);
     }
