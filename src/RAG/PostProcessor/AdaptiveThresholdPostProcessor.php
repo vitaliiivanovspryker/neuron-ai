@@ -3,7 +3,6 @@
 namespace NeuronAI\RAG\PostProcessor;
 
 use NeuronAI\Chat\Messages\Message;
-use NeuronAI\RAG\Document;
 use NeuronAI\RAG\DocumentModelInterface;
 
 class AdaptiveThresholdPostProcessor implements PostProcessorInterface

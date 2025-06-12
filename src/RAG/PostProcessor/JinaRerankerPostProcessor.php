@@ -5,7 +5,6 @@ namespace NeuronAI\RAG\PostProcessor;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use NeuronAI\Chat\Messages\Message;
-use NeuronAI\RAG\Document;
 use NeuronAI\RAG\DocumentModelInterface;
 
 class JinaRerankerPostProcessor implements PostProcessorInterface

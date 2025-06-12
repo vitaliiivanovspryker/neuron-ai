@@ -2,8 +2,6 @@
 
 namespace NeuronAI\RAG;
 
-use NeuronAI\RAG\DocumentModelInterface;
-
 abstract class AbstractDocumentModel implements DocumentModelInterface
 {
     public string|int $id;
