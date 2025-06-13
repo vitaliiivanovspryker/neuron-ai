@@ -32,7 +32,7 @@ class SentenceTextSplitter implements SplitterInterface
     /**
      * Splits text into word-based chunks, preserving sentence boundaries.
      *
-     * @param string $text
+     * @param Document $document
      * @return Document[] Array of Document chunks
      */
     public function splitDocument(Document $document): array
