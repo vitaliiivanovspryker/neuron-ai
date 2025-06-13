@@ -7,7 +7,6 @@ use Inspector\Inspector;
 use Inspector\Models\Segment;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Observability\Events\AgentError;
-use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\Toolkits\ToolkitInterface;
 use NeuronAI\Tools\ToolPropertyInterface;
@@ -151,11 +150,11 @@ class AgentMonitoring implements \SplObserver
 
     protected function getContext(\NeuronAI\AgentInterface $agent): array
     {
-        $mapTool = fn(ToolInterface $tool) => [
+        $mapTool = fn (ToolInterface $tool) => [
             $tool->getName() => [
                 'description' => $tool->getDescription(),
                 'properties' => \array_map(
-                    fn(ToolPropertyInterface $property) => $property->jsonSerialize(),
+                    fn (ToolPropertyInterface $property) => $property->jsonSerialize(),
                     $tool->getProperties()
                 )
             ]
@@ -167,7 +166,7 @@ class AgentMonitoring implements \SplObserver
                 'provider' => $agent->resolveProvider()::class,
             ],
             'Tools' => \array_map(
-                fn(ToolInterface|ToolkitInterface $tool) => $tool instanceof ToolInterface
+                fn (ToolInterface|ToolkitInterface $tool) => $tool instanceof ToolInterface
                     ? $mapTool($tool)
                     : [get_class($tool) => \array_map($mapTool, $tool->tools())],
                 $agent->getTools()
