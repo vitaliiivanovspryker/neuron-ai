@@ -3,7 +3,6 @@
 namespace NeuronAI\RAG\Splitter;
 
 use NeuronAI\RAG\Document;
-use NeuronAI\RAG\Splitter\SplitterInterface;
 use InvalidArgumentException;
 
 /**
@@ -150,10 +149,10 @@ class SentenceTextSplitter implements SplitterInterface
 
             // Get only the words needed for overlap
             $overlap = array_slice($prevWords, -$this->overlapWords);
-            
+
             // Remove duplicate words at the beginning of current chunk
             $curWords = array_slice($curWords, $this->overlapWords);
-            
+
             $merged = array_merge($overlap, $curWords);
             $result[] = implode(' ', $merged);
         }
@@ -171,7 +170,7 @@ class SentenceTextSplitter implements SplitterInterface
     {
         $chunks = [];
         $currentChunk = [];
-        
+
         foreach ($words as $word) {
             if (count($currentChunk) >= $this->maxWords) {
                 $chunks[] = implode(' ', $currentChunk);
@@ -179,11 +178,11 @@ class SentenceTextSplitter implements SplitterInterface
             }
             $currentChunk[] = $word;
         }
-        
+
         if (!empty($currentChunk)) {
             $chunks[] = implode(' ', $currentChunk);
         }
-        
+
         return $chunks;
     }
 }

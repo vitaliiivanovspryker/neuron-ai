@@ -15,7 +15,7 @@ class SentenceTextSplitterTest extends TestCase
         $text = "This is a longer text that should be split into multiple chunks. " .
                 "This is the second sentence that should appear in two chunks. " .
                 "This is the third sentence that completes the text.";
-        
+
         $document = new Document($text);
         $document->sourceType = 'test';
         $document->sourceName = 'test.txt';
@@ -23,11 +23,11 @@ class SentenceTextSplitterTest extends TestCase
         $result = $splitter->splitDocument($document);
 
         $this->assertGreaterThan(1, count($result));
-        
+
         // Verifica che l'overlap sia presente
         $firstChunkWords = explode(' ', $result[0]->content);
         $secondChunkWords = explode(' ', $result[1]->content);
-        
+
         $this->assertEquals(
             array_slice($firstChunkWords, -2),
             array_slice($secondChunkWords, 0, 2)
@@ -60,7 +60,7 @@ class SentenceTextSplitterTest extends TestCase
     public function test_split_document_without_overlap(): void
     {
         $splitter = new SentenceTextSplitter(maxWords: 10, overlapWords: 0);
-        
+
         $text = "This is the first sentence. This is the second sentence. This is the third sentence.";
         $document = new Document($text);
         $document->sourceType = 'test';
@@ -84,7 +84,7 @@ class SentenceTextSplitterTest extends TestCase
             'This is the third sentence.'
         ];
 
-        $allContent = implode(' ', array_map(fn($c) => $c->content, $result));
+        $allContent = implode(' ', array_map(fn ($c) => $c->content, $result));
 
         foreach ($sentences as $sentence) {
             $this->assertStringContainsString($sentence, $allContent, "The sentence '$sentence' is not present");
@@ -162,7 +162,7 @@ class SentenceTextSplitterTest extends TestCase
         $result = $splitter->splitDocument($document);
 
         $this->assertStringContainsString('First paragraph.', $result[0]->content);
-        
+
         $found = false;
         foreach ($result as $chunk) {
             if (strpos($chunk->content, 'Second paragraph') !== false) {
@@ -196,7 +196,7 @@ class SentenceTextSplitterTest extends TestCase
             $this->assertLessThanOrEqual(6, count($words));
         }
 
-        $allContent = implode(' ', array_map(fn($c) => $c->content, $result));
+        $allContent = implode(' ', array_map(fn ($c) => $c->content, $result));
 
         $this->assertStringContainsString('Short.', $allContent);
         $this->assertStringContainsString('End.', $allContent);
