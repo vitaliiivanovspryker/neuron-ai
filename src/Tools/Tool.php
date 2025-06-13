@@ -163,7 +163,7 @@ class Tool implements ToolInterface
                 if ($items instanceof ObjectProperty && $items->getClass()) {
                     $class = $items->getClass();
 
-                    return array_map(function ($input) use ($property, $class) {
+                    return array_map(function ($input) use ($class) {
                         return Deserializer::fromJson(\json_encode($input), $class);
                     }, $inputs);
                 }
