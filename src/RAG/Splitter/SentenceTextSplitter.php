@@ -101,7 +101,11 @@ class SentenceTextSplitter implements SplitterInterface
      */
     public function splitDocuments(array $documents): array
     {
-        return array_map(fn(Document $document) => $this->splitDocument($document), $documents);
+        $result = [];
+        foreach ($documents as $document) {
+            $result = array_merge($result, $this->splitDocument($document));
+        }
+        return $result;
     }
 
     /**
