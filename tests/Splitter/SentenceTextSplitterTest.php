@@ -165,7 +165,7 @@ class SentenceTextSplitterTest extends TestCase
 
         $found = false;
         foreach ($result as $chunk) {
-            if (strpos($chunk->content, 'Second paragraph') !== false) {
+            if (str_contains($chunk->content, 'Second paragraph')) {
                 $found = true;
             }
         }
@@ -174,7 +174,7 @@ class SentenceTextSplitterTest extends TestCase
 
         $found = false;
         foreach ($result as $chunk) {
-            if (strpos($chunk->content, 'Third paragraph.') !== false) {
+            if (str_contains($chunk->content, 'Third paragraph.')) {
                 $found = true;
             }
         }
