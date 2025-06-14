@@ -74,7 +74,6 @@ class RAG extends Agent
      * Set the system message based on the context.
      *
      * @param DocumentModelInterface[] $documents
-     * @return AgentInterface
      */
     public function withDocumentsContext(array $documents): AgentInterface
     {
