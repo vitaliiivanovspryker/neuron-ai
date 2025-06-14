@@ -12,7 +12,7 @@ class AdaptiveThresholdPostProcessorTest extends TestCase
     public function test_process_with_default_multiplier(): void
     {
         $doc1 = new Document();
-        $doc1->setScore( 0.8);
+        $doc1->setScore(0.8);
 
         $doc2 = new Document();
         $doc2->setScore(0.3);
