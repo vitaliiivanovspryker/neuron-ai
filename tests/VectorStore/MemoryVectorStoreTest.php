@@ -54,4 +54,20 @@ class MemoryVectorStoreTest extends TestCase
         $this->assertGreaterThanOrEqual($results[1]->getScore(), $results[0]->getScore());
         $this->assertGreaterThanOrEqual($results[2]->getScore(), $results[1]->getScore());
     }
+
+    public function test_custom_document_model()
+    {
+        $document = new class extends Document {
+            public string $customProperty = 'customValue';
+        };
+        $document->embedding = [1, 0];
+
+        $vectorStore = new MemoryVectorStore();
+        $vectorStore->addDocuments([$document]);
+
+        $results = $vectorStore->similaritySearch([1, 0], $document::class);
+
+        $this->assertCount(1, $results);
+        $this->assertEquals($document->customProperty, $results[0]->customProperty);
+    }
 }
