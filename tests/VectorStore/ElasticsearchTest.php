@@ -43,10 +43,9 @@ class ElasticsearchTest extends TestCase
 
         $document = new Document('Hello World!');
         $document->embedding = $this->embedding;
-        $document->hash = \hash('sha256', 'Hello World!' . time());
 
         $store->addDocument($document);
 
-        $results = $store->similaritySearch($this->embedding);
+        $results = $store->similaritySearch($this->embedding, Document::class);
     }
 }

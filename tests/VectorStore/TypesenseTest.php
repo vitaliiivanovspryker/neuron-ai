@@ -56,10 +56,9 @@ class TypesenseTest extends TestCase
 
         $document = new Document('Hello World!');
         $document->embedding = $this->embedding;
-        $document->hash = \hash('sha256', 'Hello World!' . time()); // added time() to avoid exception 'A document with id x already exists'
 
         $store->addDocument($document);
 
-        $results = $store->similaritySearch($this->embedding);
+        $results = $store->similaritySearch($this->embedding, Document::class);
     }
 }

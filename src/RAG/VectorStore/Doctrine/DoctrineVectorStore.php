@@ -75,9 +75,6 @@ class DoctrineVectorStore implements VectorStoreInterface
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * @param Document $document
-     */
     private function persistDocument(DocumentModelInterface $document): void
     {
         if (empty($document->embedding)) {
