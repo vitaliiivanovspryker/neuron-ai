@@ -13,14 +13,14 @@ class MySQLWriteTool extends Tool
     {
         parent::__construct(
             'execute_write_query',
-            'Use this tool to perform write operations against the MySQL database (e.g. INSERT, UPDATE, DELETE).'
+            'Use this tool to perform write operations against the MySQL database (INSERT, UPDATE, DELETE).'
         );
 
         $this->addProperty(
             new ToolProperty(
                 'query',
                 PropertyType::STRING,
-                'The write query you want to run against the MySQL database.',
+                'The write query you want to run against the MySQL database (e.g. INSERT, UPDATE, DELETE).',
                 true
             )
         )->setCallable($this);
