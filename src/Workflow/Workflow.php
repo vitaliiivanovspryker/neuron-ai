@@ -1,93 +1,133 @@
 <?php
 
-declare(strict_types=1);
-
 namespace NeuronAI\Workflow;
 
-use NeuronAI\Chat\Messages\Message;
-use NeuronAI\Exceptions\StateGraphError;
-use NeuronAI\Observability\Events\WorkflowEnd;
-use NeuronAI\Observability\Events\WorkflowNodeEnd;
-use NeuronAI\Observability\Events\WorkflowNodeStart;
-use NeuronAI\Observability\Events\WorkflowStart;
-use NeuronAI\Observability\Observable;
-use NeuronAI\StaticConstructor;
-use SplSubject;
-
-class Workflow implements SplSubject
+class Workflow
 {
-    use StaticConstructor;
-    use Observable;
+    private array $nodes = [];
+    private array $edges = [];
+    private ?string $startNode = null;
+    private ?string $endNode = null;
+    private ExporterInterface $exporter;
 
-    /** @var string[] */
-    private array $executionList;
-
-    /** @var array<string,Message[]> */
-    private array $replies = [];
-
-    /**
-     * @throws StateGraphError
-     */
-    public function __construct(
-        private readonly StateGraph $graph,
-    ) {
-        $this->executionList = $graph->compile();
+    public function __construct(?ExporterInterface $exporter = null)
+    {
+        $this->exporter = $exporter ?? new MermaidExporter();
     }
 
-    /**
-     * @throws StateGraphError
-     */
-    public function execute(Message|array $messages): Message
+    public function addNode(NodeInterface $node): self
     {
-        $lastReply = null;
-
-        $this->notify('workflow-start', new WorkflowStart($this->executionList));
-
-        foreach ($this->graph->getNodeNames() as $node) {
-            $this->replies[$node] = [];
-        }
-
-        foreach ($this->executionList as $item) {
-            $node = $this->graph->getNode($item);
-            $input = $this->getPayload($item, $messages);
-
-            $this->attachObservers($node);
-
-            $this->notify('workflow-node-start', new WorkflowNodeStart($item, $input));
-
-            $lastReply = $node->execute($input);
-            $this->replies[$item] = [$lastReply];
-
-            $this->notify('workflow-node-end', new WorkflowNodeEnd($item, $lastReply));
-        }
-
-        $this->notify('workflow-end', new WorkflowEnd($lastReply));
-
-        return $lastReply;
+        $name = $this->getNodeName($node);
+        $this->nodes[$name] = $node;
+        return $this;
     }
 
-    /**
-     * @throws StateGraphError
-     */
-    private function getPayload(string $node, Message|array $messages): array
+    private function getNodeName(NodeInterface $node): string
     {
-        // Always add the original query
-        $input = is_array($messages) ? $messages : [$messages];
-
-        // Add the replies of all the predecessors
-        foreach ($this->graph->getPredecessors($node) as $predecessor) {
-            $input = array_merge($input, $this->replies[$predecessor]);
-        }
-
-        return $input;
+        $reflection = new \ReflectionClass($node);
+        return $reflection->getShortName();
     }
 
-    private function attachObservers(NodeInterface $node): void
+    public function addEdge(Edge $edge): self
     {
-        foreach ($this->observers as $event => $observers) {
-            foreach ($observers as $observer) {
-                $node->observe($observer, $event);
+        $this->edges[] = $edge;
+        return $this;
+    }
+
+    public function setStart(string $nodeClass): self
+    {
+        $this->startNode = $this->getShortClassName($nodeClass);
+        return $this;
+    }
+
+    public function setEnd(string $nodeClass): self
+    {
+        $this->endNode = $this->getShortClassName($nodeClass);
+        return $this;
+    }
+
+    private function getShortClassName(string $fullyQualifiedClass): string
+    {
+        $reflection = new \ReflectionClass($fullyQualifiedClass);
+        return $reflection->getShortName();
+    }
+
+    public function validate(): void
+    {
+        if ($this->startNode === null) {
+            throw new \InvalidArgumentException('Start node must be defined');
+        }
+
+        if ($this->endNode === null) {
+            throw new \InvalidArgumentException('End node must be defined');
+        }
+
+        if (!isset($this->nodes[$this->startNode])) {
+            throw new \InvalidArgumentException("Start node '{$this->startNode}' does not exist");
+        }
+
+        if (!isset($this->nodes[$this->endNode])) {
+            throw new \InvalidArgumentException("End node '{$this->endNode}' does not exist");
+        }
+
+        foreach ($this->edges as $edge) {
+            if (!isset($this->nodes[$edge->getFrom()])) {
+                throw new \InvalidArgumentException("Edge from node '{$edge->getFrom()}' does not exist");
+            }
+
+            if (!isset($this->nodes[$edge->getTo()])) {
+                throw new \InvalidArgumentException("Edge to node '{$edge->getTo()}' does not exist");
             }
         }
+    }
+
+    public function execute(?WorkflowState $initialState = null): WorkflowState
+    {
+        $this->validate();
+
+        $state = $initialState ?? new WorkflowState();
+        $currentNode = $this->startNode;
+
+        while ($currentNode !== $this->endNode) {
+            $node = $this->nodes[$currentNode];
+            $state = $node->run($state);
+
+            $nextNode = $this->findNextNode($currentNode, $state);
+
+            if ($nextNode === null) {
+                throw new \RuntimeException("No valid edge found from node '{$currentNode}'");
+            }
+
+            $currentNode = $nextNode;
+        }
+
+        $endNode = $this->nodes[$this->endNode];
+        return $endNode->run($state);
+    }
+
+    private function findNextNode(string $currentNode, WorkflowState $state): ?string
+    {
+        foreach ($this->edges as $edge) {
+            if ($edge->getFrom() === $currentNode && $edge->shouldExecute($state)) {
+                return $edge->getTo();
+            }
+        }
+
+        return null;
+    }
+
+    public function export(): string
+    {
+        return $this->exporter->export($this);
+    }
+
+    public function getEdges(): array
+    {
+        return $this->edges;
+    }
+
+    public function getNodes(): array
+    {
+        return $this->nodes;
     }
 }
