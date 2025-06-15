@@ -157,7 +157,7 @@ class PGSQLSelectTool extends Tool
         // Simple split on semicolons (this could be enhanced for more complex cases)
         return array_filter(
             array_map('trim', explode(';', $query)),
-            fn($stmt) => !empty($stmt)
+            fn ($stmt) => !empty($stmt)
         );
     }
 
