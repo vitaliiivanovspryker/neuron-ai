@@ -23,6 +23,7 @@ class PGSQLToolkit extends AbstractToolkit
         return [
             PGSQLSchemaTool::make($this->pdo),
             PGSQLSelectTool::make($this->pdo),
+            PGSQLWriteTool::make($this->pdo),
         ];
     }
 }
