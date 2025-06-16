@@ -64,7 +64,12 @@ class ChromaVectorStore implements VectorStoreInterface
             $document->sourceType = $response['metadatas'][$i]['sourceType'] ?? null;
             $document->sourceName = $response['metadatas'][$i]['sourceName'] ?? null;
             $document->score = $response['distances'][$i];
-            $document->metadata = $response['metadatas'][$i]['metadata'] ?? [];
+
+            foreach ($response['metadatas'][$i] as $name => $value) {
+                if (!\in_array($name, ['content', 'sourceType', 'sourceName', 'score', 'embedding', 'id'])) {
+                    $document->addMetadata($name, $value);
+                }
+            }
 
             $result[] = $document;
         }
@@ -92,7 +97,7 @@ class ChromaVectorStore implements VectorStoreInterface
             $payload['metadatas'][] = [
                 'sourceType' => $document->getSourceType(),
                 'sourceName' => $document->getSourceName(),
-                'metadata' => $document->metadata,
+                ...$document->metadata,
             ];
         }
 

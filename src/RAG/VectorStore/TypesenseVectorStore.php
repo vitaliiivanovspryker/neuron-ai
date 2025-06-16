@@ -111,7 +111,7 @@ class TypesenseVectorStore implements VectorStoreInterface
                 'content' => $document->getContent(),
                 'sourceType' => $document->getSourceType(),
                 'sourceName' => $document->getSourceName(),
-                'metadata' => $document->metadata,
+                ...$document->metadata,
             ]);
         }
 
@@ -141,7 +141,12 @@ class TypesenseVectorStore implements VectorStoreInterface
             $document->sourceType = $item['sourceType'];
             $document->sourceName = $item['sourceName'];
             $document->score = 1 - $hit['vector_distance'];
-            $document->metadata = $item['metadata'] ?? [];
+
+            foreach ($item as $name => $value) {
+                if (!\in_array($name, ['content', 'sourceType', 'sourceName', 'score', 'embedding', 'id', 'vector_distance'])) {
+                    $document->addMetadata($name, $value);
+                }
+            }
 
             return $document;
         }, $response['results'][0]['hits']);

@@ -54,7 +54,7 @@ class PineconeVectorStore implements VectorStoreInterface
                         'content' => $document->getContent(),
                         'sourceType' => $document->getSourceType(),
                         'sourceName' => $document->getSourceName(),
-                        'metadata' => $document->metadata,
+                        ...$document->metadata,
                     ],
                 ], $documents)
             ]
@@ -83,7 +83,12 @@ class PineconeVectorStore implements VectorStoreInterface
             $document->sourceType = $item['metadata']['sourceType'];
             $document->sourceName = $item['metadata']['sourceName'];
             $document->score = $item['score'];
-            $document->metadata = $item['metadata']['metadata'] ?? [];
+
+            foreach ($item['metadata'] as $name => $value) {
+                if (!\in_array($name, ['content', 'sourceType', 'sourceName', 'score', 'embedding', 'id'])) {
+                    $document->addMetadata($name, $value);
+                }
+            }
 
             return $document;
         }, $result['matches']);

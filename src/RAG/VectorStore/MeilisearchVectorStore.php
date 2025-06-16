@@ -51,7 +51,7 @@ class MeilisearchVectorStore implements VectorStoreInterface
                     'content' => $document->getContent(),
                     'sourceType' => $document->getSourceType(),
                     'sourceName' => $document->getSourceName(),
-                    'metadata' => $document->metadata,
+                    ...$document->metadata,
                     '_vectors' => [
                         'default' => [
                             'embeddings' => $document->getEmbedding(),
@@ -87,7 +87,12 @@ class MeilisearchVectorStore implements VectorStoreInterface
             $document->sourceName = $item['sourceName'] ?? null;
             $document->embedding = $item['_vectors']['default']['embeddings'];
             $document->score = $item['_rankingScore'];
-            $document->metadata = $item['metadata'] ?? [];
+
+            foreach ($item as $name => $value) {
+                if (!\in_array($name, ['_vectors', '_rankingScore', 'content', 'sourceType', 'sourceName', 'score', 'embedding', 'id'])) {
+                    $document->addMetadata($name, $value);
+                }
+            }
 
             return $document;
         }, $response['hits']);

@@ -46,17 +46,10 @@ class ElasticsearchVectorStore implements VectorStoreInterface
         ];
 
         // Map metadata
-        if (!empty($document->metadata)) {
-            $properties['metadata'] = [
-                'type' => 'object',
-                'properties' => [],
+        foreach ($document->metadata as $name => $value) {
+            $properties[$name] = [
+                'type' => 'keyword',
             ];
-
-            foreach ($document->metadata as $name => $value) {
-                $properties['metadata']['properties'][$name] = [
-                    'type' => 'keyword',
-                ];
-            }
         }
 
         $this->client->indices()->create([
@@ -85,7 +78,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
                 'content' => $document->getContent(),
                 'sourceType' => $document->getSourceType(),
                 'sourceName' => $document->getSourceName(),
-                'metadata' => $document->metadata,
+                ...$document->metadata,
             ],
         ]);
 
@@ -124,7 +117,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
                 'content' => $document->getContent(),
                 'sourceType' => $document->getSourceType(),
                 'sourceName' => $document->getSourceName(),
-                'metadata' => $document->metadata,
+                ...$document->metadata,
             ];
         }
         $this->client->bulk($params);
@@ -171,7 +164,12 @@ class ElasticsearchVectorStore implements VectorStoreInterface
             $document->sourceType = $item['_source']['sourceType'];
             $document->sourceName = $item['_source']['sourceName'];
             $document->score = $item['_score'];
-            $document->metadata = $item['_source']['metadata'] ?? [];
+
+            foreach ($item['_source'] as $name => $value) {
+                if (!\in_array($name, ['content', 'sourceType', 'sourceName', 'score', 'embedding', 'id'])) {
+                    $document->addMetadata($name, $value);
+                }
+            }
 
             return $document;
         }, $response['hits']['hits']);

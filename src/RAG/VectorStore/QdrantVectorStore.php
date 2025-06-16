@@ -6,7 +6,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 use NeuronAI\RAG\Document;
-use NeuronAI\RAG\DocumentModelInterface;
 
 class QdrantVectorStore implements VectorStoreInterface
 {
@@ -49,7 +48,7 @@ class QdrantVectorStore implements VectorStoreInterface
     /**
      * Bulk save documents.
      *
-     * @param DocumentModelInterface[] $documents
+     * @param Document[] $documents
      * @return void
      * @throws GuzzleException
      */
@@ -61,7 +60,7 @@ class QdrantVectorStore implements VectorStoreInterface
                 'content' => $document->getContent(),
                 'sourceType' => $document->getSourceType(),
                 'sourceName' => $document->getSourceName(),
-                'metadata' => $document->getCustomFields(),
+                ...$document->metadata,
             ],
             'vector' => $document->getEmbedding(),
         ], $documents);
@@ -75,7 +74,7 @@ class QdrantVectorStore implements VectorStoreInterface
         ]);
     }
 
-    public function similaritySearch(array $embedding, string $documentModel): iterable
+    public function similaritySearch(array $embedding): iterable
     {
         $response = $this->client->post('points/search', [
             RequestOptions::JSON => [
@@ -88,15 +87,19 @@ class QdrantVectorStore implements VectorStoreInterface
 
         $response = \json_decode($response, true);
 
-        return \array_map(function (array $item) use ($documentModel) {
-            $document = new $documentModel();
+        return \array_map(function (array $item) {
+            $document = new Document($item['payload']['content']);
             $document->id = $item['id'];
             $document->embedding = $item['vector'];
-            $document->content = $item['payload']['content'];
             $document->sourceType = $item['payload']['sourceType'];
             $document->sourceName = $item['payload']['sourceName'];
             $document->score = $item['score'];
-            $document->metadata = $item['payload']['metadata'] ?? [];
+
+            foreach ($item['payload'] as $name => $value) {
+                if (!\in_array($name, ['content', 'sourceType', 'sourceName', 'score', 'embedding', 'id'])) {
+                    $document->addMetadata($name, $value);
+                }
+            }
 
             return $document;
         }, $response['result']);
