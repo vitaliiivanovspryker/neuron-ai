@@ -162,7 +162,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
 
         return \array_map(function (array $item) {
             $document = new Document($item['_source']['content']);
-            $document->embedding = $item['_source']['embedding'];
+            //$document->embedding = $item['_source']['embedding']; // avoid carrying large data
             $document->sourceType = $item['_source']['sourceType'];
             $document->sourceName = $item['_source']['sourceName'];
             $document->score = $item['_score'];

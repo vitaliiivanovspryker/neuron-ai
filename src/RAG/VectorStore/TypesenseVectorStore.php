@@ -137,7 +137,7 @@ class TypesenseVectorStore implements VectorStoreInterface
         return \array_map(function (array $hit) {
             $item = $hit['document'];
             $document = new Document($item['content']);
-            $document->embedding = $item['embedding'];
+            //$document->embedding = $item['embedding']; // avoid carrying large data
             $document->sourceType = $item['sourceType'];
             $document->sourceName = $item['sourceName'];
             $document->score = 1 - $hit['vector_distance'];
