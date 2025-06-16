@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
-use NeuronAI\RAG\Document;
 use NeuronAI\RAG\VectorStore\Doctrine\DoctrineVectorStore;
 use NeuronAI\RAG\VectorStore\Doctrine\VectorType;
 use NeuronAI\Tests\Traits\CheckOpenPort;
