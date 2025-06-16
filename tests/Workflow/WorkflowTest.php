@@ -6,7 +6,7 @@ namespace NeuronAI\Tests\Workflow;
 
 use NeuronAI\Exceptions\WorkflowException;
 use NeuronAI\Workflow\Edge;
-use NeuronAI\Workflow\ExporterInterface;
+use NeuronAI\Workflow\Exporter\ExporterInterface;
 use NeuronAI\Workflow\Workflow;
 use NeuronAI\Workflow\WorkflowState;
 use PHPUnit\Framework\TestCase;

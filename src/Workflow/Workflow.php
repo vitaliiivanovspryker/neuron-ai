@@ -4,6 +4,10 @@ namespace NeuronAI\Workflow;
 
 use NeuronAI\Exceptions\WorkflowException;
 use NeuronAI\Observability\Observable;
+use NeuronAI\Workflow\Exporter\ExporterInterface;
+use NeuronAI\Workflow\Exporter\MermaidExporter;
+use NeuronAI\Workflow\Persistence\InMemoryPersistence;
+use NeuronAI\Workflow\Persistence\PersistenceInterface;
 use ReflectionClass;
 use SplSubject;
 

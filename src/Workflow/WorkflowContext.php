@@ -2,6 +2,8 @@
 
 namespace NeuronAI\Workflow;
 
+use NeuronAI\Workflow\Persistence\PersistenceInterface;
+
 class WorkflowContext
 {
     protected bool $isResuming = false;

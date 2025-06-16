@@ -1,6 +1,8 @@
 <?php
 
-namespace NeuronAI\Workflow;
+namespace NeuronAI\Workflow\Persistence;
+
+use NeuronAI\Workflow\WorkflowInterrupt;
 
 interface PersistenceInterface
 {
