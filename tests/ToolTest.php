@@ -363,4 +363,57 @@ class ToolTest extends TestCase
             $tool->getResult()
         );
     }
+
+    public function test_tool_named_parameters()
+    {
+        $callable = function (int $prop_2, string $prop_1, bool $prop_3): array {
+            return [
+                'prop_1' => $prop_1,
+                'prop_2' => $prop_2,
+                'prop_3' => $prop_3,
+            ];
+        };
+
+        $tool = Tool::make(
+            'test_tool',
+            "description"
+        )->addProperty(
+            new ToolProperty(
+                name: 'prop_3',
+                type: PropertyType::BOOLEAN,
+                description: "description prop_1",
+                required: false,
+            )
+        )->addProperty(
+            new ToolProperty(
+                name: 'prop_1',
+                type: PropertyType::STRING,
+                description: "description prop_1",
+                required: true,
+            )
+        )->addProperty(
+            new ToolProperty(
+                name: 'prop_2',
+                type: PropertyType::INTEGER,
+                description: "description prop_2",
+                required: true,
+            )
+        )->setCallable($callable);
+
+
+        $input = [
+            'prop_1' => 'a',
+            'prop_3' => false,
+            'prop_2' => 3,
+        ];
+
+        $tool->setInputs($input);
+
+        $tool->execute();
+
+        $this->assertEquals(
+            '{"prop_1":"a","prop_2":3,"prop_3":false}',
+            $tool->getResult()
+        );
+    }
 }
