@@ -55,7 +55,9 @@ class ElasticsearchVectorStore implements VectorStoreInterface
         $this->client->indices()->create([
             'index' => $this->index,
             'body' => [
-                'mappings' => [compact('properties')],
+                'mappings' => [
+                    'properties' => $properties,
+                ],
             ],
         ]);
     }
