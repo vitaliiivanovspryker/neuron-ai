@@ -41,7 +41,7 @@ class NeuronAITest extends TestCase
         $system = new SystemPrompt(["Agent"]);
         $this->assertEquals("# IDENTITY AND PURPOSE".PHP_EOL."Agent", $system);
 
-        $agent = new class extends Agent {
+        $agent = new class () extends Agent {
             public function instructions(): string
             {
                 return 'Hello';
