@@ -81,13 +81,13 @@ class WorkflowHumanInTheLoopTest extends TestCase
                 new Edge(
                     MultipleInterruptNode::class,
                     MultipleInterruptNode::class,
-                    fn(WorkflowState $state) => $state->get('interrupt_counter', 0) < 2
+                    fn (WorkflowState $state) => $state->get('interrupt_counter', 0) < 2
                 ),
                 // Move forward when the interrupt_counter is >= 2
                 new Edge(
                     MultipleInterruptNode::class,
                     AfterInterruptNode::class,
-                    fn(WorkflowState $state) => $state->get('interrupt_counter', 0) >= 2
+                    fn (WorkflowState $state) => $state->get('interrupt_counter', 0) >= 2
                 )
             ])
             ->setStart(MultipleInterruptNode::class)
@@ -252,10 +252,11 @@ class WorkflowHumanInTheLoopTest extends TestCase
 
     public function test_custom_persistence_layer()
     {
-        $customPersistence = new class implements PersistenceInterface {
+        $customPersistence = new class () implements PersistenceInterface {
             private array $data = [];
 
-            public function save(string $workflowId, WorkflowInterrupt $interrupt): void {
+            public function save(string $workflowId, WorkflowInterrupt $interrupt): void
+            {
                 $this->data[$workflowId] = [
                     'node' => $interrupt->getCurrentNode(),
                     'data' => $interrupt->getData(),
@@ -263,7 +264,8 @@ class WorkflowHumanInTheLoopTest extends TestCase
                 ];
             }
 
-            public function load(string $workflowId): ?WorkflowInterrupt {
+            public function load(string $workflowId): ?WorkflowInterrupt
+            {
                 if (!isset($this->data[$workflowId])) {
                     return null;
                 }
@@ -276,7 +278,8 @@ class WorkflowHumanInTheLoopTest extends TestCase
                 );
             }
 
-            public function delete(string $workflowId): void {
+            public function delete(string $workflowId): void
+            {
                 unset($this->data[$workflowId]);
             }
         };
