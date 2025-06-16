@@ -164,7 +164,7 @@ class Tool implements ToolInterface
             $inputValue = $inputs[$propertyName];
 
             // If there is an object property with a class definition,
-            // deserialize the tool input into an instance of that class instance
+            // deserialize the tool input into an instance of that class
             if ($property instanceof ObjectProperty && $property->getClass()) {
                 $carry[$propertyName] = Deserializer::fromJson(json_encode($inputValue), $property->getClass());
                 return $carry;
