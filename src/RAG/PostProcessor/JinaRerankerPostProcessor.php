@@ -41,7 +41,7 @@ class JinaRerankerPostProcessor implements PostProcessorInterface
                 'model' => $this->model,
                 'query' => $question->getContent(),
                 'top_n' => $this->topN,
-                'documents' => \array_map(fn (Document $document) => ['text' => $document->content], $documents),
+                'documents' => \array_map(fn (Document $document) => ['text' => $document->getContent()], $documents),
                 'return_documents' => false,
             ],
         ])->getBody()->getContents();
@@ -50,7 +50,7 @@ class JinaRerankerPostProcessor implements PostProcessorInterface
 
         return \array_map(function ($item) use ($documents) {
             $document = $documents[$item['index']];
-            $document->score = $item['relevance_score'];
+            $document->setScore($item['relevance_score']);
             return $document;
         }, $result['results']);
     }

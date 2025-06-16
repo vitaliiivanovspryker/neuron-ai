@@ -51,15 +51,30 @@ class TypesenseTest extends TestCase
 
     public function test_add_document_and_search(): void
     {
-        $this->expectNotToPerformAssertions();
         $store = new TypesenseVectorStore($this->client, 'test', $this->vectorDimension);
 
         $document = new Document('Hello World!');
         $document->embedding = $this->embedding;
-        $document->hash = \hash('sha256', 'Hello World!' . time()); // added time() to avoid exception 'A document with id x already exists'
 
         $store->addDocument($document);
 
         $results = $store->similaritySearch($this->embedding);
+
+        $this->assertEquals($document->getContent(), $results[0]->getContent());
+    }
+
+    public function test_custom_document_model()
+    {
+        $store = new TypesenseVectorStore($this->client, 'test', $this->vectorDimension);
+
+        $document = new Document('Hello!');
+        $document->addMetadata('customProperty', 'customValue');
+        $document->embedding = $this->embedding;
+
+        $store->addDocument($document);
+
+        $results = $store->similaritySearch($this->embedding);
+
+        $this->assertEquals($document->metadata['customProperty'], $results[0]->metadata['customProperty']);
     }
 }
