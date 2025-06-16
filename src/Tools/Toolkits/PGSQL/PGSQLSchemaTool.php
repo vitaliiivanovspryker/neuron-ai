@@ -24,12 +24,12 @@ class PGSQLSchemaTool extends Tool
 
     public function __invoke()
     {
-        return [
+        return $this->formatForLLM([
             'tables' => $this->getTables(),
             'relationships' => $this->getRelationships(),
             'indexes' => $this->getIndexes(),
             'constraints' => $this->getConstraints()
-        ];
+        ]);
     }
 
     private function getTables(): array
