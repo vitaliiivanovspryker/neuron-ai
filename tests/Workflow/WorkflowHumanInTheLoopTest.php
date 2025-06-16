@@ -13,7 +13,7 @@ use NeuronAI\Workflow\WorkflowInterrupt;
 use NeuronAI\Workflow\WorkflowState;
 use PHPUnit\Framework\TestCase;
 
-class WorkflowInterruptTest extends TestCase
+class WorkflowHumanInTheLoopTest extends TestCase
 {
     public function test_basic_interrupt_and_resume()
     {
