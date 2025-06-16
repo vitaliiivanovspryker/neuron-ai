@@ -48,7 +48,7 @@ trait HandleRagEvents
         $id = \md5($data->instructions);
 
         $this->segments['instructions-'.$id] = $this->inspector
-            ->startSegment(self::SEGMENT_TYPE.'-instructions')
+            ->startSegment(self::SEGMENT_TYPE.'-instructions', 'withInstructions()')
             ->setColor(self::SEGMENT_COLOR);
     }
 

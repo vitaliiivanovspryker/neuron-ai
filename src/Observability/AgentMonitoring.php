@@ -7,6 +7,7 @@ use Inspector\Inspector;
 use Inspector\Models\Segment;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Observability\Events\AgentError;
+use NeuronAI\RAG\RAG;
 use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\Toolkits\ToolkitInterface;
 use NeuronAI\Tools\ToolPropertyInterface;
@@ -110,7 +111,7 @@ class AgentMonitoring implements \SplObserver
 
         if ($this->inspector->needTransaction()) {
             $this->inspector->startTransaction($class.'::'.$method)->setType('ai-agent');
-        } elseif ($this->inspector->canAddSegments()) {
+        } elseif ($this->inspector->canAddSegments() && !$agent instanceof RAG) { // do not add "chat" segments on RAG
             $key = $class.$method;
 
             if (\array_key_exists($key, $this->segments)) {

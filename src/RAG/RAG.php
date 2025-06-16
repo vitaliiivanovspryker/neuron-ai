@@ -85,7 +85,7 @@ class RAG extends Agent
         $newInstructions .= '</EXTRA-CONTEXT>';
 
         $this->withInstructions(\trim($newInstructions));
-        $this->notify('rag-instructions-changed', new InstructionsChanged($originalInstructions, $this->instructions()));
+        $this->notify('rag-instructions-changed', new InstructionsChanged($originalInstructions, $this->resolveInstructions()));
 
         return $this;
     }
