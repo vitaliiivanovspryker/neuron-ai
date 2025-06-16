@@ -32,7 +32,7 @@ class MemoryVectorStoreTest extends TestCase
         $store = new MemoryVectorStore();
         $store->addDocument($document);
 
-        $results = $store->similaritySearch($this->embedding, Document::class);
+        $results = $store->similaritySearch($this->embedding);
     }
 
     public function test_similarity_search_with_scores()
@@ -48,7 +48,7 @@ class MemoryVectorStoreTest extends TestCase
 
         $vectorStore->addDocuments([$doc1, $doc2, $doc3]);
 
-        $results = $vectorStore->similaritySearch([1, 0], Document::class);
+        $results = $vectorStore->similaritySearch([1, 0]);
 
         $this->assertCount(3, $results);
         $this->assertGreaterThanOrEqual($results[1]->getScore(), $results[0]->getScore());
@@ -57,17 +57,16 @@ class MemoryVectorStoreTest extends TestCase
 
     public function test_custom_document_model()
     {
-        $document = new class () extends Document {
-            public string $customProperty = 'customValue';
-        };
+        $document = new Document('Hello World!');
+        $document->addMetadata('customProperty', 'customValue');
         $document->embedding = [1, 0];
 
         $vectorStore = new MemoryVectorStore();
         $vectorStore->addDocuments([$document]);
 
-        $results = $vectorStore->similaritySearch([1, 0], $document::class);
+        $results = $vectorStore->similaritySearch([1, 0]);
 
         $this->assertCount(1, $results);
-        $this->assertEquals($document->customProperty, $results[0]->customProperty);
+        $this->assertEquals($document->metadata['customProperty'], $results[0]->metadata['customProperty']);
     }
 }

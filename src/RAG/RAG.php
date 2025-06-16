@@ -101,7 +101,7 @@ class RAG extends Agent
     /**
      * Retrieve relevant documents from the vector store.
      *
-     * @return DocumentModelInterface[]
+     * @return Document[]
      */
     public function retrieveDocuments(Message $question): array
     {
@@ -146,7 +146,7 @@ class RAG extends Agent
     /**
      * Feed the vector store with documents.
      *
-     * @param DocumentModelInterface[] $documents
+     * @param Document[] $documents
      * @return void
      */
     public function addDocuments(array $documents): void

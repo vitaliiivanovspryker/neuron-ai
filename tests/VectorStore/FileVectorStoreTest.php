@@ -11,6 +11,7 @@ class FileVectorStoreTest extends TestCase
     public function test_store_documents()
     {
         $document = new Document('Hello!');
+        $document->addMetadata('customProperty', 'customValue');
         $document->embedding = [1, 2, 3];
         $document->id = 1;
         $document->sourceName = 'test';
@@ -33,6 +34,7 @@ class FileVectorStoreTest extends TestCase
         $this->assertEquals($document->embedding, $results[0]->getEmbedding());
         $this->assertEquals($document->sourceType, $results[0]->getSourceType());
         $this->assertEquals($document->sourceName, $results[0]->getSourceName());
+        $this->assertEquals($document->metadata, $results[0]->metadata);
 
         unlink(__DIR__.'/neuron.store');
     }

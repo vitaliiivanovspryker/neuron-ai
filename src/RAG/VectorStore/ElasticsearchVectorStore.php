@@ -128,7 +128,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
      * {@inheritDoc}
      *
      * num_candidates are used to tune approximate kNN for speed or accuracy (see : https://www.elastic.co/guide/en/elasticsearch/reference/current/knn-search.html#tune-approximate-knn-for-speed-accuracy)
-     * @return array
+     * @return Document[]
      * @throws ClientResponseException
      * @throws ServerResponseException
      */

@@ -3,7 +3,6 @@
 namespace NeuronAI\RAG\DataLoader;
 
 use NeuronAI\RAG\Document;
-use NeuronAI\RAG\DocumentModelInterface;
 
 class DocumentSplitter
 {
@@ -40,8 +39,8 @@ class DocumentSplitter
     }
 
     /**
-     * @param  DocumentModelInterface[]  $documents
-     * @return DocumentModelInterface[]
+     * @param  Document[]  $documents
+     * @return Document[]
      */
     public static function splitDocuments(array $documents, int $maxLength = 1000, string $separator = '.', int $wordOverlap = 0): array
     {

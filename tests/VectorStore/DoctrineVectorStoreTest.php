@@ -94,7 +94,7 @@ class DoctrineVectorStoreTest extends TestCase
         $vectorStore = new DoctrineVectorStore($this->entityManager, EntityVectorStub::class);
         $vectorStore->addDocuments($documents);
 
-        $entitiesVectorStub = $vectorStore->similaritySearch($this->embeddingToSearch, Document::class);
+        $entitiesVectorStub = $vectorStore->similaritySearch($this->embeddingToSearch);
 
         $this->assertCount(2, $entitiesVectorStub);
         foreach ($entitiesVectorStub as $index => $entityVectorStub) {
