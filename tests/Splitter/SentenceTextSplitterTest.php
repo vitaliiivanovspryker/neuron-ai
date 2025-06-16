@@ -24,9 +24,9 @@ class SentenceTextSplitterTest extends TestCase
 
         $this->assertGreaterThan(1, count($result));
 
-        // Verifica che l'overlap sia presente
-        $firstChunkWords = explode(' ', $result[0]->content);
-        $secondChunkWords = explode(' ', $result[1]->content);
+        // Verify that the overlap is present
+        $firstChunkWords = explode(' ', $result[0]->getContent());
+        $secondChunkWords = explode(' ', $result[1]->getContent());
 
         $this->assertEquals(
             array_slice($firstChunkWords, -2),
@@ -46,8 +46,8 @@ class SentenceTextSplitterTest extends TestCase
         $result = $splitter->splitDocument($document);
 
         $this->assertCount(1, $result);
-        $this->assertEquals('test', $result[0]->sourceType);
-        $this->assertEquals('test.txt', $result[0]->sourceName);
+        $this->assertEquals('test', $result[0]->getSourceType());
+        $this->assertEquals('test.txt', $result[0]->getSourceName());
     }
 
     public function test_invalid_overlap_configuration(): void
@@ -72,7 +72,7 @@ class SentenceTextSplitterTest extends TestCase
 
         // Verify no chunk exceeds the word limit
         foreach ($result as $chunk) {
-            $words = preg_split('/\s+/u', trim($chunk->content));
+            $words = preg_split('/\s+/u', trim($chunk->getContent()));
             $this->assertLessThanOrEqual(10, count($words), 'Chunk exceeds word limit');
         }
 
@@ -83,7 +83,7 @@ class SentenceTextSplitterTest extends TestCase
             'This is the third sentence.'
         ];
 
-        $allContent = implode(' ', array_map(fn ($c) => $c->content, $result));
+        $allContent = implode(' ', array_map(fn ($c) => $c->getContent(), $result));
 
         foreach ($sentences as $sentence) {
             $this->assertStringContainsString($sentence, $allContent, "The sentence '$sentence' is not present");
@@ -92,8 +92,8 @@ class SentenceTextSplitterTest extends TestCase
         }
 
         // Verify there is no overlap between chunks
-        $firstChunkWords = preg_split('/\s+/u', trim($result[0]->content));
-        $secondChunkWords = preg_split('/\s+/u', trim($result[1]->content));
+        $firstChunkWords = preg_split('/\s+/u', trim($result[0]->getContent()));
+        $secondChunkWords = preg_split('/\s+/u', trim($result[1]->getContent()));
 
         // Last words of first chunk should not be the first words of second chunk
         $lastWordsOfFirst = array_slice($firstChunkWords, -2);
@@ -111,7 +111,7 @@ class SentenceTextSplitterTest extends TestCase
         $result = $splitter->splitDocument($document);
 
         $this->assertCount(1, $result);
-        $this->assertStringContainsString('First sentence. Second sentence. Third sentence.', $result[0]->content);
+        $this->assertStringContainsString('First sentence. Second sentence. Third sentence.', $result[0]->getContent());
     }
 
     public function test_chunking_with_overlap(): void
@@ -125,8 +125,8 @@ class SentenceTextSplitterTest extends TestCase
 
         $this->assertGreaterThan(1, count($result));
 
-        $firstChunkWords = preg_split('/\s+/u', trim($result[0]->content));
-        $secondChunkWords = preg_split('/\s+/u', trim($result[1]->content));
+        $firstChunkWords = preg_split('/\s+/u', trim($result[0]->getContent()));
+        $secondChunkWords = preg_split('/\s+/u', trim($result[1]->getContent()));
 
         $this->assertEquals(
             array_slice($firstChunkWords, -2),
@@ -146,7 +146,7 @@ class SentenceTextSplitterTest extends TestCase
         $this->assertGreaterThan(1, count($result));
 
         foreach ($result as $chunk) {
-            $words = preg_split('/\s+/u', trim($chunk->content));
+            $words = preg_split('/\s+/u', trim($chunk->getContent()));
             $this->assertLessThanOrEqual(5, count($words));
         }
     }
@@ -160,11 +160,11 @@ class SentenceTextSplitterTest extends TestCase
 
         $result = $splitter->splitDocument($document);
 
-        $this->assertStringContainsString('First paragraph.', $result[0]->content);
+        $this->assertStringContainsString('First paragraph.', $result[0]->getContent());
 
         $found = false;
         foreach ($result as $chunk) {
-            if (str_contains($chunk->content, 'Second paragraph')) {
+            if (str_contains($chunk->getContent(), 'Second paragraph')) {
                 $found = true;
             }
         }
@@ -173,7 +173,7 @@ class SentenceTextSplitterTest extends TestCase
 
         $found = false;
         foreach ($result as $chunk) {
-            if (str_contains($chunk->content, 'Third paragraph.')) {
+            if (str_contains($chunk->getContent(), 'Third paragraph.')) {
                 $found = true;
             }
         }
@@ -191,11 +191,11 @@ class SentenceTextSplitterTest extends TestCase
         $result = $splitter->splitDocument($document);
 
         foreach ($result as $chunk) {
-            $words = preg_split('/\s+/u', trim($chunk->content));
+            $words = preg_split('/\s+/u', trim($chunk->getContent()));
             $this->assertLessThanOrEqual(6, count($words));
         }
 
-        $allContent = implode(' ', array_map(fn ($c) => $c->content, $result));
+        $allContent = implode(' ', array_map(fn ($c) => $c->getContent(), $result));
 
         $this->assertStringContainsString('Short.', $allContent);
         $this->assertStringContainsString('End.', $allContent);
@@ -223,6 +223,6 @@ class SentenceTextSplitterTest extends TestCase
         $result = $splitter->splitDocument($document);
 
         $this->assertCount(1, $result);
-        $this->assertEquals('Only one sentence.', trim($result[0]->content));
+        $this->assertEquals('Only one sentence.', trim($result[0]->getContent()));
     }
 }

@@ -37,7 +37,7 @@ class SentenceTextSplitter implements SplitterInterface
     public function splitDocument(Document $document): array
     {
         // Split by paragraphs (2 or more newlines)
-        $paragraphs = preg_split('/\n{2,}/', $document->content);
+        $paragraphs = preg_split('/\n{2,}/', $document->getContent());
         $chunks = [];
         $currentWords = [];
 
@@ -82,8 +82,8 @@ class SentenceTextSplitter implements SplitterInterface
         $split = [];
         foreach ($chunks as $chunk) {
             $newDocument = new Document($chunk);
-            $newDocument->sourceType = $document->sourceType;
-            $newDocument->sourceName = $document->sourceName;
+            $newDocument->sourceType = $document->getSourceType();
+            $newDocument->sourceName = $document->getSourceName();
             $split[] = $newDocument;
         }
 
