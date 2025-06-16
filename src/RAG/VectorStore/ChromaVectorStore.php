@@ -58,13 +58,19 @@ class ChromaVectorStore implements VectorStoreInterface
         $result = [];
         for ($i = 0; $i < $size; $i++) {
             $document = new Document();
-            $document->id = $response['ids'][$i] ?? null;
+            $document->id = $response['ids'][$i] ?? \uniqid();
             $document->embedding = $response['embeddings'][$i];
             $document->content = $response['documents'][$i];
             $document->sourceType = $response['metadatas'][$i]['sourceType'] ?? null;
             $document->sourceName = $response['metadatas'][$i]['sourceName'] ?? null;
-            $document->chunkNumber = $response['metadatas'][$i]['chunkNumber'] ?? null;
             $document->score = $response['distances'][$i];
+
+            foreach ($response['metadatas'][$i] as $name => $value) {
+                if (!\in_array($name, ['content', 'sourceType', 'sourceName', 'score', 'embedding', 'id'])) {
+                    $document->addMetadata($name, $value);
+                }
+            }
+
             $result[] = $document;
         }
 
@@ -72,7 +78,7 @@ class ChromaVectorStore implements VectorStoreInterface
     }
 
     /**
-     * @param array<Document> $documents
+     * @param Document[] $documents
      * @return array
      */
     protected function mapDocuments(array $documents): array
@@ -85,13 +91,13 @@ class ChromaVectorStore implements VectorStoreInterface
 
         ];
         foreach ($documents as $document) {
-            $payload['ids'][] = $document->id;
-            $payload['documents'][] = $document->content;
-            $payload['embeddings'][] = $document->embedding;
+            $payload['ids'][] = $document->getId();
+            $payload['documents'][] = $document->getContent();
+            $payload['embeddings'][] = $document->getEmbedding();
             $payload['metadatas'][] = [
-                'sourceType' => $document->sourceType,
-                'sourceName' => $document->sourceName,
-                'chunkNumber' => $document->chunkNumber,
+                'sourceType' => $document->getSourceType(),
+                'sourceName' => $document->getSourceName(),
+                ...$document->metadata,
             ];
         }
 

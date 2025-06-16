@@ -48,12 +48,13 @@ class PineconeVectorStore implements VectorStoreInterface
             RequestOptions::JSON => [
                 'namespace' => $this->namespace,
                 'vectors' => \array_map(fn (Document $document) => [
-                    'id' => $document->id ?? \uniqid(),
-                    'values' => $document->embedding,
+                    'id' => $document->getId(),
+                    'values' => $document->getEmbedding(),
                     'metadata' => [
-                        'content' => $document->content,
-                        'sourceType' => $document->sourceType,
-                        'sourceName' => $document->sourceName,
+                        'content' => $document->getContent(),
+                        'sourceType' => $document->getSourceType(),
+                        'sourceName' => $document->getSourceName(),
+                        ...$document->metadata,
                     ],
                 ], $documents)
             ]
@@ -68,7 +69,7 @@ class PineconeVectorStore implements VectorStoreInterface
                 'includeMetadata' => true,
                 'vector' => $embedding,
                 'topK' => $this->topK,
-                'filters' => $this->filters,
+                'filters' => $this->filters, // Hybrid search
             ]
         ])->getBody()->getContents();
 
@@ -82,6 +83,13 @@ class PineconeVectorStore implements VectorStoreInterface
             $document->sourceType = $item['metadata']['sourceType'];
             $document->sourceName = $item['metadata']['sourceName'];
             $document->score = $item['score'];
+
+            foreach ($item['metadata'] as $name => $value) {
+                if (!\in_array($name, ['content', 'sourceType', 'sourceName', 'score', 'embedding', 'id'])) {
+                    $document->addMetadata($name, $value);
+                }
+            }
+
             return $document;
         }, $result['matches']);
     }
