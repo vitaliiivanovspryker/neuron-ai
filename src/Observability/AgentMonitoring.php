@@ -86,7 +86,7 @@ class AgentMonitoring implements \SplObserver
         }
     }
 
-    public function reportError(\NeuronAI\AgentInterface $agent, string $event, AgentError $data)
+    public function reportError(\NeuronAI\Agent $agent, string $event, AgentError $data)
     {
         if ($this->catch) {
             $error = $this->inspector->reportException($data->exception, !$data->unhandled);
@@ -100,7 +100,7 @@ class AgentMonitoring implements \SplObserver
         }
     }
 
-    public function start(\NeuronAI\AgentInterface $agent, string $event, $data = null)
+    public function start(\NeuronAI\Agent $agent, string $event, $data = null)
     {
         if (!$this->inspector->isRecording()) {
             return;
@@ -123,7 +123,7 @@ class AgentMonitoring implements \SplObserver
         }
     }
 
-    public function stop(\NeuronAI\AgentInterface $agent, string $event, $data = null)
+    public function stop(\NeuronAI\Agent $agent, string $event, $data = null)
     {
         $method = $this->getPrefix($event);
         $class = $agent::class;
@@ -149,7 +149,7 @@ class AgentMonitoring implements \SplObserver
         return explode('-', $event)[0];
     }
 
-    protected function getContext(\NeuronAI\AgentInterface $agent): array
+    protected function getContext(\NeuronAI\Agent $agent): array
     {
         $mapTool = fn (ToolInterface $tool) => [
             $tool->getName() => [
