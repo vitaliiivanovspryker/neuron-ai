@@ -35,7 +35,7 @@ class WorkflowHumanInTheLoopTest extends TestCase
             $workflow->run();
             $this->fail('Expected WorkflowInterrupt exception was not thrown');
         } catch (WorkflowInterrupt $interrupt) {
-            $this->assertEquals('InterruptNode', $interrupt->getCurrentNode());
+            $this->assertEquals(InterruptNode::class, $interrupt->getCurrentNode());
             $this->assertEquals([
                 'question' => 'Should we continue?',
                 'current_value' => 42
@@ -195,13 +195,13 @@ class WorkflowHumanInTheLoopTest extends TestCase
             // Verify interrupt was saved
             $savedInterrupt = $persistence->load('test_workflow');
             $this->assertNotNull($savedInterrupt);
-            $this->assertEquals('InterruptNode', $savedInterrupt->getCurrentNode());
+            $this->assertEquals(InterruptNode::class, $savedInterrupt->getCurrentNode());
         }
 
         $workflow->resume(['status' => 'approved']);
 
         $savedInterrupt = $persistence->load('test_workflow');
-        $this->assertEquals('InterruptNode', $savedInterrupt->getCurrentNode());
+        $this->assertEquals(InterruptNode::class, $savedInterrupt->getCurrentNode());
     }
 
     public function test_workflow_interrupt_exception()
@@ -294,7 +294,7 @@ class WorkflowHumanInTheLoopTest extends TestCase
         try {
             $workflow->run();
         } catch (WorkflowInterrupt $interrupt) {
-            $this->assertEquals('InterruptNode', $interrupt->getCurrentNode());
+            $this->assertEquals(InterruptNode::class, $interrupt->getCurrentNode());
         }
 
         $result = $workflow->resume(['custom' => 'data']);

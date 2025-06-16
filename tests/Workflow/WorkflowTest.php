@@ -132,7 +132,7 @@ class WorkflowTest extends TestCase
             ->setEnd(FinishNode::class);
 
         $this->expectException(WorkflowException::class);
-        $this->expectExceptionMessage("Start node 'StartNode' does not exist");
+        $this->expectExceptionMessage("Start node ".StartNode::class." does not exist");
 
         $workflow->run();
     }
@@ -146,7 +146,7 @@ class WorkflowTest extends TestCase
             ->setEnd(FinishNode::class);
 
         $this->expectException(WorkflowException::class);
-        $this->expectExceptionMessage("End node 'FinishNode' does not exist");
+        $this->expectExceptionMessage("End node ".FinishNode::class." does not exist");
 
         $workflow->run();
     }
@@ -160,7 +160,7 @@ class WorkflowTest extends TestCase
             ->setEnd(FinishNode::class);
 
         $this->expectException(WorkflowException::class);
-        $this->expectExceptionMessage("Edge from node 'StartNode' does not exist");
+        $this->expectExceptionMessage("Edge from node ".StartNode::class." does not exist");
 
         $workflow->run();
     }
@@ -174,7 +174,7 @@ class WorkflowTest extends TestCase
             ->setEnd(StartNode::class);
 
         $this->expectException(WorkflowException::class);
-        $this->expectExceptionMessage("Edge to node 'FinishNode' does not exist");
+        $this->expectExceptionMessage("Edge to node ".FinishNode::class." does not exist");
 
         $workflow->run();
     }
@@ -193,7 +193,7 @@ class WorkflowTest extends TestCase
             ->setEnd(FinishNode::class);
 
         $this->expectException(WorkflowException::class);
-        $this->expectExceptionMessage("No valid edge found from node 'StartNode'");
+        $this->expectExceptionMessage("No valid edge found from node ".StartNode::class);
 
         $workflow->run();
     }
@@ -292,7 +292,7 @@ class WorkflowTest extends TestCase
         $this->assertSame($edge, $edges[0]);
 
         $this->assertCount(2, $nodes);
-        $this->assertSame($startNode, $nodes['StartNode']);
-        $this->assertSame($endNode, $nodes['FinishNode']);
+        $this->assertSame($startNode, $nodes[StartNode::class]);
+        $this->assertSame($endNode, $nodes[FinishNode::class]);
     }
 }

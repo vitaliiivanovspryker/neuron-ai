@@ -8,7 +8,6 @@ use NeuronAI\Workflow\Exporter\ExporterInterface;
 use NeuronAI\Workflow\Exporter\MermaidExporter;
 use NeuronAI\Workflow\Persistence\InMemoryPersistence;
 use NeuronAI\Workflow\Persistence\PersistenceInterface;
-use ReflectionClass;
 use SplSubject;
 
 class Workflow implements SplSubject
@@ -44,8 +43,7 @@ class Workflow implements SplSubject
 
     public function addNode(NodeInterface $node): self
     {
-        $name = $this->getNodeName($node);
-        $this->nodes[$name] = $node;
+        $this->nodes[$node::class] = $node;
         return $this;
     }
 
@@ -58,12 +56,6 @@ class Workflow implements SplSubject
             $this->addNode($node);
         }
         return $this;
-    }
-
-    private function getNodeName(NodeInterface $node): string
-    {
-        $reflection = new ReflectionClass($node);
-        return $reflection->getShortName();
     }
 
     public function addEdge(Edge $edge): self
@@ -85,20 +77,14 @@ class Workflow implements SplSubject
 
     public function setStart(string $nodeClass): self
     {
-        $this->startNode = $this->getShortClassName($nodeClass);
+        $this->startNode = $nodeClass;
         return $this;
     }
 
     public function setEnd(string $nodeClass): self
     {
-        $this->endNode = $this->getShortClassName($nodeClass);
+        $this->endNode = $nodeClass;
         return $this;
-    }
-
-    private function getShortClassName(string $fullyQualifiedClass): string
-    {
-        $reflection = new ReflectionClass($fullyQualifiedClass);
-        return $reflection->getShortName();
     }
 
     public function validate(): void
@@ -112,20 +98,20 @@ class Workflow implements SplSubject
         }
 
         if (!isset($this->nodes[$this->startNode])) {
-            throw new WorkflowException("Start node '{$this->startNode}' does not exist");
+            throw new WorkflowException("Start node {$this->startNode} does not exist");
         }
 
         if (!isset($this->nodes[$this->endNode])) {
-            throw new WorkflowException("End node '{$this->endNode}' does not exist");
+            throw new WorkflowException("End node {$this->endNode} does not exist");
         }
 
         foreach ($this->edges as $edge) {
             if (!isset($this->nodes[$edge->getFrom()])) {
-                throw new WorkflowException("Edge from node '{$edge->getFrom()}' does not exist");
+                throw new WorkflowException("Edge from node {$edge->getFrom()} does not exist");
             }
 
             if (!isset($this->nodes[$edge->getTo()])) {
-                throw new WorkflowException("Edge to node '{$edge->getTo()}' does not exist");
+                throw new WorkflowException("Edge to node {$edge->getTo()} does not exist");
             }
         }
     }
@@ -162,7 +148,7 @@ class Workflow implements SplSubject
                 $nextNode = $this->findNextNode($currentNode, $state);
 
                 if ($nextNode === null) {
-                    throw new WorkflowException("No valid edge found from node '{$currentNode}'");
+                    throw new WorkflowException("No valid edge found from node {$currentNode}");
                 }
 
                 $currentNode = $nextNode;
