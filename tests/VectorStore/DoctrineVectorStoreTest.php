@@ -11,7 +11,7 @@ use Doctrine\ORM\Tools\SchemaTool;
 use NeuronAI\RAG\VectorStore\Doctrine\DoctrineVectorStore;
 use NeuronAI\RAG\VectorStore\Doctrine\VectorType;
 use NeuronAI\Tests\Traits\CheckOpenPort;
-use NeuronAI\Tests\stubs\EntityVectorStub;
+use NeuronAI\Tests\Stubs\EntityVectorStub;
 use PHPUnit\Framework\TestCase;
 
 class DoctrineVectorStoreTest extends TestCase
@@ -64,7 +64,7 @@ class DoctrineVectorStoreTest extends TestCase
         $this->schemaTool = new SchemaTool($this->entityManager);
         $this->metadata = $this->entityManager->getClassMetadata(EntityVectorStub::class);
         $this->schemaTool->createSchema([$this->metadata]);
-        $this->embeddingToSearch = json_decode(file_get_contents(__DIR__ . '/../stubs/hello-world.embeddings'), true);
+        $this->embeddingToSearch = json_decode(file_get_contents(__DIR__ . '/../Stubs/hello-world.embeddings'), true);
     }
 
     protected function bootstrapDatabase()

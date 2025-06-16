@@ -19,7 +19,7 @@ class DataLoaderTest extends TestCase
 
     public function test_split_long_text()
     {
-        $doc = new Document(file_get_contents(__DIR__.'/stubs/long-text.txt'));
+        $doc = new Document(file_get_contents(__DIR__ . '/Stubs/long-text.txt'));
 
         $documents = DocumentSplitter::splitDocument($doc);
         $this->assertCount(7, $documents);

@@ -27,7 +27,7 @@ class ElasticsearchTest extends TestCase
         $this->client = ClientBuilder::create()->build();
 
         // embedding "Hello World!"
-        $this->embedding = json_decode(file_get_contents(__DIR__ . '/../stubs/hello-world.embeddings'), true);
+        $this->embedding = json_decode(file_get_contents(__DIR__ . '/../Stubs/hello-world.embeddings'), true);
     }
 
     public function test_elasticsearch_instance()

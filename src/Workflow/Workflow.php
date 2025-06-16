@@ -2,6 +2,9 @@
 
 namespace NeuronAI\Workflow;
 
+use NeuronAI\Exceptions\WorkflowException;
+use ReflectionClass;
+
 class Workflow
 {
     private array $nodes = [];
@@ -22,15 +25,37 @@ class Workflow
         return $this;
     }
 
+    /**
+     * @param NodeInterface[] $nodes
+     */
+    public function addNodes(array $nodes): Workflow
+    {
+        foreach ($nodes as $node) {
+            $this->addNode($node);
+        }
+        return $this;
+    }
+
     private function getNodeName(NodeInterface $node): string
     {
-        $reflection = new \ReflectionClass($node);
+        $reflection = new ReflectionClass($node);
         return $reflection->getShortName();
     }
 
     public function addEdge(Edge $edge): self
     {
         $this->edges[] = $edge;
+        return $this;
+    }
+
+    /**
+     * @param Edge[] $edges
+     */
+    public function addEdges(array $edges): Workflow
+    {
+        foreach ($edges as $edge) {
+            $this->addEdge($edge);
+        }
         return $this;
     }
 
@@ -48,35 +73,35 @@ class Workflow
 
     private function getShortClassName(string $fullyQualifiedClass): string
     {
-        $reflection = new \ReflectionClass($fullyQualifiedClass);
+        $reflection = new ReflectionClass($fullyQualifiedClass);
         return $reflection->getShortName();
     }
 
     public function validate(): void
     {
         if ($this->startNode === null) {
-            throw new \InvalidArgumentException('Start node must be defined');
+            throw new WorkflowException('Start node must be defined');
         }
 
         if ($this->endNode === null) {
-            throw new \InvalidArgumentException('End node must be defined');
+            throw new WorkflowException('End node must be defined');
         }
 
         if (!isset($this->nodes[$this->startNode])) {
-            throw new \InvalidArgumentException("Start node '{$this->startNode}' does not exist");
+            throw new WorkflowException("Start node '{$this->startNode}' does not exist");
         }
 
         if (!isset($this->nodes[$this->endNode])) {
-            throw new \InvalidArgumentException("End node '{$this->endNode}' does not exist");
+            throw new WorkflowException("End node '{$this->endNode}' does not exist");
         }
 
         foreach ($this->edges as $edge) {
             if (!isset($this->nodes[$edge->getFrom()])) {
-                throw new \InvalidArgumentException("Edge from node '{$edge->getFrom()}' does not exist");
+                throw new WorkflowException("Edge from node '{$edge->getFrom()}' does not exist");
             }
 
             if (!isset($this->nodes[$edge->getTo()])) {
-                throw new \InvalidArgumentException("Edge to node '{$edge->getTo()}' does not exist");
+                throw new WorkflowException("Edge to node '{$edge->getTo()}' does not exist");
             }
         }
     }
@@ -95,7 +120,7 @@ class Workflow
             $nextNode = $this->findNextNode($currentNode, $state);
 
             if ($nextNode === null) {
-                throw new \RuntimeException("No valid edge found from node '{$currentNode}'");
+                throw new WorkflowException("No valid edge found from node '{$currentNode}'");
             }
 
             $currentNode = $nextNode;
