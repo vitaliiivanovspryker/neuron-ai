@@ -19,9 +19,10 @@
 
 **[Go to the official documentation](https://neuron.inspector.dev/)**
 
-## Forum
+## Guides & Tutorials
 
-You can post questions and feedback on the [Inspector Forum](https://github.com/inspector-apm/neuron-ai/discussions).
+Check out the technical guides and tutorials archive to learn how to start creating your AI Agents with Neuron
+https://docs.neuron-ai.dev/resources/guides-and-tutorials.
 
 ## Neuron AI Examples
 
@@ -79,7 +80,7 @@ class DataAnalystAgent extends Agent
     {
         return new SystemPrompt(
             background: [
-                "You are a data analyst expert expert in creating reports from SQL databases."
+                "You are a data analyst expert in creating reports from SQL databases."
             ]
         );
     }
@@ -110,7 +111,7 @@ $response = $agent->chat(
     new UserMessage("Hi, I'm Valerio. Who are you?")
 );
 echo $response->getContent();
-// I'm a math passionate. How can I help you today?
+// I'm a data analyst. How can I help you today?
 
 
 $response = $agent->chat(
@@ -167,7 +168,7 @@ class DataAnalystAgent extends Agent
     {
         return new SystemPrompt(
             background: [
-                "You are a data analyst expert expert in creating reports from SQL databases."
+                "You are a data analyst expert in creating reports from SQL databases."
             ]
         );
     }

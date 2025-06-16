@@ -99,11 +99,9 @@ class FileDataLoader extends AbstractDataLoader
     }
 
 
-    protected function getDocument(string $content, string $entry): mixed
+    protected function getDocument(string $content, string $entry): Document
     {
         $document = new Document($content);
-        $document->id = \uniqid();
-        $document->hash = \hash('sha256', $content);
         $document->sourceType = 'files';
         $document->sourceName = $entry;
 

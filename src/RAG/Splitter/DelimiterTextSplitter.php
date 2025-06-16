@@ -18,24 +18,17 @@ class DelimiterTextSplitter implements SplitterInterface
     }
 
     /**
-     * @return array<Document>
+     * @return Document[]
      */
     public function splitDocument(Document $document): array
     {
-        $text = $document->content;
+        $text = $document->getContent();
 
         if (empty($text)) {
             return [];
         }
 
         if (\strlen($text) <= $this->maxLength) {
-            if (empty($document->hash)) {
-                $document->hash = \hash('sha256', $text);
-            }
-
-            if (empty($document->id)) {
-                $document->id = \uniqid();
-            }
             return [$document];
         }
 
@@ -44,15 +37,12 @@ class DelimiterTextSplitter implements SplitterInterface
         $chunks = $this->createChunksWithOverlap($parts);
 
         $split = [];
-        $chunkNumber = 0;
+        //$chunkNumber = 0;
         foreach ($chunks as $chunk) {
             $newDocument = new Document($chunk);
-            $newDocument->hash = \hash('sha256', $chunk);
-            $newDocument->id = \uniqid();
-            $newDocument->sourceType = $document->sourceType;
-            $newDocument->sourceName = $document->sourceName;
-            $newDocument->chunkNumber = $chunkNumber;
-            $chunkNumber++;
+            $newDocument->sourceType = $document->getSourceType();
+            $newDocument->sourceName = $document->getSourceName();
+            //$chunkNumber++;
             $split[] = $newDocument;
         }
 
@@ -60,8 +50,8 @@ class DelimiterTextSplitter implements SplitterInterface
     }
 
     /**
-     * @param  array<Document>  $documents
-     * @return array<Document>
+     * @param  Document[]  $documents
+     * @return Document[]
      */
     public function splitDocuments(array $documents): array
     {
@@ -118,6 +108,6 @@ class DelimiterTextSplitter implements SplitterInterface
      */
     private function calculateChunkLength(array $currentChunk, string $separator): int
     {
-        return \array_sum(\array_map('strlen', $currentChunk)) + \count($currentChunk) * \strlen($this->separator) - 1;
+        return \array_sum(\array_map('strlen', $currentChunk)) + \count($currentChunk) * \strlen($separator) - 1;
     }
 }

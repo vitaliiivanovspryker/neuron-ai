@@ -7,7 +7,9 @@ use Inspector\Inspector;
 use Inspector\Models\Segment;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Observability\Events\AgentError;
-use NeuronAI\Tools\Tool;
+use NeuronAI\RAG\RAG;
+use NeuronAI\Tools\ToolInterface;
+use NeuronAI\Tools\Toolkits\ToolkitInterface;
 use NeuronAI\Tools\ToolPropertyInterface;
 
 /**
@@ -60,8 +62,8 @@ class AgentMonitoring implements \SplObserver
         'structured-validated' => 'validated',
         'rag-vectorstore-searching' => 'vectorStoreSearching',
         'rag-vectorstore-result' => 'vectorStoreResult',
-        'rag-instructions-changing' => 'instructionsChanging',
-        'rag-instructions-changed' => 'instructionsChanged',
+//        'rag-instructions-changing' => 'instructionsChanging',
+//        'rag-instructions-changed' => 'instructionsChanged',
         'rag-postprocessing' => 'postProcessing',
         'rag-postprocessed' => 'postProcessed',
     ];
@@ -84,7 +86,7 @@ class AgentMonitoring implements \SplObserver
         }
     }
 
-    public function reportError(\NeuronAI\AgentInterface $agent, string $event, AgentError $data)
+    public function reportError(\NeuronAI\Agent $agent, string $event, AgentError $data)
     {
         if ($this->catch) {
             $error = $this->inspector->reportException($data->exception, !$data->unhandled);
@@ -98,7 +100,7 @@ class AgentMonitoring implements \SplObserver
         }
     }
 
-    public function start(\NeuronAI\AgentInterface $agent, string $event, $data = null)
+    public function start(\NeuronAI\Agent $agent, string $event, $data = null)
     {
         if (!$this->inspector->isRecording()) {
             return;
@@ -109,7 +111,7 @@ class AgentMonitoring implements \SplObserver
 
         if ($this->inspector->needTransaction()) {
             $this->inspector->startTransaction($class.'::'.$method)->setType('ai-agent');
-        } elseif ($this->inspector->canAddSegments()) {
+        } elseif ($this->inspector->canAddSegments() && !$agent instanceof RAG) { // do not add "chat" segments on RAG
             $key = $class.$method;
 
             if (\array_key_exists($key, $this->segments)) {
@@ -121,7 +123,7 @@ class AgentMonitoring implements \SplObserver
         }
     }
 
-    public function stop(\NeuronAI\AgentInterface $agent, string $event, $data = null)
+    public function stop(\NeuronAI\Agent $agent, string $event, $data = null)
     {
         $method = $this->getPrefix($event);
         $class = $agent::class;
@@ -147,18 +149,29 @@ class AgentMonitoring implements \SplObserver
         return explode('-', $event)[0];
     }
 
-    protected function getContext(\NeuronAI\AgentInterface $agent): array
+    protected function getContext(\NeuronAI\Agent $agent): array
     {
+        $mapTool = fn (ToolInterface $tool) => [
+            $tool->getName() => [
+                'description' => $tool->getDescription(),
+                'properties' => \array_map(
+                    fn (ToolPropertyInterface $property) => $property->jsonSerialize(),
+                    $tool->getProperties()
+                )
+            ]
+        ];
+
         return [
             'Agent' => [
-                'instructions' => $agent->instructions(),
                 'provider' => $agent->resolveProvider()::class,
+                'instructions' => $agent->resolveInstructions(),
             ],
-            'Tools' => \array_map(fn (Tool $tool) => [
-                'name' => $tool->getName(),
-                'description' => $tool->getDescription(),
-                'properties' => \array_map(fn (ToolPropertyInterface $property) => $property->jsonSerialize(), $tool->getProperties()),
-            ], $agent->getTools()),
+            'Tools' => \array_map(
+                fn (ToolInterface|ToolkitInterface $tool) => $tool instanceof ToolInterface
+                    ? $mapTool($tool)
+                    : [get_class($tool) => \array_map($mapTool, $tool->tools())],
+                $agent->getTools()
+            ),
             //'Messages' => $agent->resolveChatHistory()->getMessages(),
         ];
     }

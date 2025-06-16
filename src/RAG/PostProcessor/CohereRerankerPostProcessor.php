@@ -12,28 +12,35 @@ class CohereRerankerPostProcessor implements PostProcessorInterface
     protected Client $client;
 
     public function __construct(
-        string $key,
+        protected string $key,
         protected string $model = 'rerank-v3.5',
         protected int $topN = 3
     ) {
-        $this->client = new Client([
+    }
+
+    protected function getClient(): Client
+    {
+        if (isset($this->client)) {
+            return $this->client;
+        }
+        return $this->client = new Client([
             'base_uri' => 'https://api.cohere.com/v2/',
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer '.$key,
+                'Authorization' => 'Bearer '.$this->key,
             ],
         ]);
     }
 
     public function process(Message $question, array $documents): array
     {
-        $response = $this->client->post('rerank', [
+        $response = $this->getClient()->post('rerank', [
             RequestOptions::JSON => [
                 'model' => $this->model,
                 'query' => $question->getContent(),
                 'top_n' => $this->topN,
-                'documents' => \array_map(fn (Document $document) => $document->content, $documents),
+                'documents' => \array_map(fn (Document $document) => $document->getContent(), $documents),
             ],
         ])->getBody()->getContents();
 
@@ -41,7 +48,7 @@ class CohereRerankerPostProcessor implements PostProcessorInterface
 
         return \array_map(function ($item) use ($documents) {
             $document = $documents[$item['index']];
-            $document->score = $item['relevance_score'];
+            $document->setScore($item['relevance_score']);
             return $document;
         }, $result['results']);
     }
