@@ -26,11 +26,6 @@ class RAG extends Agent
     use ResolveEmbeddingProvider;
 
     /**
-     * The default document model.
-     */
-    protected string $documentModel = Document::class;
-
-    /**
      * @var PostprocessorInterface[]
      */
     protected array $postProcessors = [];
@@ -73,7 +68,7 @@ class RAG extends Agent
     /**
      * Set the system message based on the context.
      *
-     * @param DocumentModelInterface[] $documents
+     * @param Document[] $documents
      */
     public function withDocumentsContext(array $documents): AgentInterface
     {
@@ -114,7 +109,6 @@ class RAG extends Agent
 
         $documents = $this->resolveVectorStore()->similaritySearch(
             $this->resolveEmbeddingsProvider()->embedText($question->getContent()),
-            $this->documentModel
         );
 
         $retrievedDocs = [];
@@ -135,8 +129,8 @@ class RAG extends Agent
      * Apply a series of postprocessors to the retrieved documents.
      *
      * @param Message $question The question to process the documents for.
-     * @param DocumentModelInterface[] $documents The documents to process.
-     * @return DocumentModelInterface[] The processed documents.
+     * @param Document[] $documents The documents to process.
+     * @return Document[] The processed documents.
      */
     protected function applyPostProcessors(Message $question, array $documents): array
     {

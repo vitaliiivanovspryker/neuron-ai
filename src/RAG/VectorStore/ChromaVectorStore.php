@@ -4,7 +4,7 @@ namespace NeuronAI\RAG\VectorStore;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
-use NeuronAI\RAG\DocumentModelInterface;
+use NeuronAI\RAG\Document;
 
 class ChromaVectorStore implements VectorStoreInterface
 {
@@ -30,7 +30,7 @@ class ChromaVectorStore implements VectorStoreInterface
         ]);
     }
 
-    public function addDocument(DocumentModelInterface $document): void
+    public function addDocument(Document $document): void
     {
         $this->addDocuments([$document]);
     }
@@ -42,7 +42,7 @@ class ChromaVectorStore implements VectorStoreInterface
         ])->getBody()->getContents();
     }
 
-    public function similaritySearch(array $embedding, string $documentModel): iterable
+    public function similaritySearch(array $embedding): iterable
     {
         $response = $this->getClient()->post('query', [
             RequestOptions::JSON => [
@@ -57,19 +57,14 @@ class ChromaVectorStore implements VectorStoreInterface
         $size = \count($response['distances']);
         $result = [];
         for ($i = 0; $i < $size; $i++) {
-            $document = new $documentModel();
+            $document = new Document();
             $document->id = $response['ids'][$i] ?? \uniqid();
             $document->embedding = $response['embeddings'][$i];
             $document->content = $response['documents'][$i];
             $document->sourceType = $response['metadatas'][$i]['sourceType'] ?? null;
             $document->sourceName = $response['metadatas'][$i]['sourceName'] ?? null;
             $document->score = $response['distances'][$i];
-
-            // Load custom fields
-            $customFields = \array_intersect_key($response['metadatas'][$i], $document->getCustomFields());
-            foreach ($customFields as $fieldName => $value) {
-                $document->{$fieldName} = $value;
-            }
+            $document->metadata = $response['metadatas'][$i]['metadata'] ?? [];
 
             $result[] = $document;
         }
@@ -78,7 +73,7 @@ class ChromaVectorStore implements VectorStoreInterface
     }
 
     /**
-     * @param DocumentModelInterface[] $documents
+     * @param Document[] $documents
      * @return array
      */
     protected function mapDocuments(array $documents): array
@@ -97,7 +92,7 @@ class ChromaVectorStore implements VectorStoreInterface
             $payload['metadatas'][] = [
                 'sourceType' => $document->getSourceType(),
                 'sourceName' => $document->getSourceName(),
-                ...$document->getCustomFields(),
+                'metadata' => $document->metadata,
             ];
         }
 

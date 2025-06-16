@@ -3,7 +3,7 @@
 namespace NeuronAI\RAG\VectorStore;
 
 use Http\Client\Exception;
-use NeuronAI\RAG\DocumentModelInterface;
+use NeuronAI\RAG\Document;
 use Typesense\Client;
 use Typesense\Exceptions\ObjectNotFound;
 use Typesense\Exceptions\TypesenseClientError;
@@ -22,7 +22,7 @@ class TypesenseVectorStore implements VectorStoreInterface
      * @throws Exception
      * @throws TypesenseClientError
      */
-    public function checkIndexStatus(DocumentModelInterface $document): void
+    public function checkIndexStatus(Document $document): void
     {
         try {
             $this->client->collections[$this->collection]->retrieve();
@@ -52,7 +52,7 @@ class TypesenseVectorStore implements VectorStoreInterface
             ];
 
             // Map custom fields
-            foreach ($document->getCustomFields() as $name => $value) {
+            foreach ($document->metadata as $name => $value) {
                 $fields[] = [
                     'name' => $name,
                     'type' => \gettype($value),
@@ -67,7 +67,7 @@ class TypesenseVectorStore implements VectorStoreInterface
         }
     }
 
-    public function addDocument(DocumentModelInterface $document): void
+    public function addDocument(Document $document): void
     {
         if (empty($document->getEmbedding())) {
             throw new \Exception('document embedding must be set before adding a document');
@@ -81,12 +81,12 @@ class TypesenseVectorStore implements VectorStoreInterface
             'embedding' => $document->getEmbedding(),
             'sourceType' => $document->getSourceType(),
             'sourceName' => $document->getSourceName(),
-            ...$document->getCustomFields(),
+            ...$document->metadata,
         ]);
     }
 
     /**
-     * @param DocumentModelInterface[] $documents
+     * @param Document[] $documents
      * @throws Exception
      * @throws \JsonException
      * @throws TypesenseClientError
@@ -111,7 +111,7 @@ class TypesenseVectorStore implements VectorStoreInterface
                 'content' => $document->getContent(),
                 'sourceType' => $document->getSourceType(),
                 'sourceName' => $document->getSourceName(),
-                ...$document->getCustomFields(),
+                'metadata' => $document->metadata,
             ]);
         }
 
@@ -120,7 +120,7 @@ class TypesenseVectorStore implements VectorStoreInterface
         $this->client->collections[$this->collection]->documents->import($ndjson);
     }
 
-    public function similaritySearch(array $embedding, string $documentModel): array
+    public function similaritySearch(array $embedding): array
     {
         $params = [
             'collection' => $this->collection,
@@ -133,23 +133,15 @@ class TypesenseVectorStore implements VectorStoreInterface
 
         $searchRequests = ['searches' => [$params]];
 
-        // Search parameters that are common to all searches go here
-        $commonSearchParams =  [];
-
-        $response = $this->client->multiSearch->perform($searchRequests, $commonSearchParams);
-        return \array_map(function (array $hit) use ($documentModel) {
+        $response = $this->client->multiSearch->perform($searchRequests);
+        return \array_map(function (array $hit) {
             $item = $hit['document'];
-            $document = new $documentModel($item['content']);
+            $document = new Document($item['content']);
             $document->embedding = $item['embedding'];
             $document->sourceType = $item['sourceType'];
             $document->sourceName = $item['sourceName'];
             $document->score = 1 - $hit['vector_distance'];
-
-            // Load custom fields
-            $customFields = \array_intersect_key($item, $document->getCustomFields());
-            foreach ($customFields as $fieldName => $value) {
-                $document->{$fieldName} = $value;
-            }
+            $document->metadata = $item['metadata'] ?? [];
 
             return $document;
         }, $response['results'][0]['hits']);
@@ -177,7 +169,7 @@ class TypesenseVectorStore implements VectorStoreInterface
 
         throw new \Exception(
             "Vector embeddings dimension {$dimension} must be the same as the initial setup {$this->vectorDimension} - ".
-            json_encode($embeddingField)
+            \json_encode($embeddingField)
         );
     }
 }

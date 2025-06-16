@@ -25,7 +25,7 @@ class FileVectorStoreTest extends TestCase
         $store = new FileVectorStore(__DIR__, 1);
         $store->addDocuments([$document, $document2]);
 
-        $results = $store->similaritySearch([1, 2, 3], Document::class);
+        $results = $store->similaritySearch([1, 2, 3]);
 
         $this->assertCount(1, $results);
         $this->assertEquals($document->id, $results[0]->getId());
@@ -35,24 +35,5 @@ class FileVectorStoreTest extends TestCase
         $this->assertEquals($document->sourceName, $results[0]->getSourceName());
 
         unlink(__DIR__.'/neuron.store');
-    }
-
-    public function test_custom_document_model()
-    {
-        $document = new class extends Document {
-            public string $customProperty = 'customValue';
-        };
-        $document->embedding = [1, 2, 3];
-        $document->id = 1;
-        $document->sourceName = 'test';
-        $document->sourceType = 'string';
-
-        $store = new FileVectorStore(__DIR__, 1);
-        $store->addDocuments([$document]);
-
-        $results = $store->similaritySearch([1, 2, 3], $document::class);
-
-        $this->assertCount(1, $results);
-        $this->assertEquals($document->customProperty, $results[0]->customProperty);
     }
 }

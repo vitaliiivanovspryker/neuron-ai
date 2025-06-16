@@ -2,6 +2,8 @@
 
 namespace NeuronAI\RAG\DataLoader;
 
+use NeuronAI\RAG\Document;
+
 class StringDataLoader extends AbstractDataLoader
 {
     public function __construct(protected string $content)
@@ -11,7 +13,7 @@ class StringDataLoader extends AbstractDataLoader
     public function getDocuments(): array
     {
         return DocumentSplitter::splitDocument(
-            new $this->documentModel($this->content),
+            new Document($this->content),
             $this->maxLength,
             $this->separator,
             $this->wordOverlap

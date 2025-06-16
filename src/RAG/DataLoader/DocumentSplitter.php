@@ -8,9 +8,9 @@ use NeuronAI\RAG\DocumentModelInterface;
 class DocumentSplitter
 {
     /**
-     * @return DocumentModelInterface[]
+     * @return Document[]
      */
-    public static function splitDocument(DocumentModelInterface $document, int $maxLength = 1000, string $separator = ' ', int $wordOverlap = 0): array
+    public static function splitDocument(Document $document, int $maxLength = 1000, string $separator = ' ', int $wordOverlap = 0): array
     {
         $text = $document->getContent();
 

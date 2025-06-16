@@ -4,7 +4,7 @@ namespace NeuronAI\RAG\VectorStore;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
-use NeuronAI\RAG\DocumentModelInterface;
+use NeuronAI\RAG\Document;
 
 class MeilisearchVectorStore implements VectorStoreInterface
 {
@@ -37,7 +37,7 @@ class MeilisearchVectorStore implements VectorStoreInterface
         }
     }
 
-    public function addDocument(DocumentModelInterface $document): void
+    public function addDocument(Document $document): void
     {
         $this->addDocuments([$document]);
     }
@@ -45,13 +45,13 @@ class MeilisearchVectorStore implements VectorStoreInterface
     public function addDocuments(array $documents): void
     {
         $this->client->put('documents', [
-            RequestOptions::JSON => \array_map(function (DocumentModelInterface $document) {
+            RequestOptions::JSON => \array_map(function (Document $document) {
                 return [
                     'id' => $document->getId(),
                     'content' => $document->getContent(),
                     'sourceType' => $document->getSourceType(),
                     'sourceName' => $document->getSourceName(),
-                    ...$document->getCustomFields(),
+                    'metadata' => $document->metadata,
                     '_vectors' => [
                         'default' => [
                             'embeddings' => $document->getEmbedding(),
@@ -63,7 +63,7 @@ class MeilisearchVectorStore implements VectorStoreInterface
         ]);
     }
 
-    public function similaritySearch(array $embedding, string $documentModel): iterable
+    public function similaritySearch(array $embedding): iterable
     {
         $response = $this->client->post('search', [
             RequestOptions::JSON => [
@@ -80,20 +80,14 @@ class MeilisearchVectorStore implements VectorStoreInterface
 
         $response = \json_decode($response, true);
 
-        return \array_map(function (array $item) use ($documentModel) {
-            $document = new $documentModel();
+        return \array_map(function (array $item) {
+            $document = new Document($item['content']);
             $document->id = $item['id'] ?? \uniqid();
-            $document->content = $item['content'];
             $document->sourceType = $item['sourceType'] ?? null;
             $document->sourceName = $item['sourceName'] ?? null;
             $document->embedding = $item['_vectors']['default']['embeddings'];
             $document->score = $item['_rankingScore'];
-
-            // Load custom fields
-            $customFields = \array_intersect_key($item, $document->getCustomFields());
-            foreach ($customFields as $fieldName => $value) {
-                $document->{$fieldName} = $value;
-            }
+            $document->metadata = $item['metadata'] ?? [];
 
             return $document;
         }, $response['hits']);

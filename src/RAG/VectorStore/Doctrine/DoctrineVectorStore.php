@@ -5,7 +5,6 @@ namespace NeuronAI\RAG\VectorStore\Doctrine;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManagerInterface;
 use NeuronAI\RAG\Document;
-use NeuronAI\RAG\DocumentModelInterface;
 use NeuronAI\RAG\VectorStore\VectorStoreInterface;
 
 class DoctrineVectorStore implements VectorStoreInterface
@@ -33,7 +32,7 @@ class DoctrineVectorStore implements VectorStoreInterface
         $this->doctrineVectorStoreType->addCustomisationsTo($this->entityManager);
     }
 
-    public function addDocument(DocumentModelInterface $document): void
+    public function addDocument(Document $document): void
     {
         if (empty($document->embedding)) {
             throw new \RuntimeException('document embedding must be set before adding a document');
@@ -55,7 +54,7 @@ class DoctrineVectorStore implements VectorStoreInterface
         $this->entityManager->flush();
     }
 
-    public function similaritySearch(array $embedding, string $documentModel): array
+    public function similaritySearch(array $embedding): array
     {
         $repository = $this->entityManager->getRepository($this->entityClassName);
 
@@ -75,7 +74,7 @@ class DoctrineVectorStore implements VectorStoreInterface
         return $qb->getQuery()->getResult();
     }
 
-    private function persistDocument(DocumentModelInterface $document): void
+    private function persistDocument(Document $document): void
     {
         if (empty($document->embedding)) {
             throw new \RuntimeException('Trying to save a document in a vectorStore without embedding');

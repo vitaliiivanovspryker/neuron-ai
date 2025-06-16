@@ -5,6 +5,7 @@ namespace NeuronAI\RAG\VectorStore;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
+use NeuronAI\RAG\Document;
 use NeuronAI\RAG\DocumentModelInterface;
 
 class QdrantVectorStore implements VectorStoreInterface
@@ -25,7 +26,7 @@ class QdrantVectorStore implements VectorStoreInterface
         ]);
     }
 
-    public function addDocument(DocumentModelInterface $document): void
+    public function addDocument(Document $document): void
     {
         $this->client->put('points', [
             RequestOptions::JSON => [
@@ -36,6 +37,7 @@ class QdrantVectorStore implements VectorStoreInterface
                             'content' => $document->getContent(),
                             'sourceType' => $document->getSourceType(),
                             'sourceName' => $document->getSourceName(),
+                            'metadata' => $document->metadata,
                         ],
                         'vector' => $document->getEmbedding(),
                     ]
@@ -59,7 +61,7 @@ class QdrantVectorStore implements VectorStoreInterface
                 'content' => $document->getContent(),
                 'sourceType' => $document->getSourceType(),
                 'sourceName' => $document->getSourceName(),
-                ...$document->getCustomFields(),
+                'metadata' => $document->getCustomFields(),
             ],
             'vector' => $document->getEmbedding(),
         ], $documents);
@@ -94,12 +96,7 @@ class QdrantVectorStore implements VectorStoreInterface
             $document->sourceType = $item['payload']['sourceType'];
             $document->sourceName = $item['payload']['sourceName'];
             $document->score = $item['score'];
-
-            // Load custom fields
-            $customFields = \array_intersect_key($item['payload'], $document->getCustomFields());
-            foreach ($customFields as $fieldName => $value) {
-                $document->{$fieldName} = $value;
-            }
+            $document->metadata = $item['payload']['metadata'] ?? [];
 
             return $document;
         }, $response['result']);

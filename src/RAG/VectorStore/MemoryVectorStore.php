@@ -3,13 +3,13 @@
 namespace NeuronAI\RAG\VectorStore;
 
 use NeuronAI\Exceptions\VectorStoreException;
-use NeuronAI\RAG\DocumentModelInterface;
+use NeuronAI\RAG\Document;
 use NeuronAI\RAG\VectorStore\Search\SimilaritySearch;
 
 class MemoryVectorStore implements VectorStoreInterface
 {
     /**
-     * @var DocumentModelInterface[]
+     * @var Document[]
      */
     private array $documents = [];
 
@@ -17,7 +17,7 @@ class MemoryVectorStore implements VectorStoreInterface
     {
     }
 
-    public function addDocument(DocumentModelInterface $document): void
+    public function addDocument(Document $document): void
     {
         $this->documents[] = $document;
     }
@@ -27,7 +27,7 @@ class MemoryVectorStore implements VectorStoreInterface
         $this->documents = \array_merge($this->documents, $documents);
     }
 
-    public function similaritySearch(array $embedding, string $documentModel): array
+    public function similaritySearch(array $embedding): array
     {
         $distances = [];
 

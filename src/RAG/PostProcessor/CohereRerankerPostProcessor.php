@@ -5,7 +5,7 @@ namespace NeuronAI\RAG\PostProcessor;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use NeuronAI\Chat\Messages\Message;
-use NeuronAI\RAG\DocumentModelInterface;
+use NeuronAI\RAG\Document;
 
 class CohereRerankerPostProcessor implements PostProcessorInterface
 {
@@ -40,7 +40,7 @@ class CohereRerankerPostProcessor implements PostProcessorInterface
                 'model' => $this->model,
                 'query' => $question->getContent(),
                 'top_n' => $this->topN,
-                'documents' => \array_map(fn (DocumentModelInterface $document) => $document->getContent(), $documents),
+                'documents' => \array_map(fn (Document $document) => $document->getContent(), $documents),
             ],
         ])->getBody()->getContents();
 

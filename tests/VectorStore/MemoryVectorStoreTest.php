@@ -57,7 +57,7 @@ class MemoryVectorStoreTest extends TestCase
 
     public function test_custom_document_model()
     {
-        $document = new class extends Document {
+        $document = new class () extends Document {
             public string $customProperty = 'customValue';
         };
         $document->embedding = [1, 0];

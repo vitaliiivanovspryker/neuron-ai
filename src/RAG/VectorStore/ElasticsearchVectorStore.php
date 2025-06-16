@@ -7,7 +7,6 @@ use Elastic\Elasticsearch\Exception\ServerResponseException;
 use NeuronAI\RAG\Document;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\Response\Elasticsearch;
-use NeuronAI\RAG\DocumentModelInterface;
 
 class ElasticsearchVectorStore implements VectorStoreInterface
 {
@@ -22,7 +21,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
     ) {
     }
 
-    protected function checkIndexStatus(DocumentModelInterface $document): void
+    protected function checkIndexStatus(Document $document): void
     {
         /** @var Elasticsearch $existResponse */
         $existResponse = $this->client->indices()->exists(['index' => $this->index]);
@@ -46,11 +45,18 @@ class ElasticsearchVectorStore implements VectorStoreInterface
             ]
         ];
 
-        // Map custom fields
-        foreach ($document->getCustomFields() as $name => $value) {
-            $properties[$name] = [
-                'type' => 'keyword',
+        // Map metadata
+        if (!empty($document->metadata)) {
+            $properties['metadata'] = [
+                'type' => 'object',
+                'properties' => [],
             ];
+
+            foreach ($document->metadata as $name => $value) {
+                $properties['metadata']['properties'][$name] = [
+                    'type' => 'keyword',
+                ];
+            }
         }
 
         $this->client->indices()->create([
@@ -64,7 +70,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
     /**
      * @throws \Exception
      */
-    public function addDocument(DocumentModelInterface $document): void
+    public function addDocument(Document $document): void
     {
         if (empty($document->embedding)) {
             throw new \Exception('Document embedding must be set before adding a document');
@@ -77,7 +83,9 @@ class ElasticsearchVectorStore implements VectorStoreInterface
             'body' => [
                 'embedding' => $document->getEmbedding(),
                 'content' => $document->getContent(),
-                ...$document->getCustomFields(),
+                'sourceType' => $document->getSourceType(),
+                'sourceName' => $document->getSourceName(),
+                'metadata' => $document->metadata,
             ],
         ]);
 
@@ -85,7 +93,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
     }
 
     /**
-     * @param  DocumentModelInterface[]  $documents
+     * @param  Document[]  $documents
      *
      * @throws \Exception
      */
@@ -114,7 +122,9 @@ class ElasticsearchVectorStore implements VectorStoreInterface
             $params['body'][] = [
                 'embedding' => $document->getEmbedding(),
                 'content' => $document->getContent(),
-                ...$document->getCustomFields(),
+                'sourceType' => $document->getSourceType(),
+                'sourceName' => $document->getSourceName(),
+                'metadata' => $document->metadata,
             ];
         }
         $this->client->bulk($params);
@@ -129,7 +139,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
      * @throws ClientResponseException
      * @throws ServerResponseException
      */
-    public function similaritySearch(array $embedding, string $documentModel): array
+    public function similaritySearch(array $embedding): array
     {
         $searchParams = [
             'index' => $this->index,
@@ -155,18 +165,13 @@ class ElasticsearchVectorStore implements VectorStoreInterface
 
         $response = $this->client->search($searchParams);
 
-        return \array_map(function (array $item) use ($documentModel) {
-            $document = new $documentModel($item['_source']['content']);
+        return \array_map(function (array $item) {
+            $document = new Document($item['_source']['content']);
             $document->embedding = $item['_source']['embedding'];
             $document->sourceType = $item['_source']['sourceType'];
             $document->sourceName = $item['_source']['sourceName'];
             $document->score = $item['_score'];
-
-            // Load custom fields
-            $customFields = \array_intersect_key($item['_source'], $document->getCustomFields());
-            foreach ($customFields as $fieldName => $value) {
-                $document->{$fieldName} = $value;
-            }
+            $document->metadata = $item['_source']['metadata'] ?? [];
 
             return $document;
         }, $response['hits']['hits']);

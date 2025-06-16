@@ -54,7 +54,7 @@ class ElasticsearchTest extends TestCase
     {
         $store = new ElasticsearchVectorStore($this->client, 'test');
 
-        $document = new class extends Document {
+        $document = new class () extends Document {
             public string $customProperty = 'customValue';
         };
         $document->embedding = $this->embedding;

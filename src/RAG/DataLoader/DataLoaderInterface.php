@@ -2,12 +2,12 @@
 
 namespace NeuronAI\RAG\DataLoader;
 
-use NeuronAI\RAG\DocumentModelInterface;
+use NeuronAI\RAG\Document;
 
 interface DataLoaderInterface
 {
     /**
-     * @return DocumentModelInterface[]
+     * @return Document[]
      */
     public function getDocuments(): array;
 }

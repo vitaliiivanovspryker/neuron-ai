@@ -67,7 +67,7 @@ class TypesenseTest extends TestCase
     {
         $store = new TypesenseVectorStore($this->client, 'test', $this->vectorDimension);
 
-        $document = new class extends Document {
+        $document = new class () extends Document {
             public string $customProperty = 'customValue';
         };
         $document->embedding = $this->embedding;

@@ -3,7 +3,7 @@
 namespace NeuronAI\RAG\VectorStore;
 
 use NeuronAI\Exceptions\VectorStoreException;
-use NeuronAI\RAG\DocumentModelInterface;
+use NeuronAI\RAG\Document;
 use NeuronAI\RAG\VectorStore\Search\SimilaritySearch;
 
 class FileVectorStore implements VectorStoreInterface
@@ -24,7 +24,7 @@ class FileVectorStore implements VectorStoreInterface
         return $this->directory . DIRECTORY_SEPARATOR . $this->name.$this->ext;
     }
 
-    public function addDocument(DocumentModelInterface $document): void
+    public function addDocument(Document $document): void
     {
         $this->addDocuments([$document]);
     }
@@ -32,11 +32,11 @@ class FileVectorStore implements VectorStoreInterface
     public function addDocuments(array $documents): void
     {
         $this->appendToFile(
-            \array_map(fn (DocumentModelInterface $document) => $document->jsonSerialize(), $documents)
+            \array_map(fn (Document $document) => $document->jsonSerialize(), $documents)
         );
     }
 
-    public function similaritySearch(array $embedding, string $documentModel): array
+    public function similaritySearch(array $embedding): array
     {
         $topItems = [];
 
@@ -57,23 +57,18 @@ class FileVectorStore implements VectorStoreInterface
             }
         }
 
-        return \array_reduce($topItems, function ($carry, $item) use ($documentModel) {
+        return \array_map(function ($item) {
             $itemDoc = $item['document'];
-            $document = new $documentModel($itemDoc['content']);
+            $document = new Document($itemDoc['content']);
             $document->embedding = $itemDoc['embedding'];
             $document->sourceType = $itemDoc['sourceType'];
             $document->sourceName = $itemDoc['sourceName'];
             $document->id = $itemDoc['id'];
             $document->score = 1 - $item['dist'];
+            $document->metadata = $itemDoc['metadata'] ?? [];
 
-            $customFields = \array_intersect_key($itemDoc, $document->getCustomFields());
-            foreach ($customFields as $fieldName => $value) {
-                $document->{$fieldName} = $value;
-            }
-
-            $carry[] = $document;
-            return $carry;
-        }, []);
+            return $document;
+        }, $topItems);
     }
 
 
@@ -82,11 +77,11 @@ class FileVectorStore implements VectorStoreInterface
         return SimilaritySearch::cosine($vector1, $vector2);
     }
 
-    protected function appendToFile(array $vectors): void
+    protected function appendToFile(array $documents): void
     {
         \file_put_contents(
             $this->getFilePath(),
-            implode(PHP_EOL, \array_map(fn (array $vector) => \json_encode($vector), $vectors)).PHP_EOL,
+            implode(PHP_EOL, \array_map(fn (array $vector) => \json_encode($vector), $documents)).PHP_EOL,
             FILE_APPEND
         );
     }

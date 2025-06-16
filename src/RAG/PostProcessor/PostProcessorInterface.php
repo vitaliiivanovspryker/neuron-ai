@@ -3,7 +3,7 @@
 namespace NeuronAI\RAG\PostProcessor;
 
 use NeuronAI\Chat\Messages\Message;
-use NeuronAI\RAG\DocumentModelInterface;
+use NeuronAI\RAG\Document;
 
 interface PostProcessorInterface
 {
@@ -11,8 +11,8 @@ interface PostProcessorInterface
      * Process an array of documents and return the processed documents.
      *
      * @param Message $question The question to process the documents for.
-     * @param DocumentModelInterface[] $documents The documents to process.
-     * @return DocumentModelInterface[] The processed documents.
+     * @param Document[] $documents The documents to process.
+     * @return Document[] The processed documents.
      */
     public function process(Message $question, array $documents): array;
 }
