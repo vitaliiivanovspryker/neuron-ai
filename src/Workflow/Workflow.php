@@ -7,15 +7,31 @@ use ReflectionClass;
 
 class Workflow
 {
-    private array $nodes = [];
-    private array $edges = [];
-    private ?string $startNode = null;
-    private ?string $endNode = null;
-    private ExporterInterface $exporter;
+    /**
+     * @var NodeInterface[]
+     */
+    protected array $nodes = [];
 
-    public function __construct(?ExporterInterface $exporter = null)
+    /**
+     * @var Edge[]
+     */
+    protected array $edges = [];
+
+    protected ?string $startNode = null;
+
+    protected ?string $endNode = null;
+
+    protected ExporterInterface $exporter;
+
+    protected PersistenceInterface $persistence;
+
+    protected string $workflowId;
+
+    public function __construct(?PersistenceInterface $persistence = null, ?string $workflowId = null)
     {
-        $this->exporter = $exporter ?? new MermaidExporter();
+        $this->exporter = new MermaidExporter();
+        $this->persistence = $persistence ?? new InMemoryPersistence();
+        $this->workflowId = $workflowId ?? \uniqid('neuron_workflow_');
     }
 
     public function addNode(NodeInterface $node): self
@@ -106,28 +122,93 @@ class Workflow
         }
     }
 
-    public function execute(?WorkflowState $initialState = null): WorkflowState
+    /**
+     * @throws WorkflowInterrupt|WorkflowException
+     */
+    protected function execute(
+        string $currentNode,
+        WorkflowState $state,
+        bool $resuming = false,
+        array|string|int $humanFeedback = []
+    ): WorkflowState {
+        $context = new WorkflowContext(
+            $this->workflowId,
+            $currentNode,
+            $this->persistence,
+            $state
+        );
+
+        if ($resuming) {
+            $context->setResuming(true, [$currentNode => $humanFeedback]);
+        }
+
+        try {
+            while ($currentNode !== $this->endNode) {
+                $node = $this->nodes[$currentNode];
+                $node->setContext($context);
+
+                $state = $node->run($state);
+
+                $nextNode = $this->findNextNode($currentNode, $state);
+
+                if ($nextNode === null) {
+                    throw new WorkflowException("No valid edge found from node '{$currentNode}'");
+                }
+
+                $currentNode = $nextNode;
+
+                // Update the context before the next iteration or end node
+                $context = new WorkflowContext(
+                    $this->workflowId,
+                    $currentNode,
+                    $this->persistence,
+                    $state
+                );
+            }
+
+            $endNode = $this->nodes[$this->endNode];
+            $endNode->setContext($context);
+            return $endNode->run($state);
+
+        } catch (WorkflowInterrupt $interrupt) {
+            $this->persistence->save($this->workflowId, $interrupt);
+            throw $interrupt;
+        }
+    }
+
+    /**
+     * @throws WorkflowInterrupt|WorkflowException
+     */
+    public function run(?WorkflowState $initialState = null): WorkflowState
     {
         $this->validate();
 
         $state = $initialState ?? new WorkflowState();
         $currentNode = $this->startNode;
 
-        while ($currentNode !== $this->endNode) {
-            $node = $this->nodes[$currentNode];
-            $state = $node->run($state);
+        return $this->execute($currentNode, $state);
+    }
 
-            $nextNode = $this->findNextNode($currentNode, $state);
+    /**
+     * @throws WorkflowInterrupt|WorkflowException
+     */
+    public function resume(array|string|int $humanFeedback): WorkflowState
+    {
+        $interrupt = $this->persistence->load($this->workflowId);
 
-            if ($nextNode === null) {
-                throw new WorkflowException("No valid edge found from node '{$currentNode}'");
-            }
-
-            $currentNode = $nextNode;
+        if ($interrupt === null) {
+            throw new WorkflowException("No saved workflow found for ID: {$this->workflowId}");
         }
 
-        $endNode = $this->nodes[$this->endNode];
-        return $endNode->run($state);
+        $state = $interrupt->getState();
+        $currentNode = $interrupt->getCurrentNode();
+
+        return $this->execute(
+            $currentNode,
+            $state,
+            true,
+            $humanFeedback
+        );
     }
 
     private function findNextNode(string $currentNode, WorkflowState $state): ?string
@@ -146,6 +227,12 @@ class Workflow
         return $this->exporter->export($this);
     }
 
+    public function setExporter(ExporterInterface $exporter): Workflow
+    {
+        $this->exporter = $exporter;
+        return $this;
+    }
+
     public function getEdges(): array
     {
         return $this->edges;
@@ -154,5 +241,10 @@ class Workflow
     public function getNodes(): array
     {
         return $this->nodes;
+    }
+
+    public function getWorkflowId(): string
+    {
+        return $this->workflowId;
     }
 }

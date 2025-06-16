@@ -5,12 +5,12 @@ namespace NeuronAI\Tests\Workflow;
 use NeuronAI\Workflow\Node;
 use NeuronAI\Workflow\WorkflowState;
 
-class ConditionalNode extends Node
+class AfterInterruptNode extends Node
 {
     public function run(WorkflowState $state): WorkflowState
     {
-        $counter = $state->get('counter', 0);
-        $state->set('should_loop', $counter < 3);
+        $state->set('step', 'after_interrupt');
+        $state->set('final_value', $state->get('value') + 10);
         return $state;
     }
 }

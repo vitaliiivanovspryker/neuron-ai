@@ -22,7 +22,7 @@ class WorkflowTest extends TestCase
             ->setStart(StartNode::class)
             ->setEnd(FinishNode::class);
 
-        $result = $workflow->execute();
+        $result = $workflow->run();
 
         $this->assertEquals('end', $result->get('step'));
     }
@@ -39,7 +39,7 @@ class WorkflowTest extends TestCase
         $initialState = new WorkflowState();
         $initialState->set('initial_value', 'test');
 
-        $result = $workflow->execute($initialState);
+        $result = $workflow->run($initialState);
 
         $this->assertEquals('test', $result->get('initial_value'));
         $this->assertEquals('end', $result->get('step'));
@@ -56,7 +56,7 @@ class WorkflowTest extends TestCase
             ->setStart(StartNode::class)
             ->setEnd(FinishNode::class);
 
-        $result = $workflow->execute();
+        $result = $workflow->run();
 
         $this->assertEquals('end', $result->get('step'));
         $this->assertEquals(1, $result->get('counter'));
@@ -88,7 +88,7 @@ class WorkflowTest extends TestCase
             ->setStart(StartNode::class)
             ->setEnd(FinishNode::class);
 
-        $result = $workflow->execute();
+        $result = $workflow->run();
 
         $this->assertEquals('end', $result->get('step'));
         $this->assertEquals(3, $result->get('counter'));
@@ -106,7 +106,7 @@ class WorkflowTest extends TestCase
         $this->expectException(WorkflowException::class);
         $this->expectExceptionMessage('Start node must be defined');
 
-        $workflow->execute();
+        $workflow->run();
     }
 
     public function test_validation_throws_exception_when_end_node_not_set()
@@ -120,7 +120,7 @@ class WorkflowTest extends TestCase
         $this->expectException(WorkflowException::class);
         $this->expectExceptionMessage('End node must be defined');
 
-        $workflow->execute();
+        $workflow->run();
     }
 
     public function test_validation_throws_exception_when_start_node_does_not_exist()
@@ -134,7 +134,7 @@ class WorkflowTest extends TestCase
         $this->expectException(WorkflowException::class);
         $this->expectExceptionMessage("Start node 'StartNode' does not exist");
 
-        $workflow->execute();
+        $workflow->run();
     }
 
     public function test_validation_throws_exception_when_end_node_does_not_exist()
@@ -148,7 +148,7 @@ class WorkflowTest extends TestCase
         $this->expectException(WorkflowException::class);
         $this->expectExceptionMessage("End node 'FinishNode' does not exist");
 
-        $workflow->execute();
+        $workflow->run();
     }
 
     public function test_validation_throws_exception_when_edge_from_node_does_not_exist()
@@ -162,7 +162,7 @@ class WorkflowTest extends TestCase
         $this->expectException(WorkflowException::class);
         $this->expectExceptionMessage("Edge from node 'StartNode' does not exist");
 
-        $workflow->execute();
+        $workflow->run();
     }
 
     public function test_validation_throws_exception_when_edge_to_node_does_not_exist()
@@ -176,7 +176,7 @@ class WorkflowTest extends TestCase
         $this->expectException(WorkflowException::class);
         $this->expectExceptionMessage("Edge to node 'FinishNode' does not exist");
 
-        $workflow->execute();
+        $workflow->run();
     }
 
     public function test_execution_throws_exception_when_no_valid_edge_found()
@@ -195,7 +195,7 @@ class WorkflowTest extends TestCase
         $this->expectException(WorkflowException::class);
         $this->expectExceptionMessage("No valid edge found from node 'StartNode'");
 
-        $workflow->execute();
+        $workflow->run();
     }
 
     public function testMermaidExport()
@@ -225,7 +225,8 @@ class WorkflowTest extends TestCase
             }
         };
 
-        $workflow = new Workflow($customExporter);
+        $workflow = new Workflow();
+        $workflow->setExporter($customExporter);
         $result = $workflow->export();
 
         $this->assertEquals('custom export', $result);

@@ -4,7 +4,7 @@ namespace NeuronAI\Workflow;
 
 class WorkflowState
 {
-    private array $data = [];
+    protected array $data = [];
 
     public function set(string $key, mixed $value): void
     {
@@ -18,7 +18,17 @@ class WorkflowState
 
     public function has(string $key): bool
     {
-        return array_key_exists($key, $this->data);
+        return \array_key_exists($key, $this->data);
+    }
+
+    /**
+     * Missing keys in the state are simply ignored.
+     *
+     * @param string[] $keys
+     */
+    public function only(array $keys): array
+    {
+        return \array_intersect_key($this->data, \array_flip($keys));
     }
 
     public function all(): array

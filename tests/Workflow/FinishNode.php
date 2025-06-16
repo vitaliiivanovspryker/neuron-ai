@@ -2,10 +2,10 @@
 
 namespace NeuronAI\Tests\Workflow;
 
-use NeuronAI\Workflow\NodeInterface;
+use NeuronAI\Workflow\Node;
 use NeuronAI\Workflow\WorkflowState;
 
-class FinishNode implements NodeInterface
+class FinishNode extends Node
 {
     public function run(WorkflowState $state): WorkflowState
     {
