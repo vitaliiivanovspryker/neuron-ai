@@ -6,8 +6,8 @@ namespace NeuronAI\Tests\Workflow;
 
 use NeuronAI\Exceptions\WorkflowException;
 use NeuronAI\Workflow\Edge;
-use NeuronAI\Workflow\InMemoryPersistence;
-use NeuronAI\Workflow\PersistenceInterface;
+use NeuronAI\Workflow\Persistence\InMemoryPersistence;
+use NeuronAI\Workflow\Persistence\PersistenceInterface;
 use NeuronAI\Workflow\Workflow;
 use NeuronAI\Workflow\WorkflowContext;
 use NeuronAI\Workflow\WorkflowInterrupt;

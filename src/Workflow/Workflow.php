@@ -3,10 +3,18 @@
 namespace NeuronAI\Workflow;
 
 use NeuronAI\Exceptions\WorkflowException;
+use NeuronAI\Observability\Observable;
+use NeuronAI\Workflow\Exporter\ExporterInterface;
+use NeuronAI\Workflow\Exporter\MermaidExporter;
+use NeuronAI\Workflow\Persistence\InMemoryPersistence;
+use NeuronAI\Workflow\Persistence\PersistenceInterface;
 use ReflectionClass;
+use SplSubject;
 
-class Workflow
+class Workflow implements SplSubject
 {
+    use Observable;
+
     /**
      * @var NodeInterface[]
      */
@@ -147,7 +155,9 @@ class Workflow
                 $node = $this->nodes[$currentNode];
                 $node->setContext($context);
 
+                $this->notify('workflow-node-start', $node);
                 $state = $node->run($state);
+                $this->notify('workflow-node-stop', $node);
 
                 $nextNode = $this->findNextNode($currentNode, $state);
 
@@ -172,6 +182,7 @@ class Workflow
 
         } catch (WorkflowInterrupt $interrupt) {
             $this->persistence->save($this->workflowId, $interrupt);
+            $this->notify('workflow-interrupt', $interrupt);
             throw $interrupt;
         }
     }
@@ -181,12 +192,16 @@ class Workflow
      */
     public function run(?WorkflowState $initialState = null): WorkflowState
     {
+        $this->notify('workflow-start');
         $this->validate();
 
         $state = $initialState ?? new WorkflowState();
         $currentNode = $this->startNode;
 
-        return $this->execute($currentNode, $state);
+        $result = $this->execute($currentNode, $state);
+        $this->notify('workflow-stop');
+
+        return $result;
     }
 
     /**
@@ -194,6 +209,7 @@ class Workflow
      */
     public function resume(array|string|int $humanFeedback): WorkflowState
     {
+        $this->notify('workflow-resume');
         $interrupt = $this->persistence->load($this->workflowId);
 
         if ($interrupt === null) {
@@ -203,12 +219,15 @@ class Workflow
         $state = $interrupt->getState();
         $currentNode = $interrupt->getCurrentNode();
 
-        return $this->execute(
+        $result = $this->execute(
             $currentNode,
             $state,
             true,
             $humanFeedback
         );
+        $this->notify('workflow-stop');
+
+        return  $result;
     }
 
     private function findNextNode(string $currentNode, WorkflowState $state): ?string
