@@ -2,7 +2,9 @@
 
 namespace NeuronAI\Tests;
 
+use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Tests\Stubs\Color;
+use NeuronAI\Tools\ArrayProperty;
 use NeuronAI\Tools\ObjectProperty;
 use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\ToolProperty;
@@ -43,6 +45,32 @@ class ToolTest extends TestCase
 
         $properties = $tool->getRequiredProperties();
         $this->assertEquals(['name', 'age'], $properties);
+    }
+
+    public function test_missing_required_parameter_exception()
+    {
+        $tool = Tool::make('test', 'Test tool')
+            ->addProperty(
+                new ToolProperty('name', PropertyType::STRING, 'User name', true)
+            )->setCallable(function (string $name): string {
+                return $name;
+            });
+
+        $tool->setInputs([
+            "test" => "test"
+        ]);
+
+        $this->expectException(MissingCallbackParameter::class);
+        $this->expectExceptionMessage('Missing required parameter: name');
+
+        $tool->execute();
+
+        $tool->setInputs([]);
+
+        $this->expectException(MissingCallbackParameter::class);
+        $this->expectExceptionMessage('Missing required parameter: name');
+
+        $tool->execute();
     }
 
     public function test_required_properties_with_mapped_object()
@@ -95,5 +123,243 @@ class ToolTest extends TestCase
 
         $tool->setCallable(fn () => new class () {
         })->execute();
+    }
+
+    public function test_tool_optional_parameters()
+    {
+        $tool = Tool::make(
+            'test_tool',
+            "description"
+        )->addProperty(new ToolProperty(
+            name: 'optional_prop_1',
+            type: PropertyType::STRING,
+            description: "description",
+            required: false,
+        ))->addProperty(new ToolProperty(
+            name: 'optional_prop_2',
+            type: PropertyType::STRING,
+            description: "description",
+            required: false,
+        ))->addProperty(new ToolProperty(
+            name: 'optional_prop_3',
+            type: PropertyType::STRING,
+            description: "description",
+            required: false,
+        ))->setCallable(function (?string $optional_prop_1, ?string $optional_prop_2, ?string $optional_prop_3): array {
+            return [
+                'optional_prop_1' => $optional_prop_1,
+                'optional_prop_2' => $optional_prop_2,
+                'optional_prop_3' => $optional_prop_3
+            ];
+        });
+
+        // Example: none of the optional parameters are provided
+        $tool->setInputs([]);
+
+        $tool->execute();
+
+        $this->assertEquals(
+            '{"optional_prop_1":null,"optional_prop_2":null,"optional_prop_3":null}',
+            $tool->getResult()
+        );
+    }
+
+    public function test_tool_variadic_invocation_basic_properties()
+    {
+        $tool = Tool::make(
+            'user_manager',
+            "Update user information"
+        )->addProperty(new ToolProperty(
+            name: 'lastname',
+            type: PropertyType::STRING,
+            description: "The user lastname",
+            required: false,
+        ))->addProperty(new ToolProperty(
+            name: 'firstname',
+            type: PropertyType::STRING,
+            description: "The user firstname",
+            required: false,
+        ))->addProperty(new ToolProperty(
+            name: 'email',
+            type: PropertyType::STRING,
+            description: "The user email",
+            required: true,
+        ))->addProperty(new ToolProperty(
+            name: 'language',
+            type: PropertyType::STRING,
+            description: "The user's language",
+            required: true,
+            enum: ['fr', 'en', 'it', 'de', 'es' ],
+        ))->setCallable(function (...$data): array {
+            return $data;
+        });
+
+        // Example: the user's last name is not provided
+        $tool->setInputs([
+            "firstname" => "John",
+            "email" => "john.doe@example.com",
+            "language" => "fr",
+        ]);
+
+        $tool->execute();
+
+        $this->assertEquals(
+            '{"lastname":null,"firstname":"John","email":"john.doe@example.com","language":"fr"}',
+            $tool->getResult()
+        );
+    }
+
+    public function test_tool_variadic_invocation_object_properties()
+    {
+        $tool = Tool::make(
+            'test_tool',
+            "description"
+        )->addProperty(
+            new ObjectProperty(
+                name: 'obj_prop_1',
+                description: "description obj_prop_1",
+                required: true,
+                properties: [
+                    new ToolProperty(
+                        name: 'a',
+                        type: PropertyType::STRING,
+                        description: "description a",
+                        required: true,
+                    ),
+                    new ToolProperty(
+                        name: 'b',
+                        type: PropertyType::STRING,
+                        description: "description b",
+                        required: true,
+                    )
+                ]
+            )
+        )->addProperty(
+            new ObjectProperty(
+                name: 'obj_prop_2',
+                description: "description obj_prop_2",
+                required: false,
+                properties: [
+                        new ToolProperty(
+                            name: 'x',
+                            type: PropertyType::STRING,
+                            description: "description x",
+                            required: true,
+                        ),
+                        new ToolProperty(
+                            name: 'y',
+                            type: PropertyType::STRING,
+                            description: "description y",
+                            required: true,
+                        )
+                    ]
+            )
+        )->setCallable(function (...$data): array {
+            return $data;
+        });
+
+        // Example, the second object property is not provided
+        $tool->setInputs([
+            "obj_prop_1" => [
+                "a" => "a_input",
+                "b" => "b_input",
+            ]
+        ]);
+
+        $tool->execute();
+
+        $this->assertEquals(
+            '{"obj_prop_1":{"a":"a_input","b":"b_input"},"obj_prop_2":null}',
+            $tool->getResult()
+        );
+    }
+
+    public function test_tool_variadic_invocation_mapped_object_properties()
+    {
+        $tool = Tool::make(
+            'test_tool',
+            "description"
+        )->addProperty(
+            new ObjectProperty(
+                name: 'color',
+                description: "description color",
+                required: true,
+                class: Color::class
+            )
+        )->setCallable(function (...$data): array {
+            return $data;
+        });
+
+        $tool->setInputs([
+            "color" => [
+                "r" => 255,
+                "g" => 127,
+                "b" => 63,
+            ]
+        ]);
+
+        $tool->execute();
+
+        $this->assertEquals(
+            '{"color":{"r":255,"g":127,"b":63}}',
+            $tool->getResult()
+        );
+    }
+
+    public function test_tool_variadic_invocation_array_properties()
+    {
+        $tool = Tool::make(
+            'test_tool',
+            "description"
+        )->addProperty(
+            new ArrayProperty(
+                name: 'colors',
+                description: "description color",
+                required: true,
+                items: new ToolProperty(
+                    name: 'colors',
+                    type: PropertyType::STRING,
+                    description: "description color",
+                    required: true,
+                )
+            )
+        )->addProperty(
+            new ObjectProperty(
+                name: 'dimensions',
+                description: "description dimensions",
+                required: true,
+                properties: [
+                    new ToolProperty(
+                        name: 'width',
+                        type: PropertyType::INTEGER,
+                        description: "width",
+                        required: true,
+                    ),
+                    new ToolProperty(
+                        name: 'height',
+                        type: PropertyType::INTEGER,
+                        description: "height",
+                        required: true,
+                    )
+                ]
+            )
+        )->setCallable(function (...$data): array {
+            return $data;
+        });
+
+        $tool->setInputs([
+            "colors" => ["red", "green", "red", "red", "green"],
+            "dimensions" => [
+                "width" => 600,
+                "height" => 800,
+            ]
+        ]);
+
+        $tool->execute();
+
+        $this->assertEquals(
+            '{"colors":["red","green","red","red","green"],"dimensions":{"width":600,"height":800}}',
+            $tool->getResult()
+        );
     }
 }
