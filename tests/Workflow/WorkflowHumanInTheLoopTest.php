@@ -137,7 +137,7 @@ class WorkflowHumanInTheLoopTest extends TestCase
         $this->assertEquals('after_interrupt', $result->get('step'));
         $this->assertFalse($result->has('high_value_feedback'));
 
-        $workflow2 = new Workflow(null, null, 'workflow_2');
+        $workflow2 = new Workflow(null, 'workflow_2');
         $workflow2->addNode(new ConditionalInterruptNode())
             ->addNode(new AfterInterruptNode())
             ->addEdge(new Edge(ConditionalInterruptNode::class, AfterInterruptNode::class))
