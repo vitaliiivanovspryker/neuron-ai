@@ -2,7 +2,7 @@
 
 namespace NeuronAI\RAG;
 
-class Document
+class Document implements \JsonSerializable
 {
     public string|int $id;
 
