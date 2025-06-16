@@ -287,6 +287,7 @@ class ToolTest extends TestCase
                 class: Color::class
             )
         )->setCallable(function (...$data): array {
+            $this->assertInstanceOf(Color::class, $data['color']);
             return $data;
         });
 
