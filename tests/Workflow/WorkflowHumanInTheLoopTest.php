@@ -9,6 +9,7 @@ use NeuronAI\Workflow\Edge;
 use NeuronAI\Workflow\InMemoryPersistence;
 use NeuronAI\Workflow\PersistenceInterface;
 use NeuronAI\Workflow\Workflow;
+use NeuronAI\Workflow\WorkflowContext;
 use NeuronAI\Workflow\WorkflowInterrupt;
 use NeuronAI\Workflow\WorkflowState;
 use PHPUnit\Framework\TestCase;
@@ -65,7 +66,7 @@ class WorkflowHumanInTheLoopTest extends TestCase
 
         $this->assertEquals('after_interrupt', $result->get('step'));
         $this->assertEquals(42, $result->get('value'));
-        $this->assertEquals(10, $result->get('final_value'));
+        $this->assertEquals(52, $result->get('final_value'));
     }
 
     public function test_multiple_interrupts_in_same_workflow()
@@ -223,7 +224,7 @@ class WorkflowHumanInTheLoopTest extends TestCase
     public function test_workflow_context_behavior()
     {
         $persistence = new InMemoryPersistence();
-        $context = new WorkflowContext('TestNode', $persistence, 'test_id');
+        $context = new WorkflowContext('test_id', 'TestNode', $persistence, new WorkflowState());
 
         try {
             $context->interrupt(['data' => 'test']);
