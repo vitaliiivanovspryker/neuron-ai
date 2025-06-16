@@ -1,6 +1,8 @@
 <?php
 
-namespace NeuronAI\Workflow;
+namespace NeuronAI\Workflow\Exporter;
+
+use NeuronAI\Workflow\Workflow;
 
 class MermaidExporter implements ExporterInterface
 {
