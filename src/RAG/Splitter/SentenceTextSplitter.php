@@ -80,14 +80,10 @@ class SentenceTextSplitter implements SplitterInterface
         }
 
         $split = [];
-        $chunkNumber = 0;
         foreach ($chunks as $chunk) {
             $newDocument = new Document($chunk);
-            $newDocument->hash = hash('sha256', $chunk);
-            $newDocument->id = uniqid();
             $newDocument->sourceType = $document->sourceType;
             $newDocument->sourceName = $document->sourceName;
-            $newDocument->chunkNumber = $chunkNumber++;
             $split[] = $newDocument;
         }
 

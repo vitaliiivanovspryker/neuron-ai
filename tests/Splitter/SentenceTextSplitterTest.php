@@ -48,7 +48,6 @@ class SentenceTextSplitterTest extends TestCase
         $this->assertCount(1, $result);
         $this->assertEquals('test', $result[0]->sourceType);
         $this->assertEquals('test.txt', $result[0]->sourceName);
-        $this->assertEquals(0, $result[0]->chunkNumber);
     }
 
     public function test_invalid_overlap_configuration(): void
