@@ -39,7 +39,7 @@ trait HandleRagEvents
         }
     }
 
-    public function instructionsChanging(AgentInterface $agent, string $event, InstructionsChanging $data)
+    /*public function instructionsChanging(AgentInterface $agent, string $event, InstructionsChanging $data)
     {
         if (!$this->inspector->canAddSegments()) {
             return;
@@ -64,7 +64,7 @@ trait HandleRagEvents
                 ])
                 ->end();
         }
-    }
+    }*/
 
     public function postProcessing(AgentInterface $agent, string $event, PostProcessing $data)
     {

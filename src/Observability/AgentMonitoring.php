@@ -62,8 +62,8 @@ class AgentMonitoring implements \SplObserver
         'structured-validated' => 'validated',
         'rag-vectorstore-searching' => 'vectorStoreSearching',
         'rag-vectorstore-result' => 'vectorStoreResult',
-        'rag-instructions-changing' => 'instructionsChanging',
-        'rag-instructions-changed' => 'instructionsChanged',
+//        'rag-instructions-changing' => 'instructionsChanging',
+//        'rag-instructions-changed' => 'instructionsChanged',
         'rag-postprocessing' => 'postProcessing',
         'rag-postprocessed' => 'postProcessed',
     ];
@@ -163,8 +163,8 @@ class AgentMonitoring implements \SplObserver
 
         return [
             'Agent' => [
-                'instructions' => $agent->instructions(),
                 'provider' => $agent->resolveProvider()::class,
+                'instructions' => $agent->resolveInstructions(),
             ],
             'Tools' => \array_map(
                 fn (ToolInterface|ToolkitInterface $tool) => $tool instanceof ToolInterface
