@@ -54,20 +54,6 @@ class TypesenseTest extends TestCase
         $store = new TypesenseVectorStore($this->client, 'test', $this->vectorDimension);
 
         $document = new Document('Hello World!');
-        $document->embedding = $this->embedding;
-
-        $store->addDocument($document);
-
-        $results = $store->similaritySearch($this->embedding);
-
-        $this->assertEquals($document->getContent(), $results[0]->getContent());
-    }
-
-    public function test_custom_document_model()
-    {
-        $store = new TypesenseVectorStore($this->client, 'test', $this->vectorDimension);
-
-        $document = new Document('Hello!');
         $document->addMetadata('customProperty', 'customValue');
         $document->embedding = $this->embedding;
 
@@ -75,6 +61,7 @@ class TypesenseTest extends TestCase
 
         $results = $store->similaritySearch($this->embedding);
 
+        $this->assertEquals($document->getContent(), $results[0]->getContent());
         $this->assertEquals($document->metadata['customProperty'], $results[0]->metadata['customProperty']);
     }
 }
