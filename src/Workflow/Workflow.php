@@ -205,7 +205,7 @@ class Workflow implements SplSubject
      */
     public function resume(array|string|int $humanFeedback): WorkflowState
     {
-        $this->notify('workflow-start');
+        $this->notify('workflow-resume');
         $interrupt = $this->persistence->load($this->workflowId);
 
         if ($interrupt === null) {
