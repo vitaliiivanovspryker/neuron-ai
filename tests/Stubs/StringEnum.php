@@ -2,7 +2,8 @@
 
 namespace NeuronAI\Tests\Stubs;
 
-enum TestEnum: string{
+enum StringEnum: string
+{
     case ONE = 'one';
     case TWO = 'two';
     case THREE = 'three';

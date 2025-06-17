@@ -25,7 +25,7 @@ use NeuronAI\StructuredOutput\Validation\Rules\Url;
 use NeuronAI\StructuredOutput\Validation\Validator;
 use NeuronAI\Tests\Stubs\DummyEnum;
 use NeuronAI\Tests\Stubs\Person;
-use NeuronAI\Tests\Stubs\TestEnum;
+use NeuronAI\Tests\Stubs\StringEnum;
 use PHPUnit\Framework\TestCase;
 
 class ValidationTest extends TestCase
@@ -476,7 +476,7 @@ class ValidationTest extends TestCase
             #[Choice(choices: ['one', 'two', 'three'])]
             public string $number = 'one';
 
-            #[Choice(enum: TestEnum::class)]
+            #[Choice(enum: StringEnum::class)]
             public string $enumNumber = 'one';
         };
 
@@ -497,7 +497,7 @@ class ValidationTest extends TestCase
     public function test_choice_validation_exception_both_option_provided()
     {
         $class = new class () {
-            #[Choice(choices: ['one', 'two', 'three'], enum: TestEnum::class)]
+            #[Choice(choices: ['one', 'two', 'three'], enum: StringEnum::class)]
             public string $number = 'one';
         };
 
