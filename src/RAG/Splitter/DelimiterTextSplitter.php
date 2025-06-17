@@ -37,12 +37,10 @@ class DelimiterTextSplitter implements SplitterInterface
         $chunks = $this->createChunksWithOverlap($parts);
 
         $split = [];
-        //$chunkNumber = 0;
         foreach ($chunks as $chunk) {
             $newDocument = new Document($chunk);
             $newDocument->sourceType = $document->getSourceType();
             $newDocument->sourceName = $document->getSourceName();
-            //$chunkNumber++;
             $split[] = $newDocument;
         }
 
@@ -80,7 +78,7 @@ class DelimiterTextSplitter implements SplitterInterface
 
             if ($currentChunkLength + \strlen($this->separator.$word) <= $this->maxLength || $currentChunk === []) {
                 $currentChunk[] = $word;
-                $currentChunkLength = $this->calculateChunkLength($currentChunk, $this->separator);
+                $currentChunkLength = $this->calculateChunkLength($currentChunk);
             } else {
                 // Add the chunk with overlap
                 $chunks[] = \implode($this->separator, $currentChunk);
@@ -92,7 +90,7 @@ class DelimiterTextSplitter implements SplitterInterface
                 // Start a new chunk with overlap words
                 $currentChunk = [...$overlapWords, $word];
                 $currentChunk[0] = \trim($currentChunk[0]);
-                $currentChunkLength = $this->calculateChunkLength($currentChunk, $this->separator);
+                $currentChunkLength = $this->calculateChunkLength($currentChunk);
             }
         }
 
@@ -104,10 +102,10 @@ class DelimiterTextSplitter implements SplitterInterface
     }
 
     /**
-     * @param  array<string>  $currentChunk
+     * @param  array<string>  $chunk
      */
-    private function calculateChunkLength(array $currentChunk, string $separator): int
+    private function calculateChunkLength(array $chunk): int
     {
-        return \array_sum(\array_map('strlen', $currentChunk)) + \count($currentChunk) * \strlen($separator) - 1;
+        return \array_sum(\array_map('strlen', $chunk)) + \count($chunk) * \strlen($this->separator) - 1;
     }
 }
