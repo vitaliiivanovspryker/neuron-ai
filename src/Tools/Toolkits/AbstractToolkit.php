@@ -2,7 +2,6 @@
 
 namespace NeuronAI\Tools\Toolkits;
 
-use NeuronAI\Shared\Helper;
 use NeuronAI\StaticConstructor;
 use NeuronAI\Tools\ToolInterface;
 
@@ -43,8 +42,9 @@ abstract class AbstractToolkit implements ToolkitInterface
 
     public function tools(): array
     {
-        return \array_filter($this->provide(),
-            fn(ToolInterface $tool) => !in_array($tool::class, $this->exclude)
+        return \array_filter(
+            $this->provide(),
+            fn (ToolInterface $tool) => !in_array($tool::class, $this->exclude)
                 && (empty($this->only) || in_array($tool::class, $this->only))
         );
     }
