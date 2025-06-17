@@ -29,14 +29,6 @@ class TavilyExtractTool extends Tool
             'url_reader',
             'Get the content of a URL in markdown format.'
         );
-        $this->addProperty(
-            new ToolProperty(
-                'url',
-                PropertyType::STRING,
-                'The URL to read.',
-                true
-            ),
-        )->setCallable($this);
     }
 
     protected function getClient(): Client
@@ -53,6 +45,18 @@ class TavilyExtractTool extends Tool
                 'Accept' => 'application/json',
             ]
         ]);
+    }
+
+    protected function properties(): array
+    {
+        return [
+            new ToolProperty(
+                'url',
+                PropertyType::STRING,
+                'The URL to read.',
+                true
+            ),
+        ];
     }
 
     public function __invoke(string $url): string
