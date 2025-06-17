@@ -46,8 +46,9 @@ abstract class AbstractToolkit implements ToolkitInterface
             return $this->provide();
         }
 
-        return \array_filter($this->provide(),
-            fn(ToolInterface $tool) => !in_array($tool::class, $this->exclude)
+        return \array_filter(
+            $this->provide(),
+            fn (ToolInterface $tool) => !in_array($tool::class, $this->exclude)
                 && (empty($this->only) || in_array($tool::class, $this->only))
         );
     }
