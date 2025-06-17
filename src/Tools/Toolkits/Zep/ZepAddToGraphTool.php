@@ -7,6 +7,9 @@ use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 
+/**
+ * @method static static make(string $key, string $user_id)
+ */
 class ZepAddToGraphTool extends Tool
 {
     use HandleZepClient;

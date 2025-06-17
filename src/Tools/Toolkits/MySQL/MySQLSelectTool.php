@@ -7,6 +7,9 @@ use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 use PDO;
 
+/**
+ * @method static static make(PDO $pdo)
+ */
 class MySQLSelectTool extends Tool
 {
     protected array $allowedStatements = ['SELECT', 'WITH', 'SHOW', 'DESCRIBE', 'EXPLAIN'];

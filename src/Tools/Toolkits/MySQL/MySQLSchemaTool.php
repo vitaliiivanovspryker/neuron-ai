@@ -5,6 +5,9 @@ namespace NeuronAI\Tools\Toolkits\MySQL;
 use NeuronAI\Tools\Tool;
 use PDO;
 
+/**
+ * @method static static make(PDO $pdo, ?array $tables = null)
+ */
 class MySQLSchemaTool extends Tool
 {
     public function __construct(

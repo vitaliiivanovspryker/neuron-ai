@@ -9,6 +9,8 @@ use NeuronAI\Tools\ToolProperty;
 
 /**
  * https://help.getzep.com/sdk-reference/graph/search
+ *
+ * @method static static make(string $key, string $user_id)
  */
 class ZepSearchGraphTool extends Tool
 {

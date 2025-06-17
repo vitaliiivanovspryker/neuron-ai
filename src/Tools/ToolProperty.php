@@ -2,8 +2,15 @@
 
 namespace NeuronAI\Tools;
 
+use NeuronAI\StaticConstructor;
+
+/**
+ * @method static static make(string $name, PropertyType $type, string $description, bool $required = false, array $enum = [])
+ */
 class ToolProperty implements ToolPropertyInterface
 {
+    use StaticConstructor;
+
     public function __construct(
         protected string $name,
         protected PropertyType $type,

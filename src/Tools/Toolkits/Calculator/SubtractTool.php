@@ -8,29 +8,29 @@ use NeuronAI\Tools\ToolProperty;
 
 class SubtractTool extends Tool
 {
-    public function __construct()
-    {
-        parent::__construct(
-            'subtract',
-            'Calculate the subtraction between two numbers and return the result',
-        );
+    protected string $name = 'substract';
+    protected string $description = 'Calculate the subtraction between two numbers and return the result';
 
-        $this->addProperty(
-            new ToolProperty(
-                'a',
-                PropertyType::NUMBER,
-                'The first number of the subtraction.',
-                true
+    public function properties(): array
+    {
+        return [
+            ToolProperty::make(
+                name: 'number1',
+                type: PropertyType::NUMBER,
+                description: 'Minuend number',
+                required: true,
+            ),
+            ToolProperty::make(
+                name: 'number2',
+                type: PropertyType::NUMBER,
+                description: 'Subtrahend number',
+                required: true,
             )
-        )->addProperty(
-            new ToolProperty(
-                'b',
-                PropertyType::NUMBER,
-                'The second number of the subtraction.',
-                true
-            )
-        )->setCallable(
-            fn (int|float $a, int|float $b) => ['operation' => $this->name, 'result' => $a - $b]
-        );
+        ];
+    }
+
+    public function __invoke(int|float $number1, int|float $number2): int|float
+    {
+        return $number1 - $number2;
     }
 }
