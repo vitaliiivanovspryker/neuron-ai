@@ -29,14 +29,11 @@ trait ResolveTools
     }
 
     /**
-     * @return ToolInterface[]
+     * @return ToolInterface[]|ToolkitInterface[]
      */
     public function getTools(): array
     {
-        $agentTools = $this->tools();
-        $runtimeTools = $this->tools;
-
-        return \array_merge($runtimeTools, $agentTools);
+        return \array_merge($this->tools, $this->tools());
     }
 
     /**
