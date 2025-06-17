@@ -8,6 +8,9 @@ use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 use PDO;
 
+/**
+ * @method static static make(PDO $pdo)
+ */
 class PGSQLSelectTool extends Tool
 {
     /**

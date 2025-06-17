@@ -5,6 +5,9 @@ namespace NeuronAI\Tools\Toolkits\PGSQL;
 use NeuronAI\Tools\Tool;
 use PDO;
 
+/**
+ * @method static static make(PDO $pdo, ?array $tables = null)
+ */
 class PGSQLSchemaTool extends Tool
 {
     public function __construct(
