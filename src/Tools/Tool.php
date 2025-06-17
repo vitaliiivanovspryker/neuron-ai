@@ -149,33 +149,45 @@ class Tool implements ToolInterface
             }
         }
 
-        // If there is an object property with class definition, deserialize the tool input into class instances
-        $parameters = array_map(function (ToolPropertyInterface $property) {
-            if (!\array_key_exists($property->getName(), $this->getInputs())) {
-                return null;
+        $parameters = array_reduce($this->properties, function ($carry, $property) {
+            $propertyName = $property->getName();
+            $inputs = $this->getInputs();
+
+            // Normalize missing optional properties by assigning them a null value
+            // Treat it as explicitly null to ensure consistent structure
+            if (!array_key_exists($propertyName, $inputs)) {
+                $carry[$propertyName] = null;
+                return $carry;
             }
 
-            // Find the corresponding input
-            $inputs = $this->getInputs()[$property->getName()];
+            // Find the corresponding input value
+            $inputValue = $inputs[$propertyName];
 
+            // If there is an object property with a class definition,
+            // deserialize the tool input into an instance of that class
             if ($property instanceof ObjectProperty && $property->getClass()) {
-                return Deserializer::fromJson(\json_encode($inputs), $property->getClass());
+                $carry[$propertyName] = Deserializer::fromJson(json_encode($inputValue), $property->getClass());
+                return $carry;
             }
 
+            // If a property is an array of objects and each item matches a class definition,
+            // deserialize each item into an instance of that class
             if ($property instanceof ArrayProperty) {
                 $items = $property->getItems();
                 if ($items instanceof ObjectProperty && $items->getClass()) {
                     $class = $items->getClass();
-
-                    return array_map(function ($input) use ($class) {
-                        return Deserializer::fromJson(\json_encode($input), $class);
-                    }, $inputs);
+                    $carry[$propertyName] = array_map(function ($input) use ($class) {
+                        return Deserializer::fromJson(json_encode($input), $class);
+                    }, $inputValue);
+                    return $carry;
                 }
             }
 
             // No extra treatments for basic property types
-            return $inputs;
-        }, $this->properties);
+            $carry[$propertyName] = $inputValue;
+            return $carry;
+
+        }, []);
 
         $this->setResult(
             \call_user_func($this->callback, ...$parameters)
