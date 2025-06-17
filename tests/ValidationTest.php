@@ -2,7 +2,9 @@
 
 namespace NeuronAI\Tests;
 
+use NeuronAI\StructuredOutput\StructuredOutputException;
 use NeuronAI\StructuredOutput\Validation\Rules\ArrayOf;
+use NeuronAI\StructuredOutput\Validation\Rules\Choice;
 use NeuronAI\StructuredOutput\Validation\Rules\Count;
 use NeuronAI\StructuredOutput\Validation\Rules\Email;
 use NeuronAI\StructuredOutput\Validation\Rules\EqualTo;
@@ -21,7 +23,9 @@ use NeuronAI\StructuredOutput\Validation\Rules\NotEqualTo;
 use NeuronAI\StructuredOutput\Validation\Rules\IsNotNull;
 use NeuronAI\StructuredOutput\Validation\Rules\Url;
 use NeuronAI\StructuredOutput\Validation\Validator;
+use NeuronAI\Tests\Stubs\DummyEnum;
 use NeuronAI\Tests\Stubs\Person;
+use NeuronAI\Tests\Stubs\TestEnum;
 use PHPUnit\Framework\TestCase;
 
 class ValidationTest extends TestCase
@@ -464,5 +468,85 @@ class ValidationTest extends TestCase
         $class->json = 'invalid json';
         $violations = Validator::validate($class);
         $this->assertCount(1, $violations);
+    }
+
+    public function test_choice_validation()
+    {
+        $class = new class () {
+            #[Choice(choices: ['one', 'two', 'three'])]
+            public string $number = 'one';
+
+            #[Choice(enum: TestEnum::class)]
+            public string $enumNumber = 'one';
+        };
+
+        $obj = new $class();
+
+        $violations = Validator::validate($obj);
+        $this->assertCount(0, $violations);
+
+        $obj->number = 'four';
+        $violations = Validator::validate($obj);
+        $this->assertCount(1, $violations);
+
+        $obj->enumNumber = 'five';
+        $violations = Validator::validate($obj);
+        $this->assertCount(2, $violations);
+    }
+
+    public function test_choice_validation_exception_both_option_provided()
+    {
+        $class = new class () {
+            #[Choice(choices: ['one', 'two', 'three'], enum: TestEnum::class)]
+            public string $number = 'one';
+        };
+
+        $obj = new $class();
+
+        $this->expectException(StructuredOutputException::class);
+
+        $violations = Validator::validate($obj);
+    }
+
+    public function test_choice_validation_exception_no_option_provided()
+    {
+        $class = new class () {
+            #[Choice()]
+            public string $number = 'one';
+        };
+
+        $obj = new $class();
+
+        $this->expectException(StructuredOutputException::class);
+
+        $violations = Validator::validate($obj);
+    }
+
+    public function test_choice_validation_exception_invalid_enum()
+    {
+        $class = new class () {
+            #[Choice(enum: Person::class)]
+            public string $number = 'one';
+        };
+
+        $obj = new $class();
+
+        $this->expectException(StructuredOutputException::class);
+
+        $violations = Validator::validate($obj);
+    }
+
+    public function test_choice_validation_exception_enum_non_backed()
+    {
+        $class = new class () {
+            #[Choice(enum: DummyEnum::class)]
+            public string $number = 'one';
+        };
+
+        $obj = new $class();
+
+        $this->expectException(StructuredOutputException::class);
+
+        $violations = Validator::validate($obj);
     }
 }
