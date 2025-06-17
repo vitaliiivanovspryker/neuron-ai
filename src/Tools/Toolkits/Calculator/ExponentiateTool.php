@@ -8,29 +8,29 @@ use NeuronAI\Tools\ToolProperty;
 
 class ExponentiateTool extends Tool
 {
-    public function __construct()
-    {
-        parent::__construct(
-            'exponentiate',
-            'Raise first number to the power of the second number and return the result.'
-        );
+    protected string $name = 'exponentiate';
+    protected string $description = 'Calculate the exponential between two numbers and return the result';
 
-        $this->addProperty(
-            new ToolProperty(
-                'a',
-                PropertyType::NUMBER,
-                'Base.',
-                true
+    public function properties(): array
+    {
+        return [
+            ToolProperty::make(
+                name: 'number',
+                type: PropertyType::NUMBER,
+                description: 'The base number to exponentiate',
+                required: true,
+            ),
+            ToolProperty::make(
+                name: 'exponent',
+                type: PropertyType::NUMBER,
+                description: 'The exponent',
+                required: true,
             )
-        )->addProperty(
-            new ToolProperty(
-                'b',
-                PropertyType::NUMBER,
-                'Exponential.',
-                true
-            )
-        )->setCallable(
-            fn (int|float $a, int|float $b) => ['operation' => $this->name, 'result' => pow($a, $b)]
-        );
+        ];
+    }
+
+    public function __invoke(int|float $number, int $exponent): int|float
+    {
+        return pow($number, $exponent);
     }
 }
