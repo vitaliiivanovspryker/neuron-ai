@@ -14,7 +14,7 @@ class MySQLSelectTool extends Tool
 {
     protected array $allowedStatements = ['SELECT', 'WITH', 'SHOW', 'DESCRIBE', 'EXPLAIN'];
 
-    protected array $forbiddenKeywords = [
+    protected array $forbiddenStatements = [
         'INSERT', 'UPDATE', 'DELETE', 'DROP', 'CREATE', 'ALTER',
         'TRUNCATE', 'REPLACE', 'MERGE', 'CALL', 'EXECUTE'
     ];
@@ -61,7 +61,7 @@ class MySQLSelectTool extends Tool
         }
 
         // Check for forbidden keywords that might be in subqueries
-        foreach ($this->forbiddenKeywords as $forbidden) {
+        foreach ($this->forbiddenStatements as $forbidden) {
             if (self::containsKeyword($cleanQuery, $forbidden)) {
                 return false;
             }

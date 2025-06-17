@@ -25,7 +25,7 @@ trait HandleToolEvents
 
     public function toolsBootstrapped(\NeuronAI\AgentInterface $agent, string $event, ToolsBootstrapped $data)
     {
-        if (\array_key_exists(get_class($agent).'_tools_bootstrap', $this->segments)) {
+        if (\array_key_exists(get_class($agent).'_tools_bootstrap', $this->segments) && !empty($data->tools)) {
             $this->segments[get_class($agent).'_tools_bootstrap']
                 ->addContext('Tools', \array_map(fn (ToolInterface $tool) => $tool->getName(), $data->tools))
                 ->end();

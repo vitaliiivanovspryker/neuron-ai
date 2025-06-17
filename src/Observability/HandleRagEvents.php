@@ -39,7 +39,7 @@ trait HandleRagEvents
         }
     }
 
-    public function instructionsChanging(AgentInterface $agent, string $event, InstructionsChanging $data)
+    /*public function instructionsChanging(AgentInterface $agent, string $event, InstructionsChanging $data)
     {
         if (!$this->inspector->canAddSegments()) {
             return;
@@ -48,7 +48,7 @@ trait HandleRagEvents
         $id = \md5($data->instructions);
 
         $this->segments['instructions-'.$id] = $this->inspector
-            ->startSegment(self::SEGMENT_TYPE.'-instructions')
+            ->startSegment(self::SEGMENT_TYPE.'-instructions', 'withInstructions()')
             ->setColor(self::SEGMENT_COLOR);
     }
 
@@ -64,7 +64,7 @@ trait HandleRagEvents
                 ])
                 ->end();
         }
-    }
+    }*/
 
     public function postProcessing(AgentInterface $agent, string $event, PostProcessing $data)
     {

@@ -6,8 +6,6 @@ use NeuronAI\Agent;
 use NeuronAI\AgentInterface;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Exceptions\AgentException;
-use NeuronAI\Observability\Events\InstructionsChanged;
-use NeuronAI\Observability\Events\InstructionsChanging;
 use NeuronAI\Observability\Events\PostProcessed;
 use NeuronAI\Observability\Events\PostProcessing;
 use NeuronAI\Observability\Events\VectorStoreResult;
@@ -26,7 +24,7 @@ class RAG extends Agent
     use ResolveEmbeddingProvider;
 
     /**
-     * @var array<PostprocessorInterface>
+     * @var PostprocessorInterface[]
      */
     protected array $postProcessors = [];
 
@@ -68,55 +66,44 @@ class RAG extends Agent
     /**
      * Set the system message based on the context.
      *
-     * @param array<Document> $documents
-     * @return AgentInterface
+     * @param Document[] $documents
      */
     public function withDocumentsContext(array $documents): AgentInterface
     {
         $originalInstructions = $this->instructions();
-        $this->notify('rag-instructions-changing', new InstructionsChanging($originalInstructions));
 
         // Remove the old context to avoid infinite grow
         $newInstructions = $this->removeDelimitedContent($originalInstructions, '<EXTRA-CONTEXT>', '</EXTRA-CONTEXT>');
 
         $newInstructions .= '<EXTRA-CONTEXT>';
         foreach ($documents as $document) {
-            $newInstructions .= $document->content.PHP_EOL.PHP_EOL;
+            $newInstructions .= $document->getContent().PHP_EOL.PHP_EOL;
         }
         $newInstructions .= '</EXTRA-CONTEXT>';
 
         $this->withInstructions(\trim($newInstructions));
-        $this->notify('rag-instructions-changed', new InstructionsChanged($originalInstructions, $this->instructions()));
 
         return $this;
     }
 
     /**
-     * @deprecated Use withDocumentsContext instead.
-     */
-    protected function setSystemMessage(array $documents): AgentInterface
-    {
-        return $this->withDocumentsContext($documents);
-    }
-
-    /**
      * Retrieve relevant documents from the vector store.
      *
-     * @return array<Document>
+     * @return Document[]
      */
     public function retrieveDocuments(Message $question): array
     {
         $this->notify('rag-vectorstore-searching', new VectorStoreSearching($question));
 
-        $docs = $this->resolveVectorStore()->similaritySearch(
-            $this->resolveEmbeddingsProvider()->embedText($question->getContent())
+        $documents = $this->resolveVectorStore()->similaritySearch(
+            $this->resolveEmbeddingsProvider()->embedText($question->getContent()),
         );
 
         $retrievedDocs = [];
 
-        foreach ($docs as $doc) {
+        foreach ($documents as $document) {
             //md5 for removing duplicates
-            $retrievedDocs[\md5($doc->content)] = $doc;
+            $retrievedDocs[\md5($document->getContent())] = $document;
         }
 
         $retrievedDocs = \array_values($retrievedDocs);
@@ -130,8 +117,8 @@ class RAG extends Agent
      * Apply a series of postprocessors to the retrieved documents.
      *
      * @param Message $question The question to process the documents for.
-     * @param array<Document> $documents The documents to process.
-     * @return array<Document> The processed documents.
+     * @param Document[] $documents The documents to process.
+     * @return Document[] The processed documents.
      */
     protected function applyPostProcessors(Message $question, array $documents): array
     {
@@ -147,7 +134,7 @@ class RAG extends Agent
     /**
      * Feed the vector store with documents.
      *
-     * @param array<Document> $documents
+     * @param Document[] $documents
      * @return void
      */
     public function addDocuments(array $documents): void

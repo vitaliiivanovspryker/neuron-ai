@@ -2,7 +2,7 @@
 
 namespace NeuronAI\Observability;
 
-use NeuronAI\AgentInterface;
+use NeuronAI\Agent;
 use NeuronAI\Observability\Events\InferenceStart;
 use NeuronAI\Observability\Events\InferenceStop;
 use NeuronAI\Observability\Events\MessageSaved;
@@ -10,7 +10,7 @@ use NeuronAI\Observability\Events\MessageSaving;
 
 trait HandleInferenceEvents
 {
-    public function messageSaving(AgentInterface $agent, string $event, MessageSaving $data)
+    public function messageSaving(Agent $agent, string $event, MessageSaving $data)
     {
         if (!$this->inspector->canAddSegments()) {
             return;
@@ -23,7 +23,7 @@ trait HandleInferenceEvents
             ->setColor(self::SEGMENT_COLOR);
     }
 
-    public function messageSaved(AgentInterface $agent, string $event, MessageSaved $data)
+    public function messageSaved(Agent $agent, string $event, MessageSaved $data)
     {
         $id = $this->getMessageId($data->message).'-save';
 
@@ -41,7 +41,7 @@ trait HandleInferenceEvents
             ->end();
     }
 
-    public function inferenceStart(AgentInterface $agent, string $event, InferenceStart $data)
+    public function inferenceStart(Agent $agent, string $event, InferenceStart $data)
     {
         if (!$this->inspector->canAddSegments()) {
             return;
@@ -54,7 +54,7 @@ trait HandleInferenceEvents
             ->setColor(self::SEGMENT_COLOR);
     }
 
-    public function inferenceStop(AgentInterface $agent, string $event, InferenceStop $data)
+    public function inferenceStop(Agent $agent, string $event, InferenceStop $data)
     {
         $id = $this->getMessageId($data->message).'-inference';
 
