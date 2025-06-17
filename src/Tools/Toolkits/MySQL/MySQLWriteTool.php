@@ -7,6 +7,9 @@ use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 use PDO;
 
+/**
+ * @method static static make(PDO $pdo)
+ */
 class MySQLWriteTool extends Tool
 {
     public function __construct(protected PDO $pdo)

@@ -8,6 +8,9 @@ use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Tools\Tool;
 
+/**
+ * @method static static make(string $pdo, string $language = 'JavaScript')
+ */
 class RizaFunctionExecutor extends Tool
 {
     protected Client $client;
