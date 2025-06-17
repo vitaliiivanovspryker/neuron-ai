@@ -163,16 +163,8 @@ class Deserializer
             return self::deserializeObject($value, $typeName);
         }
 
-        // Handle backed enum
-        if (enum_exists($typeName) && is_subclass_of($typeName, \BackedEnum::class)) {
-            /** @var class-string<\BackedEnum> $typeName */
-            $enum = $typeName::tryFrom($value);
-
-            if ($enum === null) {
-                throw new DeserializerException("Invalid enum value '{$value}' for {$typeName}");
-            }
-
-            return $enum;
+        if (enum_exists($typeName)) {
+            return self::handleEnum($typeName, $value);
         }
 
         // If it's already the correct type, return as-is
@@ -283,5 +275,20 @@ class Deserializer
         }
 
         throw new DeserializerException("Cannot create DateTimeImmutable from value type: " . gettype($value));
+    }
+
+    private static function handleEnum(\BackedEnum|string $typeName, mixed $value)
+    {
+        if (! is_subclass_of($typeName, \BackedEnum::class)) {
+            throw new DeserializerException("Cannot create BackedEnum from: {$typeName}");
+        }
+
+        $enum = $typeName::tryFrom($value);
+
+        if ($enum === null) {
+            throw new DeserializerException("Invalid enum value '{$value}' for {$typeName}");
+        }
+
+        return $enum;
     }
 }
