@@ -8,7 +8,6 @@ use NeuronAI\StaticConstructor;
 use NeuronAI\StructuredOutput\Deserializer\Deserializer;
 use NeuronAI\StructuredOutput\Deserializer\DeserializerException;
 
-
 /**
  * @method static static make(?string $name = null, ?string $description = null, array $properties = [])
  */
@@ -61,17 +60,17 @@ class Tool implements ToolInterface
         ?string $description = null,
         array $properties = []
     ) {
-        if(!empty($name)){
+        if (!empty($name)) {
             $this->name = $name;
         }
 
-        if(!empty($description)) {
+        if (!empty($description)) {
             $this->description = $description;
         }
 
-        if(!empty($properties)){
+        if (!empty($properties)) {
             $this->properties = $properties;
-        }else{
+        } else {
             $this->properties = $this->properties();
         }
     }
