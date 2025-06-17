@@ -8,7 +8,6 @@ use NeuronAI\Workflow\Exporter\ExporterInterface;
 use NeuronAI\Workflow\Exporter\MermaidExporter;
 use NeuronAI\Workflow\Persistence\InMemoryPersistence;
 use NeuronAI\Workflow\Persistence\PersistenceInterface;
-use ReflectionClass;
 use SplSubject;
 
 class Workflow implements SplSubject
@@ -42,65 +41,6 @@ class Workflow implements SplSubject
         $this->workflowId = $workflowId ?? \uniqid('neuron_workflow_');
     }
 
-    public function addNode(NodeInterface $node): self
-    {
-        $name = $this->getNodeName($node);
-        $this->nodes[$name] = $node;
-        return $this;
-    }
-
-    /**
-     * @param NodeInterface[] $nodes
-     */
-    public function addNodes(array $nodes): Workflow
-    {
-        foreach ($nodes as $node) {
-            $this->addNode($node);
-        }
-        return $this;
-    }
-
-    private function getNodeName(NodeInterface $node): string
-    {
-        $reflection = new ReflectionClass($node);
-        return $reflection->getShortName();
-    }
-
-    public function addEdge(Edge $edge): self
-    {
-        $this->edges[] = $edge;
-        return $this;
-    }
-
-    /**
-     * @param Edge[] $edges
-     */
-    public function addEdges(array $edges): Workflow
-    {
-        foreach ($edges as $edge) {
-            $this->addEdge($edge);
-        }
-        return $this;
-    }
-
-    public function setStart(string $nodeClass): self
-    {
-        $this->startNode = $this->getShortClassName($nodeClass);
-        return $this;
-    }
-
-    public function setEnd(string $nodeClass): self
-    {
-        $this->endNode = $this->getShortClassName($nodeClass);
-        return $this;
-    }
-
-    private function getShortClassName(string $fullyQualifiedClass): string
-    {
-        $reflection = new ReflectionClass($fullyQualifiedClass);
-        return $reflection->getShortName();
-    }
-
     public function validate(): void
     {
         if ($this->startNode === null) {
@@ -112,20 +52,20 @@ class Workflow implements SplSubject
         }
 
         if (!isset($this->nodes[$this->startNode])) {
-            throw new WorkflowException("Start node '{$this->startNode}' does not exist");
+            throw new WorkflowException("Start node {$this->startNode} does not exist");
         }
 
         if (!isset($this->nodes[$this->endNode])) {
-            throw new WorkflowException("End node '{$this->endNode}' does not exist");
+            throw new WorkflowException("End node {$this->endNode} does not exist");
         }
 
         foreach ($this->edges as $edge) {
             if (!isset($this->nodes[$edge->getFrom()])) {
-                throw new WorkflowException("Edge from node '{$edge->getFrom()}' does not exist");
+                throw new WorkflowException("Edge from node {$edge->getFrom()} does not exist");
             }
 
             if (!isset($this->nodes[$edge->getTo()])) {
-                throw new WorkflowException("Edge to node '{$edge->getTo()}' does not exist");
+                throw new WorkflowException("Edge to node {$edge->getTo()} does not exist");
             }
         }
     }
@@ -162,7 +102,7 @@ class Workflow implements SplSubject
                 $nextNode = $this->findNextNode($currentNode, $state);
 
                 if ($nextNode === null) {
-                    throw new WorkflowException("No valid edge found from node '{$currentNode}'");
+                    throw new WorkflowException("No valid edge found from node {$currentNode}");
                 }
 
                 $currentNode = $nextNode;
@@ -230,6 +170,78 @@ class Workflow implements SplSubject
         return  $result;
     }
 
+    /**
+     * @return Node[]
+     */
+    public function nodes(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return Edge[]
+     */
+    public function edges(): array
+    {
+        return [];
+    }
+
+    public function addNode(NodeInterface $node): self
+    {
+        $this->nodes[$node::class] = $node;
+        return $this;
+    }
+
+    /**
+     * @param NodeInterface[] $nodes
+     */
+    public function addNodes(array $nodes): Workflow
+    {
+        foreach ($nodes as $node) {
+            $this->addNode($node);
+        }
+        return $this;
+    }
+
+    public function getNodes(): array
+    {
+        return \array_merge($this->nodes(), $this->nodes);
+    }
+
+    public function addEdge(Edge $edge): self
+    {
+        $this->edges[] = $edge;
+        return $this;
+    }
+
+    /**
+     * @param Edge[] $edges
+     */
+    public function addEdges(array $edges): Workflow
+    {
+        foreach ($edges as $edge) {
+            $this->addEdge($edge);
+        }
+        return $this;
+    }
+
+    public function getEdges(): array
+    {
+        return \array_merge($this->edges(), $this->edges);
+    }
+
+    public function setStart(string $nodeClass): self
+    {
+        $this->startNode = $nodeClass;
+        return $this;
+    }
+
+    public function setEnd(string $nodeClass): self
+    {
+        $this->endNode = $nodeClass;
+        return $this;
+    }
+
     private function findNextNode(string $currentNode, WorkflowState $state): ?string
     {
         foreach ($this->edges as $edge) {
@@ -241,6 +253,11 @@ class Workflow implements SplSubject
         return null;
     }
 
+    public function getWorkflowId(): string
+    {
+        return $this->workflowId;
+    }
+
     public function export(): string
     {
         return $this->exporter->export($this);
@@ -250,20 +267,5 @@ class Workflow implements SplSubject
     {
         $this->exporter = $exporter;
         return $this;
-    }
-
-    public function getEdges(): array
-    {
-        return $this->edges;
-    }
-
-    public function getNodes(): array
-    {
-        return $this->nodes;
-    }
-
-    public function getWorkflowId(): string
-    {
-        return $this->workflowId;
     }
 }

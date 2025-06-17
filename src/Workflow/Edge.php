@@ -2,26 +2,13 @@
 
 namespace NeuronAI\Workflow;
 
-use ReflectionClass;
-
 class Edge
 {
-    private string $from;
-    private string $to;
-
     public function __construct(
-        string $fromClass,
-        string $toClass,
+        protected string $from,
+        protected string $to,
         private ?\Closure $condition = null
     ) {
-        $this->from = $this->getShortClassName($fromClass);
-        $this->to = $this->getShortClassName($toClass);
-    }
-
-    private function getShortClassName(string $fullyQualifiedClass): string
-    {
-        $reflection = new ReflectionClass($fullyQualifiedClass);
-        return $reflection->getShortName();
     }
 
     public function getFrom(): string
