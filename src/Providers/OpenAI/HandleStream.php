@@ -95,7 +95,9 @@ trait HandleStream
      */
     protected function composeToolCalls(array $line, array $toolCalls): array
     {
-        foreach ($line['choices'][0]['delta']['tool_calls'] as $index => $call) {
+        foreach ($line['choices'][0]['delta']['tool_calls'] as $call) {
+            $index = $call['index'];
+
             if (!\array_key_exists($index, $toolCalls)) {
                 if ($name = $call['function']['name'] ?? null) {
                     $toolCalls[$index]['function'] = ['name' => $name, 'arguments' => ''];
