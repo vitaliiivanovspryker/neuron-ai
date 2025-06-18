@@ -5,8 +5,8 @@ namespace NeuronAI\Tools\Toolkits\Riza;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use NeuronAI\Tools\PropertyType;
-use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Tools\Tool;
+use NeuronAI\Tools\ToolProperty;
 
 /**
  * @method static static make(string $pdo, string $language = 'JavaScript')
@@ -20,34 +20,37 @@ class RizaFunctionExecutor extends Tool
     public function __construct(
         protected string $key,
         protected string $language = 'JavaScript', // Python, JavaScript, and TypeScript (no PHP unfortunately)
-    ) {
+    )
+    {
         parent::__construct(
             "execute_{$language}_function",
             "Execute {$language} function and get the result."
         );
 
-        $this->addProperty(
+    }
+
+    protected function properties(): array
+    {
+        return [
             new ToolProperty(
                 'code',
                 PropertyType::STRING,
                 'The function code to execute.',
                 true,
-            )
-        )->addProperty(
+            ),
             new ToolProperty(
                 'input',
                 PropertyType::ARRAY,
                 'The input arguments to execute the function.',
                 false,
-            )
-        )->addProperty(
+            ),
             new ToolProperty(
                 'env',
                 PropertyType::ARRAY,
                 "Set of key-value pairs to add to the script's execution environment.",
                 false,
             )
-        )->setCallable($this);
+        ];
     }
 
     protected function getClient(): Client

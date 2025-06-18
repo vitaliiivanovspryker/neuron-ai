@@ -25,29 +25,30 @@ class RizaCodeInterpreter extends Tool
             "execute_{$language}_code",
             "Execute {$language} scripts in a secure and isolated runtime environment."
         );
+    }
 
-        $this->addProperty(
+    protected function properties(): array
+    {
+        return [
             new ToolProperty(
-                'code',
-                PropertyType::STRING,
-                'The code to execute.',
-                true,
-            )
-        )->addProperty(
+            'code',
+            PropertyType::STRING,
+            'The code to execute.',
+            true,
+        ),
             new ToolProperty(
                 'args',
                 PropertyType::ARRAY,
                 "List of command line arguments to pass to the script (List of strings).",
                 false,
-            )
-        )->addProperty(
+            ),
             new ToolProperty(
                 'env',
                 PropertyType::ARRAY,
                 "Set of key-value pairs to add to the script's execution environment.",
                 false,
             )
-        )->setCallable($this);
+        ];
     }
 
     public function getClient(): Client

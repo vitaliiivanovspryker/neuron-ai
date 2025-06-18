@@ -23,17 +23,21 @@ class ZepSearchGraphTool extends Tool
         parent::__construct(
             'search_knowledge_graph',
             'Searches the knowledge graph for relevant facts or nodes.
-            Use this tool if you need to retrieve user information that can help you provide more accurate answers.'
+Use this tool if you need to retrieve user information that can help you provide more accurate answers.'
         );
 
-        $this->addProperty(
+        $this->createUser();
+    }
+
+    protected function properties(): array
+    {
+        return [
             new ToolProperty(
                 'query',
                 PropertyType::STRING,
                 'The search term to find relevant facts or nodes',
                 true
-            )
-        )->addProperty(
+            ),
             new ToolProperty(
                 'search_scope',
                 PropertyType::STRING,
@@ -41,9 +45,7 @@ class ZepSearchGraphTool extends Tool
                 false,
                 ['facts', 'nodes']
             )
-        )->setCallable($this);
-
-        $this->createUser();
+        ];
     }
 
     public function __invoke(string $query, string $search_scope = 'facts', int $limit = 5): array

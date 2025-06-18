@@ -42,24 +42,29 @@ class PGSQLSelectTool extends Tool
         parent::__construct(
             'execute_select_query',
             'Use this tool only to run SELECT query against the PostgreSQL database.
-            This the tool to use only to gather information from the MySQL database.'
+This the tool to use only to gather information from the MySQL database.'
         );
+    }
 
-        $this->addProperty(
+    protected function properties(): array
+    {
+        return [
             new ToolProperty(
                 'query',
                 PropertyType::STRING,
                 'The SELECT query you want to run against the database.',
                 true
             )
-        )->setCallable($this);
+        ];
     }
 
     public function __invoke(string $query): array
     {
         if (!$this->validateReadOnlyQuery($query)) {
-            return ["error" => "The query was rejected for security reasons.
-            It looks like you are trying to run a write query using the read-only query tool."];
+            return [
+                "error" => "The query was rejected for security reasons.
+It looks like you are trying to run a write query using the read-only query tool."
+            ];
         }
 
         $statement = $this->pdo->prepare($query);
@@ -160,7 +165,7 @@ class PGSQLSelectTool extends Tool
         // Simple split on semicolons (this could be enhanced for more complex cases)
         return array_filter(
             array_map('trim', explode(';', $query)),
-            fn ($stmt) => !empty($stmt)
+            fn($stmt) => !empty($stmt)
         );
     }
 
