@@ -31,14 +31,14 @@ trait HandleInferenceEvents
             return;
         }
 
-        $this->segments[$id]
-            ->addContext('Message', \array_merge($data->message->jsonSerialize(), $data->message->getUsage() ? [
+        $segment = $this->segments[$id];
+        $segment->addContext('Message', \array_merge($data->message->jsonSerialize(), $data->message->getUsage() ? [
                 'usage' => [
                     'input_tokens' => $data->message->getUsage()->inputTokens,
                     'output_tokens' => $data->message->getUsage()->outputTokens,
                 ]
-            ] : []))
-            ->end();
+            ] : []));
+        $segment->end();
     }
 
     public function inferenceStart(Agent $agent, string $event, InferenceStart $data)
@@ -59,13 +59,12 @@ trait HandleInferenceEvents
         $id = $this->getMessageId($data->message).'-inference';
 
         if (\array_key_exists($id, $this->segments)) {
-            $segment = $this->segments[$id]
-                ->addContext('Message', $data->message)
+            $segment = $this->segments[$id]->end();
+            $segment->addContext('Message', $data->message)
                 ->addContext('Response', $data->response);
             foreach ($this->getContext($agent) as $key => $value) {
                 $segment->addContext($key, $value);
             }
-            $segment->end();
         }
     }
 }
