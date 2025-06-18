@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace NeuronAI\Observability;
 
-use Inspector\Configuration;
-use Inspector\Inspector;
 use SplObserver;
 
 trait Observable
