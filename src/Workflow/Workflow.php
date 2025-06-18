@@ -112,7 +112,7 @@ class Workflow implements SplSubject
                     $this->notify('error', new AgentError($exception));
                     throw $exception;
                 }
-                $this->notify('workflow-node-stop', new WorkflowNodeEnd($currentNode, $state));
+                $this->notify('workflow-node-end', new WorkflowNodeEnd($currentNode, $state));
 
                 $nextNode = $this->findNextNode($currentNode, $state);
 
