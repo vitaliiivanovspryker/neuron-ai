@@ -39,10 +39,10 @@ trait HandleWorkflowEvents
         if (\array_key_exists($workflow::class, $this->segments)) {
             $this->segments[$workflow::class]
                 ->end()
-                ->addContext('Last Reply', $data->lastReply->jsonSerialize());
+                ->addContext('Last Reply', $data->state->all());
         } elseif ($this->inspector->canAddSegments()) {
             $transaction = $this->inspector->transaction();
-            $transaction->addContext('Last Reply', $data->lastReply->jsonSerialize());
+            $transaction->addContext('Last Reply', $data->state->all());
             $transaction->setResult('success');
         }
     }
