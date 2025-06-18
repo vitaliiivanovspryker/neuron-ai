@@ -90,7 +90,7 @@ class LogObserver implements \SplObserver
                 'documents' => $data->documents,
             ],
             Events\WorkflowStart::class => [
-                'executionList' => $data->executionList,
+                'executionList' => $data->nodes,
             ],
             Events\WorkflowNodeStart::class => [
                 'node' => $data->node,

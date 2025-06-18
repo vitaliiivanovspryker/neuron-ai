@@ -3,6 +3,8 @@
 namespace NeuronAI\Workflow;
 
 use NeuronAI\Exceptions\WorkflowException;
+use NeuronAI\Observability\Events\WorkflowEnd;
+use NeuronAI\Observability\Events\WorkflowStart;
 use NeuronAI\Observability\Observable;
 use NeuronAI\Workflow\Exporter\ExporterInterface;
 use NeuronAI\Workflow\Exporter\MermaidExporter;
@@ -132,14 +134,14 @@ class Workflow implements SplSubject
      */
     public function run(?WorkflowState $initialState = null): WorkflowState
     {
-        $this->notify('workflow-start');
+        $this->notify('workflow-start', new WorkflowStart($this->getNodes(), $this->getEdges()));
         $this->validate();
 
         $state = $initialState ?? new WorkflowState();
         $currentNode = $this->startNode;
 
         $result = $this->execute($currentNode, $state);
-        $this->notify('workflow-stop');
+        $this->notify('workflow-end', new WorkflowEnd($result));
 
         return $result;
     }
@@ -149,7 +151,7 @@ class Workflow implements SplSubject
      */
     public function resume(array|string|int $humanFeedback): WorkflowState
     {
-        $this->notify('workflow-resume');
+        $this->notify('workflow-resume', new WorkflowStart($this->getNodes(), $this->getEdges()));
         $interrupt = $this->persistence->load($this->workflowId);
 
         if ($interrupt === null) {
@@ -165,7 +167,7 @@ class Workflow implements SplSubject
             true,
             $humanFeedback
         );
-        $this->notify('workflow-stop');
+        $this->notify('workflow-end', new WorkflowEnd($result));
 
         return  $result;
     }
