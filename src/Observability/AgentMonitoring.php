@@ -36,8 +36,6 @@ class AgentMonitoring implements \SplObserver
 
     protected array $methodsMap = [
         'error' => 'reportError',
-        'workflow-start' => 'workflowStart',
-        'workflow-end' => 'workflowEnd',
         'chat-start' => 'start',
         'chat-stop' => 'stop',
         'stream-start' => 'start',
@@ -64,6 +62,10 @@ class AgentMonitoring implements \SplObserver
         'rag-vectorstore-result' => 'vectorStoreResult',
         'rag-postprocessing' => 'postProcessing',
         'rag-postprocessed' => 'postProcessed',
+        'workflow-start' => 'workflowStart',
+        'workflow-end' => 'workflowEnd',
+        'workflow-node-start' => 'workflowNodeStart',
+        'workflow-node-end' => 'workflowNodeEnd',
     ];
 
     /**

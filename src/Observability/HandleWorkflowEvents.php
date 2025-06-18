@@ -50,11 +50,19 @@ trait HandleWorkflowEvents
 
     public function workflowNodeStart(\SplSubject $workflow, string $event, WorkflowNodeStart $data)
     {
-        //
+        if (!$this->inspector->canAddSegments()) {
+            return;
+        }
+
+        $this->segments[$data->node] = $this->inspector
+            ->startSegment('workflow-node', $data->node)
+            ->setColor(self::SEGMENT_COLOR);
     }
 
     public function workflowNodeEnd(\SplSubject $workflow, string $event, WorkflowNodeEnd $data)
     {
-        //
+        if (\array_key_exists($data->node, $this->segments)) {
+            $this->segments[$data->node]->end();
+        }
     }
 }
