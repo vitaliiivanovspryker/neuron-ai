@@ -79,7 +79,7 @@ class Workflow implements SplSubject
     }
 
     /**
-     * @throws WorkflowInterrupt|WorkflowException
+     * @throws WorkflowInterrupt|WorkflowException|\Throwable
      */
     protected function execute(
         string $currentNode,
@@ -143,7 +143,7 @@ class Workflow implements SplSubject
     }
 
     /**
-     * @throws WorkflowInterrupt|WorkflowException
+     * @throws WorkflowInterrupt|WorkflowException|\Throwable
      */
     public function run(?WorkflowState $initialState = null): WorkflowState
     {
@@ -165,7 +165,7 @@ class Workflow implements SplSubject
     }
 
     /**
-     * @throws WorkflowInterrupt|WorkflowException
+     * @throws WorkflowInterrupt|WorkflowException|\Throwable
      */
     public function resume(array|string|int $humanFeedback): WorkflowState
     {

@@ -3,6 +3,7 @@
 namespace NeuronAI\Observability;
 
 use GuzzleHttp\Exception\RequestException;
+use Inspector\Configuration;
 use Inspector\Inspector;
 use Inspector\Models\Segment;
 use NeuronAI\Chat\Messages\Message;
@@ -67,6 +68,18 @@ class AgentMonitoring implements \SplObserver
         'workflow-node-start' => 'workflowNodeStart',
         'workflow-node-end' => 'workflowNodeEnd',
     ];
+
+    protected static ?AgentMonitoring $instance = null;
+
+    public static function instance(): AgentMonitoring
+    {
+        if (self::$instance === null) {
+            $configuration = new Configuration($_ENV['INSPECTOR_INGESTION_KEY']);
+            $configuration->setTransport($_ENV['INSPECTOR_TRANSPORT'] ?? 'async');
+            self::$instance = new self(new Inspector($configuration));
+        }
+        return self::$instance;
+    }
 
     /**
      * @param Inspector $inspector The monitoring instance

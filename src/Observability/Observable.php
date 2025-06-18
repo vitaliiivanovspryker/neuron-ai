@@ -19,10 +19,8 @@ trait Observable
     private function initEventGroup(string $event = '*'): void
     {
         if (!\array_key_exists('*', $this->observers) && !empty($_ENV['INSPECTOR_INGESTION_KEY'])) {
-            $configuration = new Configuration($_ENV['INSPECTOR_INGESTION_KEY']);
-            $configuration->setTransport($_ENV['INSPECTOR_TRANSPORT'] ?? 'async');
             $this->observers['*'] = [
-                new AgentMonitoring(new Inspector($configuration))
+                AgentMonitoring::instance(),
             ];
         }
 
