@@ -86,7 +86,7 @@ class AgentMonitoring implements \SplObserver
         }
     }
 
-    public function reportError(\NeuronAI\Agent $agent, string $event, AgentError $data)
+    public function reportError(\SplSubject $subject, string $event, AgentError $data)
     {
         if ($this->catch) {
             $error = $this->inspector->reportException($data->exception, !$data->unhandled);
