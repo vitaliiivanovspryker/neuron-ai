@@ -19,7 +19,7 @@ trait HandleWorkflowEvents
             $this->inspector->startTransaction($workflow::class)
                 ->setType('neuron-workflow')
                 ->addContext('List', [
-                    'nodes' => \array_map(fn (NodeInterface $node) => $node::class, $data->nodes),
+                    'nodes' => \array_keys($data->nodes),
                     'edges' => \array_map(function (Edge $edge) {
                         return [
                             'from' => $edge->getFrom(),
