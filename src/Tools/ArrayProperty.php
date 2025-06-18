@@ -2,16 +2,24 @@
 
 namespace NeuronAI\Tools;
 
+use NeuronAI\Exceptions\ArrayPropertyException;
+
 class ArrayProperty implements ToolPropertyInterface
 {
     protected PropertyType $type = PropertyType::ARRAY;
 
+    /**
+     * @throws ArrayPropertyException
+     */
     public function __construct(
         protected string $name,
         protected string $description,
         protected bool $required = false,
         protected ?ToolPropertyInterface $items = null,
+        protected ?int $minItems = null,
+        protected ?int $maxItems = null,
     ) {
+        $this->validateConstraints();
     }
 
     public function jsonSerialize(): array
@@ -34,6 +42,14 @@ class ArrayProperty implements ToolPropertyInterface
 
         if (!empty($this->items)) {
             $schema['items'] = $this->items->getJsonSchema();
+        }
+
+        if (!empty($this->minItems)) {
+            $schema['minItems'] = $this->minItems;
+        }
+
+        if (!empty($this->maxItems)) {
+            $schema['maxItems'] = $this->maxItems;
         }
 
         return $schema;
@@ -62,5 +78,25 @@ class ArrayProperty implements ToolPropertyInterface
     public function getItems(): ?ToolPropertyInterface
     {
         return $this->items;
+    }
+
+    /**
+     * @throws ArrayPropertyException
+     */
+    protected function validateConstraints(): void
+    {
+        if ($this->minItems !== null && $this->minItems < 0) {
+            throw new ArrayPropertyException("minItems must be >= 0, got {$this->minItems}");
+        }
+
+        if ($this->maxItems !== null && $this->maxItems < 0) {
+            throw new ArrayPropertyException("maxItems must be >= 0, got {$this->maxItems}");
+        }
+
+        if ($this->minItems !== null && $this->maxItems !== null && $this->minItems > $this->maxItems) {
+            throw new ArrayPropertyException(
+                "minItems ({$this->minItems}) cannot be greater than maxItems ({$this->maxItems})"
+            );
+        }
     }
 }
