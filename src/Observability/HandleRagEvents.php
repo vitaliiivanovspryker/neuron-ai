@@ -3,8 +3,6 @@
 namespace NeuronAI\Observability;
 
 use NeuronAI\AgentInterface;
-use NeuronAI\Observability\Events\InstructionsChanged;
-use NeuronAI\Observability\Events\InstructionsChanging;
 use NeuronAI\Observability\Events\PostProcessed;
 use NeuronAI\Observability\Events\PostProcessing;
 use NeuronAI\Observability\Events\VectorStoreResult;

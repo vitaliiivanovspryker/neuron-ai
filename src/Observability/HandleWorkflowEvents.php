@@ -5,7 +5,6 @@ namespace NeuronAI\Observability;
 use NeuronAI\Observability\Events\WorkflowEnd;
 use NeuronAI\Observability\Events\WorkflowStart;
 use NeuronAI\Workflow\Edge;
-use NeuronAI\Workflow\NodeInterface;
 
 trait HandleWorkflowEvents
 {
