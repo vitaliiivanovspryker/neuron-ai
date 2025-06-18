@@ -14,6 +14,7 @@ use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\RAG\PostProcessor\PostProcessorInterface;
+use NeuronAI\RAG\PreProcessor\PreProcessorInterface;
 
 /**
  * @method RAG withProvider(AIProviderInterface $provider)
@@ -24,7 +25,12 @@ class RAG extends Agent
     use ResolveEmbeddingProvider;
 
     /**
-     * @var PostprocessorInterface[]
+     * @var array PreProcessorInterface[]
+     */
+    protected array $preProcessors = [];
+
+    /**
+     * @var PostProcessorInterface[]
      */
     protected array $postProcessors = [];
 
@@ -93,6 +99,8 @@ class RAG extends Agent
      */
     public function retrieveDocuments(Message $question): array
     {
+        $question = $this->applyPreProcessors($question);
+
         $this->notify('rag-vectorstore-searching', new VectorStoreSearching($question));
 
         $documents = $this->resolveVectorStore()->similaritySearch(
@@ -111,6 +119,21 @@ class RAG extends Agent
         $this->notify('rag-vectorstore-result', new VectorStoreResult($question, $retrievedDocs));
 
         return $this->applyPostProcessors($question, $retrievedDocs);
+    }
+
+    /**
+     * Apply a series of preprocessors to the asked question.
+     *
+     * @param Message $question The question to process.
+     * @return Message The processed question.
+     */
+    private function applyPreProcessors(Message $question): Message
+    {
+        foreach ($this->preProcessors() as $processor) {
+            $question = $processor->process($question);
+        }
+
+        return $question;
     }
 
     /**
@@ -147,6 +170,22 @@ class RAG extends Agent
     /**
      * @throws AgentException
      */
+    public function setPreProcessors(array $preProcessors): RAG
+    {
+        foreach ($preProcessors as $processor) {
+            if (! $processor instanceof PreProcessorInterface) {
+                throw new AgentException($processor::class." must implement PreProcessorInterface");
+            }
+
+            $this->preProcessors[] = $processor;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @throws AgentException
+     */
     public function setPostProcessors(array $postProcessors): RAG
     {
         foreach ($postProcessors as $processor) {
@@ -158,6 +197,14 @@ class RAG extends Agent
         }
 
         return $this;
+    }
+
+    /**
+     * @return PreProcessorInterface[]
+     */
+    protected function preProcessors(): array
+    {
+        return $this->preProcessors;
     }
 
     /**
