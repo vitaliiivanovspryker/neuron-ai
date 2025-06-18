@@ -3,6 +3,8 @@
 namespace NeuronAI\Observability;
 
 use NeuronAI\Observability\Events\WorkflowEnd;
+use NeuronAI\Observability\Events\WorkflowNodeEnd;
+use NeuronAI\Observability\Events\WorkflowNodeStart;
 use NeuronAI\Observability\Events\WorkflowStart;
 use NeuronAI\Workflow\Edge;
 
@@ -44,5 +46,15 @@ trait HandleWorkflowEvents
             $transaction->addContext('Last Reply', $data->state->all());
             $transaction->setResult('success');
         }
+    }
+
+    public function workflowNodeStart(\SplSubject $workflow, string $event, WorkflowNodeStart $data)
+    {
+        //
+    }
+
+    public function workflowNodeEnd(\SplSubject $workflow, string $event, WorkflowNodeEnd $data)
+    {
+        //
     }
 }
