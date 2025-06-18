@@ -30,6 +30,9 @@ class PdfReader implements ReaderInterface
 
     public function setBinPath(string $binPath): self
     {
+        if (!is_executable($binPath)) {
+            throw new DataReaderException("The provided path is not executable.");
+        }
         $this->binPath = $binPath;
         return $this;
     }
