@@ -347,36 +347,16 @@ Why is the model taking certain decisions? What data is the model reacting to? P
 in the common sense. No static types, small changes break output, long prompts cost latency,
 and no two models behave exactly the same with the same prompt.
 
-The Inspector team designed NeuronAI with built-in observability features, so you can monitor AI agents were running,
-helping you maintain production-grade implementations with confidence.
+The best way to do this is with [Inspector](https://inspector.dev). After you sign up,
+make sure to set the `INSPECTOR_INGESTION_KEY` variable in the application environment file to start monitoring:
 
-You have to install the Inspector package based on your development environment. We provide integration packages
-for [PHP](https://github.com/inspector-apm/inspector-php), [Laravel](https://github.com/inspector-apm/inspector-laravel),
-[Symfony](https://github.com/inspector-apm/inspector-symfony), [CodeIgniter](https://github.com/inspector-apm/inspector-codeigniter),
-[Drupal](https://git.drupalcode.org/project/inspector_monitoring).
-
-Attach the `AgentMonitoring` component to the agent to monitor the internal execution timeline in the Inspector dashboard.
-If the agent fires an error, you will be alerted in real-time. You can connect several notification channels like email, slack, discord, telegram, and more.
-Here is a code example in a legacy PHP script:
-
-```php
-use NeuronAI\Observability\AgentMonitoring;
-
-// https://docs.neuron-ai.dev/advanced/observability
-$inspector = new \Inspector\Inspector(
-    new \Inspector\Configuration('INSPECTOR_INGESTION_KEY')
-);
-
-// Attach monitoring to the Agent
-$response = MyAgent::make()
-    ->observe(new AgentMonitoring($inspector))
-    ->chat(...);
+```dotenv
+INSPECTOR_INGESTION_KEY=fwe45gtxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-![](./docs/img/neuron-observability.png)
+After configuring the environment variable, you will see the agent execution timeline in your Inspector dashboard.
 
-> If you use a framework like Laravel, Symfony, or CodeIgniter, the connection is even easier,
-> since you already have the Inspector instance in the container.
+![](./docs/images/neuron-observability.avif)
 
 Learn more about Monitoring in the [documentation](https://docs.neuron-ai.dev/advanced/observability).
 
