@@ -208,7 +208,9 @@ class Workflow implements SplSubject
     public function getNodes(): array
     {
         if (empty($this->nodes)) {
-            $this->nodes = $this->nodes();
+            foreach ($this->nodes() as $node) {
+                $this->addNode($node);
+            }
         }
 
         return $this->nodes;
