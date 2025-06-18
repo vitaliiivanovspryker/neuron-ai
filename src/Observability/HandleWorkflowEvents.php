@@ -65,7 +65,7 @@ trait HandleWorkflowEvents
     {
         if (\array_key_exists($data->node, $this->segments)) {
             $segment = $this->segments[$data->node]->end();
-            $segment->addContext('State', [$segment->getContext('State'), ...['after' => $data->state->all()]]);
+            $segment->addContext('State', \array_merge($segment->getContext('State'), ['after' => $data->state->all()]));
         }
     }
 }
