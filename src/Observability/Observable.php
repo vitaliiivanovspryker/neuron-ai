@@ -16,7 +16,7 @@ trait Observable
 
     private function initEventGroup(string $event = '*'): void
     {
-        if (!empty($_ENV['INSPECTOR_INGESTION_KEY'])) {
+        /*if (!empty($_ENV['INSPECTOR_INGESTION_KEY'])) {
             if (!isset($this->observers['*'])) {
                 $this->observers['*'] = [
                     AgentMonitoring::instance(),
@@ -24,6 +24,15 @@ trait Observable
             } else {
                 $this->observers['*'][] = AgentMonitoring::instance();
             }
+        }*/
+
+        /*
+         * If developers attach an observer, the agent monitoring will not be attached by default.
+         */
+        if (!isset($this->observers['*']) && !empty($_ENV['INSPECTOR_INGESTION_KEY'])) {
+            $this->observers['*'] = [
+                AgentMonitoring::instance(),
+            ];
         }
 
         if (!isset($this->observers[$event])) {

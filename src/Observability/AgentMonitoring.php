@@ -73,9 +73,14 @@ class AgentMonitoring implements \SplObserver
 
     public static function instance(): AgentMonitoring
     {
+        $configuration = new Configuration($_ENV['INSPECTOR_INGESTION_KEY']);
+        $configuration->setTransport($_ENV['INSPECTOR_TRANSPORT'] ?? 'async');
+
+        if (isset($_ENV['INSPECTOR_SPLIT_MONITORING'])) {
+            return new self(new Inspector($configuration));
+        }
+
         if (self::$instance === null) {
-            $configuration = new Configuration($_ENV['INSPECTOR_INGESTION_KEY']);
-            $configuration->setTransport($_ENV['INSPECTOR_TRANSPORT'] ?? 'async');
             self::$instance = new self(new Inspector($configuration));
         }
         return self::$instance;
