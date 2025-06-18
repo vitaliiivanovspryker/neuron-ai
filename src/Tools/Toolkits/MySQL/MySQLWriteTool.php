@@ -12,7 +12,6 @@ use PDO;
  */
 class MySQLWriteTool extends Tool
 {
-
     public function __construct(protected PDO $pdo)
     {
         parent::__construct(

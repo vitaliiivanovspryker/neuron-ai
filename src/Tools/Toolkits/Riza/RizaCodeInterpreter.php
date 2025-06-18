@@ -31,11 +31,11 @@ class RizaCodeInterpreter extends Tool
     {
         return [
             new ToolProperty(
-            'code',
-            PropertyType::STRING,
-            'The code to execute.',
-            true,
-        ),
+                'code',
+                PropertyType::STRING,
+                'The code to execute.',
+                true,
+            ),
             new ToolProperty(
                 'args',
                 PropertyType::ARRAY,

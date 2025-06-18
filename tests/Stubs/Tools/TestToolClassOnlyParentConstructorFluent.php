@@ -14,19 +14,19 @@ class TestToolClassOnlyParentConstructorFluent extends \NeuronAI\Tools\Tool
             'test tool'
         );
         $this->addProperty(
-                new ToolProperty(
-                    'url',
-                    PropertyType::STRING,
-                    'The URL to read.',
-                    true
-                )
-            )->addProperty(
-                new ToolProperty(
-                    'param',
-                    PropertyType::STRING,
-                    'the param'
-                )
-            );
+            new ToolProperty(
+                'url',
+                PropertyType::STRING,
+                'The URL to read.',
+                true
+            )
+        )->addProperty(
+            new ToolProperty(
+                'param',
+                PropertyType::STRING,
+                'the param'
+            )
+        );
     }
 
     public function getKey(): string

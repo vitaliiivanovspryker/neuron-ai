@@ -423,7 +423,8 @@ class ToolTest extends TestCase
         );
     }
 
-    function test_properties_declaration_on_method_and_constructor_without_parent_constructor(){
+    public function test_properties_declaration_on_method_and_constructor_without_parent_constructor()
+    {
         $tool = new TestToolClassWithoutParentConstructorMixed('test', true);
         $this->assertEquals(2, count($tool->getProperties()));
         $this->assertEquals('test_tool', $tool->getName());
@@ -437,7 +438,8 @@ class ToolTest extends TestCase
         $this->assertEquals('test', $tool->getKey());
     }
 
-    function test_properties_declaration_on_method_without_parent_constructor(){
+    public function test_properties_declaration_on_method_without_parent_constructor()
+    {
         $tool = new TestToolClassWithoutParentConstructor('test');
         $this->assertEquals(2, count($tool->getProperties()));
         $this->assertEquals('test_tool', $tool->getName());
@@ -445,7 +447,8 @@ class ToolTest extends TestCase
         $this->assertEquals('test', $tool->getKey());
     }
 
-    function test_properties_declaration_on_method_and_constructor_with_parent_constructor(){
+    public function test_properties_declaration_on_method_and_constructor_with_parent_constructor()
+    {
         $tool = new TestToolClassWithParentConstructorMixed('test', true);
         $this->assertEquals(2, count($tool->getProperties()));
         $this->assertEquals('test_tool', $tool->getName());
@@ -459,7 +462,8 @@ class ToolTest extends TestCase
         $this->assertEquals('test', $tool->getKey());
     }
 
-    function test_properties_declaration_on_method_with_parent_constructor(){
+    public function test_properties_declaration_on_method_with_parent_constructor()
+    {
         $tool = new TestToolClassWithParentConstructor('test');
         $this->assertEquals(1, count($tool->getProperties()));
         $this->assertEquals('test_tool', $tool->getName());
@@ -467,7 +471,8 @@ class ToolTest extends TestCase
         $this->assertEquals('test', $tool->getKey());
     }
 
-    function test_properties_declaration_on_constructor_with_parent_constructor(){
+    public function test_properties_declaration_on_constructor_with_parent_constructor()
+    {
         $tool = new TestToolClassOnlyParentConstructor('test');
         $this->assertEquals(2, count($tool->getProperties()));
         $this->assertEquals('test_tool', $tool->getName());
@@ -475,7 +480,8 @@ class ToolTest extends TestCase
         $this->assertEquals('test', $tool->getKey());
     }
 
-    function test_properties_declaration_on_constructor_with_parent_constructor_fluent(){
+    public function test_properties_declaration_on_constructor_with_parent_constructor_fluent()
+    {
         $tool = new TestToolClassOnlyParentConstructorFluent('test');
         $this->assertEquals(2, count($tool->getProperties()));
         $this->assertEquals('test_tool', $tool->getName());

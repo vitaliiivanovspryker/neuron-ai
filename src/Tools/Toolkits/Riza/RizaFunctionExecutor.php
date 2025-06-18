@@ -20,8 +20,7 @@ class RizaFunctionExecutor extends Tool
     public function __construct(
         protected string $key,
         protected string $language = 'JavaScript', // Python, JavaScript, and TypeScript (no PHP unfortunately)
-    )
-    {
+    ) {
         parent::__construct(
             "execute_{$language}_function",
             "Execute {$language} function and get the result."

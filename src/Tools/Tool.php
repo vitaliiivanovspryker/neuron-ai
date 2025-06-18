@@ -85,7 +85,7 @@ class Tool implements ToolInterface
 
     public function addProperty(ToolPropertyInterface $property): ToolInterface
     {
-        if(empty($this->properties) && $this->properties() !== []){
+        if (empty($this->properties) && $this->properties() !== []) {
             $this->properties = $this->properties();
         }
 

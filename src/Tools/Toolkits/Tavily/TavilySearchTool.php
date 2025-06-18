@@ -45,11 +45,11 @@ class TavilySearchTool extends Tool
     {
         return [
             new ToolProperty(
-            'search_query',
-            PropertyType::STRING,
-            'The search query to perform web search.',
-            true
-        ),
+                'search_query',
+                PropertyType::STRING,
+                'The search query to perform web search.',
+                true
+            ),
             new ToolProperty(
                 'topic',
                 PropertyType::STRING,

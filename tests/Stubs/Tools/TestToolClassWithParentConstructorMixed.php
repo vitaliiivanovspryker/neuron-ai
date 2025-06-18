@@ -11,7 +11,7 @@ class TestToolClassWithParentConstructorMixed extends \NeuronAI\Tools\Tool
     {
         parent::__construct('test_tool', 'test tool');
 
-        if($this->secondProperty){
+        if ($this->secondProperty) {
             $this->addProperty(new ToolProperty('param', PropertyType::STRING, 'the param'));
         }
     }

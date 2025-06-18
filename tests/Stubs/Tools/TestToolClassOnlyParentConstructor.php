@@ -24,7 +24,8 @@ class TestToolClassOnlyParentConstructor extends \NeuronAI\Tools\Tool
                     PropertyType::STRING,
                     'the param'
                 )
-            ]);
+            ]
+        );
     }
 
     public function getKey(): string

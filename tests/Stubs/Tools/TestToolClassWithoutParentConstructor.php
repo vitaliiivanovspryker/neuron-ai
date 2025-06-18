@@ -7,7 +7,6 @@ use NeuronAI\Tools\ToolProperty;
 
 class TestToolClassWithoutParentConstructor extends \NeuronAI\Tools\Tool
 {
-
     public function __construct(protected string $key)
     {
         $this->name = 'test_tool';
