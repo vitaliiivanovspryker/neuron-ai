@@ -7,7 +7,7 @@ use NeuronAI\Observability\Events\WorkflowStart;
 
 trait HandleWorkflowEvents
 {
-    public function workflowStart(\SplObserver $workflow, string $event, WorkflowStart $data)
+    public function workflowStart(\SplSubject $workflow, string $event, WorkflowStart $data)
     {
         if (!$this->inspector->isRecording()) {
             return;
@@ -23,7 +23,7 @@ trait HandleWorkflowEvents
         }
     }
 
-    public function workflowEnd(\SplObserver $workflow, string $event, WorkflowEnd $data)
+    public function workflowEnd(\SplSubject $workflow, string $event, WorkflowEnd $data)
     {
         if (\array_key_exists($workflow::class, $this->segments)) {
             $this->segments[$workflow::class]
