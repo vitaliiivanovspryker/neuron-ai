@@ -321,7 +321,6 @@ This guide covers a few strategies for getting structured outputs from the agent
 use App\Neuron\MyAgent;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\StructuredOutput\SchemaProperty;
-use NeuronAI\Observability\AgentMonitoring;
 
 /*
  * Define the output structure as a PHP class.
@@ -335,18 +334,11 @@ class Person
     public string $preference;
 }
 
-// https://docs.neuron-ai.dev/advanced/observability
-$inspector = new \Inspector\Inspector(
-    new \Inspector\Configuration('INSPECTOR_INGESTION_KEY')
-);
-
 // Talk to the agent requiring the structured output
-$person = MyAgent::make()
-    ->observe(new AgentMonitoring($inspector))
-    ->structured(
-        new UserMessage("I'm John and I like pizza!"),
-        Person::class
-    );
+$person = MyAgent::make()->structured(
+    new UserMessage("I'm John and I like pizza!"),
+    Person::class
+);
 
 echo $person->name ' like '.$person->preference;
 // John like pizza
