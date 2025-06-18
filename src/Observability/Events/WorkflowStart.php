@@ -3,12 +3,12 @@
 namespace NeuronAI\Observability\Events;
 
 use NeuronAI\Workflow\Edge;
-use NeuronAI\Workflow\Node;
+use NeuronAI\Workflow\NodeInterface;
 
 class WorkflowStart
 {
     /**
-     * @param Node[] $nodes
+     * @param NodeInterface[] $nodes
      * @param Edge[] $edges
      */
     public function __construct(public array $nodes, public array $edges)

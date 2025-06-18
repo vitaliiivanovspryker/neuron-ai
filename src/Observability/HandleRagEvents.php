@@ -39,33 +39,6 @@ trait HandleRagEvents
         }
     }
 
-    /*public function instructionsChanging(AgentInterface $agent, string $event, InstructionsChanging $data)
-    {
-        if (!$this->inspector->canAddSegments()) {
-            return;
-        }
-
-        $id = \md5($data->instructions);
-
-        $this->segments['instructions-'.$id] = $this->inspector
-            ->startSegment(self::SEGMENT_TYPE.'-instructions', 'withInstructions()')
-            ->setColor(self::SEGMENT_COLOR);
-    }
-
-    public function instructionsChanged(AgentInterface $agent, string $event, InstructionsChanged $data)
-    {
-        $id = 'instructions-'.\md5($data->previous);
-
-        if (\array_key_exists($id, $this->segments)) {
-            $this->segments[$id]
-                ->addContext('Instructions', [
-                    'previous' => $data->previous,
-                    'current' => $data->current
-                ])
-                ->end();
-        }
-    }*/
-
     public function postProcessing(AgentInterface $agent, string $event, PostProcessing $data)
     {
         if (!$this->inspector->canAddSegments()) {

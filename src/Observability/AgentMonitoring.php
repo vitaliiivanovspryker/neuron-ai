@@ -62,8 +62,6 @@ class AgentMonitoring implements \SplObserver
         'structured-validated' => 'validated',
         'rag-vectorstore-searching' => 'vectorStoreSearching',
         'rag-vectorstore-result' => 'vectorStoreResult',
-//        'rag-instructions-changing' => 'instructionsChanging',
-//        'rag-instructions-changed' => 'instructionsChanged',
         'rag-postprocessing' => 'postProcessing',
         'rag-postprocessed' => 'postProcessed',
     ];

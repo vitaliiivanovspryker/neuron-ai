@@ -97,9 +97,9 @@ class Workflow implements SplSubject
                 $node = $this->nodes[$currentNode];
                 $node->setContext($context);
 
-                $this->notify('workflow-node-start', $node);
+                //$this->notify('workflow-node-start', $node);
                 $state = $node->run($state);
-                $this->notify('workflow-node-stop', $node);
+                //$this->notify('workflow-node-stop', $node);
 
                 $nextNode = $this->findNextNode($currentNode, $state);
 
@@ -205,6 +205,9 @@ class Workflow implements SplSubject
         return $this;
     }
 
+    /**
+     * @return array<string, NodeInterface>
+     */
     public function getNodes(): array
     {
         if (empty($this->nodes)) {
@@ -233,6 +236,9 @@ class Workflow implements SplSubject
         return $this;
     }
 
+    /**
+     * @return Edge[]
+     */
     public function getEdges(): array
     {
         if (empty($this->edges)) {
@@ -256,7 +262,7 @@ class Workflow implements SplSubject
 
     private function findNextNode(string $currentNode, WorkflowState $state): ?string
     {
-        foreach ($this->edges as $edge) {
+        foreach ($this->getEdges() as $edge) {
             if ($edge->getFrom() === $currentNode && $edge->shouldExecute($state)) {
                 return $edge->getTo();
             }

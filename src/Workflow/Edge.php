@@ -28,6 +28,6 @@ class Edge
 
     public function shouldExecute(WorkflowState $state): bool
     {
-        return $this->hasCondition() ? ($this->condition)($state) : false;
+        return $this->hasCondition() ? ($this->condition)($state) : true;
     }
 }
