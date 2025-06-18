@@ -15,6 +15,9 @@ use NeuronAI\Workflow\Persistence\InMemoryPersistence;
 use NeuronAI\Workflow\Persistence\PersistenceInterface;
 use SplSubject;
 
+/**
+ * @method static static make(?PersistenceInterface $persistence = null, ?string $workflowId = null)
+ */
 class Workflow implements SplSubject
 {
     use Observable;
