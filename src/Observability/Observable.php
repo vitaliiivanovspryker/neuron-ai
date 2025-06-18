@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NeuronAI\Observability;
 
+use Inspector\Configuration;
 use Inspector\Inspector;
 use SplObserver;
 
@@ -18,8 +19,12 @@ trait Observable
     private function initEventGroup(string $event = '*'): void
     {
         if (!\array_key_exists('*', $this->observers) && !empty($_ENV['INSPECTOR_INGESTION_KEY'])) {
+            $inspector = Inspector::create($_ENV['INSPECTOR_INGESTION_KEY'])
+                ->configure(function (Configuration $configuration) {
+                    $configuration->setTransport($_ENV['INSPECTOR_TRANSPORT']??'async');
+                });
             $this->observers['*'] = [
-                new AgentMonitoring(Inspector::create($_ENV['INSPECTOR_INGESTION_KEY']))
+                new AgentMonitoring($inspector)
             ];
         }
 
