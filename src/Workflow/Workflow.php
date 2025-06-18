@@ -53,20 +53,20 @@ class Workflow implements SplSubject
             throw new WorkflowException('End node must be defined');
         }
 
-        if (!isset($this->nodes[$this->startNode])) {
+        if (!isset($this->getNodes()[$this->startNode])) {
             throw new WorkflowException("Start node {$this->startNode} does not exist");
         }
 
-        if (!isset($this->nodes[$this->endNode])) {
+        if (!isset($this->getNodes()[$this->endNode])) {
             throw new WorkflowException("End node {$this->endNode} does not exist");
         }
 
-        foreach ($this->edges as $edge) {
-            if (!isset($this->nodes[$edge->getFrom()])) {
+        foreach ($this->getEdges() as $edge) {
+            if (!isset($this->getNodes()[$edge->getFrom()])) {
                 throw new WorkflowException("Edge from node {$edge->getFrom()} does not exist");
             }
 
-            if (!isset($this->nodes[$edge->getTo()])) {
+            if (!isset($this->getNodes()[$edge->getTo()])) {
                 throw new WorkflowException("Edge to node {$edge->getTo()} does not exist");
             }
         }
@@ -207,7 +207,11 @@ class Workflow implements SplSubject
 
     public function getNodes(): array
     {
-        return \array_merge($this->nodes(), $this->nodes);
+        if (empty($this->nodes)) {
+            $this->nodes = $this->nodes();
+        }
+
+        return $this->nodes;
     }
 
     public function addEdge(Edge $edge): self
@@ -229,7 +233,11 @@ class Workflow implements SplSubject
 
     public function getEdges(): array
     {
-        return \array_merge($this->edges(), $this->edges);
+        if (empty($this->edges)) {
+            $this->edges = $this->edges();
+        }
+
+        return $this->edges;
     }
 
     public function setStart(string $nodeClass): self
