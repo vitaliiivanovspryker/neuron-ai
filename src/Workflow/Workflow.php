@@ -51,20 +51,20 @@ class Workflow implements SplSubject
 
     public function validate(): void
     {
-        if ($this->startNode === null) {
+        /*if ($this->getStartNode() === null) {
             throw new WorkflowException('Start node must be defined');
         }
 
-        if ($this->endNode === null) {
+        if ($this->getEndNode() === null) {
             throw new WorkflowException('End node must be defined');
+        }*/
+
+        if (!isset($this->getNodes()[$this->getStartNode()])) {
+            throw new WorkflowException("Start node {$this->getStartNode()} does not exist");
         }
 
-        if (!isset($this->getNodes()[$this->startNode])) {
-            throw new WorkflowException("Start node {$this->startNode} does not exist");
-        }
-
-        if (!isset($this->getNodes()[$this->endNode])) {
-            throw new WorkflowException("End node {$this->endNode} does not exist");
+        if (!isset($this->getNodes()[$this->getEndNode()])) {
+            throw new WorkflowException("End node {$this->getEndNode()} does not exist");
         }
 
         foreach ($this->getEdges() as $edge) {
@@ -99,7 +99,7 @@ class Workflow implements SplSubject
         }
 
         try {
-            while ($currentNode !== $this->endNode) {
+            while ($currentNode !== $this->getEndNode()) {
                 $node = $this->nodes[$currentNode];
                 $node->setContext($context);
 
@@ -131,7 +131,8 @@ class Workflow implements SplSubject
                 );
             }
 
-            $endNode = $this->nodes[$this->endNode];
+            $endNode = $this->nodes[$this->getEndNode()];
+            ;
             $endNode->setContext($context);
             return $endNode->run($state);
 
@@ -156,7 +157,7 @@ class Workflow implements SplSubject
         }
 
         $state = $initialState ?? new WorkflowState();
-        $currentNode = $this->startNode;
+        $currentNode = $this->getStartNode();
 
         $result = $this->execute($currentNode, $state);
         $this->notify('workflow-end', new WorkflowEnd($result));
@@ -193,7 +194,7 @@ class Workflow implements SplSubject
     /**
      * @return Node[]
      */
-    public function nodes(): array
+    protected function nodes(): array
     {
         return [];
     }
@@ -201,7 +202,7 @@ class Workflow implements SplSubject
     /**
      * @return Edge[]
      */
-    public function edges(): array
+    protected function edges(): array
     {
         return [];
     }
@@ -266,16 +267,36 @@ class Workflow implements SplSubject
         return $this->edges;
     }
 
-    public function setStart(string $nodeClass): self
+    public function setStart(string $nodeClass): Workflow
     {
         $this->startNode = $nodeClass;
         return $this;
     }
 
-    public function setEnd(string $nodeClass): self
+    public function setEnd(string $nodeClass): Workflow
     {
         $this->endNode = $nodeClass;
         return $this;
+    }
+
+    protected function getStartNode(): string
+    {
+        return $this->startNode ?? $this->start();
+    }
+
+    protected function getEndNode(): string
+    {
+        return $this->endNode ?? $this->end();
+    }
+
+    protected function start(): ?string
+    {
+        throw new WorkflowException('Start node must be defined');
+    }
+
+    protected function end(): ?string
+    {
+        throw new WorkflowException('End node must be defined');
     }
 
     private function findNextNode(string $currentNode, WorkflowState $state): ?string
