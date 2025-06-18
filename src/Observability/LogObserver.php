@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NeuronAI\Observability;
 
-use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Workflow\Edge;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
