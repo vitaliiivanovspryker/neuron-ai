@@ -3,7 +3,10 @@
 namespace NeuronAI\Workflow;
 
 use NeuronAI\Exceptions\WorkflowException;
+use NeuronAI\Observability\Events\AgentError;
 use NeuronAI\Observability\Events\WorkflowEnd;
+use NeuronAI\Observability\Events\WorkflowNodeEnd;
+use NeuronAI\Observability\Events\WorkflowNodeStart;
 use NeuronAI\Observability\Events\WorkflowStart;
 use NeuronAI\Observability\Observable;
 use NeuronAI\Workflow\Exporter\ExporterInterface;
@@ -97,9 +100,9 @@ class Workflow implements SplSubject
                 $node = $this->nodes[$currentNode];
                 $node->setContext($context);
 
-                //$this->notify('workflow-node-start', $node);
+                $this->notify('workflow-node-start', new WorkflowNodeStart($currentNode));
                 $state = $node->run($state);
-                //$this->notify('workflow-node-stop', $node);
+                $this->notify('workflow-node-stop', new WorkflowNodeEnd($currentNode));
 
                 $nextNode = $this->findNextNode($currentNode, $state);
 
@@ -135,7 +138,12 @@ class Workflow implements SplSubject
     public function run(?WorkflowState $initialState = null): WorkflowState
     {
         $this->notify('workflow-start', new WorkflowStart($this->getNodes(), $this->getEdges()));
-        $this->validate();
+        try {
+            $this->validate();
+        } catch (WorkflowException $exception) {
+            $this->notify('error', new AgentError($exception));
+            throw $exception;
+        }
 
         $state = $initialState ?? new WorkflowState();
         $currentNode = $this->startNode;
