@@ -131,15 +131,15 @@ class AgentMonitoring implements \SplObserver
             // End the last segment for the given method and agent class
             foreach (\array_reverse($this->segments, true) as $key => $value) {
                 if ($key === $class.$method) {
-                    $value->setContext($this->getContext($agent))->end();
+                    $value->setContext($this->getContext($agent));
+                    $value->end();
                     unset($this->segments[$key]);
                     break;
                 }
             }
         } elseif ($this->inspector->canAddSegments()) {
-            $this->inspector->transaction()
-                ->setContext($this->getContext($agent))
-                ->setResult('success');
+            $transaction = $this->inspector->transaction()->setResult('success');
+            $transaction->setContext($this->getContext($agent));
         }
     }
 
