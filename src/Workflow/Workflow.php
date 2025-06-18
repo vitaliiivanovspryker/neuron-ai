@@ -100,7 +100,7 @@ class Workflow implements SplSubject
                 $node = $this->nodes[$currentNode];
                 $node->setContext($context);
 
-                $this->notify('workflow-node-start', new WorkflowNodeStart($currentNode));
+                $this->notify('workflow-node-start', new WorkflowNodeStart($currentNode, $state));
                 try {
                     $state = $node->run($state);
                 } catch (WorkflowInterrupt $interrupt) {
@@ -109,7 +109,7 @@ class Workflow implements SplSubject
                     $this->notify('error', new AgentError($exception));
                     throw $exception;
                 }
-                $this->notify('workflow-node-stop', new WorkflowNodeEnd($currentNode));
+                $this->notify('workflow-node-stop', new WorkflowNodeEnd($currentNode, $state));
 
                 $nextNode = $this->findNextNode($currentNode, $state);
 

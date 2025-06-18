@@ -2,13 +2,13 @@
 
 namespace NeuronAI\Observability\Events;
 
+use NeuronAI\Workflow\WorkflowState;
+
 class WorkflowNodeStart
 {
-    /**
-     * @param string $node
-     */
     public function __construct(
         public string $node,
+        public WorkflowState $state,
     ) {
     }
 }

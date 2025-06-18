@@ -54,15 +54,18 @@ trait HandleWorkflowEvents
             return;
         }
 
-        $this->segments[$data->node] = $this->inspector
+        $segment = $this->inspector
             ->startSegment('workflow-node', $data->node)
             ->setColor(self::SEGMENT_COLOR);
+        $segment->addContext('State', ['before' => $data->state->all()]);
+        $this->segments[$data->node] = $segment;
     }
 
     public function workflowNodeEnd(\SplSubject $workflow, string $event, WorkflowNodeEnd $data)
     {
         if (\array_key_exists($data->node, $this->segments)) {
-            $this->segments[$data->node]->end();
+            $segment = $this->segments[$data->node]->end();
+            $segment->addContext('State', [$segment->getContext('State'), ...['after' => $data->state->all()]]);
         }
     }
 }
