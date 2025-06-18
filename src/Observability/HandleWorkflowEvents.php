@@ -26,11 +26,13 @@ trait HandleWorkflowEvents
     public function workflowEnd(\SplObserver $workflow, string $event, WorkflowEnd $data)
     {
         if (\array_key_exists($workflow::class, $this->segments)) {
-            $this->segments[$workflow::class]->addContext('Last Reply', $data->lastReply->jsonSerialize())->end();
+            $this->segments[$workflow::class]
+                ->end()
+                ->addContext('Last Reply', $data->lastReply->jsonSerialize());
         } elseif ($this->inspector->canAddSegments()) {
-            $this->inspector->transaction()
-                ->addContext('Last Reply', $data->lastReply->jsonSerialize())
-                ->setResult('success');
+            $transaction = $this->inspector->transaction();
+            $transaction->addContext('Last Reply', $data->lastReply->jsonSerialize());
+            $transaction->setResult('success');
         }
     }
 }

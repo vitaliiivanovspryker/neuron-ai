@@ -26,9 +26,8 @@ trait HandleToolEvents
     public function toolsBootstrapped(\NeuronAI\AgentInterface $agent, string $event, ToolsBootstrapped $data)
     {
         if (\array_key_exists(get_class($agent).'_tools_bootstrap', $this->segments) && !empty($data->tools)) {
-            $this->segments[get_class($agent).'_tools_bootstrap']
-                ->addContext('Tools', \array_map(fn (ToolInterface $tool) => $tool->getName(), $data->tools))
-                ->end();
+            $segment = $this->segments[get_class($agent).'_tools_bootstrap']->end();
+            $segment->addContext('Tools', \array_map(fn (ToolInterface $tool) => $tool->getName(), $data->tools));
         }
     }
 
@@ -50,8 +49,8 @@ trait HandleToolEvents
     {
         if (\array_key_exists($data->tool->getName(), $this->segments)) {
             $this->segments[$data->tool->getName()]
-                ->addContext('Tool', $data->tool->jsonSerialize())
-                ->end();
+                ->end()
+                ->addContext('Tool', $data->tool->jsonSerialize());
         }
     }
 }
