@@ -124,6 +124,7 @@ class PdfReader implements ReaderInterface
     ): string {
         /** @phpstan-ignore new.static */
         $instance = new static();
+        $instance->setPdf($filePath);
 
         if (\array_key_exists('binPath', $options)) {
             $instance->setBinPath($options['binPath']);
