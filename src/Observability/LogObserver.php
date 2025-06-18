@@ -107,7 +107,7 @@ class LogObserver implements \SplObserver
                 'node' => $data->node,
             ],
             Events\WorkflowEnd::class => [
-                'lastReply' => $data->state->all(),
+                'state' => $data->state->all(),
             ],
             default => [],
         };
