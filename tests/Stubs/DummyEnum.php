@@ -2,8 +2,8 @@
 
 namespace NeuronAI\Tests\Stubs;
 
-enum DummyEnum {
+enum DummyEnum
+{
     case A;
     case B;
 }
-
