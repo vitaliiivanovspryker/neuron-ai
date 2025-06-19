@@ -4,6 +4,7 @@ namespace NeuronAI\Workflow\Persistence;
 
 use NeuronAI\Exceptions\WorkflowException;
 use NeuronAI\Workflow\WorkflowInterrupt;
+use NeuronAI\Workflow\WorkflowState;
 
 class FilePersistence implements PersistenceInterface
 {
@@ -33,7 +34,7 @@ class FilePersistence implements PersistenceInterface
         return new WorkflowInterrupt(
             $interrupt['data'],
             $interrupt['currentNode'],
-            $interrupt['state']
+            new WorkflowState($interrupt['state'])
         );
     }
 

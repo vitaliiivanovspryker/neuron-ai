@@ -135,7 +135,9 @@ class Workflow implements SplSubject
 
             $endNode = $this->nodes[$currentNode];
             $endNode->setContext($context);
-            return $endNode->run($state);
+            $result = $endNode->run($state);
+            $this->persistence->delete($this->workflowId);
+            return $result;
 
         } catch (WorkflowInterrupt $interrupt) {
             $this->persistence->save($this->workflowId, $interrupt);
