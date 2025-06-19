@@ -31,22 +31,6 @@ class TavilyExtractTool extends Tool
         );
     }
 
-    protected function getClient(): Client
-    {
-        if (isset($this->client)) {
-            return $this->client;
-        }
-
-        return $this->client = new Client([
-            'base_uri' => trim($this->url, '/').'/',
-            'headers' => [
-                'Authorization' => 'Bearer '.$this->key,
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-            ]
-        ]);
-    }
-
     protected function properties(): array
     {
         return [
@@ -75,6 +59,23 @@ class TavilyExtractTool extends Tool
         $result = \json_decode($result, true);
 
         return $result['results'][0];
+    }
+
+
+    protected function getClient(): Client
+    {
+        if (isset($this->client)) {
+            return $this->client;
+        }
+
+        return $this->client = new Client([
+            'base_uri' => trim($this->url, '/').'/',
+            'headers' => [
+                'Authorization' => 'Bearer '.$this->key,
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ]
+        ]);
     }
 
     public function withOptions(array $options): self

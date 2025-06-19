@@ -2,7 +2,6 @@
 
 namespace NeuronAI\Observability;
 
-use GuzzleHttp\Exception\RequestException;
 use Inspector\Configuration;
 use Inspector\Inspector;
 use Inspector\Models\Segment;
@@ -107,10 +106,8 @@ class AgentMonitoring implements \SplObserver
     public function reportError(\SplSubject $subject, string $event, AgentError $data)
     {
         if ($this->catch) {
-            $error = $this->inspector->reportException($data->exception, !$data->unhandled);
-            if ($data->exception instanceof RequestException) {
-                $error->message = $data->exception->getResponse()->getBody()->getContents();
-            }
+            $this->inspector->reportException($data->exception, !$data->unhandled);
+
             if ($data->unhandled) {
                 $this->inspector->transaction()->setResult('error');
             }

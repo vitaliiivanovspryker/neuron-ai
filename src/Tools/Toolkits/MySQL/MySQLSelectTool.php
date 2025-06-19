@@ -24,17 +24,20 @@ class MySQLSelectTool extends Tool
         parent::__construct(
             'execute_select_query',
             'Use this tool only to run SELECT query against the MySQL database.
-            This the tool to use only to gather information from the MySQL database.'
+This the tool to use only to gather information from the MySQL database.'
         );
+    }
 
-        $this->addProperty(
+    protected function properties(): array
+    {
+        return [
             new ToolProperty(
                 'query',
                 PropertyType::STRING,
                 'The SELECT query you want to run against the database.',
                 true
             )
-        )->setCallable($this);
+        ];
     }
 
     public function __invoke(string $query)

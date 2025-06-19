@@ -8,8 +8,13 @@ use NeuronAI\Tools\ToolProperty;
 
 class SubtractTool extends Tool
 {
-    protected string $name = 'substract';
-    protected string $description = 'Calculate the subtraction between two numbers and return the result';
+    public function __construct()
+    {
+        parent::__construct(
+            name: 'substract',
+            description: 'Calculate the subtraction between two numbers and return the result',
+        );
+    }
 
     public function properties(): array
     {

@@ -21,8 +21,6 @@ class MySQLSchemaTool extends Tool
             Essential for generating accurate queries with proper table/column names, JOIN conditions,
             and performance optimization. If you already know the database structure, you can skip this step.'
         );
-
-        $this->setCallable($this);
     }
 
     public function __invoke()

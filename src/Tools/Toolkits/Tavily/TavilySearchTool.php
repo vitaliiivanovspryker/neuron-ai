@@ -31,6 +31,7 @@ class TavilySearchTool extends Tool
         protected string $key,
         protected array $topics = [],
     ) {
+
         parent::__construct(
             'web_search',
             'Use this tool to search the web for additional information '.
@@ -38,14 +39,17 @@ class TavilySearchTool extends Tool
             'if the question is outside the scope of the context you have.'
         );
 
-        $this->addProperty(
+    }
+
+    protected function properties(): array
+    {
+        return [
             new ToolProperty(
                 'search_query',
                 PropertyType::STRING,
                 'The search query to perform web search.',
                 true
             ),
-        )->addProperty(
             new ToolProperty(
                 'topic',
                 PropertyType::STRING,
@@ -53,22 +57,20 @@ class TavilySearchTool extends Tool
                 false,
                 ['general', 'news']
             ),
-        )->addProperty(
             new ToolProperty(
                 'time_range',
                 PropertyType::STRING,
                 '',
                 false,
                 ['day, week, month, year']
-            )
-        )->addProperty(
+            ),
             new ToolProperty(
                 'days',
                 PropertyType::INTEGER,
                 'Filter search results for a certain range of days up to today.',
                 false,
             )
-        )->setCallable($this);
+        ];
     }
 
     protected function getClient(): Client

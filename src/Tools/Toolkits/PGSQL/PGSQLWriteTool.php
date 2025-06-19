@@ -18,15 +18,18 @@ class PGSQLWriteTool extends Tool
             'execute_write_query',
             'Use this tool to perform write operations against the PostgreSQL database (e.g. INSERT, UPDATE, DELETE).'
         );
+    }
 
-        $this->addProperty(
+    protected function properties(): array
+    {
+        return [
             new ToolProperty(
                 'query',
                 PropertyType::STRING,
                 'The write query you want to run against the PostgreSQL database.',
                 true
             )
-        )->setCallable($this);
+        ];
     }
 
     public function __invoke(string $query)

@@ -26,7 +26,7 @@ class Tool implements ToolInterface
     protected string $description;
 
     /**
-     * @var array<ToolPropertyInterface>
+     * @var ToolPropertyInterface[]
      */
     protected array $properties = [];
 
@@ -53,7 +53,7 @@ class Tool implements ToolInterface
     /**
      * Tool constructor.
      *
-     * @param array<ToolPropertyInterface> $properties
+     * @param ToolPropertyInterface[] $properties
      */
     public function __construct(
         ?string $name = null,
@@ -70,8 +70,6 @@ class Tool implements ToolInterface
 
         if (!empty($properties)) {
             $this->properties = $properties;
-        } else {
-            $this->properties = $this->properties();
         }
     }
 
@@ -92,7 +90,7 @@ class Tool implements ToolInterface
     }
 
     /**
-     * @return array<ToolPropertyInterface>
+     * @return ToolPropertyInterface[]
      */
     protected function properties(): array
     {
@@ -104,6 +102,12 @@ class Tool implements ToolInterface
      */
     public function getProperties(): array
     {
+        if (empty($this->properties)) {
+            foreach ($this->properties() as $property) {
+                $this->addProperty($property);
+            }
+        }
+
         return $this->properties;
     }
 
@@ -179,7 +183,7 @@ class Tool implements ToolInterface
             }
         }
 
-        $parameters = array_reduce($this->properties, function ($carry, $property) {
+        $parameters = array_reduce($this->getProperties(), function ($carry, $property) {
             $propertyName = $property->getName();
             $inputs = $this->getInputs();
 

@@ -21,17 +21,21 @@ class ZepAddToGraphTool extends Tool
         parent::__construct(
             'add_knowledge_graph_data',
             'Add relevant information to the knowledge graph for long term memory.
-            Look for facts, news or any relevant information in the conversation that you think is important to store for future use.'
+Look for facts, news or any relevant information in the conversation that you think is important to store for future use.'
         );
 
-        $this->addProperty(
+        $this->createUser();
+    }
+
+    protected function properties(): array
+    {
+        return [
             new ToolProperty(
                 'data',
                 PropertyType::STRING,
                 'The search term to find relevant facts or nodes',
                 true
-            )
-        )->addProperty(
+            ),
             new ToolProperty(
                 'type',
                 PropertyType::STRING,
@@ -39,9 +43,7 @@ class ZepAddToGraphTool extends Tool
                 true,
                 ['text', 'json', 'message']
             )
-        )->setCallable($this);
-
-        $this->createUser();
+        ];
     }
 
     public function __invoke(string $data, string $type): string
