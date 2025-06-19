@@ -34,7 +34,7 @@ class Workflow implements SplSubject
 
     protected ?string $startNode = null;
 
-    protected ?string $endNode = null;
+    protected ?array $endNodes = null;
 
     protected ExporterInterface $exporter;
 
@@ -63,8 +63,10 @@ class Workflow implements SplSubject
             throw new WorkflowException("Start node {$this->getStartNode()} does not exist");
         }
 
-        if (!isset($this->getNodes()[$this->getEndNode()])) {
-            throw new WorkflowException("End node {$this->getEndNode()} does not exist");
+        foreach ($this->getEndNodes() as $endNode) {
+            if (!isset($this->getNodes()[$endNode])) {
+                throw new WorkflowException("End node {$endNode} does not exist");
+            }
         }
 
         foreach ($this->getEdges() as $edge) {
@@ -99,7 +101,7 @@ class Workflow implements SplSubject
         }
 
         try {
-            while ($currentNode !== $this->getEndNode()) {
+            while (!\in_array($currentNode, $this->getEndNodes())) {
                 $node = $this->nodes[$currentNode];
                 $node->setContext($context);
 
@@ -131,8 +133,7 @@ class Workflow implements SplSubject
                 );
             }
 
-            $endNode = $this->nodes[$this->getEndNode()];
-            ;
+            $endNode = $this->nodes[$currentNode];
             $endNode->setContext($context);
             return $endNode->run($state);
 
@@ -275,7 +276,7 @@ class Workflow implements SplSubject
 
     public function setEnd(string $nodeClass): Workflow
     {
-        $this->endNode = $nodeClass;
+        $this->endNodes[] = $nodeClass;
         return $this;
     }
 
@@ -284,9 +285,9 @@ class Workflow implements SplSubject
         return $this->startNode ?? $this->start();
     }
 
-    protected function getEndNode(): string
+    protected function getEndNodes(): array
     {
-        return $this->endNode ?? $this->end();
+        return $this->endNodes ?? $this->end();
     }
 
     protected function start(): ?string
@@ -294,7 +295,7 @@ class Workflow implements SplSubject
         throw new WorkflowException('Start node must be defined');
     }
 
-    protected function end(): ?string
+    protected function end(): array
     {
         throw new WorkflowException('End node must be defined');
     }
