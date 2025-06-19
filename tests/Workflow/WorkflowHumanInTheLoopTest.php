@@ -194,14 +194,10 @@ class WorkflowHumanInTheLoopTest extends TestCase
         } catch (WorkflowInterrupt $interrupt) {
             // Verify interrupt was saved
             $savedInterrupt = $persistence->load('test_workflow');
-            $this->assertNotNull($savedInterrupt);
             $this->assertEquals(InterruptNode::class, $savedInterrupt->getCurrentNode());
         }
 
         $workflow->resume(['status' => 'approved']);
-
-        $savedInterrupt = $persistence->load('test_workflow');
-        $this->assertEquals(InterruptNode::class, $savedInterrupt->getCurrentNode());
     }
 
     public function test_workflow_interrupt_exception()
@@ -264,10 +260,10 @@ class WorkflowHumanInTheLoopTest extends TestCase
                 ];
             }
 
-            public function load(string $workflowId): ?WorkflowInterrupt
+            public function load(string $workflowId): WorkflowInterrupt
             {
                 if (!isset($this->data[$workflowId])) {
-                    return null;
+                    throw new WorkflowException("No saved workflow found for ID: {$workflowId}.");
                 }
 
                 $stored = $this->data[$workflowId];

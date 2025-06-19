@@ -23,10 +23,10 @@ class FilePersistence implements PersistenceInterface
         \file_put_contents($this->getFilePath($workflowId), \json_encode($interrupt));
     }
 
-    public function load(string $workflowId): ?WorkflowInterrupt
+    public function load(string $workflowId): WorkflowInterrupt
     {
         if (!\is_file($this->getFilePath($workflowId))) {
-            throw new WorkflowException("File '{$this->getFilePath($workflowId)}' does not exist");
+            throw new WorkflowException("No saved workflow found for ID: {$workflowId}.");
         }
 
         $interrupt = \json_decode(\file_get_contents($this->getFilePath($workflowId)), true) ?? [];

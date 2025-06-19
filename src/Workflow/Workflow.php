@@ -176,10 +176,6 @@ class Workflow implements SplSubject
         $this->notify('workflow-resume', new WorkflowStart($this->getNodes(), $this->getEdges()));
         $interrupt = $this->persistence->load($this->workflowId);
 
-        if ($interrupt === null) {
-            throw new WorkflowException("No saved workflow found for ID: {$this->workflowId}");
-        }
-
         $state = $interrupt->getState();
         $currentNode = $interrupt->getCurrentNode();
 
