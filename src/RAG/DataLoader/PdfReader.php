@@ -25,7 +25,7 @@ class PdfReader implements ReaderInterface
 
     public function __construct(?string $binPath = null)
     {
-        $this->binPath = $binPath ?? $this->findPdfToText();
+        $this->binPath = \is_string($binPath) ? $this->setBinPath($binPath) : $this->findPdfToText();
     }
 
     public function setBinPath(string $binPath): self
