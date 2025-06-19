@@ -2,7 +2,6 @@
 
 namespace NeuronAI\Tests\PreProcessor;
 
-
 use NeuronAI\Providers\Anthropic\Anthropic;
 use NeuronAI\RAG\PreProcessor\PreProcessorInterface;
 use NeuronAI\RAG\PreProcessor\QueryTransformationPreProcessor;
@@ -11,7 +10,6 @@ use PHPUnit\Framework\TestCase;
 
 class QueryTransformationPreProcessorTest extends TestCase
 {
-
     public function test_instance()
     {
         $processor = new QueryTransformationPreProcessor(

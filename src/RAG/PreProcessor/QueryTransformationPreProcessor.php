@@ -5,7 +5,6 @@ namespace NeuronAI\RAG\PreProcessor;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Providers\AIProviderInterface;
-use NeuronAI\StaticConstructor;
 use NeuronAI\SystemPrompt;
 
 class QueryTransformationPreProcessor implements PreProcessorInterface

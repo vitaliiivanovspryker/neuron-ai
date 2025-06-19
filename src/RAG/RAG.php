@@ -25,7 +25,7 @@ class RAG extends Agent
     use ResolveEmbeddingProvider;
 
     /**
-     * @var array PreProcessorInterface[]
+     * @var PreProcessorInterface[]
      */
     protected array $preProcessors = [];
 
@@ -127,7 +127,7 @@ class RAG extends Agent
      * @param Message $question The question to process.
      * @return Message The processed question.
      */
-    private function applyPreProcessors(Message $question): Message
+    protected function applyPreProcessors(Message $question): Message
     {
         foreach ($this->preProcessors() as $processor) {
             $question = $processor->process($question);
