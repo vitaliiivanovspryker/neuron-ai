@@ -10,7 +10,13 @@ class BeforeInterruptNode extends Node
     public function run(WorkflowState $state): WorkflowState
     {
         $state->set('step', 'before_interrupt');
-        $state->set('value', 42);
+
+        if ($state->has('value')) {
+            $state->set('value', $state->get('value') + 10);
+        } else {
+            $state->set('value', 42);
+        }
+
         return $state;
     }
 }

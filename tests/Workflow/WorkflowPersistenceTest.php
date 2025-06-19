@@ -60,13 +60,14 @@ class WorkflowPersistenceTest extends TestCase
             ->setEnd(AfterInterruptNode::class);
 
         try {
-            $workflow->run();
+            $workflow->run(new WorkflowState(['value' => 8]));
         } catch (WorkflowInterrupt $interrupt) {
             // Verify interrupt was saved
             $savedInterrupt = $persistence->load('test_workflow');
             $this->assertEquals(InterruptNode::class, $savedInterrupt->getCurrentNode());
         }
 
-        $workflow->resume(['status' => 'approved']);
+        $result = $workflow->resume(['status' => 'approved']);
+        $this->assertEquals($result->get('final_value'), 28);
     }
 }

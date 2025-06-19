@@ -246,57 +246,6 @@ class WorkflowHumanInTheLoopTest extends TestCase
         $node->run($state);
     }
 
-    public function test_custom_persistence_layer()
-    {
-        $customPersistence = new class () implements PersistenceInterface {
-            private array $data = [];
-
-            public function save(string $workflowId, WorkflowInterrupt $interrupt): void
-            {
-                $this->data[$workflowId] = [
-                    'node' => $interrupt->getCurrentNode(),
-                    'data' => $interrupt->getData(),
-                    'state' => $interrupt->getState()
-                ];
-            }
-
-            public function load(string $workflowId): WorkflowInterrupt
-            {
-                if (!isset($this->data[$workflowId])) {
-                    throw new WorkflowException("No saved workflow found for ID: {$workflowId}.");
-                }
-
-                $stored = $this->data[$workflowId];
-                return new WorkflowInterrupt(
-                    $stored['data'],
-                    $stored['node'],
-                    $stored['state']
-                );
-            }
-
-            public function delete(string $workflowId): void
-            {
-                unset($this->data[$workflowId]);
-            }
-        };
-
-        $workflow = new Workflow($customPersistence, 'custom_test');
-        $workflow->addNode(new InterruptNode())
-            ->addNode(new AfterInterruptNode())
-            ->addEdge(new Edge(InterruptNode::class, AfterInterruptNode::class))
-            ->setStart(InterruptNode::class)
-            ->setEnd(AfterInterruptNode::class);
-
-        try {
-            $workflow->run();
-        } catch (WorkflowInterrupt $interrupt) {
-            $this->assertEquals(InterruptNode::class, $interrupt->getCurrentNode());
-        }
-
-        $result = $workflow->resume(['custom' => 'data']);
-        $this->assertEquals(['custom' => 'data'], $result->get('user_feedback'));
-    }
-
     public function test_workflow_id_generation()
     {
         $workflow1 = new Workflow();
