@@ -8,9 +8,6 @@ use NeuronAI\Chat\Messages\Message;
 
 trait HandleStructured
 {
-    /**
-     * @throws GuzzleException
-     */
     public function structured(
         array $messages,
         string $class,
