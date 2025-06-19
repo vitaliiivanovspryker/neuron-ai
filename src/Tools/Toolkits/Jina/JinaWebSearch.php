@@ -22,15 +22,6 @@ class JinaWebSearch extends Tool
             (!empty($topics) ? 'about '.implode(', ', $topics).', or ' : '').
             'if the question is outside the scope of the context you have.'
         );
-
-        $this->addProperty(
-            new ToolProperty(
-                'search_query',
-                PropertyType::STRING,
-                'The search query to perform web search.',
-                true
-            )
-        );
     }
 
     protected function properties(): array

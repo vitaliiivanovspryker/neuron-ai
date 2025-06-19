@@ -13,21 +13,25 @@ class SumTool extends Tool
         parent::__construct(
             name: 'sum',
             description: 'Calculate the sum between two numbers and return the result',
-            properties: [
-                ToolProperty::make(
-                    name: 'number1',
-                    type: PropertyType::NUMBER,
-                    description: 'First addend',
-                    required: true,
-                ),
-                ToolProperty::make(
-                    name: 'number2',
-                    type: PropertyType::NUMBER,
-                    description: 'Second addend',
-                    required: true,
-                )
-            ]
         );
+    }
+
+    protected function properties(): array
+    {
+        return [
+            ToolProperty::make(
+                name: 'number1',
+                type: PropertyType::NUMBER,
+                description: 'First addend',
+                required: true,
+            ),
+            ToolProperty::make(
+                name: 'number2',
+                type: PropertyType::NUMBER,
+                description: 'Second addend',
+                required: true,
+            )
+        ];
     }
 
     public function __invoke(int|float $number1, int|float $number2): int|float

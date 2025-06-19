@@ -8,8 +8,13 @@ use NeuronAI\Tools\ToolProperty;
 
 class ExponentiateTool extends Tool
 {
-    protected string $name = 'exponentiate';
-    protected string $description = 'Calculate the exponential between two numbers and return the result';
+    public function __construct()
+    {
+        parent::__construct(
+            name: 'exponentiate',
+            description: 'Calculate the exponential between two numbers and return the result',
+        );
+    }
 
     public function properties(): array
     {

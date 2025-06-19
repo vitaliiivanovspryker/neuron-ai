@@ -8,8 +8,13 @@ use NeuronAI\Tools\ToolProperty;
 
 class DivideTool extends Tool
 {
-    protected string $name = 'divide';
-    protected string $description = 'Calculate the division between two numbers and return the result';
+    public function __construct()
+    {
+        parent::__construct(
+            'divide',
+            'Calculate the division between two numbers and return the result'
+        );
+    }
 
     public function properties(): array
     {
