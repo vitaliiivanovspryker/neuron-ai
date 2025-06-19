@@ -2,7 +2,9 @@
 
 namespace NeuronAI\Tests;
 
+use NeuronAI\StructuredOutput\StructuredOutputException;
 use NeuronAI\StructuredOutput\Validation\Rules\ArrayOf;
+use NeuronAI\StructuredOutput\Validation\Rules\Enum;
 use NeuronAI\StructuredOutput\Validation\Rules\Count;
 use NeuronAI\StructuredOutput\Validation\Rules\Email;
 use NeuronAI\StructuredOutput\Validation\Rules\EqualTo;
@@ -21,7 +23,10 @@ use NeuronAI\StructuredOutput\Validation\Rules\NotEqualTo;
 use NeuronAI\StructuredOutput\Validation\Rules\IsNotNull;
 use NeuronAI\StructuredOutput\Validation\Rules\Url;
 use NeuronAI\StructuredOutput\Validation\Validator;
+use NeuronAI\Tests\Stubs\DummyEnum;
+use NeuronAI\Tests\Stubs\IntEnum;
 use NeuronAI\Tests\Stubs\Person;
+use NeuronAI\Tests\Stubs\StringEnum;
 use PHPUnit\Framework\TestCase;
 
 class ValidationTest extends TestCase
@@ -464,5 +469,90 @@ class ValidationTest extends TestCase
         $class->json = 'invalid json';
         $violations = Validator::validate($class);
         $this->assertCount(1, $violations);
+    }
+
+    public function test_enum_validation()
+    {
+        $class = new class () {
+            #[Enum(values: ['one', 'two', 'three'])]
+            public string $number = 'one';
+
+            #[Enum(class: StringEnum::class)]
+            public string $enumNumber = 'one';
+
+            #[Enum(class: IntEnum::class)]
+            public IntEnum $intEnum = IntEnum::ONE;
+        };
+
+        $obj = new $class();
+
+        $violations = Validator::validate($obj);
+        $this->assertCount(0, $violations);
+
+        $obj->number = 'four';
+        $violations = Validator::validate($obj);
+        $this->assertCount(1, $violations);
+
+        $obj->enumNumber = 'five';
+        $violations = Validator::validate($obj);
+        $this->assertCount(2, $violations);
+
+        // $obj->intEnum = 3; -> TypeError anyway...
+    }
+
+    public function test_enum_validation_exception_both_option_provided()
+    {
+        $class = new class () {
+            #[Enum(values: ['one', 'two', 'three'], class: StringEnum::class)]
+            public string $number = 'one';
+        };
+
+        $obj = new $class();
+
+        $this->expectException(StructuredOutputException::class);
+
+        $violations = Validator::validate($obj);
+    }
+
+    public function test_enum_validation_exception_no_option_provided()
+    {
+        $class = new class () {
+            #[Enum()]
+            public string $number = 'one';
+        };
+
+        $obj = new $class();
+
+        $this->expectException(StructuredOutputException::class);
+
+        $violations = Validator::validate($obj);
+    }
+
+    public function test_choice_validation_exception_invalid_enum()
+    {
+        $class = new class () {
+            #[Enum(class: Person::class)]
+            public string $number = 'one';
+        };
+
+        $obj = new $class();
+
+        $this->expectException(StructuredOutputException::class);
+
+        $violations = Validator::validate($obj);
+    }
+
+    public function test_enum_validation_exception_enum_non_backed()
+    {
+        $class = new class () {
+            #[Enum(class: DummyEnum::class)]
+            public string $number = 'one';
+        };
+
+        $obj = new $class();
+
+        $this->expectException(StructuredOutputException::class);
+
+        $violations = Validator::validate($obj);
     }
 }
