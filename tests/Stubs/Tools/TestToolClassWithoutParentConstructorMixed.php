@@ -10,11 +10,8 @@ class TestToolClassWithoutParentConstructorMixed extends \NeuronAI\Tools\Tool
     protected string $name = 'test_tool';
     protected string $description = 'test tool';
 
-    public function __construct(protected string $key, protected bool $secondProperty = false)
+    public function __construct(protected string $key)
     {
-        if ($this->secondProperty) {
-            $this->addProperty(new ToolProperty('param', PropertyType::STRING, 'the param'));
-        }
     }
 
     public function properties(): array

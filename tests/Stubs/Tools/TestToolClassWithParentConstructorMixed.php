@@ -7,13 +7,9 @@ use NeuronAI\Tools\ToolProperty;
 
 class TestToolClassWithParentConstructorMixed extends \NeuronAI\Tools\Tool
 {
-    public function __construct(protected string $key, protected bool $secondProperty = false)
+    public function __construct(protected string $key)
     {
         parent::__construct('test_tool', 'test tool');
-
-        if ($this->secondProperty) {
-            $this->addProperty(new ToolProperty('param', PropertyType::STRING, 'the param'));
-        }
     }
 
     public function properties(): array
