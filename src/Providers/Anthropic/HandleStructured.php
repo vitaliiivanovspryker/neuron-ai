@@ -2,7 +2,6 @@
 
 namespace NeuronAI\Providers\Anthropic;
 
-use GuzzleHttp\Exception\GuzzleException;
 use NeuronAI\Chat\Messages\Message;
 
 trait HandleStructured

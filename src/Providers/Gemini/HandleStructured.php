@@ -2,7 +2,6 @@
 
 namespace NeuronAI\Providers\Gemini;
 
-use GuzzleHttp\Exception\GuzzleException;
 use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\Message;
 

@@ -2,7 +2,6 @@
 
 namespace NeuronAI\Providers\OpenAI;
 
-use GuzzleHttp\Exception\GuzzleException;
 use NeuronAI\Chat\Messages\Message;
 
 trait HandleStructured
