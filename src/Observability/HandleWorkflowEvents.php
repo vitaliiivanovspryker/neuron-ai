@@ -3,11 +3,14 @@
 namespace NeuronAI\Observability;
 
 use NeuronAI\Observability\Events\WorkflowEnd;
+use NeuronAI\Observability\Events\WorkflowNodeEnd;
+use NeuronAI\Observability\Events\WorkflowNodeStart;
 use NeuronAI\Observability\Events\WorkflowStart;
+use NeuronAI\Workflow\Edge;
 
 trait HandleWorkflowEvents
 {
-    public function workflowStart(\SplObserver $workflow, string $event, WorkflowStart $data)
+    public function workflowStart(\SplSubject $workflow, string $event, WorkflowStart $data)
     {
         if (!$this->inspector->isRecording()) {
             return;
@@ -16,21 +19,53 @@ trait HandleWorkflowEvents
         if ($this->inspector->needTransaction()) {
             $this->inspector->startTransaction($workflow::class)
                 ->setType('neuron-workflow')
-                ->addContext('execution', $data->executionList);
+                ->addContext('List', [
+                    'nodes' => \array_keys($data->nodes),
+                    'edges' => \array_map(function (Edge $edge) {
+                        return [
+                            'from' => $edge->getFrom(),
+                            'to' => $edge->getTo(),
+                            'has_condition' => $edge->hasCondition(),
+                        ];
+                    }, $data->edges)
+                ]);
         } elseif ($this->inspector->canAddSegments()) {
             $this->segments[$workflow::class] = $this->inspector->startSegment('neuron-workflow', $workflow::class)
                 ->setColor(self::SEGMENT_COLOR);
         }
     }
 
-    public function workflowEnd(\SplObserver $workflow, string $event, WorkflowEnd $data)
+    public function workflowEnd(\SplSubject $workflow, string $event, WorkflowEnd $data)
     {
         if (\array_key_exists($workflow::class, $this->segments)) {
-            $this->segments[$workflow::class]->addContext('Last Reply', $data->lastReply->jsonSerialize())->end();
+            $this->segments[$workflow::class]
+                ->end()
+                ->addContext('State', $data->state->all());
         } elseif ($this->inspector->canAddSegments()) {
-            $this->inspector->transaction()
-                ->addContext('Last Reply', $data->lastReply->jsonSerialize())
-                ->setResult('success');
+            $transaction = $this->inspector->transaction();
+            $transaction->addContext('State', $data->state->all());
+            $transaction->setResult('success');
+        }
+    }
+
+    public function workflowNodeStart(\SplSubject $workflow, string $event, WorkflowNodeStart $data)
+    {
+        if (!$this->inspector->canAddSegments()) {
+            return;
+        }
+
+        $segment = $this->inspector
+            ->startSegment('workflow-node', $data->node)
+            ->setColor(self::SEGMENT_COLOR);
+        $segment->addContext('State', ['before' => $data->state->all()]);
+        $this->segments[$data->node] = $segment;
+    }
+
+    public function workflowNodeEnd(\SplSubject $workflow, string $event, WorkflowNodeEnd $data)
+    {
+        if (\array_key_exists($data->node, $this->segments)) {
+            $segment = $this->segments[$data->node]->end();
+            $segment->addContext('State', \array_merge($segment->getContext('State'), ['after' => $data->state->all()]));
         }
     }
 }

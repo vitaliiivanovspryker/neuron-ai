@@ -29,12 +29,12 @@ https://docs.neuron-ai.dev/resources/guides-and-tutorials.
 - [Install](#install)
 - [Create an Agent](#create)
 - [Talk to the Agent](#talk)
+- [Monitoring](#monitoring)
 - [Supported LLM Providers](#providers)
 - [Tools & Function Calls](#tools)
 - [MCP server connector](#mcp)
 - [Implement RAG systems](#rag)
 - [Structured Output](#structured)
-- [Monitoring](#monitoring)
 - [Official Documentation](#documentation)
 
 <a name="install">
@@ -97,14 +97,8 @@ reducing the effort for prompt engineering.
 Send a prompt to the agent to get a response from the underlying LLM:
 
 ```php
-use NeuronAI\Observability\AgentMonitoring;
 
-// https://docs.neuron-ai.dev/advanced/observability
-$inspector = new \Inspector\Inspector(
-    new \Inspector\Configuration('INSPECTOR_INGESTION_KEY')
-);
-
-$agent = DataAnalystAgent::make()->observe(new AgentMonitoring($inspector));
+$agent = DataAnalystAgent::make();
 
 
 $response = $agent->chat(
@@ -122,6 +116,35 @@ echo $response->getContent();
 ```
 
 As you can see in the example above, the Agent automatically has memory of the ongoing conversation. Learn more about memory in the [documentation](https://docs.neuron-ai.dev/chat-history-and-memory).
+
+<a name="monitoring">
+
+## Monitoring
+
+Integrating AI Agents into your application you’re not working only with functions and deterministic code,
+you program your agent also influencing probability distributions. Same input ≠ output.
+That means reproducibility, versioning, and debugging become real problems.
+
+Many of the Agents you build with NeuronAI will contain multiple steps with multiple invocations of LLM calls,
+tool usage, access to external memories, etc. As these applications get more and more complex, it becomes crucial
+to be able to inspect what exactly your agent is doing and why.
+
+Why is the model taking certain decisions? What data is the model reacting to? Prompting is not programming
+in the common sense. No static types, small changes break output, long prompts cost latency,
+and no two models behave exactly the same with the same prompt.
+
+The best way to do this is with [Inspector](https://inspector.dev). After you sign up,
+make sure to set the `INSPECTOR_INGESTION_KEY` variable in the application environment file to start monitoring:
+
+```dotenv
+INSPECTOR_INGESTION_KEY=fwe45gtxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+After configuring the environment variable, you will see the agent execution timeline in your Inspector dashboard.
+
+![](./docs/images/neuron-observability.avif)
+
+Learn more about Monitoring in the [documentation](https://docs.neuron-ai.dev/advanced/observability).
 
 <a name="providers">
 
@@ -298,7 +321,6 @@ This guide covers a few strategies for getting structured outputs from the agent
 use App\Neuron\MyAgent;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\StructuredOutput\SchemaProperty;
-use NeuronAI\Observability\AgentMonitoring;
 
 /*
  * Define the output structure as a PHP class.
@@ -312,73 +334,17 @@ class Person
     public string $preference;
 }
 
-// https://docs.neuron-ai.dev/advanced/observability
-$inspector = new \Inspector\Inspector(
-    new \Inspector\Configuration('INSPECTOR_INGESTION_KEY')
-);
-
 // Talk to the agent requiring the structured output
-$person = MyAgent::make()
-    ->observe(new AgentMonitoring($inspector))
-    ->structured(
-        new UserMessage("I'm John and I like pizza!"),
-        Person::class
-    );
+$person = MyAgent::make()->structured(
+    new UserMessage("I'm John and I like pizza!"),
+    Person::class
+);
 
 echo $person->name ' like '.$person->preference;
 // John like pizza
 ```
 
 Learn more about Structured Output on the [documentation](https://docs.neuron-ai.dev/advanced/structured-output).
-
-<a name="monitoring">
-
-## Monitoring
-
-Integrating AI Agents into your application you’re not working only with functions and deterministic code,
-you program your agent also influencing probability distributions. Same input ≠ output.
-That means reproducibility, versioning, and debugging become real problems.
-
-Many of the Agents you build with NeuronAI will contain multiple steps with multiple invocations of LLM calls,
-tool usage, access to external memories, etc. As these applications get more and more complex, it becomes crucial
-to be able to inspect what exactly your agent is doing and why.
-
-Why is the model taking certain decisions? What data is the model reacting to? Prompting is not programming
-in the common sense. No static types, small changes break output, long prompts cost latency,
-and no two models behave exactly the same with the same prompt.
-
-The Inspector team designed NeuronAI with built-in observability features, so you can monitor AI agents were running,
-helping you maintain production-grade implementations with confidence.
-
-You have to install the Inspector package based on your development environment. We provide integration packages
-for [PHP](https://github.com/inspector-apm/inspector-php), [Laravel](https://github.com/inspector-apm/inspector-laravel),
-[Symfony](https://github.com/inspector-apm/inspector-symfony), [CodeIgniter](https://github.com/inspector-apm/inspector-codeigniter),
-[Drupal](https://git.drupalcode.org/project/inspector_monitoring).
-
-Attach the `AgentMonitoring` component to the agent to monitor the internal execution timeline in the Inspector dashboard.
-If the agent fires an error, you will be alerted in real-time. You can connect several notification channels like email, slack, discord, telegram, and more.
-Here is a code example in a legacy PHP script:
-
-```php
-use NeuronAI\Observability\AgentMonitoring;
-
-// https://docs.neuron-ai.dev/advanced/observability
-$inspector = new \Inspector\Inspector(
-    new \Inspector\Configuration('INSPECTOR_INGESTION_KEY')
-);
-
-// Attach monitoring to the Agent
-$response = MyAgent::make()
-    ->observe(new AgentMonitoring($inspector))
-    ->chat(...);
-```
-
-![](./docs/img/neuron-observability.png)
-
-> If you use a framework like Laravel, Symfony, or CodeIgniter, the connection is even easier,
-> since you already have the Inspector instance in the container.
-
-Learn more about Monitoring in the [documentation](https://docs.neuron-ai.dev/advanced/observability).
 
 <a name="documentation">
 

@@ -89,10 +89,14 @@ class TavilySearchTool extends Tool
 
     public function __invoke(
         string $search_query,
-        string $topic = 'general',
-        string $time_range = 'day',
-        int $days = 7,
+        ?string $topic = null,
+        ?string $time_range = null,
+        ?int $days = null,
     ) {
+        $topic = $topic ?? 'general';
+        $time_range = $time_range ?? 'day';
+        $days = $days ?? 7;
+
         $result = $this->getClient()->post('search', [
             RequestOptions::JSON => \array_merge(
                 compact('topic', 'time_range', 'days'),

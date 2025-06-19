@@ -24,7 +24,8 @@ trait HandleStructuredEvents
         $id = $this->getMessageId($data->message).'-extract';
 
         if (\array_key_exists($id, $this->segments)) {
-            $this->segments[$id]->addContext(
+            $segment = $this->segments[$id]->end();
+            $segment->addContext(
                 'Data',
                 [
                     'response' => $data->message->jsonSerialize(),
@@ -33,7 +34,7 @@ trait HandleStructuredEvents
             )->addContext(
                 'Schema',
                 $data->schema
-            )->end();
+            );
             unset($this->segments[$id]);
         }
     }
@@ -64,11 +65,11 @@ trait HandleStructuredEvents
         $id = $data->class.'-validate';
 
         if (\array_key_exists($id, $this->segments)) {
-            $segment = $this->segments[$id]->addContext('Json', \json_decode($data->json));
+            $segment = $this->segments[$id]->end();
+            $segment->addContext('Json', \json_decode($data->json));
             if (!empty($data->violations)) {
                 $segment->addContext('Violations', $data->violations);
             }
-            $segment->end();
         }
     }
 }

@@ -7,7 +7,7 @@ class Edge
     public function __construct(
         protected string $from,
         protected string $to,
-        private ?\Closure $condition = null
+        protected ?\Closure $condition = null
     ) {
     }
 
@@ -21,12 +21,13 @@ class Edge
         return $this->to;
     }
 
+    public function hasCondition(): bool
+    {
+        return $this->condition !== null;
+    }
+
     public function shouldExecute(WorkflowState $state): bool
     {
-        if ($this->condition === null) {
-            return true;
-        }
-
-        return ($this->condition)($state);
+        return $this->hasCondition() ? ($this->condition)($state) : true;
     }
 }
