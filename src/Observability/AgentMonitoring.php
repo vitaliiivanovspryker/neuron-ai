@@ -3,6 +3,7 @@
 namespace NeuronAI\Observability;
 
 use GuzzleHttp\Exception\RequestException;
+use Inspector\Configuration;
 use Inspector\Inspector;
 use Inspector\Models\Segment;
 use NeuronAI\Chat\Messages\Message;
@@ -36,8 +37,6 @@ class AgentMonitoring implements \SplObserver
 
     protected array $methodsMap = [
         'error' => 'reportError',
-        'workflow-start' => 'workflowStart',
-        'workflow-end' => 'workflowEnd',
         'chat-start' => 'start',
         'chat-stop' => 'stop',
         'stream-start' => 'start',
@@ -62,11 +61,30 @@ class AgentMonitoring implements \SplObserver
         'structured-validated' => 'validated',
         'rag-vectorstore-searching' => 'vectorStoreSearching',
         'rag-vectorstore-result' => 'vectorStoreResult',
-//        'rag-instructions-changing' => 'instructionsChanging',
-//        'rag-instructions-changed' => 'instructionsChanged',
         'rag-postprocessing' => 'postProcessing',
         'rag-postprocessed' => 'postProcessed',
+        'workflow-start' => 'workflowStart',
+        'workflow-end' => 'workflowEnd',
+        'workflow-node-start' => 'workflowNodeStart',
+        'workflow-node-end' => 'workflowNodeEnd',
     ];
+
+    protected static ?AgentMonitoring $instance = null;
+
+    public static function instance(): AgentMonitoring
+    {
+        $configuration = new Configuration($_ENV['INSPECTOR_INGESTION_KEY']);
+        $configuration->setTransport($_ENV['INSPECTOR_TRANSPORT'] ?? 'async');
+
+        if (isset($_ENV['INSPECTOR_SPLIT_MONITORING'])) {
+            return new self(new Inspector($configuration));
+        }
+
+        if (self::$instance === null) {
+            self::$instance = new self(new Inspector($configuration));
+        }
+        return self::$instance;
+    }
 
     /**
      * @param Inspector $inspector The monitoring instance
@@ -86,12 +104,11 @@ class AgentMonitoring implements \SplObserver
         }
     }
 
-    public function reportError(\NeuronAI\Agent $agent, string $event, AgentError $data)
+    public function reportError(\SplSubject $subject, string $event, AgentError $data)
     {
         if ($this->catch) {
             $error = $this->inspector->reportException($data->exception, !$data->unhandled);
             if ($data->exception instanceof RequestException) {
-                // @phpstan-ignore-next-line
                 $error->message = $data->exception->getResponse()->getBody()->getContents();
             }
             if ($data->unhandled) {
@@ -132,15 +149,15 @@ class AgentMonitoring implements \SplObserver
             // End the last segment for the given method and agent class
             foreach (\array_reverse($this->segments, true) as $key => $value) {
                 if ($key === $class.$method) {
-                    $value->setContext($this->getContext($agent))->end();
+                    $value->setContext($this->getContext($agent));
+                    $value->end();
                     unset($this->segments[$key]);
                     break;
                 }
             }
         } elseif ($this->inspector->canAddSegments()) {
-            $this->inspector->transaction()
-                ->setContext($this->getContext($agent))
-                ->setResult('success');
+            $transaction = $this->inspector->transaction()->setResult('success');
+            $transaction->setContext($this->getContext($agent));
         }
     }
 

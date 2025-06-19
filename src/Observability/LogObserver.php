@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace NeuronAI\Observability;
 
-use NeuronAI\Chat\Messages\Message;
+use NeuronAI\Workflow\Edge;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -90,18 +90,23 @@ class LogObserver implements \SplObserver
                 'documents' => $data->documents,
             ],
             Events\WorkflowStart::class => [
-                'executionList' => $data->executionList,
+                'nodes' => \array_keys($data->nodes),
+                'edges' => \array_map(function (Edge $edge) {
+                    return [
+                        'from' => $edge->getFrom(),
+                        'to' => $edge->getTo(),
+                        'has_condition' => $edge->hasCondition(),
+                    ];
+                }, $data->edges),
             ],
             Events\WorkflowNodeStart::class => [
                 'node' => $data->node,
-                'input' => array_map(fn (Message $message) => $message->jsonSerialize(), $data->messages),
             ],
             Events\WorkflowNodeEnd::class => [
                 'node' => $data->node,
-                'lastReply' => $data->lastReply?->jsonSerialize(),
             ],
             Events\WorkflowEnd::class => [
-                'lastReply' => $data->lastReply?->jsonSerialize(),
+                'state' => $data->state->all(),
             ],
             default => [],
         };

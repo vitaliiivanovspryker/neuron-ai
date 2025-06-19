@@ -3,6 +3,11 @@
 namespace NeuronAI\Workflow;
 
 use NeuronAI\Exceptions\WorkflowException;
+use NeuronAI\Observability\Events\AgentError;
+use NeuronAI\Observability\Events\WorkflowEnd;
+use NeuronAI\Observability\Events\WorkflowNodeEnd;
+use NeuronAI\Observability\Events\WorkflowNodeStart;
+use NeuronAI\Observability\Events\WorkflowStart;
 use NeuronAI\Observability\Observable;
 use NeuronAI\Workflow\Exporter\ExporterInterface;
 use NeuronAI\Workflow\Exporter\MermaidExporter;
@@ -10,6 +15,9 @@ use NeuronAI\Workflow\Persistence\InMemoryPersistence;
 use NeuronAI\Workflow\Persistence\PersistenceInterface;
 use SplSubject;
 
+/**
+ * @method static static make(?PersistenceInterface $persistence = null, ?string $workflowId = null)
+ */
 class Workflow implements SplSubject
 {
     use Observable;
@@ -43,35 +51,35 @@ class Workflow implements SplSubject
 
     public function validate(): void
     {
-        if ($this->startNode === null) {
+        /*if ($this->getStartNode() === null) {
             throw new WorkflowException('Start node must be defined');
         }
 
-        if ($this->endNode === null) {
+        if ($this->getEndNode() === null) {
             throw new WorkflowException('End node must be defined');
+        }*/
+
+        if (!isset($this->getNodes()[$this->getStartNode()])) {
+            throw new WorkflowException("Start node {$this->getStartNode()} does not exist");
         }
 
-        if (!isset($this->nodes[$this->startNode])) {
-            throw new WorkflowException("Start node {$this->startNode} does not exist");
+        if (!isset($this->getNodes()[$this->getEndNode()])) {
+            throw new WorkflowException("End node {$this->getEndNode()} does not exist");
         }
 
-        if (!isset($this->nodes[$this->endNode])) {
-            throw new WorkflowException("End node {$this->endNode} does not exist");
-        }
-
-        foreach ($this->edges as $edge) {
-            if (!isset($this->nodes[$edge->getFrom()])) {
+        foreach ($this->getEdges() as $edge) {
+            if (!isset($this->getNodes()[$edge->getFrom()])) {
                 throw new WorkflowException("Edge from node {$edge->getFrom()} does not exist");
             }
 
-            if (!isset($this->nodes[$edge->getTo()])) {
+            if (!isset($this->getNodes()[$edge->getTo()])) {
                 throw new WorkflowException("Edge to node {$edge->getTo()} does not exist");
             }
         }
     }
 
     /**
-     * @throws WorkflowInterrupt|WorkflowException
+     * @throws WorkflowInterrupt|WorkflowException|\Throwable
      */
     protected function execute(
         string $currentNode,
@@ -91,13 +99,20 @@ class Workflow implements SplSubject
         }
 
         try {
-            while ($currentNode !== $this->endNode) {
+            while ($currentNode !== $this->getEndNode()) {
                 $node = $this->nodes[$currentNode];
                 $node->setContext($context);
 
-                $this->notify('workflow-node-start', $node);
-                $state = $node->run($state);
-                $this->notify('workflow-node-stop', $node);
+                $this->notify('workflow-node-start', new WorkflowNodeStart($currentNode, $state));
+                try {
+                    $state = $node->run($state);
+                } catch (WorkflowInterrupt $interrupt) {
+                    throw $interrupt;
+                } catch (\Throwable $exception) {
+                    $this->notify('error', new AgentError($exception));
+                    throw $exception;
+                }
+                $this->notify('workflow-node-end', new WorkflowNodeEnd($currentNode, $state));
 
                 $nextNode = $this->findNextNode($currentNode, $state);
 
@@ -116,7 +131,8 @@ class Workflow implements SplSubject
                 );
             }
 
-            $endNode = $this->nodes[$this->endNode];
+            $endNode = $this->nodes[$this->getEndNode()];
+            ;
             $endNode->setContext($context);
             return $endNode->run($state);
 
@@ -128,28 +144,33 @@ class Workflow implements SplSubject
     }
 
     /**
-     * @throws WorkflowInterrupt|WorkflowException
+     * @throws WorkflowInterrupt|WorkflowException|\Throwable
      */
     public function run(?WorkflowState $initialState = null): WorkflowState
     {
-        $this->notify('workflow-start');
-        $this->validate();
+        $this->notify('workflow-start', new WorkflowStart($this->getNodes(), $this->getEdges()));
+        try {
+            $this->validate();
+        } catch (WorkflowException $exception) {
+            $this->notify('error', new AgentError($exception));
+            throw $exception;
+        }
 
         $state = $initialState ?? new WorkflowState();
-        $currentNode = $this->startNode;
+        $currentNode = $this->getStartNode();
 
         $result = $this->execute($currentNode, $state);
-        $this->notify('workflow-stop');
+        $this->notify('workflow-end', new WorkflowEnd($result));
 
         return $result;
     }
 
     /**
-     * @throws WorkflowInterrupt|WorkflowException
+     * @throws WorkflowInterrupt|WorkflowException|\Throwable
      */
     public function resume(array|string|int $humanFeedback): WorkflowState
     {
-        $this->notify('workflow-resume');
+        $this->notify('workflow-resume', new WorkflowStart($this->getNodes(), $this->getEdges()));
         $interrupt = $this->persistence->load($this->workflowId);
 
         if ($interrupt === null) {
@@ -165,7 +186,7 @@ class Workflow implements SplSubject
             true,
             $humanFeedback
         );
-        $this->notify('workflow-stop');
+        $this->notify('workflow-end', new WorkflowEnd($result));
 
         return  $result;
     }
@@ -173,7 +194,7 @@ class Workflow implements SplSubject
     /**
      * @return Node[]
      */
-    public function nodes(): array
+    protected function nodes(): array
     {
         return [];
     }
@@ -181,7 +202,7 @@ class Workflow implements SplSubject
     /**
      * @return Edge[]
      */
-    public function edges(): array
+    protected function edges(): array
     {
         return [];
     }
@@ -203,9 +224,18 @@ class Workflow implements SplSubject
         return $this;
     }
 
+    /**
+     * @return array<string, NodeInterface>
+     */
     public function getNodes(): array
     {
-        return \array_merge($this->nodes(), $this->nodes);
+        if (empty($this->nodes)) {
+            foreach ($this->nodes() as $node) {
+                $this->addNode($node);
+            }
+        }
+
+        return $this->nodes;
     }
 
     public function addEdge(Edge $edge): self
@@ -225,26 +255,53 @@ class Workflow implements SplSubject
         return $this;
     }
 
+    /**
+     * @return Edge[]
+     */
     public function getEdges(): array
     {
-        return \array_merge($this->edges(), $this->edges);
+        if (empty($this->edges)) {
+            $this->edges = $this->edges();
+        }
+
+        return $this->edges;
     }
 
-    public function setStart(string $nodeClass): self
+    public function setStart(string $nodeClass): Workflow
     {
         $this->startNode = $nodeClass;
         return $this;
     }
 
-    public function setEnd(string $nodeClass): self
+    public function setEnd(string $nodeClass): Workflow
     {
         $this->endNode = $nodeClass;
         return $this;
     }
 
+    protected function getStartNode(): string
+    {
+        return $this->startNode ?? $this->start();
+    }
+
+    protected function getEndNode(): string
+    {
+        return $this->endNode ?? $this->end();
+    }
+
+    protected function start(): ?string
+    {
+        throw new WorkflowException('Start node must be defined');
+    }
+
+    protected function end(): ?string
+    {
+        throw new WorkflowException('End node must be defined');
+    }
+
     private function findNextNode(string $currentNode, WorkflowState $state): ?string
     {
-        foreach ($this->edges as $edge) {
+        foreach ($this->getEdges() as $edge) {
             if ($edge->getFrom() === $currentNode && $edge->shouldExecute($state)) {
                 return $edge->getTo();
             }

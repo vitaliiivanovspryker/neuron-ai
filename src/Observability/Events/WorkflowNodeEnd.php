@@ -2,13 +2,13 @@
 
 namespace NeuronAI\Observability\Events;
 
-use NeuronAI\Chat\Messages\Message;
+use NeuronAI\Workflow\WorkflowState;
 
 class WorkflowNodeEnd
 {
     public function __construct(
         public string $node,
-        public ?Message $lastReply,
+        public WorkflowState $state
     ) {
     }
 }
