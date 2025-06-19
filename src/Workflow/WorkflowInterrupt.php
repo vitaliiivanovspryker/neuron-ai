@@ -4,7 +4,7 @@ namespace NeuronAI\Workflow;
 
 use NeuronAI\Exceptions\WorkflowException;
 
-class WorkflowInterrupt extends WorkflowException
+class WorkflowInterrupt extends WorkflowException implements \JsonSerializable
 {
     public function __construct(
         protected array $data,
@@ -27,5 +27,14 @@ class WorkflowInterrupt extends WorkflowException
     public function getState(): WorkflowState
     {
         return $this->state;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'data' => $this->data,
+            'currentNode' => $this->currentNode,
+            'state' => $this->state->all(),
+        ];
     }
 }
