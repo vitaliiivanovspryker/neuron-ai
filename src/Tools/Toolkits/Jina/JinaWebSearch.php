@@ -30,7 +30,19 @@ class JinaWebSearch extends Tool
                 'The search query to perform web search.',
                 true
             )
-        )->setCallable($this);
+        );
+    }
+
+    protected function properties(): array
+    {
+        return [
+            new ToolProperty(
+                'search_query',
+                PropertyType::STRING,
+                'The search query to perform web search.',
+                true
+            )
+        ];
     }
 
     protected function getClient(): Client

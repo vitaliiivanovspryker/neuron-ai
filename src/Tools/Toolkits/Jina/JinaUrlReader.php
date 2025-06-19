@@ -19,15 +19,18 @@ class JinaUrlReader extends Tool
             'url_reader',
             'Get the content of a URL in markdown format.'
         );
+    }
 
-        $this->addProperty(
+    protected function properties(): array
+    {
+        return [
             new ToolProperty(
                 'url',
                 PropertyType::STRING,
                 'The URL to read.',
                 true
             ),
-        )->setCallable($this);
+        ];
     }
 
     protected function getClient(): Client

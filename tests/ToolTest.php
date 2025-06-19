@@ -4,12 +4,18 @@ namespace NeuronAI\Tests;
 
 use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Tests\Stubs\Color;
+use NeuronAI\Tests\Stubs\Tools\TestToolClassOnlyParentConstructor;
+use NeuronAI\Tests\Stubs\Tools\TestToolClassOnlyParentConstructorFluent;
+use NeuronAI\Tests\Stubs\Tools\TestToolClassWithoutParentConstructor;
+use NeuronAI\Tests\Stubs\Tools\TestToolClassWithoutParentConstructorMixed;
+use NeuronAI\Tests\Stubs\Tools\TestToolClassWithParentConstructor;
+use NeuronAI\Tests\Stubs\Tools\TestToolClassWithParentConstructorMixed;
 use NeuronAI\Tools\ArrayProperty;
 use NeuronAI\Tools\ObjectProperty;
 use NeuronAI\Tools\PropertyType;
-use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolInterface;
+use NeuronAI\Tools\ToolProperty;
 use PHPUnit\Framework\TestCase;
 
 class ToolTest extends TestCase
@@ -415,5 +421,71 @@ class ToolTest extends TestCase
             '{"prop_1":"a","prop_2":3,"prop_3":false}',
             $tool->getResult()
         );
+    }
+
+    public function test_properties_declaration_on_method_and_constructor_without_parent_constructor()
+    {
+        $tool = new TestToolClassWithoutParentConstructorMixed('test', true);
+        $this->assertEquals(2, count($tool->getProperties()));
+        $this->assertEquals('test_tool', $tool->getName());
+        $this->assertEquals('test tool', $tool->getDescription());
+        $this->assertEquals('test', $tool->getKey());
+
+        $tool = new TestToolClassWithoutParentConstructorMixed('test', false);
+        $this->assertEquals(1, count($tool->getProperties()));
+        $this->assertEquals('test_tool', $tool->getName());
+        $this->assertEquals('test tool', $tool->getDescription());
+        $this->assertEquals('test', $tool->getKey());
+    }
+
+    public function test_properties_declaration_on_method_without_parent_constructor()
+    {
+        $tool = new TestToolClassWithoutParentConstructor('test');
+        $this->assertEquals(2, count($tool->getProperties()));
+        $this->assertEquals('test_tool', $tool->getName());
+        $this->assertEquals('test tool', $tool->getDescription());
+        $this->assertEquals('test', $tool->getKey());
+    }
+
+    public function test_properties_declaration_on_method_and_constructor_with_parent_constructor()
+    {
+        $tool = new TestToolClassWithParentConstructorMixed('test', true);
+        $this->assertEquals(2, count($tool->getProperties()));
+        $this->assertEquals('test_tool', $tool->getName());
+        $this->assertEquals('test tool', $tool->getDescription());
+        $this->assertEquals('test', $tool->getKey());
+
+        $tool = new TestToolClassWithParentConstructorMixed('test', false);
+        $this->assertEquals(1, count($tool->getProperties()));
+        $this->assertEquals('test_tool', $tool->getName());
+        $this->assertEquals('test tool', $tool->getDescription());
+        $this->assertEquals('test', $tool->getKey());
+    }
+
+    public function test_properties_declaration_on_method_with_parent_constructor()
+    {
+        $tool = new TestToolClassWithParentConstructor('test');
+        $this->assertEquals(1, count($tool->getProperties()));
+        $this->assertEquals('test_tool', $tool->getName());
+        $this->assertEquals('test tool', $tool->getDescription());
+        $this->assertEquals('test', $tool->getKey());
+    }
+
+    public function test_properties_declaration_on_constructor_with_parent_constructor()
+    {
+        $tool = new TestToolClassOnlyParentConstructor('test');
+        $this->assertEquals(2, count($tool->getProperties()));
+        $this->assertEquals('test_tool', $tool->getName());
+        $this->assertEquals('test tool', $tool->getDescription());
+        $this->assertEquals('test', $tool->getKey());
+    }
+
+    public function test_properties_declaration_on_constructor_with_parent_constructor_fluent()
+    {
+        $tool = new TestToolClassOnlyParentConstructorFluent('test');
+        $this->assertEquals(2, count($tool->getProperties()));
+        $this->assertEquals('test_tool', $tool->getName());
+        $this->assertEquals('test tool', $tool->getDescription());
+        $this->assertEquals('test', $tool->getKey());
     }
 }

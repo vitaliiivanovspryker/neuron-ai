@@ -70,8 +70,6 @@ class Tool implements ToolInterface
 
         if (!empty($properties)) {
             $this->properties = $properties;
-        } else {
-            $this->properties = $this->properties();
         }
     }
 
@@ -87,6 +85,10 @@ class Tool implements ToolInterface
 
     public function addProperty(ToolPropertyInterface $property): ToolInterface
     {
+        if (empty($this->properties) && $this->properties() !== []) {
+            $this->properties = $this->properties();
+        }
+
         $this->properties[] = $property;
         return $this;
     }
@@ -104,7 +106,7 @@ class Tool implements ToolInterface
      */
     public function getProperties(): array
     {
-        return $this->properties;
+        return $this->properties ?: $this->properties();
     }
 
     public function getRequiredProperties(): array
@@ -179,7 +181,7 @@ class Tool implements ToolInterface
             }
         }
 
-        $parameters = array_reduce($this->properties, function ($carry, $property) {
+        $parameters = array_reduce($this->getProperties(), function ($carry, $property) {
             $propertyName = $property->getName();
             $inputs = $this->getInputs();
 

@@ -12,6 +12,10 @@ use PDO;
  */
 class MySQLSelectTool extends Tool
 {
+    protected string $name = 'execute_select_query';
+
+    protected string $description = 'Use this tool only to run SELECT query against the MySQL database.
+This the tool to use only to gather information from the MySQL database.';
     protected array $allowedStatements = ['SELECT', 'WITH', 'SHOW', 'DESCRIBE', 'EXPLAIN'];
 
     protected array $forbiddenStatements = [
@@ -21,20 +25,18 @@ class MySQLSelectTool extends Tool
 
     public function __construct(protected PDO $pdo)
     {
-        parent::__construct(
-            'execute_select_query',
-            'Use this tool only to run SELECT query against the MySQL database.
-            This the tool to use only to gather information from the MySQL database.'
-        );
+    }
 
-        $this->addProperty(
+    protected function properties(): array
+    {
+        return [
             new ToolProperty(
                 'query',
                 PropertyType::STRING,
                 'The SELECT query you want to run against the database.',
                 true
             )
-        )->setCallable($this);
+        ];
     }
 
     public function __invoke(string $query)
