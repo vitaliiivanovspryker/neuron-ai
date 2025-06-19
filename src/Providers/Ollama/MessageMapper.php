@@ -51,7 +51,7 @@ class MessageMapper implements MessageMapperInterface
 
         foreach ($attachments as $attachment) {
             if ($attachment->type === AttachmentType::DOCUMENT) {
-                throw new ProviderException('Ollama does not support document attachments.');
+                throw new ProviderException('This provider does not support document attachments.');
             }
 
             $payload['images'][] = $this->mapAttachment($attachment);
