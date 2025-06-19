@@ -5,6 +5,7 @@ namespace NeuronAI\RAG\PreProcessor;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Providers\AIProviderInterface;
+use NeuronAI\StaticConstructor;
 use NeuronAI\SystemPrompt;
 
 class QueryTransformationPreProcessor implements PreProcessorInterface
@@ -14,19 +15,19 @@ class QueryTransformationPreProcessor implements PreProcessorInterface
      *
      * @param AIProviderInterface $provider The AI provider for query transformation
      * @param QueryTransformationType $queryTransformation The transformation strategy
-     * @param string|null $customInstructions Custom system prompt to override built-in transformations
+     * @param string|null $customPrompt Custom system prompt to override built-in transformations strategies
      */
     public function __construct(
         protected AIProviderInterface $provider,
         protected QueryTransformationType $queryTransformation = QueryTransformationType::REWRITING,
-        protected ?string $customInstructions = null,
+        protected ?string $customPrompt = null,
     ) {
     }
 
     /**
      * Transforms a user query for optimized RAG document retrieval.
      *
-     * Applies the configured transformation strategy or uses custom instructions
+     * Applies the configured transformation strategy or uses custom system prompt
      * if provided to enhance query effectiveness.
      *
      * @param Message $question The original user query to transform
@@ -37,14 +38,14 @@ class QueryTransformationPreProcessor implements PreProcessorInterface
         $preparedMessage = $this->prepareMessage($question);
 
         return $this->provider
-            ->systemPrompt($this->getInstructions())
+            ->systemPrompt($this->getSystemPrompt())
             ->chat([$preparedMessage]);
     }
 
-    public function getInstructions(): string
+    public function getSystemPrompt(): string
     {
-        if (isset($this->customInstructions)) {
-            return $this->customInstructions;
+        if (isset($this->customPrompt)) {
+            return $this->customPrompt;
         }
 
         return match ($this->queryTransformation) {
@@ -54,9 +55,9 @@ class QueryTransformationPreProcessor implements PreProcessorInterface
         };
     }
 
-    public function setCustomInstructions(string $instructions): self
+    public function setCustomPrompt(string $prompt): self
     {
-        $this->customInstructions = $instructions;
+        $this->customPrompt = $prompt;
         return $this;
     }
 
@@ -74,7 +75,7 @@ class QueryTransformationPreProcessor implements PreProcessorInterface
 
     protected function prepareMessage(Message $question): UserMessage
     {
-        return new UserMessage('<original-query>' . $question->getContent() . '</original-query>');
+        return new UserMessage('<ORIGINAL-QUERY>' . $question->getContent() . '</ORIGINAL-QUERY>');
     }
 
     protected function getRewritingPrompt(): string
