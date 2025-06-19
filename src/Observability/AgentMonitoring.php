@@ -27,7 +27,7 @@ class AgentMonitoring implements \SplObserver
     use HandleWorkflowEvents;
 
     public const SEGMENT_TYPE = 'neuron';
-    public const SEGMENT_COLOR = '#506b9b';
+    public const SEGMENT_COLOR = '#FF800C';
 
     /**
      * @var array<string, Segment>
