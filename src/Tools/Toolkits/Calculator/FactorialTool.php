@@ -33,7 +33,7 @@ DESC
         ];
     }
 
-    public function __invoke(int $number): int|array
+    public function __invoke(int $number): int|float|array
     {
         // Validate input
         if ($number < 0) {
@@ -61,11 +61,8 @@ DESC
 
     /**
      * Calculate factorial using BCMath for large numbers
-     *
-     * @param int $number The number to calculate factorial for
-     * @return string The factorial as a string (to handle very large numbers)
      */
-    private function calculateWithBCMath(int $number): string
+    private function calculateWithBCMath(int $number): float
     {
         $result = '1';
 
@@ -73,6 +70,6 @@ DESC
             $result = \bcmul($result, (string)$i);
         }
 
-        return $result;
+        return (float)$result;
     }
 }
