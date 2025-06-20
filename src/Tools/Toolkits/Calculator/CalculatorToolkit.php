@@ -23,6 +23,7 @@ class CalculatorToolkit extends AbstractToolkit
             SquareRootTool::make(),
             NthRootTool::make(),
             MeanTool::make(),
+            MedianTool::make(),
         ];
     }
 
