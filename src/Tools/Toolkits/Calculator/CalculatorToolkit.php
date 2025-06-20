@@ -22,6 +22,7 @@ class CalculatorToolkit extends AbstractToolkit
             ExponentiateTool::make(),
             SquareRootTool::make(),
             NthRootTool::make(),
+            MeanTool::make(),
         ];
     }
 
