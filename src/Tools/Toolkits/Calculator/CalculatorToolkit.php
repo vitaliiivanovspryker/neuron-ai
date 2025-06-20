@@ -26,6 +26,7 @@ class CalculatorToolkit extends AbstractToolkit
             MedianTool::make(),
             ModeTool::make(),
             StandardDeviationTool::make(),
+            VarianceTool::make(),
         ];
     }
 
