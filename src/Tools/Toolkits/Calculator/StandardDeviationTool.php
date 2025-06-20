@@ -7,17 +7,17 @@ use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 
-class MeanTool extends Tool
+class StandardDeviationTool extends Tool
 {
-    public function __construct(protected int $precision = 2)
+    public function __construct(protected int $precision = 2, protected bool $sample = true)
     {
         parent::__construct(
-            'calculate_mean',
+            'calculate_standard_deviation',
             <<<DESC
-Calculates the arithmetic mean (average) of a dataset. The mean is the sum of all values divided
-by the number of values. Use this tool when you need the central tendency of numerical data,
-analyzing performance metrics, calculating average scores, or determining typical values in a
-dataset. Input should be an array of numbers.
+Calculates the standard deviation, which measures how spread out the data points are from the mean.
+A low standard deviation indicates data points are close to the mean, while a high standard deviation
+indicates greater variability. Use this tool for risk assessment, quality control, measuring consistency,
+or understanding data distribution. Choose sample (n-1) for sample data or population (n) for complete populations.
 DESC
         );
     }
@@ -55,10 +55,29 @@ DESC
             return ['error' => 'Data array must contain at least one numeric value'];
         }
 
+        if (count($numericData) === 1 && $this->sample) {
+            return ['error' => 'Cannot calculate sample standard deviation with only one data point'];
+        }
+
         // Convert to float values
         $numericData = array_map('floatval', $numericData);
+
+        // Calculate mean
         $mean = array_sum($numericData) / count($numericData);
 
-        return round($mean, $this->precision);
+        // Calculate the sum of squared differences
+        $sumSquaredDifferences = 0;
+        foreach ($numericData as $value) {
+            $sumSquaredDifferences += pow($value - $mean, 2);
+        }
+
+        // Calculate variance
+        $divisor = $this->sample ? count($numericData) - 1 : count($numericData);
+        $variance = $sumSquaredDifferences / $divisor;
+
+        // Calculate standard deviation
+        $standardDeviation = sqrt($variance);
+
+        return round($standardDeviation, $this->precision);
     }
 }

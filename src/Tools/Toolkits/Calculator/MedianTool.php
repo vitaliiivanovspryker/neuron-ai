@@ -9,7 +9,7 @@ use NeuronAI\Tools\ToolProperty;
 
 class MedianTool extends Tool
 {
-    public function __construct()
+    public function __construct(protected int $precision = 2)
     {
         parent::__construct(
             'calculate_median',
@@ -36,16 +36,10 @@ DESC
                     true,
                 )
             ),
-            new ToolProperty(
-                name: 'precision',
-                type: PropertyType::INTEGER,
-                description: 'Number of decimal places for the result',
-                required: false,
-            )
         ];
     }
 
-    public function __invoke(array $numbers, int $precision = 4): float|array
+    public function __invoke(array $numbers): float|array
     {
         // Validate input
         if (empty($data)) {
@@ -76,6 +70,6 @@ DESC
             $median = $numericData[$middle];
         }
 
-        return round($median, $precision);
+        return round($median, $this->precision);
     }
 }

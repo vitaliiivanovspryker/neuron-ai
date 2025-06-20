@@ -24,6 +24,8 @@ class CalculatorToolkit extends AbstractToolkit
             NthRootTool::make(),
             MeanTool::make(),
             MedianTool::make(),
+            ModeTool::make(),
+            StandardDeviationTool::make(),
         ];
     }
 

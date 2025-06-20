@@ -7,17 +7,18 @@ use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 
-class MeanTool extends Tool
+class ModeTool extends Tool
 {
-    public function __construct(protected int $precision = 2)
+    public function __construct()
     {
         parent::__construct(
-            'calculate_mean',
+            'calculate_mode',
             <<<DESC
-Calculates the arithmetic mean (average) of a dataset. The mean is the sum of all values divided
-by the number of values. Use this tool when you need the central tendency of numerical data,
-analyzing performance metrics, calculating average scores, or determining typical values in a
-dataset. Input should be an array of numbers.
+Finds the mode(s) - the most frequently occurring value(s) in a dataset.
+Returns all values that appear with the highest frequency. Use this tool to identify
+the most common values, analyze categorical data converted to numbers, find typical
+responses in surveys, or detect patterns in discrete data. Can return multiple modes
+if several values tie for highest frequency.
 DESC
         );
     }
@@ -39,7 +40,7 @@ DESC
         ];
     }
 
-    public function __invoke(array $numbers): float|array
+    public function __invoke(array $numbers): array
     {
         // Validate input
         if (empty($numbers)) {
@@ -57,8 +58,18 @@ DESC
 
         // Convert to float values
         $numericData = array_map('floatval', $numericData);
-        $mean = array_sum($numericData) / count($numericData);
 
-        return round($mean, $this->precision);
+        // Count frequency of each value
+        $frequencies = array_count_values($numericData);
+        $maxFrequency = max($frequencies);
+
+        // Find all values with maximum frequency
+        $modes = array_keys($frequencies, $maxFrequency);
+
+        // Convert back to numeric values and sort
+        $modes = array_map('floatval', $modes);
+        sort($modes);
+
+        return $modes;
     }
 }
