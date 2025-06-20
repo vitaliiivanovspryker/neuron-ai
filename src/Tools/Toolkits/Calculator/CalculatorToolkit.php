@@ -19,7 +19,7 @@ class CalculatorToolkit extends AbstractToolkit
             SubtractTool::make(),
             MultiplyTool::make(),
             DivideTool::make(),
-            ExponentiateTool::make(),
+            ExponentialTool::make(),
             SquareRootTool::make(),
             NthRootTool::make(),
             MeanTool::make(),

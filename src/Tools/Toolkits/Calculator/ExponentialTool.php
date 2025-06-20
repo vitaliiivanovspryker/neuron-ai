@@ -6,12 +6,12 @@ use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 
-class ExponentiateTool extends Tool
+class ExponentialTool extends Tool
 {
     public function __construct()
     {
         parent::__construct(
-            name: 'exponentiate',
+            name: 'calculate_exponential',
             description: 'Calculate the exponential between two numbers and return the result',
         );
     }
