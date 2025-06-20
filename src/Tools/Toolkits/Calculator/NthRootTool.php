@@ -43,6 +43,6 @@ DESC
 
     public function __invoke(float|int $number, int $root_degree): float|int
     {
-        return pow($number, 1/$root_degree);
+        return pow($number, 1 / $root_degree);
     }
 }

@@ -47,7 +47,7 @@ DESC
         }
 
         // Filter and validate numeric values
-        $numericData = array_filter($numbers, function($value) {
+        $numericData = array_filter($numbers, function ($value) {
             return is_numeric($value);
         });
 
