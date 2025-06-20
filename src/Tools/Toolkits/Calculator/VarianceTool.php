@@ -43,12 +43,12 @@ DESC
     public function __invoke(array $numbers): float|array
     {
         // Validate input
-        if (empty($data)) {
+        if (empty($numbers)) {
             return ['error' => 'Data array cannot be empty'];
         }
 
         // Filter and validate numeric values
-        $numericData = array_filter($data, function ($value) {
+        $numericData = array_filter($numbers, function ($value) {
             return is_numeric($value);
         });
 
