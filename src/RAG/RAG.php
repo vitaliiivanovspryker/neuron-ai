@@ -33,25 +33,33 @@ class RAG extends Agent
      * @throws ToolCallableNotSet
      * @throws \Throwable
      */
-    public function answer(Message $question): Message
+    public function chat(Message|array $messages): Message
     {
+        if (\is_array($messages)) {
+            throw new AgentException('RAG does not accept arrays as input. Use a single Message object instead.');
+        }
+
         $this->notify('rag-start');
 
-        $this->retrieval($question);
+        $this->retrieval($messages);
 
-        $response = $this->chat($question);
+        $response = parent::chat($messages);
 
         $this->notify('rag-stop');
         return $response;
     }
 
-    public function streamAnswer(Message $question): \Generator
+    public function stream(Message|array $messages): \Generator
     {
+        if (\is_array($messages)) {
+            throw new AgentException('RAG does not accept arrays as input. Use a single Message object instead.');
+        }
+
         $this->notify('rag-start');
 
-        $this->retrieval($question);
+        $this->retrieval($messages);
 
-        yield from $this->stream($question);
+        yield from parent::stream($messages);
 
         $this->notify('rag-stop');
     }

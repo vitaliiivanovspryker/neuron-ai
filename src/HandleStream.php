@@ -29,7 +29,7 @@ trait HandleStream
                     $this->resolveChatHistory()->getMessages(),
                     function (ToolCallMessage $toolCallMessage) {
                         $toolCallResult = $this->executeTools($toolCallMessage);
-                        yield from $this->stream([$toolCallMessage, $toolCallResult]);
+                        yield from self::stream([$toolCallMessage, $toolCallResult]);
                     }
                 );
 
