@@ -29,6 +29,22 @@ class RAG extends Agent
     protected array $postProcessors = [];
 
     /**
+     * @deprecated TUse "chat" instead
+     */
+    public function answer(Message $question): Message
+    {
+        return $this->chat($question);
+    }
+
+    /**
+     * @deprecated Use "stream" instead
+     */
+    public function answerStream(Message $question): \Generator
+    {
+        return $this->stream($question);
+    }
+
+    /**
      * @throws MissingCallbackParameter
      * @throws ToolCallableNotSet
      * @throws \Throwable
