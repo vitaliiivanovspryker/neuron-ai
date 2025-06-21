@@ -51,13 +51,11 @@ class RAG extends Agent
      */
     public function chat(Message|array $messages): Message
     {
-        if (\is_array($messages)) {
-            throw new AgentException('RAG does not accept arrays as input. Use a single Message object instead.');
-        }
+        $question = \is_array($messages) ? $messages[0] : $messages;
 
         $this->notify('rag-start');
 
-        $this->retrieval($messages);
+        $this->retrieval($question);
 
         $response = parent::chat($messages);
 
@@ -67,13 +65,11 @@ class RAG extends Agent
 
     public function stream(Message|array $messages): \Generator
     {
-        if (\is_array($messages)) {
-            throw new AgentException('RAG does not accept arrays as input. Use a single Message object instead.');
-        }
+        $question = \is_array($messages) ? $messages[0] : $messages;
 
         $this->notify('rag-start');
 
-        $this->retrieval($messages);
+        $this->retrieval($question);
 
         yield from parent::stream($messages);
 
