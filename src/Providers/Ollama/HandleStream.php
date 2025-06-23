@@ -46,8 +46,11 @@ trait HandleStream
             }
 
             // Process tool calls
-            // Ollama doesn't support tool calls for stream response
-            // https://github.com/ollama/ollama/blob/main/docs/api.md
+            if (isset($line['message']['tool_calls'])) {
+                yield from $executeToolsCallback(
+                    $this->createToolCallMessage($line['message'])
+                );
+            }
 
             // Process regular content
             $content = $line['message']['content'] ?? '';
