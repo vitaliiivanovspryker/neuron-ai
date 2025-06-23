@@ -12,16 +12,19 @@ trait ResolveTools
     /**
      * Registered tools.
      *
-     * @var ToolInterface[]
+     * @var ToolInterface[]|ToolkitInterface[]
      */
     protected array $tools = [];
 
+    /**
+     * @var ToolInterface[]
+     */
     protected array $toolsBootstrapCache = [];
 
     /**
      * Get the list of tools.
      *
-     * @return ToolInterface[]
+     * @return ToolInterface[]|ToolkitInterface[]
      */
     protected function tools(): array
     {
