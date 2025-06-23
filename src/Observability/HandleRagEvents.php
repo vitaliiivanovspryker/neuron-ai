@@ -5,6 +5,8 @@ namespace NeuronAI\Observability;
 use NeuronAI\AgentInterface;
 use NeuronAI\Observability\Events\PostProcessed;
 use NeuronAI\Observability\Events\PostProcessing;
+use NeuronAI\Observability\Events\PreProcessed;
+use NeuronAI\Observability\Events\PreProcessing;
 use NeuronAI\Observability\Events\VectorStoreResult;
 use NeuronAI\Observability\Events\VectorStoreSearching;
 
@@ -34,6 +36,30 @@ trait HandleRagEvents
                     'documents' => \count($data->documents)
                 ]);
             $segment->end();
+        }
+    }
+
+    public function preProcessing(AgentInterface $agent, string $event, PreProcessing $data)
+    {
+        if (!$this->inspector->canAddSegments()) {
+            return;
+        }
+
+        $segment = $this->inspector
+            ->startSegment(self::SEGMENT_TYPE.'-preprocessing', $data->processor)
+            ->setColor(self::SEGMENT_COLOR);
+
+        $segment->addContext('Original', $data->original->jsonSerialize());
+
+        $this->segments[$data->processor] = $segment;
+    }
+
+    public function preProcessed(AgentInterface $agent, string $event, PreProcessed $data)
+    {
+        if (\array_key_exists($data->processor, $this->segments)) {
+            $this->segments[$data->processor]
+                ->end()
+                ->addContext('Processed', $data->processed->jsonSerialize());
         }
     }
 

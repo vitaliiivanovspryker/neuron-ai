@@ -8,6 +8,8 @@ use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Exceptions\AgentException;
 use NeuronAI\Observability\Events\PostProcessed;
 use NeuronAI\Observability\Events\PostProcessing;
+use NeuronAI\Observability\Events\PreProcessed;
+use NeuronAI\Observability\Events\PreProcessing;
 use NeuronAI\Observability\Events\VectorStoreResult;
 use NeuronAI\Observability\Events\VectorStoreSearching;
 use NeuronAI\Exceptions\MissingCallbackParameter;
@@ -150,7 +152,9 @@ class RAG extends Agent
     protected function applyPreProcessors(Message $question): Message
     {
         foreach ($this->preProcessors() as $processor) {
+            $this->notify('rag-preprocessing', new PreProcessing(get_class($processor), $question));
             $question = $processor->process($question);
+            $this->notify('rag-preprocessed', new PreProcessed(get_class($processor), $question));
         }
 
         return $question;
