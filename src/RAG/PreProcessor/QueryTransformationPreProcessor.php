@@ -13,13 +13,13 @@ class QueryTransformationPreProcessor implements PreProcessorInterface
      * Creates a new query transformation preprocessor.
      *
      * @param AIProviderInterface $provider The AI provider for query transformation
-     * @param QueryTransformationType $queryTransformation The transformation strategy
+     * @param QueryTransformationType $transformation The transformation strategy
      * @param string|null $customPrompt Custom system prompt to override built-in transformations strategies
      */
     public function __construct(
-        protected AIProviderInterface $provider,
-        protected QueryTransformationType $queryTransformation = QueryTransformationType::REWRITING,
-        protected ?string $customPrompt = null,
+        protected AIProviderInterface     $provider,
+        protected QueryTransformationType $transformation = QueryTransformationType::REWRITING,
+        protected ?string                 $customPrompt = null,
     ) {
     }
 
@@ -29,7 +29,7 @@ class QueryTransformationPreProcessor implements PreProcessorInterface
      * Applies the configured transformation strategy or uses custom system prompt
      * if provided to enhance query effectiveness.
      *
-     * @param Message $question The original user query to transform
+     * @param Message $question The original user queries to transform
      * @return Message The transformed query optimized for document retrieval
      */
     public function process(Message $question): Message
@@ -47,7 +47,7 @@ class QueryTransformationPreProcessor implements PreProcessorInterface
             return $this->customPrompt;
         }
 
-        return match ($this->queryTransformation) {
+        return match ($this->transformation) {
             QueryTransformationType::REWRITING => $this->getRewritingPrompt(),
             QueryTransformationType::DECOMPOSITION => $this->getDecompositionPrompt(),
             QueryTransformationType::HYDE => $this->getHydePrompt(),
@@ -60,9 +60,9 @@ class QueryTransformationPreProcessor implements PreProcessorInterface
         return $this;
     }
 
-    public function setQueryTransformation(QueryTransformationType $queryTransformation): self
+    public function setTransformation(QueryTransformationType $transformation): self
     {
-        $this->queryTransformation = $queryTransformation;
+        $this->transformation = $transformation;
         return $this;
     }
 
