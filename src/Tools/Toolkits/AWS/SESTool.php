@@ -15,7 +15,7 @@ class SESTool extends Tool
     public function __construct(
         protected SesClient $sesClient,
         protected string $fromEmail
-    ){
+    ) {
         parent::__construct(
             'send_email',
             <<<DESC
@@ -109,7 +109,7 @@ DESC
         }
     }
 
-    protected function buildDestinations(array $to, ?string $cc = null, ?string $bcc = null): array
+    protected function buildDestinations(array $to, ?array $cc = null, ?array $bcc = null): array
     {
         $destinations = [
             'ToAddresses' => $to,
