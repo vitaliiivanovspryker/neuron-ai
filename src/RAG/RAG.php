@@ -8,12 +8,15 @@ use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Exceptions\AgentException;
 use NeuronAI\Observability\Events\PostProcessed;
 use NeuronAI\Observability\Events\PostProcessing;
+use NeuronAI\Observability\Events\PreProcessed;
+use NeuronAI\Observability\Events\PreProcessing;
 use NeuronAI\Observability\Events\VectorStoreResult;
 use NeuronAI\Observability\Events\VectorStoreSearching;
 use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\RAG\PostProcessor\PostProcessorInterface;
+use NeuronAI\RAG\PreProcessor\PreProcessorInterface;
 
 /**
  * @method RAG withProvider(AIProviderInterface $provider)
@@ -24,7 +27,12 @@ class RAG extends Agent
     use ResolveEmbeddingProvider;
 
     /**
-     * @var PostprocessorInterface[]
+     * @var PreProcessorInterface[]
+     */
+    protected array $preProcessors = [];
+
+    /**
+     * @var PostProcessorInterface[]
      */
     protected array $postProcessors = [];
 
@@ -113,6 +121,8 @@ class RAG extends Agent
      */
     public function retrieveDocuments(Message $question): array
     {
+        $question = $this->applyPreProcessors($question);
+
         $this->notify('rag-vectorstore-searching', new VectorStoreSearching($question));
 
         $documents = $this->resolveVectorStore()->similaritySearch(
@@ -131,6 +141,23 @@ class RAG extends Agent
         $this->notify('rag-vectorstore-result', new VectorStoreResult($question, $retrievedDocs));
 
         return $this->applyPostProcessors($question, $retrievedDocs);
+    }
+
+    /**
+     * Apply a series of preprocessors to the asked question.
+     *
+     * @param Message $question The question to process.
+     * @return Message The processed question.
+     */
+    protected function applyPreProcessors(Message $question): Message
+    {
+        foreach ($this->preProcessors() as $processor) {
+            $this->notify('rag-preprocessing', new PreProcessing(get_class($processor), $question));
+            $question = $processor->process($question);
+            $this->notify('rag-preprocessed', new PreProcessed(get_class($processor), $question));
+        }
+
+        return $question;
     }
 
     /**
@@ -167,6 +194,22 @@ class RAG extends Agent
     /**
      * @throws AgentException
      */
+    public function setPreProcessors(array $preProcessors): RAG
+    {
+        foreach ($preProcessors as $processor) {
+            if (! $processor instanceof PreProcessorInterface) {
+                throw new AgentException($processor::class." must implement PreProcessorInterface");
+            }
+
+            $this->preProcessors[] = $processor;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @throws AgentException
+     */
     public function setPostProcessors(array $postProcessors): RAG
     {
         foreach ($postProcessors as $processor) {
@@ -178,6 +221,14 @@ class RAG extends Agent
         }
 
         return $this;
+    }
+
+    /**
+     * @return PreProcessorInterface[]
+     */
+    protected function preProcessors(): array
+    {
+        return $this->preProcessors;
     }
 
     /**

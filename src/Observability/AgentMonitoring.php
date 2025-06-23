@@ -60,6 +60,8 @@ class AgentMonitoring implements \SplObserver
         'structured-validated' => 'validated',
         'rag-vectorstore-searching' => 'vectorStoreSearching',
         'rag-vectorstore-result' => 'vectorStoreResult',
+        'rag-preprocessing' => 'preProcessing',
+        'rag-preprocessed' => 'preProcessed',
         'rag-postprocessing' => 'postProcessing',
         'rag-postprocessed' => 'postProcessed',
         'workflow-start' => 'workflowStart',
