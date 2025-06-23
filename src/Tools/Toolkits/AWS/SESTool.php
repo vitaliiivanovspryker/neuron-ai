@@ -15,7 +15,7 @@ class SESTool extends Tool
     public function __construct(
         protected SesClient $sesClient,
         protected string $fromEmail
-    ){
+    ) {
         parent::__construct(
             'send_email',
             <<<DESC
