@@ -81,7 +81,7 @@ class QueryTransformationPreProcessor implements PreProcessorInterface
 
     protected function getRewritingPrompt(): string
     {
-        return new SystemPrompt(
+        return (string) new SystemPrompt(
             background: [
                 'You are an AI assistant tasked with reformulating user queries to improve retrieval in a RAG system.'
             ],
@@ -98,7 +98,7 @@ class QueryTransformationPreProcessor implements PreProcessorInterface
 
     protected function getDecompositionPrompt(): string
     {
-        return new SystemPrompt(
+        return (string) new SystemPrompt(
             background: [
                 'You are an AI assistant that breaks down complex queries into simpler sub-queries for comprehensive information retrieval in a RAG system.'
             ],
@@ -117,7 +117,7 @@ class QueryTransformationPreProcessor implements PreProcessorInterface
 
     protected function getHydePrompt(): string
     {
-        return new SystemPrompt(
+        return (string) new SystemPrompt(
             background: [
                 'You are an AI assistant that generates hypothetical answer to the user query, to improve retrieval in a RAG system.'
             ],

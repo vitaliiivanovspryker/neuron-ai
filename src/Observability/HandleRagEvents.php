@@ -56,7 +56,7 @@ trait HandleRagEvents
         $this->segments[$data->processor] = $segment;
     }
 
-    public function preProcessed(AgentInterface $agent, string $event, PreProcessed $data)
+    public function preProcessed(AgentInterface $agent, string $event, PreProcessed $data): void
     {
         if (\array_key_exists($data->processor, $this->segments)) {
             $this->segments[$data->processor]
@@ -65,7 +65,7 @@ trait HandleRagEvents
         }
     }
 
-    public function postProcessing(AgentInterface $agent, string $event, PostProcessing $data)
+    public function postProcessing(AgentInterface $agent, string $event, PostProcessing $data): void
     {
         if (!$this->inspector->canAddSegments()) {
             return;

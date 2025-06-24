@@ -7,6 +7,7 @@ namespace NeuronAI\Observability;
 use Inspector\Configuration;
 use Inspector\Inspector;
 use Inspector\Models\Segment;
+use NeuronAI\Agent;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Observability\Events\AgentError;
 use NeuronAI\RAG\RAG;
@@ -36,6 +37,10 @@ class AgentMonitoring implements \SplObserver
      */
     protected array $segments = [];
 
+
+    /**
+     * @var array<string, string>
+     */
     protected array $methodsMap = [
         'error' => 'reportError',
         'chat-start' => 'start',
@@ -74,6 +79,17 @@ class AgentMonitoring implements \SplObserver
 
     protected static ?AgentMonitoring $instance = null;
 
+    /**
+     * @param Inspector $inspector The monitoring instance
+     * @param bool $catch Report internal agent errors
+     */
+    public function __construct(
+        protected Inspector $inspector,
+        protected bool $catch = true
+    ) {
+    }
+
+
     public static function instance(): AgentMonitoring
     {
         $configuration = new Configuration($_ENV['INSPECTOR_INGESTION_KEY']);
@@ -87,16 +103,6 @@ class AgentMonitoring implements \SplObserver
             self::$instance = new self(new Inspector($configuration));
         }
         return self::$instance;
-    }
-
-    /**
-     * @param Inspector $inspector The monitoring instance
-     * @param bool $catch Report internal agent errors
-     */
-    public function __construct(
-        protected Inspector $inspector,
-        protected bool $catch = true
-    ) {
     }
 
     public function update(\SplSubject $subject, ?string $event = null, mixed $data = null): void
@@ -118,7 +124,7 @@ class AgentMonitoring implements \SplObserver
         }
     }
 
-    public function start(\NeuronAI\Agent $agent, string $event, $data = null): void
+    public function start(Agent $agent, string $event, $data = null): void
     {
         if (!$this->inspector->isRecording()) {
             return;
@@ -141,7 +147,7 @@ class AgentMonitoring implements \SplObserver
         }
     }
 
-    public function stop(\NeuronAI\Agent $agent, string $event, $data = null): void
+    public function stop(Agent $agent, string $event, $data = null): void
     {
         $method = $this->getPrefix($event);
         $class = $agent::class;
@@ -167,7 +173,7 @@ class AgentMonitoring implements \SplObserver
         return explode('-', $event)[0];
     }
 
-    protected function getContext(\NeuronAI\Agent $agent): array
+    protected function getContext(Agent $agent): array
     {
         $mapTool = fn (ToolInterface $tool) => [
             $tool->getName() => [
