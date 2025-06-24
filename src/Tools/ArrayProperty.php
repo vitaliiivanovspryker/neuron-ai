@@ -5,9 +5,15 @@ declare(strict_types=1);
 namespace NeuronAI\Tools;
 
 use NeuronAI\Exceptions\ArrayPropertyException;
+use NeuronAI\StaticConstructor;
 
+/**
+ * @method static static make(string $name, string $description, bool $required = false, ?ToolPropertyInterface $items = null, ?int $minItems = null, ?int $maxItems = null)
+ */
 class ArrayProperty implements ToolPropertyInterface
 {
+    use StaticConstructor;
+
     protected PropertyType $type = PropertyType::ARRAY;
 
     /**
