@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\RAG\Splitter;
 
 use NeuronAI\RAG\Document;
@@ -11,8 +13,8 @@ use InvalidArgumentException;
  */
 class SentenceTextSplitter implements SplitterInterface
 {
-    private int $maxWords;
-    private int $overlapWords;
+    private readonly int $maxWords;
+    private readonly int $overlapWords;
 
     /**
      * @param int $maxWords    Maximum number of words per chunk

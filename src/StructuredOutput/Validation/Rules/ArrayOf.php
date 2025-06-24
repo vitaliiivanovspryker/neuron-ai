@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\StructuredOutput\Validation\Rules;
 
 use NeuronAI\StructuredOutput\Validation\Validator;
@@ -40,7 +42,7 @@ class ArrayOf extends AbstractValidationRule
     ) {
     }
 
-    public function validate(string $name, mixed $value, array &$violations)
+    public function validate(string $name, mixed $value, array &$violations): void
     {
         if ($this->allowEmpty && empty($value)) {
             return;

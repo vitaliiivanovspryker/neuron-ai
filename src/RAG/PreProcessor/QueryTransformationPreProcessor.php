@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\RAG\PreProcessor;
 
 use NeuronAI\Chat\Messages\Message;
@@ -43,11 +45,7 @@ class QueryTransformationPreProcessor implements PreProcessorInterface
 
     public function getSystemPrompt(): string
     {
-        if (isset($this->customPrompt)) {
-            return $this->customPrompt;
-        }
-
-        return match ($this->transformation) {
+        return $this->customPrompt ?? match ($this->transformation) {
             QueryTransformationType::REWRITING => $this->getRewritingPrompt(),
             QueryTransformationType::DECOMPOSITION => $this->getDecompositionPrompt(),
             QueryTransformationType::HYDE => $this->getHydePrompt(),
@@ -79,7 +77,7 @@ class QueryTransformationPreProcessor implements PreProcessorInterface
 
     protected function getRewritingPrompt(): string
     {
-        return new SystemPrompt(
+        return (string) new SystemPrompt(
             background: [
                 'You are an AI assistant tasked with reformulating user queries to improve retrieval in a RAG system.'
             ],
@@ -96,7 +94,7 @@ class QueryTransformationPreProcessor implements PreProcessorInterface
 
     protected function getDecompositionPrompt(): string
     {
-        return new SystemPrompt(
+        return (string) new SystemPrompt(
             background: [
                 'You are an AI assistant that breaks down complex queries into simpler sub-queries for comprehensive information retrieval in a RAG system.'
             ],
@@ -115,7 +113,7 @@ class QueryTransformationPreProcessor implements PreProcessorInterface
 
     protected function getHydePrompt(): string
     {
-        return new SystemPrompt(
+        return (string) new SystemPrompt(
             background: [
                 'You are an AI assistant that generates hypothetical answer to the user query, to improve retrieval in a RAG system.'
             ],

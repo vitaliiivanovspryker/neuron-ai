@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\RAG\VectorStore\Doctrine;
 
 use Doctrine\DBAL\Exception;
@@ -15,7 +17,7 @@ class VectorType extends Type
      */
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        $platformClass = get_class($platform);
+        $platformClass = $platform::class;
 
         $parts = explode('\\', $platformClass);
         $shortName = end($parts); // e.g., 'PostgreSQLPlatform'

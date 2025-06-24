@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Providers\Ollama;
 
 use NeuronAI\Chat\Attachments\Attachment;
@@ -62,7 +64,7 @@ class MessageMapper implements MessageMapperInterface
         $this->mapping[] = $payload;
     }
 
-    protected function mapAttachment(Attachment $attachment)
+    protected function mapAttachment(Attachment $attachment): string
     {
         return match ($attachment->contentType) {
             AttachmentContentType::BASE64 => $attachment->content,

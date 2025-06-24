@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tests;
 
 use NeuronAI\Exceptions\ArrayPropertyException;
@@ -10,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 class ArrayPropertyTest extends TestCase
 {
-    public function test_json_schema_contains_min_and_max_items()
+    public function test_json_schema_contains_min_and_max_items(): void
     {
         $arrayProp = new ArrayProperty(
             name :"array_prop",
@@ -41,7 +43,7 @@ class ArrayPropertyTest extends TestCase
 
     }
 
-    public function test_min_items_equals_max_items_is_valid()
+    public function test_min_items_equals_max_items_is_valid(): void
     {
         $arrayProp = new ArrayProperty(
             name :"array_prop",
@@ -71,7 +73,7 @@ class ArrayPropertyTest extends TestCase
         $this->assertEquals($expectedJsonSchema, $arrayProp->getJsonSchema());
     }
 
-    public function test_array_property_minmax_items_null()
+    public function test_array_property_minmax_items_null(): void
     {
         $arrayProp = new ArrayProperty(
             name: "array_prop",
@@ -90,7 +92,7 @@ class ArrayPropertyTest extends TestCase
         $this->assertArrayNotHasKey('maxItems', $schema);
     }
 
-    public function test_min_items_cannot_be_negative()
+    public function test_min_items_cannot_be_negative(): void
     {
         $this->expectException(ArrayPropertyException::class);
         $this->expectExceptionMessage('minItems must be >= 0, got -1');
@@ -109,7 +111,7 @@ class ArrayPropertyTest extends TestCase
         );
     }
 
-    public function test_max_items_cannot_be_negative()
+    public function test_max_items_cannot_be_negative(): void
     {
         $this->expectException(ArrayPropertyException::class);
         $this->expectExceptionMessage('maxItems must be >= 0, got -1');
@@ -128,7 +130,7 @@ class ArrayPropertyTest extends TestCase
         );
     }
 
-    public function test_min_items_cannot_be_greater_than_max_items()
+    public function test_min_items_cannot_be_greater_than_max_items(): void
     {
         $this->expectException(ArrayPropertyException::class);
         $this->expectExceptionMessage('minItems (10) cannot be greater than maxItems (9)');

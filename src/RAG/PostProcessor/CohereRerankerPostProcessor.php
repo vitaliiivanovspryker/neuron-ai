@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\RAG\PostProcessor;
 
 use GuzzleHttp\Client;
@@ -20,10 +22,7 @@ class CohereRerankerPostProcessor implements PostProcessorInterface
 
     protected function getClient(): Client
     {
-        if (isset($this->client)) {
-            return $this->client;
-        }
-        return $this->client = new Client([
+        return $this->client ?? $this->client = new Client([
             'base_uri' => 'https://api.cohere.com/v2/',
             'headers' => [
                 'Accept' => 'application/json',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tests\VectorStore;
 
 use Doctrine\DBAL\DriverManager;
@@ -67,7 +69,7 @@ class DoctrineVectorStoreTest extends TestCase
         $this->embeddingToSearch = json_decode(file_get_contents(__DIR__ . '/../Stubs/hello-world.embeddings'), true);
     }
 
-    protected function bootstrapDatabase()
+    protected function bootstrapDatabase(): void
     {
         $scriptPath = __DIR__ . '/../scripts/setup-test-db.php';
 

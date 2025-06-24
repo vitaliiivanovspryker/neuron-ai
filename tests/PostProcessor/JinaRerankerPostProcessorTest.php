@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tests\PostProcessor;
 
 use NeuronAI\Chat\Messages\UserMessage;
@@ -14,7 +16,7 @@ use GuzzleHttp\Psr7\Response;
 
 class JinaRerankerPostProcessorTest extends TestCase
 {
-    public function test_post_process_reranks_documents()
+    public function test_post_process_reranks_documents(): void
     {
         $sentRequests = [];
         $history = Middleware::history($sentRequests);
@@ -53,7 +55,7 @@ class JinaRerankerPostProcessorTest extends TestCase
         $this->assertEquals("Madrid is the capital of Spain", $result[2]->getContent(), "Madrid should be the third result");
     }
 
-    public function test_post_process_with_top_n_parameter()
+    public function test_post_process_with_top_n_parameter(): void
     {
         $sentRequests = [];
         $history = Middleware::history($sentRequests);

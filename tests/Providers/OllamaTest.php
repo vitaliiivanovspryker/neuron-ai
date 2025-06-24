@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tests\Providers;
 
 use GuzzleHttp\Client;
@@ -60,7 +62,7 @@ class OllamaTest extends TestCase
         $this->assertSame('test response', $response->getContent());
     }
 
-    public function test_chat_with_base64_image()
+    public function test_chat_with_base64_image(): void
     {
         $sentRequests = [];
         $history = Middleware::history($sentRequests);
@@ -103,7 +105,7 @@ class OllamaTest extends TestCase
         $this->assertSame('test response', $response->getContent());
     }
 
-    public function test_chat_with_url_image_fail()
+    public function test_chat_with_url_image_fail(): void
     {
         $sentRequests = [];
         $history = Middleware::history($sentRequests);
@@ -127,7 +129,7 @@ class OllamaTest extends TestCase
         $provider->chat([$message]);
     }
 
-    public function test_tools_payload()
+    public function test_tools_payload(): void
     {
         $sentRequests = [];
         $history = Middleware::history($sentRequests);

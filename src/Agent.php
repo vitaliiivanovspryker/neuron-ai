@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI;
 
 use NeuronAI\Observability\Observable;
@@ -35,11 +37,7 @@ class Agent implements AgentInterface
 
     public function resolveInstructions(): string
     {
-        if (isset($this->instructions)) {
-            return $this->instructions;
-        }
-
-        return $this->instructions();
+        return $this->instructions ?? $this->instructions();
     }
 
     protected function removeDelimitedContent(string $text, string $openTag, string $closeTag): string

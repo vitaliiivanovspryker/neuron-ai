@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Chat\History;
 
 use NeuronAI\Chat\Attachments\Document;

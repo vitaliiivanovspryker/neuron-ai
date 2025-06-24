@@ -12,5 +12,6 @@ return (new Config())
         '@PSR12' => true,
         'no_unused_imports' => true,
         'nullable_type_declaration_for_default_null_value' => true,
+        'declare_strict_types' => true
     ])
     ->setFinder($finder);

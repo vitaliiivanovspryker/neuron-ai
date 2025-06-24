@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tests;
 
 use NeuronAI\Tools\Toolkits\Calculator\CalculatorToolkit;
@@ -10,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 class ToolkitTest extends TestCase
 {
-    public function test_tool_exclude()
+    public function test_tool_exclude(): void
     {
         $toolkit = (new CalculatorToolkit());
 
@@ -23,7 +25,7 @@ class ToolkitTest extends TestCase
     }
 
 
-    public function test_tools_exclude()
+    public function test_tools_exclude(): void
     {
         $toolkit = (new CalculatorToolkit());
 
@@ -39,7 +41,7 @@ class ToolkitTest extends TestCase
     }
 
 
-    public function test_tool_only()
+    public function test_tool_only(): void
     {
         $toolkit = (new CalculatorToolkit());
 
@@ -49,7 +51,7 @@ class ToolkitTest extends TestCase
         $this->assertContains(SumTool::class, array_map(fn (ToolInterface $tool) => $tool::class, $toolkit->tools()));
     }
 
-    public function test_tools_only()
+    public function test_tools_only(): void
     {
         $toolkit = (new CalculatorToolkit());
 
@@ -62,7 +64,7 @@ class ToolkitTest extends TestCase
         $this->assertContains(DivideTool::class, $toolClasses);
     }
 
-    public function test_tools_combine_exclude_only()
+    public function test_tools_combine_exclude_only(): void
     {
         $toolkit = (new CalculatorToolkit());
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tests\Workflow;
 
 use NeuronAI\Workflow\Edge;
@@ -12,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class WorkflowPersistenceTest extends TestCase
 {
-    public function test_file_persistence_save()
+    public function test_file_persistence_save(): void
     {
         $persistence = new FilePersistence(__DIR__);
         $this->assertInstanceOf(PersistenceInterface::class, $persistence);
@@ -29,7 +31,7 @@ class WorkflowPersistenceTest extends TestCase
         $this->assertFileDoesNotExist(__DIR__.DIRECTORY_SEPARATOR.'neuron_workflow_id.store');
     }
 
-    public function test_file_persistence_load()
+    public function test_file_persistence_load(): void
     {
         $persistence = new FilePersistence(__DIR__);
 
@@ -46,7 +48,7 @@ class WorkflowPersistenceTest extends TestCase
         $persistence->delete('id');
     }
 
-    public function test_workflow_state_persistence()
+    public function test_workflow_state_persistence(): void
     {
         $persistence = new FilePersistence(__DIR__);
         $workflow = new Workflow($persistence, 'test_workflow');
@@ -61,7 +63,7 @@ class WorkflowPersistenceTest extends TestCase
 
         try {
             $workflow->run(new WorkflowState(['value' => 8]));
-        } catch (WorkflowInterrupt $interrupt) {
+        } catch (WorkflowInterrupt) {
             // Verify interrupt was saved
             $savedInterrupt = $persistence->load('test_workflow');
             $this->assertEquals(InterruptNode::class, $savedInterrupt->getCurrentNode());

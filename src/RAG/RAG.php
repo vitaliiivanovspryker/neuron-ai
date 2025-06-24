@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\RAG;
 
 use NeuronAI\Agent;
@@ -152,9 +154,9 @@ class RAG extends Agent
     protected function applyPreProcessors(Message $question): Message
     {
         foreach ($this->preProcessors() as $processor) {
-            $this->notify('rag-preprocessing', new PreProcessing(get_class($processor), $question));
+            $this->notify('rag-preprocessing', new PreProcessing($processor::class, $question));
             $question = $processor->process($question);
-            $this->notify('rag-preprocessed', new PreProcessed(get_class($processor), $question));
+            $this->notify('rag-preprocessed', new PreProcessed($processor::class, $question));
         }
 
         return $question;

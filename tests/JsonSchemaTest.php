@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tests;
 
 use NeuronAI\StructuredOutput\JsonSchema;
@@ -9,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class JsonSchemaTest extends TestCase
 {
-    public function test_all_properties_required()
+    public function test_all_properties_required(): void
     {
         $class = new class () {
             public string $firstName;
@@ -32,7 +34,7 @@ class JsonSchemaTest extends TestCase
             'additionalProperties' => false,
         ], $schema);
     }
-    public function test_with_nullable_properties()
+    public function test_with_nullable_properties(): void
     {
         $class = new class () {
             public string $firstName;
@@ -57,7 +59,7 @@ class JsonSchemaTest extends TestCase
         ], $schema);
     }
 
-    public function test_with_default_value()
+    public function test_with_default_value(): void
     {
         $class = new class () {
             public string $firstName;
@@ -82,7 +84,7 @@ class JsonSchemaTest extends TestCase
         ], $schema);
     }
 
-    public function test_with_attribute()
+    public function test_with_attribute(): void
     {
         $class = new class () {
             #[SchemaProperty(title: "The user first name", description: "The user first name")]
@@ -105,7 +107,7 @@ class JsonSchemaTest extends TestCase
         ], $schema);
     }
 
-    public function test_nullable_property_with_attribute()
+    public function test_nullable_property_with_attribute(): void
     {
         $class = new class () {
             #[SchemaProperty(title: "The user first name", description: "The user first name", required: false)]
@@ -127,7 +129,7 @@ class JsonSchemaTest extends TestCase
         ], $schema);
     }
 
-    public function test_nested_object()
+    public function test_nested_object(): void
     {
         $schema = (new JsonSchema())->generate(Person::class);
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tools\Toolkits\Riza;
 
 use GuzzleHttp\Client;
@@ -53,11 +55,7 @@ class RizaCodeInterpreter extends Tool
 
     public function getClient(): Client
     {
-        if (isset($this->client)) {
-            return $this->client;
-        }
-
-        return $this->client = new Client([
+        return $this->client ?? $this->client = new Client([
             'base_uri' => trim($this->url, '/').'/',
             'headers' => [
                 'Authorization' => 'Bearer '.$this->key,

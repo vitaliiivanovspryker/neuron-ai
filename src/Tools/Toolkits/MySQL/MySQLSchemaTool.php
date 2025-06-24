@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tools\Toolkits\MySQL;
 
 use NeuronAI\Tools\Tool;
@@ -23,7 +25,7 @@ class MySQLSchemaTool extends Tool
         );
     }
 
-    public function __invoke()
+    public function __invoke(): string
     {
         return $this->formatForLLM([
             'tables' => $this->getTables(),
@@ -188,7 +190,7 @@ class MySQLSchemaTool extends Tool
                     'full_type' => $row['COLUMN_TYPE'],
                     'nullable' => $row['IS_NULLABLE'] === 'YES',
                     'default' => $row['COLUMN_DEFAULT'],
-                    'auto_increment' => \strpos($row['EXTRA'], 'auto_increment') !== false,
+                    'auto_increment' => str_contains($row['EXTRA'], 'auto_increment'),
                     'comment' => $row['COLUMN_COMMENT']
                 ];
 

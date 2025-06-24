@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tools\Toolkits\AWS;
 
 use Aws\Ses\SesClient;
@@ -92,7 +94,7 @@ DESC
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
-                'error_type' => get_class($e),
+                'error_type' => $e::class,
                 'status' => 'failed'
             ];
         }
@@ -100,10 +102,9 @@ DESC
 
     /**
      * @param array<string> $to
-     * @return void
      * @throws ToolException
      */
-    protected function validateRecipients(array $to)
+    protected function validateRecipients(array $to): void
     {
         foreach ($to as $recipient) {
             if (filter_var($recipient, FILTER_VALIDATE_EMAIL) === false) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tests;
 
 use NeuronAI\StructuredOutput\StructuredOutputException;
@@ -31,7 +33,7 @@ use PHPUnit\Framework\TestCase;
 
 class ValidationTest extends TestCase
 {
-    public function test_not_blank_validation()
+    public function test_not_blank_validation(): void
     {
         $class = new class () {
             #[NotBlank(false)]
@@ -48,7 +50,7 @@ class ValidationTest extends TestCase
         $this->assertCount(0, $violations);
     }
 
-    public function test_not_null_validation()
+    public function test_not_null_validation(): void
     {
         $class = new class () {
             #[IsNotNull]
@@ -64,11 +66,11 @@ class ValidationTest extends TestCase
         $this->assertCount(0, $violations);
     }
 
-    public function test_is_null_validation()
+    public function test_is_null_validation(): void
     {
         $class = new class () {
             #[IsNull]
-            public ?string $name;
+            public ?string $name = null;
         };
         $class = new $class();
 
@@ -84,7 +86,7 @@ class ValidationTest extends TestCase
         $this->assertCount(0, $violations);
     }
 
-    public function test_url_validation()
+    public function test_url_validation(): void
     {
         $class = new class () {
             #[Url]
@@ -100,7 +102,7 @@ class ValidationTest extends TestCase
         $this->assertCount(0, $violations);
     }
 
-    public function test_array_of_validation()
+    public function test_array_of_validation(): void
     {
         $class = new class () {
             #[ArrayOf(type: 'string')]
@@ -135,7 +137,7 @@ class ValidationTest extends TestCase
         $this->assertCount(0, $violations);
     }
 
-    public function test_array_of_nested_validation()
+    public function test_array_of_nested_validation(): void
     {
         $class = new class () {
             #[ArrayOf(type: Person::class)]
@@ -154,7 +156,7 @@ class ValidationTest extends TestCase
         $this->assertCount(0, $violations);
     }
 
-    public function test_length_validation()
+    public function test_length_validation(): void
     {
         $class = new class () {
             #[Length(exactly: 10)]
@@ -204,7 +206,7 @@ class ValidationTest extends TestCase
         $this->assertCount(1, $violations);
     }
 
-    public function test_count_validation()
+    public function test_count_validation(): void
     {
         $class = new class () {
             #[Count(exactly: 10)]
@@ -255,7 +257,7 @@ class ValidationTest extends TestCase
         $this->assertCount(1, $violations);
     }
 
-    public function test_email_validation()
+    public function test_email_validation(): void
     {
         $class = new class () {
             #[Email]
@@ -271,7 +273,7 @@ class ValidationTest extends TestCase
         $this->assertCount(0, $violations);
     }
 
-    public function test_equal_to_validation()
+    public function test_equal_to_validation(): void
     {
         $class = new class () {
             #[EqualTo(reference: 'test')]
@@ -287,7 +289,7 @@ class ValidationTest extends TestCase
         $this->assertCount(1, $violations);
     }
 
-    public function test_not_equal_to_validation()
+    public function test_not_equal_to_validation(): void
     {
         $class = new class () {
             #[NotEqualTo(reference: 'test')]
@@ -303,7 +305,7 @@ class ValidationTest extends TestCase
         $this->assertCount(0, $violations);
     }
 
-    public function test_greater_than_validation()
+    public function test_greater_than_validation(): void
     {
         $class = new class () {
             #[GreaterThan(reference: 30)]
@@ -327,7 +329,7 @@ class ValidationTest extends TestCase
         $this->assertCount(0, $violations);
     }
 
-    public function test_greater_than_equal_validation()
+    public function test_greater_than_equal_validation(): void
     {
         $class = new class () {
             #[GreaterThanEqual(reference: 30)]
@@ -351,7 +353,7 @@ class ValidationTest extends TestCase
         $this->assertCount(0, $violations);
     }
 
-    public function test_lower_than_validation()
+    public function test_lower_than_validation(): void
     {
         $class = new class () {
             #[LowerThan(reference: 30)]
@@ -375,7 +377,7 @@ class ValidationTest extends TestCase
         $this->assertCount(1, $violations);
     }
 
-    public function test_lower_than_equal_validation()
+    public function test_lower_than_equal_validation(): void
     {
         $class = new class () {
             #[LowerThanEqual(reference: 30)]
@@ -399,7 +401,7 @@ class ValidationTest extends TestCase
         $this->assertCount(1, $violations);
     }
 
-    public function test_is_false_validation()
+    public function test_is_false_validation(): void
     {
         $class = new class () {
             #[IsFalse]
@@ -419,7 +421,7 @@ class ValidationTest extends TestCase
         $this->assertCount(1, $violations);
     }
 
-    public function test_is_true_validation()
+    public function test_is_true_validation(): void
     {
         $class = new class () {
             #[IsTrue]
@@ -439,7 +441,7 @@ class ValidationTest extends TestCase
         $this->assertCount(0, $violations);
     }
 
-    public function test_ip_address_validation()
+    public function test_ip_address_validation(): void
     {
         $class = new class () {
             #[IPAddress]
@@ -455,7 +457,7 @@ class ValidationTest extends TestCase
         $this->assertCount(1, $violations);
     }
 
-    public function test_json_validation()
+    public function test_json_validation(): void
     {
         $class = new class () {
             #[Json]
@@ -471,7 +473,7 @@ class ValidationTest extends TestCase
         $this->assertCount(1, $violations);
     }
 
-    public function test_enum_validation()
+    public function test_enum_validation(): void
     {
         $class = new class () {
             #[Enum(values: ['one', 'two', 'three'])]
@@ -500,7 +502,7 @@ class ValidationTest extends TestCase
         // $obj->intEnum = 3; -> TypeError anyway...
     }
 
-    public function test_enum_validation_exception_both_option_provided()
+    public function test_enum_validation_exception_both_option_provided(): void
     {
         $class = new class () {
             #[Enum(values: ['one', 'two', 'three'], class: StringEnum::class)]
@@ -514,7 +516,7 @@ class ValidationTest extends TestCase
         $violations = Validator::validate($obj);
     }
 
-    public function test_enum_validation_exception_no_option_provided()
+    public function test_enum_validation_exception_no_option_provided(): void
     {
         $class = new class () {
             #[Enum()]
@@ -528,7 +530,7 @@ class ValidationTest extends TestCase
         $violations = Validator::validate($obj);
     }
 
-    public function test_choice_validation_exception_invalid_enum()
+    public function test_choice_validation_exception_invalid_enum(): void
     {
         $class = new class () {
             #[Enum(class: Person::class)]
@@ -542,7 +544,7 @@ class ValidationTest extends TestCase
         $violations = Validator::validate($obj);
     }
 
-    public function test_enum_validation_exception_enum_non_backed()
+    public function test_enum_validation_exception_enum_non_backed(): void
     {
         $class = new class () {
             #[Enum(class: DummyEnum::class)]

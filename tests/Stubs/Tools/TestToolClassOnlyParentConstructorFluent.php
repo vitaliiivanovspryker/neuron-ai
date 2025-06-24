@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tests\Stubs\Tools;
 
 use NeuronAI\Tools\PropertyType;

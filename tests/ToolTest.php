@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tests;
 
 use NeuronAI\Exceptions\MissingCallbackParameter;
@@ -20,7 +22,7 @@ use PHPUnit\Framework\TestCase;
 
 class ToolTest extends TestCase
 {
-    public function test_tool_instance()
+    public function test_tool_instance(): void
     {
         $tool = new Tool('example', 'example');
         $this->assertInstanceOf(ToolInterface::class, $tool);
@@ -34,7 +36,7 @@ class ToolTest extends TestCase
         $this->assertEquals('test', $tool->getCallId());
     }
 
-    public function test_required_properties()
+    public function test_required_properties(): void
     {
         $tool = Tool::make('test', 'Test tool')
             ->addProperty(
@@ -53,14 +55,12 @@ class ToolTest extends TestCase
         $this->assertEquals(['name', 'age'], $properties);
     }
 
-    public function test_missing_required_parameter_exception()
+    public function test_missing_required_parameter_exception(): void
     {
         $tool = Tool::make('test', 'Test tool')
             ->addProperty(
                 new ToolProperty('name', PropertyType::STRING, 'User name', true)
-            )->setCallable(function (string $name): string {
-                return $name;
-            });
+            )->setCallable(fn (string $name): string => $name);
 
         $tool->setInputs([
             "test" => "test"
@@ -79,7 +79,7 @@ class ToolTest extends TestCase
         $tool->execute();
     }
 
-    public function test_required_properties_with_mapped_object()
+    public function test_required_properties_with_mapped_object(): void
     {
         $tool = Tool::make('test', 'Test tool')
             ->addProperty(
@@ -99,7 +99,7 @@ class ToolTest extends TestCase
         $this->assertEquals(['r', 'g', 'b'], $objRequiredProperties);
     }
 
-    public function test_tool_return_value()
+    public function test_tool_return_value(): void
     {
         $tool = Tool::make('test', 'Test tool');
 
@@ -121,7 +121,7 @@ class ToolTest extends TestCase
         $this->assertEquals('test', $tool->getResult());
     }
 
-    public function test_invalid_return_type()
+    public function test_invalid_return_type(): void
     {
         $tool = Tool::make('test', 'Test tool');
 
@@ -131,7 +131,7 @@ class ToolTest extends TestCase
         })->execute();
     }
 
-    public function test_tool_optional_parameters()
+    public function test_tool_optional_parameters(): void
     {
         $tool = Tool::make(
             'test_tool',
@@ -151,13 +151,11 @@ class ToolTest extends TestCase
             type: PropertyType::STRING,
             description: "description",
             required: false,
-        ))->setCallable(function (?string $optional_prop_1, ?string $optional_prop_2, ?string $optional_prop_3): array {
-            return [
-                'optional_prop_1' => $optional_prop_1,
-                'optional_prop_2' => $optional_prop_2,
-                'optional_prop_3' => $optional_prop_3
-            ];
-        });
+        ))->setCallable(fn (?string $optional_prop_1, ?string $optional_prop_2, ?string $optional_prop_3): array => [
+            'optional_prop_1' => $optional_prop_1,
+            'optional_prop_2' => $optional_prop_2,
+            'optional_prop_3' => $optional_prop_3
+        ]);
 
         // Example: none of the optional parameters are provided
         $tool->setInputs([]);
@@ -170,7 +168,7 @@ class ToolTest extends TestCase
         );
     }
 
-    public function test_tool_variadic_invocation_basic_properties()
+    public function test_tool_variadic_invocation_basic_properties(): void
     {
         $tool = Tool::make(
             'user_manager',
@@ -196,9 +194,7 @@ class ToolTest extends TestCase
             description: "The user's language",
             required: true,
             enum: ['fr', 'en', 'it', 'de', 'es' ],
-        ))->setCallable(function (...$data): array {
-            return $data;
-        });
+        ))->setCallable(fn (...$data): array => $data);
 
         // Example: the user's last name is not provided
         $tool->setInputs([
@@ -215,7 +211,7 @@ class ToolTest extends TestCase
         );
     }
 
-    public function test_tool_variadic_invocation_object_properties()
+    public function test_tool_variadic_invocation_object_properties(): void
     {
         $tool = Tool::make(
             'test_tool',
@@ -260,9 +256,7 @@ class ToolTest extends TestCase
                         )
                     ]
             )
-        )->setCallable(function (...$data): array {
-            return $data;
-        });
+        )->setCallable(fn (...$data): array => $data);
 
         // Example, the second object property is not provided
         $tool->setInputs([
@@ -280,7 +274,7 @@ class ToolTest extends TestCase
         );
     }
 
-    public function test_tool_variadic_invocation_mapped_object_properties()
+    public function test_tool_variadic_invocation_mapped_object_properties(): void
     {
         $tool = Tool::make(
             'test_tool',
@@ -313,7 +307,7 @@ class ToolTest extends TestCase
         );
     }
 
-    public function test_tool_variadic_invocation_array_properties()
+    public function test_tool_variadic_invocation_array_properties(): void
     {
         $tool = Tool::make(
             'test_tool',
@@ -350,9 +344,7 @@ class ToolTest extends TestCase
                     )
                 ]
             )
-        )->setCallable(function (...$data): array {
-            return $data;
-        });
+        )->setCallable(fn (...$data): array => $data);
 
         $tool->setInputs([
             "colors" => ["red", "green", "red", "red", "green"],
@@ -370,15 +362,13 @@ class ToolTest extends TestCase
         );
     }
 
-    public function test_tool_named_parameters()
+    public function test_tool_named_parameters(): void
     {
-        $callable = function (int $prop_2, string $prop_1, bool $prop_3): array {
-            return [
-                'prop_1' => $prop_1,
-                'prop_2' => $prop_2,
-                'prop_3' => $prop_3,
-            ];
-        };
+        $callable = (fn (int $prop_2, string $prop_1, bool $prop_3): array => [
+            'prop_1' => $prop_1,
+            'prop_2' => $prop_2,
+            'prop_3' => $prop_3,
+        ]);
 
         $tool = Tool::make(
             'test_tool',
@@ -423,7 +413,7 @@ class ToolTest extends TestCase
         );
     }
 
-    public function test_properties_declaration_on_method_and_constructor_without_parent_constructor()
+    public function test_properties_declaration_on_method_and_constructor_without_parent_constructor(): void
     {
         $tool = new TestToolClassWithoutParentConstructorMixed('test');
         $this->assertEquals(1, count($tool->getProperties()));
@@ -432,7 +422,7 @@ class ToolTest extends TestCase
         $this->assertEquals('test', $tool->getKey());
     }
 
-    public function test_properties_declaration_on_method_without_parent_constructor()
+    public function test_properties_declaration_on_method_without_parent_constructor(): void
     {
         $tool = new TestToolClassWithoutParentConstructor('test');
         $this->assertEquals(2, count($tool->getProperties()));
@@ -441,7 +431,7 @@ class ToolTest extends TestCase
         $this->assertEquals('test', $tool->getKey());
     }
 
-    public function test_properties_declaration_on_method_and_constructor_with_parent_constructor()
+    public function test_properties_declaration_on_method_and_constructor_with_parent_constructor(): void
     {
         $tool = new TestToolClassWithParentConstructorMixed('test');
         $this->assertEquals(1, count($tool->getProperties()));
@@ -450,7 +440,7 @@ class ToolTest extends TestCase
         $this->assertEquals('test', $tool->getKey());
     }
 
-    public function test_properties_declaration_on_method_with_parent_constructor()
+    public function test_properties_declaration_on_method_with_parent_constructor(): void
     {
         $tool = new TestToolClassWithParentConstructor('test');
         $this->assertEquals(1, count($tool->getProperties()));
@@ -459,7 +449,7 @@ class ToolTest extends TestCase
         $this->assertEquals('test', $tool->getKey());
     }
 
-    public function test_properties_declaration_on_constructor_with_parent_constructor()
+    public function test_properties_declaration_on_constructor_with_parent_constructor(): void
     {
         $tool = new TestToolClassOnlyParentConstructor('test');
         $this->assertEquals(2, count($tool->getProperties()));
@@ -468,7 +458,7 @@ class ToolTest extends TestCase
         $this->assertEquals('test', $tool->getKey());
     }
 
-    public function test_properties_declaration_on_constructor_with_parent_constructor_fluent()
+    public function test_properties_declaration_on_constructor_with_parent_constructor_fluent(): void
     {
         $tool = new TestToolClassOnlyParentConstructorFluent('test');
         $this->assertEquals(2, count($tool->getProperties()));

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\StructuredOutput\Validation\Rules;
 
 use NeuronAI\StructuredOutput\StructuredOutputException;
@@ -9,7 +11,7 @@ class Json extends AbstractValidationRule
 {
     protected string $message = '{name} must be a valid JSON string';
 
-    public function validate(string $name, mixed $value, array &$violations)
+    public function validate(string $name, mixed $value, array &$violations): void
     {
         if (null === $value || '' === $value) {
             return;
@@ -23,7 +25,7 @@ class Json extends AbstractValidationRule
 
         try {
             json_decode($value, true, 512, JSON_THROW_ON_ERROR);
-        } catch (\JsonException $e) {
+        } catch (\JsonException) {
             $violations[] = $this->buildMessage($name, $this->message);
         }
     }

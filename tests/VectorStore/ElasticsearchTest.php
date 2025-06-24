@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tests\VectorStore;
 
 use Elastic\Elasticsearch\Client;
@@ -30,13 +32,13 @@ class ElasticsearchTest extends TestCase
         $this->embedding = json_decode(file_get_contents(__DIR__ . '/../Stubs/hello-world.embeddings'), true);
     }
 
-    public function test_elasticsearch_instance()
+    public function test_elasticsearch_instance(): void
     {
         $store = new ElasticsearchVectorStore($this->client, 'test');
         $this->assertInstanceOf(VectorStoreInterface::class, $store);
     }
 
-    public function test_add_document_and_search()
+    public function test_add_document_and_search(): void
     {
         $store = new ElasticsearchVectorStore($this->client, 'test');
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tools;
 
 use NeuronAI\Exceptions\MissingCallbackParameter;
@@ -7,6 +9,7 @@ use NeuronAI\Exceptions\ToolCallableNotSet;
 use NeuronAI\StaticConstructor;
 use NeuronAI\StructuredOutput\Deserializer\Deserializer;
 use NeuronAI\StructuredOutput\Deserializer\DeserializerException;
+use Stringable;
 
 /**
  * @method static static make(?string $name = null, ?string $description = null, array $properties = [])
@@ -155,9 +158,16 @@ class Tool implements ToolInterface
         return $this->result;
     }
 
-    public function setResult(string|array $result): self
+    public function setResult(Stringable|string|array $result): self
     {
-        $this->result = is_array($result) ? \json_encode($result) : $result;
+        if (is_array($result)) {
+            $this->result = \json_encode($result);
+        } elseif (is_string($result)) {
+            $this->result = $result;
+        } elseif ($result instanceof Stringable) {
+            $this->result = (string) $result;
+        }
+
         return $this;
     }
 
@@ -210,9 +220,7 @@ class Tool implements ToolInterface
                 $items = $property->getItems();
                 if ($items instanceof ObjectProperty && $items->getClass()) {
                     $class = $items->getClass();
-                    $carry[$propertyName] = array_map(function ($input) use ($class) {
-                        return Deserializer::fromJson(json_encode($input), $class);
-                    }, $inputValue);
+                    $carry[$propertyName] = array_map(fn ($input) => Deserializer::fromJson(json_encode($input), $class), $inputValue);
                     return $carry;
                 }
             }

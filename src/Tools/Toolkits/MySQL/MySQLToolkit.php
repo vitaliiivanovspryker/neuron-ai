@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tools\Toolkits\MySQL;
 
 use NeuronAI\Tools\Toolkits\AbstractToolkit;

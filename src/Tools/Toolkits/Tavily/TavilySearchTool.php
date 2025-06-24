@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tools\Toolkits\Tavily;
 
 use GuzzleHttp\Client;
@@ -75,11 +77,7 @@ class TavilySearchTool extends Tool
 
     protected function getClient(): Client
     {
-        if (isset($this->client)) {
-            return $this->client;
-        }
-
-        return $this->client = new Client([
+        return $this->client ?? $this->client = new Client([
             'base_uri' => trim($this->url, '/').'/',
             'headers' => [
                 'Authorization' => 'Bearer '.$this->key,
@@ -95,9 +93,9 @@ class TavilySearchTool extends Tool
         ?string $time_range = null,
         ?int $days = null,
     ) {
-        $topic = $topic ?? 'general';
-        $time_range = $time_range ?? 'day';
-        $days = $days ?? 7;
+        $topic ??= 'general';
+        $time_range ??= 'day';
+        $days ??= 7;
 
         $result = $this->getClient()->post('search', [
             RequestOptions::JSON => \array_merge(
