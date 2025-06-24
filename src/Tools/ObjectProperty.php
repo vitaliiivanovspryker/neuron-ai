@@ -68,7 +68,8 @@ class ObjectProperty implements ToolPropertyInterface
     // The mapped class required properties and required properties are merged
     public function getRequiredProperties(): array
     {
-        return array_values(\array_filter(\array_map(fn(ToolPropertyInterface $property
+        return array_values(\array_filter(\array_map(fn (
+            ToolPropertyInterface $property
         ) => $property->isRequired() ? $property->getName() : null, $this->properties)));
     }
 
