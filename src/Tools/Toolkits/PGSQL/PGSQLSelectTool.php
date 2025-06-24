@@ -92,7 +92,7 @@ It looks like you are trying to run a write query using the read-only query tool
         // Check if query starts with an allowed read operation
         $isAllowed = false;
         foreach ($this->allowedPatterns as $pattern) {
-            if (preg_match($pattern, $cleanQuery)) {
+            if (\preg_match($pattern, $cleanQuery)) {
                 $isAllowed = true;
                 break;
             }
@@ -104,7 +104,7 @@ It looks like you are trying to run a write query using the read-only query tool
 
         // Check for forbidden write operations
         foreach ($this->forbittemPatterns as $pattern) {
-            if (preg_match($pattern, $cleanQuery)) {
+            if (\preg_match($pattern, $cleanQuery)) {
                 return false;
             }
         }
@@ -116,10 +116,10 @@ It looks like you are trying to run a write query using the read-only query tool
     private function removeComments(string $query): string
     {
         // Remove single-line comments (-- style)
-        $query = preg_replace('/--.*$/m', '', $query);
+        $query = \preg_replace('/--.*$/m', '', $query);
 
         // Remove multi-line comments (/* */ style)
-        $query = preg_replace('/\/\*.*?\*\//s', '', $query);
+        $query = \preg_replace('/\/\*.*?\*\//s', '', $query);
 
         return $query;
     }
@@ -127,11 +127,11 @@ It looks like you are trying to run a write query using the read-only query tool
     private function performAdditionalSecurityChecks(string $query): bool
     {
         // Check for semicolon followed by potential write operations
-        if (preg_match('/;\s*(?!$)/i', $query)) {
+        if (\preg_match('/;\s*(?!$)/i', $query)) {
             // Multiple statements detected - need to validate each one
             $statements = $this->splitStatements($query);
             foreach ($statements as $statement) {
-                if (!empty(trim($statement))) {
+                if (!empty(\trim($statement))) {
                     if (!$this->validateSingleStatement(trim($statement))) {
                         return false;
                     }
@@ -151,7 +151,7 @@ It looks like you are trying to run a write query using the read-only query tool
         ];
 
         foreach ($dangerousFunctions as $func) {
-            if (stripos($query, $func) !== false) {
+            if (\stripos($query, $func) !== false) {
                 return false;
             }
         }
@@ -165,8 +165,8 @@ It looks like you are trying to run a write query using the read-only query tool
     private function splitStatements(string $query): array
     {
         // Simple split on semicolons (this could be enhanced for more complex cases)
-        return array_filter(
-            array_map('trim', explode(';', $query)),
+        return \array_filter(
+            \array_map('trim', \explode(';', $query)),
             fn ($stmt) => !empty($stmt)
         );
     }
@@ -180,7 +180,7 @@ It looks like you are trying to run a write query using the read-only query tool
     {
         $isAllowed = false;
         foreach ($this->allowedPatterns as $pattern) {
-            if (preg_match($pattern, $statement)) {
+            if (\preg_match($pattern, $statement)) {
                 $isAllowed = true;
                 break;
             }
