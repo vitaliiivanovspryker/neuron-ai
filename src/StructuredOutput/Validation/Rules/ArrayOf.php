@@ -53,12 +53,12 @@ class ArrayOf extends AbstractValidationRule
             return;
         }
 
-        if (!is_array($value)) {
+        if (!\is_array($value)) {
             $violations[] = $this->buildMessage($name, $this->message);
             return;
         }
 
-        $type = strtolower($this->type);
+        $type = \strtolower($this->type);
 
         $error = false;
         foreach ($value as $item) {

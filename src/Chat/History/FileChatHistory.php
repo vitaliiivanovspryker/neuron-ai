@@ -35,7 +35,7 @@ class FileChatHistory extends AbstractChatHistory
 
     protected function getFilePath(): string
     {
-        return $this->directory . DIRECTORY_SEPARATOR . $this->prefix.$this->key.$this->ext;
+        return $this->directory . \DIRECTORY_SEPARATOR . $this->prefix.$this->key.$this->ext;
     }
 
     protected function storeMessage(Message $message): ChatHistoryInterface
@@ -60,6 +60,6 @@ class FileChatHistory extends AbstractChatHistory
 
     protected function updateFile(): void
     {
-        \file_put_contents($this->getFilePath(), \json_encode($this->jsonSerialize()), LOCK_EX);
+        \file_put_contents($this->getFilePath(), \json_encode($this->jsonSerialize()), \LOCK_EX);
     }
 }

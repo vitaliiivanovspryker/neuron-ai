@@ -132,7 +132,7 @@ trait HandleStream
         }
 
         try {
-            return \json_decode($line, true, flags: JSON_THROW_ON_ERROR);
+            return \json_decode($line, true, flags: \JSON_THROW_ON_ERROR);
         } catch (\Throwable $exception) {
             throw new ProviderException('OpenAI streaming error - '.$exception->getMessage());
         }

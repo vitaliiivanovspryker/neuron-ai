@@ -33,6 +33,6 @@ class SimilaritySearch
             return 0.0;
         }
 
-        return 1 - $dotProduct / (sqrt($magnitude1) * sqrt($magnitude2));
+        return 1 - $dotProduct / (\sqrt($magnitude1) * \sqrt($magnitude2));
     }
 }

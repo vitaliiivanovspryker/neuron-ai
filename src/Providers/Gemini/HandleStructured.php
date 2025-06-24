@@ -51,7 +51,7 @@ trait HandleStructured
         }
 
         foreach ($schema as $key => $value) {
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $schema[$key] = $this->adaptSchema($value);
             }
         }

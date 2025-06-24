@@ -43,7 +43,7 @@ class McpConnector
             name: $item['name'],
             description: $item['description'] ?? ''
         )->setCallable(function (...$arguments) use ($item) {
-            $response = call_user_func($this->client->callTool(...), $item['name'], $arguments);
+            $response = \call_user_func($this->client->callTool(...), $item['name'], $arguments);
 
             if (\array_key_exists('error', $response)) {
                 throw new McpException($response['error']['message']);

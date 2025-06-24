@@ -22,7 +22,7 @@ class ChromaVectorStore implements VectorStoreInterface
     protected function getClient(): Client
     {
         return $this->client ?? $this->client = new Client([
-            'base_uri' => trim($this->host, '/')."/api/v1/collections/{$this->collection}/",
+            'base_uri' => \trim($this->host, '/')."/api/v1/collections/{$this->collection}/",
             'headers' => [
                 'Content-Type' => 'application/json',
             ]

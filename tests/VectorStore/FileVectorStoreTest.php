@@ -38,6 +38,6 @@ class FileVectorStoreTest extends TestCase
         $this->assertEquals($document->sourceName, $results[0]->getSourceName());
         $this->assertEquals($document->metadata, $results[0]->metadata);
 
-        unlink(__DIR__.'/neuron.store');
+        \unlink(__DIR__.'/neuron.store');
     }
 }

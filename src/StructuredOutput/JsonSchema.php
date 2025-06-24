@@ -64,7 +64,7 @@ class JsonSchema
         $className = $reflection->getShortName();
 
         // If we've already processed this class, and it's not the root, return a reference
-        if (!$isRoot && in_array($class, $this->processedClasses)) {
+        if (!$isRoot && \in_array($class, $this->processedClasses)) {
             return [
                 '$ref' => '#/definitions/' . $className,
             ];
@@ -168,13 +168,13 @@ class JsonSchema
             $docComment = $property->getDocComment();
             if ($docComment) {
                 // Extract type from @var array<Type>
-                preg_match('/@var\s+([a-zA-Z_\\\\]+)\[\]/', $docComment, $matches);
+                \preg_match('/@var\s+([a-zA-Z_\\\\]+)\[\]/', $docComment, $matches);
 
                 if (isset($matches[1])) {
-                    $itemType = trim($matches[1]);
+                    $itemType = \trim($matches[1]);
 
                     // Handle class type for array items
-                    if (class_exists($itemType) || enum_exists($itemType)) {
+                    if (\class_exists($itemType) || \enum_exists($itemType)) {
                         $schema['items'] = $this->generateClassSchema($itemType, false);
                     } else {
                         // Basic type
@@ -190,7 +190,7 @@ class JsonSchema
             }
         }
         // Handle enum types
-        elseif ($typeName && enum_exists($typeName)) {
+        elseif ($typeName && \enum_exists($typeName)) {
             $enumReflection = new ReflectionEnum($typeName);
             $this->processEnum($enumReflection); // Ensure enum is in definitions
 
@@ -201,14 +201,14 @@ class JsonSchema
             ];
         }
         // Handle class types
-        elseif ($typeName && class_exists($typeName)) {
+        elseif ($typeName && \class_exists($typeName)) {
             $classSchema = $this->generateClassSchema($typeName, false);
-            $schema = array_merge($schema, $classSchema);
+            $schema = \array_merge($schema, $classSchema);
         }
         // Handle basic types
         elseif ($typeName) {
             $typeSchema = $this->getBasicTypeSchema($typeName);
-            $schema = array_merge($schema, $typeSchema);
+            $schema = \array_merge($schema, $typeSchema);
         } else {
             // Default to string if no type hint
             $schema['type'] = 'string';
@@ -216,8 +216,8 @@ class JsonSchema
 
         // Handle nullable types - for basic types only
         if ($type && $type->allowsNull() && isset($schema['type']) && !isset($schema['$ref']) && !isset($schema['allOf'])) {
-            if (is_array($schema['type'])) {
-                if (!in_array('null', $schema['type'])) {
+            if (\is_array($schema['type'])) {
+                if (!\in_array('null', $schema['type'])) {
                     $schema['type'][] = 'null';
                 }
             } else {
@@ -323,9 +323,9 @@ class JsonSchema
 
             default:
                 // Check if it's a class or enum
-                if (class_exists($type)) {
+                if (\class_exists($type)) {
                     return $this->generateClassSchema($type, false);
-                } elseif (enum_exists($type)) {
+                } elseif (\enum_exists($type)) {
                     return $this->processEnum(new ReflectionEnum($type));
                 }
 

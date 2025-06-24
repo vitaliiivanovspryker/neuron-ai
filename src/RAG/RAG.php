@@ -107,7 +107,7 @@ class RAG extends Agent
 
         $newInstructions .= '<EXTRA-CONTEXT>';
         foreach ($documents as $document) {
-            $newInstructions .= $document->getContent().PHP_EOL.PHP_EOL;
+            $newInstructions .= $document->getContent().\PHP_EOL.\PHP_EOL;
         }
         $newInstructions .= '</EXTRA-CONTEXT>';
 

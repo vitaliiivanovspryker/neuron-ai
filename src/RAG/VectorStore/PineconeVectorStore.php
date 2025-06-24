@@ -29,7 +29,7 @@ class PineconeVectorStore implements VectorStoreInterface
         protected string $namespace = '__default__'
     ) {
         $this->client = new Client([
-            'base_uri' => trim($this->indexUrl, '/').'/',
+            'base_uri' => \trim($this->indexUrl, '/').'/',
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',

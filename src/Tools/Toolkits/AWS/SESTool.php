@@ -87,7 +87,7 @@ DESC
                 'success' => true,
                 'message_id' => $result['MessageId'] ?? null,
                 'status' => 'sent',
-                'recipients_count' => count($to),
+                'recipients_count' => \count($to),
                 'aws_request_id' => $result['@metadata']['requestId'] ?? null
             ];
         } catch (\Exception $e) {
@@ -107,7 +107,7 @@ DESC
     protected function validateRecipients(array $to): void
     {
         foreach ($to as $recipient) {
-            if (filter_var($recipient, FILTER_VALIDATE_EMAIL) === false) {
+            if (\filter_var($recipient, \FILTER_VALIDATE_EMAIL) === false) {
                 throw new ToolException('Invalid email address: ' . $recipient . '.');
             }
         }

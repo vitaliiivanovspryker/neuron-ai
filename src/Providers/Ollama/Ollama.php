@@ -37,7 +37,7 @@ class Ollama implements AIProviderInterface
         protected array $parameters = [],
     ) {
         $this->client = new Client([
-            'base_uri' => trim($this->url, '/').'/',
+            'base_uri' => \trim($this->url, '/').'/',
         ]);
     }
 

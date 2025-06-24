@@ -23,11 +23,11 @@ class HuggingFace extends OpenAI
     private function buildBaseUri(): void
     {
         $endpoint = match ($this->inferenceProvider) {
-            InferenceProvider::HF_INFERENCE => trim($this->inferenceProvider->value, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$this->model,
-            default => trim($this->inferenceProvider->value, DIRECTORY_SEPARATOR),
+            InferenceProvider::HF_INFERENCE => \trim($this->inferenceProvider->value, \DIRECTORY_SEPARATOR).\DIRECTORY_SEPARATOR.$this->model,
+            default => \trim($this->inferenceProvider->value, \DIRECTORY_SEPARATOR),
         };
 
-        $this->baseUri = sprintf($this->baseUri, $endpoint);
+        $this->baseUri = \sprintf($this->baseUri, $endpoint);
     }
 
 }

@@ -46,7 +46,7 @@ class MessageMapper implements MessageMapperInterface
 
         $attachments = $message->getAttachments();
 
-        if (is_string($payload['content']) && $attachments) {
+        if (\is_string($payload['content']) && $attachments) {
             $payload['content'] = [
                 [
                     'type' => 'text',

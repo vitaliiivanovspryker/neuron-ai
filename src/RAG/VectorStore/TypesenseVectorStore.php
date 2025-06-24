@@ -28,7 +28,7 @@ class TypesenseVectorStore implements VectorStoreInterface
     {
         try {
             $this->client->collections[$this->collection]->retrieve();
-            $this->checkVectorDimension(count($document->getEmbedding()));
+            $this->checkVectorDimension(\count($document->getEmbedding()));
             return;
         } catch (ObjectNotFound) {
             $fields = [
@@ -107,7 +107,7 @@ class TypesenseVectorStore implements VectorStoreInterface
 
         $lines = [];
         foreach ($documents as $document) {
-            $lines[] = json_encode([
+            $lines[] = \json_encode([
                 'id' => $document->getId(), // Unique ID is required
                 'embedding' => $document->getEmbedding(),
                 'content' => $document->getContent(),
@@ -117,7 +117,7 @@ class TypesenseVectorStore implements VectorStoreInterface
             ]);
         }
 
-        $ndjson = implode("\n", $lines);
+        $ndjson = \implode("\n", $lines);
 
         $this->client->collections[$this->collection]->documents->import($ndjson);
     }
@@ -127,10 +127,10 @@ class TypesenseVectorStore implements VectorStoreInterface
         $params = [
             'collection' => $this->collection,
             'q' => '*',
-            'vector_query' => 'embedding:(' . json_encode($embedding) . ')',
+            'vector_query' => 'embedding:(' . \json_encode($embedding) . ')',
             'exclude_fields' => 'embedding',
             'per_page' => $this->topK,
-            'num_candidates' => \max(50, intval($this->topK) * 4),
+            'num_candidates' => \max(50, \intval($this->topK) * 4),
         ];
 
         $searchRequests = ['searches' => [$params]];

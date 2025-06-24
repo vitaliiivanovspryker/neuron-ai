@@ -37,7 +37,7 @@ class JsonExtractor
             }
 
             foreach ($candidates as $candidate) {
-                if (!\is_string($candidate) || empty(trim($candidate))) {
+                if (!\is_string($candidate) || empty(\trim($candidate))) {
                     continue;
                 }
 
@@ -67,7 +67,7 @@ class JsonExtractor
      */
     private function tryParse(string $maybeJson): ?array
     {
-        $data = \json_decode($maybeJson, true, 512, JSON_THROW_ON_ERROR);
+        $data = \json_decode($maybeJson, true, 512, \JSON_THROW_ON_ERROR);
 
         if ($data === false || $data === null || $data === '') {
             return null;
@@ -83,7 +83,7 @@ class JsonExtractor
      */
     private function findByMarkdown(string $text): array
     {
-        if (empty(trim($text))) {
+        if (empty(\trim($text))) {
             return [];
         }
 
@@ -126,7 +126,7 @@ class JsonExtractor
      */
     private function findByBrackets(string $text): ?string
     {
-        $trimmed = trim($text);
+        $trimmed = \trim($text);
         if (empty($trimmed)) {
             return null;
         }
@@ -150,7 +150,7 @@ class JsonExtractor
      */
     private function findJSONLikeStrings(string $text): array
     {
-        $text = trim($text);
+        $text = \trim($text);
         if (empty($text)) {
             return [];
         }

@@ -61,7 +61,7 @@ This the tool to use only to gather information from the MySQL database.'
 
         // Check if it starts with allowed statements
         $firstKeyword = $this->getFirstKeyword($cleanQuery);
-        if (!in_array($firstKeyword, $this->allowedStatements)) {
+        if (!\in_array($firstKeyword, $this->allowedStatements)) {
             return false;
         }
 
@@ -78,17 +78,17 @@ This the tool to use only to gather information from the MySQL database.'
     protected function sanitizeQuery(string $query): string
     {
         // Remove SQL comments
-        $query = preg_replace('/--.*$/m', '', $query);
-        $query = preg_replace('/\/\*.*?\*\//s', '', $query);
+        $query = \preg_replace('/--.*$/m', '', $query);
+        $query = \preg_replace('/\/\*.*?\*\//s', '', $query);
 
         // Normalize whitespace
-        return preg_replace('/\s+/', ' ', trim($query));
+        return \preg_replace('/\s+/', ' ', \trim($query));
     }
 
     protected function getFirstKeyword(string $query): string
     {
-        if (preg_match('/^\s*(\w+)/i', $query, $matches)) {
-            return strtoupper($matches[1]);
+        if (\preg_match('/^\s*(\w+)/i', $query, $matches)) {
+            return \strtoupper($matches[1]);
         }
         return '';
     }
@@ -96,6 +96,6 @@ This the tool to use only to gather information from the MySQL database.'
     protected function containsKeyword(string $query, string $keyword): bool
     {
         // Use word boundaries to avoid false positives
-        return preg_match('/\b' . preg_quote($keyword, '/') . '\b/i', $query) === 1;
+        return \preg_match('/\b' . \preg_quote($keyword, '/') . '\b/i', $query) === 1;
     }
 }

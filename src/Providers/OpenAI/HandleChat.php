@@ -36,7 +36,7 @@ trait HandleChat
             $json['tools'] = $this->generateToolsPayload();
         }
 
-        return $this->client->postAsync('chat/completions', compact('json'))
+        return $this->client->postAsync('chat/completions', \compact('json'))
             ->then(function (ResponseInterface $response) {
                 $result = \json_decode($response->getBody()->getContents(), true);
 

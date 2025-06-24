@@ -32,7 +32,7 @@ class PdfReader implements ReaderInterface
 
     public function setBinPath(string $binPath): self
     {
-        if (!is_executable($binPath)) {
+        if (!\is_executable($binPath)) {
             throw new DataReaderException("The provided path is not executable.");
         }
         $this->binPath = $binPath;
@@ -50,7 +50,7 @@ class PdfReader implements ReaderInterface
         ];
 
         foreach ($commonPaths as $path) {
-            if (is_executable($path)) {
+            if (\is_executable($path)) {
                 return $path;
             }
         }
@@ -60,7 +60,7 @@ class PdfReader implements ReaderInterface
 
     public function setPdf(string $pdf): self
     {
-        if (!is_readable($pdf)) {
+        if (!\is_readable($pdf)) {
             throw new DataReaderException("Could not read `{$pdf}`");
         }
 
@@ -78,7 +78,7 @@ class PdfReader implements ReaderInterface
 
     public function addOptions(array $options): self
     {
-        $this->options = array_merge(
+        $this->options = \array_merge(
             $this->options,
             $this->parseOptions($options)
         );
@@ -89,17 +89,17 @@ class PdfReader implements ReaderInterface
     protected function parseOptions(array $options): array
     {
         $mapper = function (string $content): array {
-            $content = trim($content);
+            $content = \trim($content);
             if ('-' !== ($content[0] ?? '')) {
                 $content = '-' . $content;
             }
 
-            return explode(' ', $content, 2);
+            return \explode(' ', $content, 2);
         };
 
-        $reducer = fn (array $carry, array $option): array => array_merge($carry, $option);
+        $reducer = fn (array $carry, array $option): array => \array_merge($carry, $option);
 
-        return array_reduce(array_map($mapper, $options), $reducer, []);
+        return \array_reduce(\array_map($mapper, $options), $reducer, []);
     }
 
     public function setTimeout($timeout): self
@@ -110,14 +110,14 @@ class PdfReader implements ReaderInterface
 
     public function text(): string
     {
-        $process = new Process(array_merge([$this->binPath], $this->options, [$this->pdf, '-']));
+        $process = new Process(\array_merge([$this->binPath], $this->options, [$this->pdf, '-']));
         $process->setTimeout($this->timeout);
         $process->run();
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
         }
 
-        return trim($process->getOutput(), " \t\n\r\0\x0B\x0C");
+        return \trim($process->getOutput(), " \t\n\r\0\x0B\x0C");
     }
 
     /**

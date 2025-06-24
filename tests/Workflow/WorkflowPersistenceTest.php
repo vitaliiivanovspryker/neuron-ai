@@ -25,10 +25,10 @@ class WorkflowPersistenceTest extends TestCase
             new WorkflowState()
         );
         $persistence->save('id', $interrupt);
-        $this->assertFileExists(__DIR__.DIRECTORY_SEPARATOR.'neuron_workflow_id.store');
+        $this->assertFileExists(__DIR__.\DIRECTORY_SEPARATOR.'neuron_workflow_id.store');
 
         $persistence->delete('id');
-        $this->assertFileDoesNotExist(__DIR__.DIRECTORY_SEPARATOR.'neuron_workflow_id.store');
+        $this->assertFileDoesNotExist(__DIR__.\DIRECTORY_SEPARATOR.'neuron_workflow_id.store');
     }
 
     public function test_file_persistence_load(): void

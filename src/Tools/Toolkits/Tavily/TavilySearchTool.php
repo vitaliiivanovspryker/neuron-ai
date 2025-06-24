@@ -37,7 +37,7 @@ class TavilySearchTool extends Tool
         parent::__construct(
             'web_search',
             'Use this tool to search the web for additional information '.
-            (!empty($this->topics) ? 'about '.implode(', ', $this->topics).', or ' : '').
+            (!empty($this->topics) ? 'about '.\implode(', ', $this->topics).', or ' : '').
             'if the question is outside the scope of the context you have.'
         );
 
@@ -78,7 +78,7 @@ class TavilySearchTool extends Tool
     protected function getClient(): Client
     {
         return $this->client ?? $this->client = new Client([
-            'base_uri' => trim($this->url, '/').'/',
+            'base_uri' => \trim($this->url, '/').'/',
             'headers' => [
                 'Authorization' => 'Bearer '.$this->key,
                 'Content-Type' => 'application/json',
@@ -99,7 +99,7 @@ class TavilySearchTool extends Tool
 
         $result = $this->getClient()->post('search', [
             RequestOptions::JSON => \array_merge(
-                compact('topic', 'time_range', 'days'),
+                \compact('topic', 'time_range', 'days'),
                 $this->options,
                 [
                     'query' => $search_query,

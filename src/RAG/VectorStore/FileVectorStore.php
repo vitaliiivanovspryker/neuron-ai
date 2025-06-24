@@ -23,7 +23,7 @@ class FileVectorStore implements VectorStoreInterface
 
     protected function getFilePath(): string
     {
-        return $this->directory . DIRECTORY_SEPARATOR . $this->name.$this->ext;
+        return $this->directory . \DIRECTORY_SEPARATOR . $this->name.$this->ext;
     }
 
     public function addDocument(Document $document): void
@@ -50,7 +50,7 @@ class FileVectorStore implements VectorStoreInterface
             }
             $dist = $this->cosineSimilarity($embedding, $document['embedding']);
 
-            $topItems[] = compact('dist', 'document');
+            $topItems[] = \compact('dist', 'document');
 
             \usort($topItems, fn ($a, $b) => $a['dist'] <=> $b['dist']);
 
@@ -83,21 +83,21 @@ class FileVectorStore implements VectorStoreInterface
     {
         \file_put_contents(
             $this->getFilePath(),
-            implode(PHP_EOL, \array_map(fn (array $vector) => \json_encode($vector), $documents)).PHP_EOL,
-            FILE_APPEND
+            \implode(\PHP_EOL, \array_map(fn (array $vector) => \json_encode($vector), $documents)).\PHP_EOL,
+            \FILE_APPEND
         );
     }
 
     protected function getLine($file): \Generator
     {
-        $f = fopen($file, 'r');
+        $f = \fopen($file, 'r');
 
         try {
-            while ($line = fgets($f)) {
+            while ($line = \fgets($f)) {
                 yield $line;
             }
         } finally {
-            fclose($f);
+            \fclose($f);
         }
     }
 }

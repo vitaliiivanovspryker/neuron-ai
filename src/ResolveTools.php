@@ -66,7 +66,7 @@ trait ResolveTools
             if ($tool instanceof ToolkitInterface) {
                 if ($kitGuidelines = $tool->guidelines()) {
                     $name = (new \ReflectionClass($tool))->getShortName();
-                    $kitGuidelines = '# '.$name.PHP_EOL.$kitGuidelines;
+                    $kitGuidelines = '# '.$name.\PHP_EOL.$kitGuidelines;
                 }
 
                 // Merge the tools
@@ -75,8 +75,8 @@ trait ResolveTools
 
                 // Add guidelines to the system prompt
                 if ($kitGuidelines) {
-                    $kitGuidelines .= PHP_EOL.implode(
-                        PHP_EOL.'- ',
+                    $kitGuidelines .= \PHP_EOL.\implode(
+                        \PHP_EOL.'- ',
                         \array_map(
                             fn ($tool) => "{$tool->getName()}: {$tool->getDescription()}",
                             $innerTools
@@ -94,7 +94,7 @@ trait ResolveTools
         if (!empty($guidelines)) {
             $instructions = $this->removeDelimitedContent($this->resolveInstructions(), '<TOOLS-GUIDELINES>', '</TOOLS-GUIDELINES>');
             $this->withInstructions(
-                $instructions.PHP_EOL.'<TOOLS-GUIDELINES>'.PHP_EOL.implode(PHP_EOL.PHP_EOL, $guidelines).PHP_EOL.'</TOOLS-GUIDELINES>'
+                $instructions.\PHP_EOL.'<TOOLS-GUIDELINES>'.\PHP_EOL.\implode(\PHP_EOL.\PHP_EOL, $guidelines).\PHP_EOL.'</TOOLS-GUIDELINES>'
             );
         }
 

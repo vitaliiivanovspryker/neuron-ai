@@ -34,8 +34,8 @@ class AzureOpenAI extends OpenAI
 
     private function setBaseUrl(): void
     {
-        $this->endpoint = preg_replace('/^https?:\/\/([^\/]*)\/?$/', '$1', $this->endpoint);
-        $this->baseUri = sprintf($this->baseUri, $this->endpoint, $this->model);
-        $this->baseUri = trim($this->baseUri, '/').'/';
+        $this->endpoint = \preg_replace('/^https?:\/\/([^\/]*)\/?$/', '$1', $this->endpoint);
+        $this->baseUri = \sprintf($this->baseUri, $this->endpoint, $this->model);
+        $this->baseUri = \trim($this->baseUri, '/').'/';
     }
 }

@@ -49,6 +49,6 @@ class FilePersistence implements PersistenceInterface
 
     protected function getFilePath(string $workflowId): string
     {
-        return $this->directory.DIRECTORY_SEPARATOR.$this->prefix.$workflowId.$this->ext;
+        return $this->directory.\DIRECTORY_SEPARATOR.$this->prefix.$workflowId.$this->ext;
     }
 }
