@@ -85,7 +85,7 @@ trait ResolveTools
         }
 
         if (!empty($guidelines)) {
-            $instructions = $this->removeDelimitedContent($this->instructions(), '<TOOLS-GUIDELINES>', '</TOOLS-GUIDELINES>');
+            $instructions = $this->removeDelimitedContent($this->resolveInstructions(), '<TOOLS-GUIDELINES>', '</TOOLS-GUIDELINES>');
             $this->withInstructions(
                 $instructions.PHP_EOL.'<TOOLS-GUIDELINES>'.PHP_EOL.implode(PHP_EOL.PHP_EOL, $guidelines).PHP_EOL.'</TOOLS-GUIDELINES>'
             );
