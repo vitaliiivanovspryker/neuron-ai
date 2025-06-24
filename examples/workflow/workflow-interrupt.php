@@ -17,11 +17,15 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 $persistence = new FilePersistence(__DIR__);
 $workflow = new Workflow($persistence, 'test_workflow');
 
-$workflow->addNode(new BeforeInterruptNode())
-    ->addNode(new InterruptNode())
-    ->addNode(new AfterInterruptNode())
-    ->addEdge(new Edge(BeforeInterruptNode::class, InterruptNode::class))
-    ->addEdge(new Edge(InterruptNode::class, AfterInterruptNode::class))
+$workflow->addNodes([
+        new BeforeInterruptNode(),
+        new InterruptNode(),
+        new AfterInterruptNode()
+    ])
+    ->addEdges([
+        new Edge(BeforeInterruptNode::class, InterruptNode::class),
+        new Edge(InterruptNode::class, AfterInterruptNode::class)
+    ])
     ->setStart(BeforeInterruptNode::class)
     ->setEnd(AfterInterruptNode::class);
 

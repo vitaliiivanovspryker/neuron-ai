@@ -63,7 +63,7 @@ trait HandleStream
             }
 
             // Process tool calls
-            if (\array_key_exists('tool_calls', $line['choices'][0]['delta'])) {
+            if (isset($line['choices'][0]['delta']['tool_calls'])) {
                 $toolCalls = $this->composeToolCalls($line, $toolCalls);
                 continue;
             }
