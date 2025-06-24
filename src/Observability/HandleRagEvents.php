@@ -41,7 +41,7 @@ trait HandleRagEvents
         }
     }
 
-    public function preProcessing(AgentInterface $agent, string $event, PreProcessing $data):void
+    public function preProcessing(AgentInterface $agent, string $event, PreProcessing $data): void
     {
         if (!$this->inspector->canAddSegments()) {
             return;

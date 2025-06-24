@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tests\PreProcessor;
 
 use NeuronAI\Providers\Anthropic\Anthropic;
@@ -10,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 class QueryTransformationPreProcessorTest extends TestCase
 {
-    public function test_instance()
+    public function test_instance(): void
     {
         $processor = new QueryTransformationPreProcessor(
             provider: new Anthropic(
@@ -23,7 +25,7 @@ class QueryTransformationPreProcessorTest extends TestCase
         $this->assertInstanceOf(PreProcessorInterface::class, $processor);
     }
 
-    public function test_override_instructions_constructor()
+    public function test_override_instructions_constructor(): void
     {
         $prompt = new SystemPrompt(
             background: ['background'],
@@ -36,13 +38,13 @@ class QueryTransformationPreProcessorTest extends TestCase
                 'key',
                 'model'
             ),
-            customPrompt: $prompt
+            customPrompt: (string) $prompt
         );
 
         $this->assertEquals($prompt, $processor->getSystemPrompt());
     }
 
-    public function test_override_instructions_setter()
+    public function test_override_instructions_setter(): void
     {
         $prompt = new SystemPrompt(
             background: ['background'],
@@ -57,7 +59,7 @@ class QueryTransformationPreProcessorTest extends TestCase
             )
         );
 
-        $processor->setCustomPrompt($prompt);
+        $processor->setCustomPrompt((string) $prompt);
 
         $this->assertEquals($prompt, $processor->getSystemPrompt());
     }
