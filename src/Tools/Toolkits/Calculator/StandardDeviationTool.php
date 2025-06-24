@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tools\Toolkits\Calculator;
 
 use NeuronAI\Tools\ArrayProperty;
@@ -47,9 +49,7 @@ DESC
         }
 
         // Filter and validate numeric values
-        $numericData = array_filter($numbers, function ($value) {
-            return is_numeric($value);
-        });
+        $numericData = array_filter($numbers, fn ($value) => is_numeric($value));
 
         if (empty($numericData)) {
             return ['error' => 'Data array must contain at least one numeric value'];
@@ -68,7 +68,7 @@ DESC
         // Calculate the sum of squared differences
         $sumSquaredDifferences = 0;
         foreach ($numericData as $value) {
-            $sumSquaredDifferences += pow($value - $mean, 2);
+            $sumSquaredDifferences += ($value - $mean) ** 2;
         }
 
         // Calculate variance

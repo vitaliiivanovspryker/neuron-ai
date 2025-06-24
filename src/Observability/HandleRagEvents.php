@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Observability;
 
 use NeuronAI\AgentInterface;
@@ -10,7 +12,7 @@ use NeuronAI\Observability\Events\VectorStoreSearching;
 
 trait HandleRagEvents
 {
-    public function vectorStoreSearching(AgentInterface $agent, string $event, VectorStoreSearching $data)
+    public function vectorStoreSearching(AgentInterface $agent, string $event, VectorStoreSearching $data): void
     {
         if (!$this->inspector->canAddSegments()) {
             return;
@@ -23,7 +25,7 @@ trait HandleRagEvents
             ->setColor(self::SEGMENT_COLOR);
     }
 
-    public function vectorStoreResult(AgentInterface $agent, string $event, VectorStoreResult $data)
+    public function vectorStoreResult(AgentInterface $agent, string $event, VectorStoreResult $data): void
     {
         $id = \md5($data->question->getContent());
 
@@ -37,7 +39,7 @@ trait HandleRagEvents
         }
     }
 
-    public function postProcessing(AgentInterface $agent, string $event, PostProcessing $data)
+    public function postProcessing(AgentInterface $agent, string $event, PostProcessing $data): void
     {
         if (!$this->inspector->canAddSegments()) {
             return;
@@ -53,7 +55,7 @@ trait HandleRagEvents
         $this->segments[$data->processor] = $segment;
     }
 
-    public function postProcessed(AgentInterface $agent, string $event, PostProcessed $data)
+    public function postProcessed(AgentInterface $agent, string $event, PostProcessed $data): void
     {
         if (\array_key_exists($data->processor, $this->segments)) {
             $this->segments[$data->processor]

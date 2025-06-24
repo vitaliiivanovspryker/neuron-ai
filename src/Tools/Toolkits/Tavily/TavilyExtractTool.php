@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tools\Toolkits\Tavily;
 
 use GuzzleHttp\Client;
@@ -64,11 +66,7 @@ class TavilyExtractTool extends Tool
 
     protected function getClient(): Client
     {
-        if (isset($this->client)) {
-            return $this->client;
-        }
-
-        return $this->client = new Client([
+        return $this->client ?? $this->client = new Client([
             'base_uri' => trim($this->url, '/').'/',
             'headers' => [
                 'Authorization' => 'Bearer '.$this->key,

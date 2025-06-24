@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\MCP;
 
 class McpClient
@@ -23,7 +25,7 @@ class McpClient
         }
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $request = [
             "jsonrpc" => "2.0",

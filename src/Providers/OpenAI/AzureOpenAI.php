@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Providers\OpenAI;
 
 use GuzzleHttp\Client;
@@ -30,7 +32,7 @@ class AzureOpenAI extends OpenAI
         ]);
     }
 
-    private function setBaseUrl()
+    private function setBaseUrl(): void
     {
         $this->endpoint = preg_replace('/^https?:\/\/([^\/]*)\/?$/', '$1', $this->endpoint);
         $this->baseUri = sprintf($this->baseUri, $this->endpoint, $this->model);

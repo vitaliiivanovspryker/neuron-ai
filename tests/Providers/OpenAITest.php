@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tests\Providers;
 
 use GuzzleHttp\Client;
@@ -142,7 +144,7 @@ class OpenAITest extends TestCase
         $this->assertSame('test response', $response->getContent());
     }
 
-    public function test_chat_with_url_document_fail()
+    public function test_chat_with_url_document_fail(): void
     {
         $sentRequests = [];
         $history = Middleware::history($sentRequests);
@@ -204,7 +206,7 @@ class OpenAITest extends TestCase
         $this->assertSame('test response', $response->getContent());
     }
 
-    public function test_tools_payload()
+    public function test_tools_payload(): void
     {
         $sentRequests = [];
         $history = Middleware::history($sentRequests);
@@ -269,7 +271,7 @@ class OpenAITest extends TestCase
         $this->assertSame($expectedRequest, json_decode($request['request']->getBody()->getContents(), true));
     }
 
-    public function test_tools_payload_with_array_properties()
+    public function test_tools_payload_with_array_properties(): void
     {
         $sentRequests = [];
         $history = Middleware::history($sentRequests);
@@ -342,7 +344,7 @@ class OpenAITest extends TestCase
         $this->assertSame($expectedRequest, json_decode($request['request']->getBody()->getContents(), true));
     }
 
-    public function test_tools_payload_with_array_object_mapped()
+    public function test_tools_payload_with_array_object_mapped(): void
     {
         $sentRequests = [];
         $history = Middleware::history($sentRequests);

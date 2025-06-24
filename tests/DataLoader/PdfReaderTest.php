@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tests\DataLoader;
 
 use NeuronAI\Exceptions\DataReaderException;
@@ -9,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class PdfReaderTest extends TestCase
 {
-    public function skipIfPdfToTextNotFound()
+    public function skipIfPdfToTextNotFound(): void
     {
         $commonPaths = [
             '/usr/bin/pdftotext',          // Common on Linux
@@ -21,14 +23,14 @@ class PdfReaderTest extends TestCase
 
         foreach ($commonPaths as $path) {
             if (is_executable($path)) {
-                return true;
+                return;
             }
         }
 
         $this->markTestSkipped('The pdftotext binary was not found on this machine.');
     }
 
-    public function test_instance()
+    public function test_instance(): void
     {
         $this->skipIfPdfToTextNotFound();
         $instance = new PdfReader();
@@ -36,7 +38,7 @@ class PdfReaderTest extends TestCase
         $this->assertInstanceOf(ReaderInterface::class, $instance);
     }
 
-    public function test_set_pdf()
+    public function test_set_pdf(): void
     {
         $this->skipIfPdfToTextNotFound();
         $instance = new PdfReader();
@@ -45,7 +47,7 @@ class PdfReaderTest extends TestCase
         $this->assertInstanceOf(PdfReader::class, $instance);
     }
 
-    public function test_set_pdf_exception()
+    public function test_set_pdf_exception(): void
     {
         $this->skipIfPdfToTextNotFound();
         $instance = new PdfReader();
@@ -54,7 +56,7 @@ class PdfReaderTest extends TestCase
         $instance->setPdf('');
     }
 
-    public function test_get_text()
+    public function test_get_text(): void
     {
         $this->skipIfPdfToTextNotFound();
         $instance = new PdfReader();
@@ -62,7 +64,7 @@ class PdfReaderTest extends TestCase
         $this->assertStringEqualsFile(__DIR__. '/target.txt', $text . PHP_EOL);
     }
 
-    public function test_get_text_with_image()
+    public function test_get_text_with_image(): void
     {
         $this->skipIfPdfToTextNotFound();
         $instance = new PdfReader();
@@ -70,7 +72,7 @@ class PdfReaderTest extends TestCase
         $this->assertStringEqualsFile(__DIR__. '/target.txt', $text . PHP_EOL);
     }
 
-    public function test_get_text_exception()
+    public function test_get_text_exception(): void
     {
         $this->skipIfPdfToTextNotFound();
         $instance = new PdfReader();

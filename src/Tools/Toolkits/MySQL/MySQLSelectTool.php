@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tools\Toolkits\MySQL;
 
 use NeuronAI\Tools\PropertyType;
@@ -40,7 +42,7 @@ This the tool to use only to gather information from the MySQL database.'
         ];
     }
 
-    public function __invoke(string $query)
+    public function __invoke(string $query): string|array
     {
         if (!$this->validateReadOnly($query)) {
             return "The query was rejected for security reasons.

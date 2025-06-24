@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tests;
 
 use NeuronAI\StructuredOutput\Deserializer\Deserializer;
@@ -14,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class DeserializerTest extends TestCase
 {
-    public function test_person_deserializer()
+    public function test_person_deserializer(): void
     {
         $json = '{"firstName": "John", "lastName": "Doe"}';
 
@@ -25,7 +27,7 @@ class DeserializerTest extends TestCase
         $this->assertEquals('Doe', $obj->lastName);
     }
 
-    public function test_person_with_address()
+    public function test_person_with_address(): void
     {
         $json = '{"firstName": "John", "lastName": "Doe", "address": {"city": "Rome"}}';
 
@@ -35,7 +37,7 @@ class DeserializerTest extends TestCase
         $this->assertEquals('Rome', $obj->address->city);
     }
 
-    public function test_deserialize_array()
+    public function test_deserialize_array(): void
     {
         $json = '{"firstName": "John", "lastName": "Doe", "tags": [{"name": "agent"}]}';
 
@@ -46,7 +48,7 @@ class DeserializerTest extends TestCase
         $this->assertEquals('agent', $obj->tags[0]->name);
     }
 
-    public function test_deserialize_string_enum()
+    public function test_deserialize_string_enum(): void
     {
         $class = new class () {
             #[SchemaProperty]
@@ -62,7 +64,7 @@ class DeserializerTest extends TestCase
         $this->assertEquals('one', $obj->number->value);
     }
 
-    public function test_deserialize_int_enum()
+    public function test_deserialize_int_enum(): void
     {
         $class = new class () {
             #[SchemaProperty]
@@ -78,7 +80,7 @@ class DeserializerTest extends TestCase
         $this->assertEquals(1, $obj->number->value);
     }
 
-    public function test_deserialize_invalid_enum()
+    public function test_deserialize_invalid_enum(): void
     {
         $class = new class () {
             #[SchemaProperty]
@@ -92,7 +94,7 @@ class DeserializerTest extends TestCase
         $obj = Deserializer::fromJson($json, $class::class);
     }
 
-    public function test_deserialize_invalid_input()
+    public function test_deserialize_invalid_input(): void
     {
         $class = new class () {
             #[SchemaProperty]
@@ -106,7 +108,7 @@ class DeserializerTest extends TestCase
         $obj = Deserializer::fromJson($json, $class::class);
     }
 
-    public function test_deserialize_null_input()
+    public function test_deserialize_null_input(): void
     {
         $class = new class () {
             #[SchemaProperty]
@@ -119,7 +121,7 @@ class DeserializerTest extends TestCase
         $this->assertInstanceOf($class::class, $obj);
         $this->assertTrue(! isset($obj->number));
     }
-    public function test_deserialize_empty_input()
+    public function test_deserialize_empty_input(): void
     {
         $class = new class () {
             #[SchemaProperty]

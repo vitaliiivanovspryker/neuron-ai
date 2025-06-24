@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\StructuredOutput\Deserializer;
+
+use BackedEnum;
 
 class Deserializer
 {
@@ -114,7 +118,7 @@ class Deserializer
             foreach ($type->getTypes() as $unionType) {
                 try {
                     return self::castToSingleType($value, $unionType, $property);
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                     continue;
                 }
             }
@@ -168,7 +172,7 @@ class Deserializer
         }
 
         // If it's already the correct type, return as-is
-        if (is_object($value) && get_class($value) === $typeName) {
+        if (is_object($value) && $value::class === $typeName) {
             return $value;
         }
 
@@ -239,7 +243,7 @@ class Deserializer
         if (is_string($value)) {
             try {
                 return new \DateTime($value);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 throw new DeserializerException("Cannot create DateTime from: {$value}");
             }
         }
@@ -265,7 +269,7 @@ class Deserializer
         if (is_string($value)) {
             try {
                 return new \DateTimeImmutable($value);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 throw new DeserializerException("Cannot create DateTimeImmutable from: {$value}");
             }
         }
@@ -277,9 +281,9 @@ class Deserializer
         throw new DeserializerException("Cannot create DateTimeImmutable from value type: " . gettype($value));
     }
 
-    private static function handleEnum(\BackedEnum|string $typeName, mixed $value)
+    private static function handleEnum(BackedEnum|string $typeName, mixed $value): BackedEnum
     {
-        if (! is_subclass_of($typeName, \BackedEnum::class)) {
+        if (! is_subclass_of($typeName, BackedEnum::class)) {
             throw new DeserializerException("Cannot create BackedEnum from: {$typeName}");
         }
 

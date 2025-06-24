@@ -1,20 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\RAG\Splitter;
 
 use NeuronAI\RAG\Document;
 
 class DelimiterTextSplitter implements SplitterInterface
 {
-    private int $maxLength;
-    private string $separator;
-    private int $wordOverlap;
-
-    public function __construct(int $maxLength = 1000, string $separator = ' ', int $wordOverlap = 0)
+    public function __construct(private readonly int $maxLength = 1000, private readonly string $separator = ' ', private readonly int $wordOverlap = 0)
     {
-        $this->maxLength = $maxLength;
-        $this->separator = $separator;
-        $this->wordOverlap = $wordOverlap;
     }
 
     /**

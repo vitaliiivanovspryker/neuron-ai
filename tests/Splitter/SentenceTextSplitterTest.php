@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\RAG\Splitter;
 
 use NeuronAI\RAG\Document;

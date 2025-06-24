@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI;
 
 use GuzzleHttp\Promise\PromiseInterface;
@@ -61,7 +63,7 @@ trait HandleChat
 
                 $this->notify('chat-stop');
                 return $response;
-            }, function (\Throwable $exception) {
+            }, function (\Throwable $exception): void {
                 $this->notify('error', new AgentError($exception));
                 throw new AgentException($exception->getMessage(), (int)$exception->getCode(), $exception);
             });

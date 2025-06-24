@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tools\Toolkits\PGSQL;
 
 use NeuronAI\Tools\Tool;
@@ -23,7 +25,7 @@ and performance optimization. If you already know the database structure, you ca
         );
     }
 
-    public function __invoke()
+    public function __invoke(): string
     {
         return $this->formatForLLM([
             'tables' => $this->getTables(),
@@ -132,7 +134,7 @@ and performance optimization. If you already know the database structure, you ca
                     'full_type' => $fullType,
                     'nullable' => $row['is_nullable'] === 'YES',
                     'default' => $row['column_default'],
-                    'auto_increment' => strpos($row['extra'], 'auto_increment') !== false,
+                    'auto_increment' => str_contains($row['extra'], 'auto_increment'),
                     'comment' => $row['column_comment']
                 ];
 
@@ -170,7 +172,7 @@ and performance optimization. If you already know the database structure, you ca
             $stmt->execute([$tableName]);
             $result = $stmt->fetchColumn();
             return $result !== false ? (string)$result : 'N/A';
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return 'N/A';
         }
     }
@@ -291,7 +293,7 @@ and performance optimization. If you already know the database structure, you ca
             $indexes[] = [
                 'table' => $row['tablename'],
                 'name' => $row['indexname'],
-                'unique' => strpos($row['indexdef'], 'UNIQUE') !== false,
+                'unique' => str_contains($row['indexdef'], 'UNIQUE'),
                 'type' => $this->extractIndexType($row['indexdef']),
                 'columns' => !empty($cleanColumns) ? $cleanColumns : $columns
             ];
@@ -302,13 +304,13 @@ and performance optimization. If you already know the database structure, you ca
 
     private function extractIndexType(string $indexDef): string
     {
-        if (strpos($indexDef, 'USING gin') !== false) {
+        if (str_contains($indexDef, 'USING gin')) {
             return 'GIN';
-        } elseif (strpos($indexDef, 'USING gist') !== false) {
+        } elseif (str_contains($indexDef, 'USING gist')) {
             return 'GIST';
-        } elseif (strpos($indexDef, 'USING hash') !== false) {
+        } elseif (str_contains($indexDef, 'USING hash')) {
             return 'HASH';
-        } elseif (strpos($indexDef, 'USING brin') !== false) {
+        } elseif (str_contains($indexDef, 'USING brin')) {
             return 'BRIN';
         } else {
             return 'BTREE'; // Default
@@ -450,8 +452,8 @@ and performance optimization. If you already know the database structure, you ca
         foreach ($tables as $table) {
             foreach ($table['columns'] as $column) {
                 if (in_array($column['type'], ['timestamp without time zone', 'timestamp with time zone', 'timestamptz', 'date', 'time']) &&
-                    (strpos(strtolower($column['name']), 'created') !== false ||
-                     strpos(strtolower($column['name']), 'updated') !== false)) {
+                    (str_contains(strtolower($column['name']), 'created') ||
+                     str_contains(strtolower($column['name']), 'updated'))) {
                     $output .= "- For temporal queries on `{$table['name']}`, use `{$column['name']}` column\n";
                     break;
                 }
@@ -462,9 +464,9 @@ and performance optimization. If you already know the database structure, you ca
         foreach ($tables as $table) {
             foreach ($table['columns'] as $column) {
                 if (in_array($column['type'], ['character varying', 'varchar', 'text', 'character']) &&
-                    (strpos(strtolower($column['name']), 'name') !== false ||
-                     strpos(strtolower($column['name']), 'title') !== false ||
-                     strpos(strtolower($column['name']), 'description') !== false)) {
+                    (str_contains(strtolower($column['name']), 'name') ||
+                     str_contains(strtolower($column['name']), 'title') ||
+                     str_contains(strtolower($column['name']), 'description'))) {
                     $output .= "- For text searches on `{$table['name']}`, consider using `{$column['name']}` with ILIKE, ~ (regex), or full-text search\n";
                     break;
                 }
@@ -483,7 +485,7 @@ and performance optimization. If you already know the database structure, you ca
         // Find array columns
         foreach ($tables as $table) {
             foreach ($table['columns'] as $column) {
-                if (strpos($column['full_type'], '[]') !== false) {
+                if (str_contains($column['full_type'], '[]')) {
                     $output .= "- Table `{$table['name']}` has array column `{$column['name']}` ({$column['full_type']}) - use array operators like ANY, ALL, @>\n";
                 }
             }

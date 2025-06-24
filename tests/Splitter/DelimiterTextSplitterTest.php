@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\RAG\Splitter;
 
 use NeuronAI\RAG\Document;
@@ -8,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class DelimiterTextSplitterTest extends TestCase
 {
-    public function test_split_long_text()
+    public function test_split_long_text(): void
     {
         $doc = new Document(file_get_contents(__DIR__.'/../Stubs/long-text.txt'));
 

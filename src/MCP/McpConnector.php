@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\MCP;
 
 use NeuronAI\StaticConstructor;
@@ -68,7 +70,7 @@ class McpConnector
                 try {
                     $type = PropertyType::from($type);
                     break;
-                } catch (\Throwable $e) {
+                } catch (\Throwable) {
                 }
             }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Chat\Messages;
 
 use NeuronAI\Chat\Attachments\Attachment;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tools\Toolkits\Jina;
 
 use GuzzleHttp\Client;
@@ -35,11 +37,7 @@ class JinaUrlReader extends Tool
 
     protected function getClient(): Client
     {
-        if (isset($this->client)) {
-            return $this->client;
-        }
-
-        return $this->client = new Client([
+        return $this->client ?? $this->client = new Client([
             'headers' => [
                 'Authorization' => 'Bearer '.$this->key,
                 'Content-Type' => 'application/json',

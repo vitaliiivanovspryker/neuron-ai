@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tools;
 
 use NeuronAI\StructuredOutput\JsonSchema;
@@ -60,9 +62,7 @@ class ObjectProperty implements ToolPropertyInterface
     // The mapped class required properties and required properties are merged
     public function getRequiredProperties(): array
     {
-        return  array_values(\array_filter(\array_map(function (ToolPropertyInterface $property) {
-            return $property->isRequired() ? $property->getName() : null;
-        }, $this->properties)));
+        return  array_values(\array_filter(\array_map(fn (ToolPropertyInterface $property) => $property->isRequired() ? $property->getName() : null, $this->properties)));
     }
 
     public function getJsonSchema(): array

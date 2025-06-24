@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tests\VectorStore;
 
 use NeuronAI\RAG\Document;
@@ -17,13 +19,13 @@ class MemoryVectorStoreTest extends TestCase
         $this->embedding = json_decode(file_get_contents(__DIR__ . '/../Stubs/hello-world.embeddings'), true);
     }
 
-    public function test_memory_store_instance()
+    public function test_memory_store_instance(): void
     {
         $store = new MemoryVectorStore();
         $this->assertInstanceOf(VectorStoreInterface::class, $store);
     }
 
-    public function test_add_document_and_search()
+    public function test_add_document_and_search(): void
     {
         $this->expectNotToPerformAssertions();
         $document = new Document('Hello World!');
@@ -35,7 +37,7 @@ class MemoryVectorStoreTest extends TestCase
         $results = $store->similaritySearch($this->embedding);
     }
 
-    public function test_similarity_search_with_scores()
+    public function test_similarity_search_with_scores(): void
     {
         $vectorStore = new MemoryVectorStore();
 
@@ -55,7 +57,7 @@ class MemoryVectorStoreTest extends TestCase
         $this->assertGreaterThanOrEqual($results[2]->getScore(), $results[1]->getScore());
     }
 
-    public function test_custom_document_model()
+    public function test_custom_document_model(): void
     {
         $document = new Document('Hello World!');
         $document->addMetadata('customProperty', 'customValue');

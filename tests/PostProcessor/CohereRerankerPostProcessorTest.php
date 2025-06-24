@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tests\PostProcessor;
 
 use NeuronAI\Chat\Messages\UserMessage;
@@ -14,7 +16,7 @@ use GuzzleHttp\Psr7\Response;
 
 class CohereRerankerPostProcessorTest extends TestCase
 {
-    public function test_post_process_reranks_documents()
+    public function test_post_process_reranks_documents(): void
     {
         $sentRequests = [];
         $history = Middleware::history($sentRequests);
@@ -65,7 +67,7 @@ class CohereRerankerPostProcessorTest extends TestCase
         $this->assertEquals(0.9, $result[0]->getScore(), "Score should match the mock response");
     }
 
-    public function test_post_process_with_top_n_parameter()
+    public function test_post_process_with_top_n_parameter(): void
     {
         $sentRequests = [];
         $history = Middleware::history($sentRequests);

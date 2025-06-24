@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\RAG\VectorStore;
 
 use GuzzleHttp\Client;
@@ -27,7 +29,7 @@ class MeilisearchVectorStore implements VectorStoreInterface
 
         try {
             $this->client->get('');
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             $this->client->post(trim($host, '/').'/indexes/', [
                 RequestOptions::JSON => [
                     'uid' => $indexUid,
@@ -45,21 +47,19 @@ class MeilisearchVectorStore implements VectorStoreInterface
     public function addDocuments(array $documents): void
     {
         $this->client->put('documents', [
-            RequestOptions::JSON => \array_map(function (Document $document) {
-                return [
-                    'id' => $document->getId(),
-                    'content' => $document->getContent(),
-                    'sourceType' => $document->getSourceType(),
-                    'sourceName' => $document->getSourceName(),
-                    ...$document->metadata,
-                    '_vectors' => [
-                        'default' => [
-                            'embeddings' => $document->getEmbedding(),
-                            'regenerate' => false,
-                        ],
-                    ]
-                ];
-            }, $documents),
+            RequestOptions::JSON => \array_map(fn (Document $document) => [
+                'id' => $document->getId(),
+                'content' => $document->getContent(),
+                'sourceType' => $document->getSourceType(),
+                'sourceName' => $document->getSourceName(),
+                ...$document->metadata,
+                '_vectors' => [
+                    'default' => [
+                        'embeddings' => $document->getEmbedding(),
+                        'regenerate' => false,
+                    ],
+                ]
+            ], $documents),
         ]);
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\Tests\VectorStore;
 
 use NeuronAI\RAG\Document;
@@ -8,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class FileVectorStoreTest extends TestCase
 {
-    public function test_store_documents()
+    public function test_store_documents(): void
     {
         $document = new Document('Hello!');
         $document->addMetadata('customProperty', 'customValue');

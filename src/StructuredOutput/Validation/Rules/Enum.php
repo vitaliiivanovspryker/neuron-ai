@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\StructuredOutput\Validation\Rules;
 
 use NeuronAI\StructuredOutput\StructuredOutputException;
@@ -32,7 +34,7 @@ class Enum extends AbstractValidationRule
         }
     }
 
-    public function validate(string $name, mixed $value, array &$violations)
+    public function validate(string $name, mixed $value, array &$violations): void
     {
         $value = $value instanceof \BackedEnum ? $value->value : $value;
 
@@ -54,8 +56,6 @@ class Enum extends AbstractValidationRule
             throw new StructuredOutputException("Enum '{$this->class}' must implement BackedEnum.");
         }
 
-        $this->values = array_map(function (\BackedEnum $case) {
-            return $case->value;
-        }, $this->class::cases());
+        $this->values = array_map(fn (\BackedEnum $case) => $case->value, $this->class::cases());
     }
 }
