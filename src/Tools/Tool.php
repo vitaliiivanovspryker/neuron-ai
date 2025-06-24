@@ -158,14 +158,13 @@ class Tool implements ToolInterface
         return $this->result;
     }
 
-    public function setResult(mixed $result): self
+    public function setResult(Stringable|string|array $result): self
     {
         if (is_array($result)) {
             $this->result = \json_encode($result);
         } elseif (is_string($result)) {
             $this->result = $result;
-        } elseif (is_scalar($result)
-            || (is_object($result) && $result instanceof Stringable)) {
+        } elseif ($result instanceof Stringable) {
             $this->result = (string) $result;
         }
 
