@@ -94,7 +94,7 @@ DESC
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
-                'error_type' => get_class($e),
+                'error_type' => $e::class,
                 'status' => 'failed'
             ];
         }

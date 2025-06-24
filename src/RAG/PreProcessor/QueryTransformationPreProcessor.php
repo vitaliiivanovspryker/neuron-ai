@@ -45,11 +45,7 @@ class QueryTransformationPreProcessor implements PreProcessorInterface
 
     public function getSystemPrompt(): string
     {
-        if (isset($this->customPrompt)) {
-            return $this->customPrompt;
-        }
-
-        return match ($this->transformation) {
+        return $this->customPrompt ?? match ($this->transformation) {
             QueryTransformationType::REWRITING => $this->getRewritingPrompt(),
             QueryTransformationType::DECOMPOSITION => $this->getDecompositionPrompt(),
             QueryTransformationType::HYDE => $this->getHydePrompt(),
