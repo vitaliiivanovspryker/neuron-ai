@@ -49,16 +49,16 @@ DESC
         }
 
         // Filter and validate numeric values
-        $numericData = array_filter($numbers, fn ($value) => is_numeric($value));
+        $numericData = \array_filter($numbers, fn ($value) => \is_numeric($value));
 
         if (empty($numericData)) {
             return ['error' => 'Data array must contain at least one numeric value'];
         }
 
         // Convert to float values
-        $numericData = array_map('floatval', $numericData);
-        $mean = array_sum($numericData) / count($numericData);
+        $numericData = \array_map('floatval', $numericData);
+        $mean = \array_sum($numericData) / \count($numericData);
 
-        return round($mean, $this->precision);
+        return \round($mean, $this->precision);
     }
 }

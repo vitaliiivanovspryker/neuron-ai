@@ -38,6 +38,6 @@ DESC
 
     public function __invoke(float|int $number): float|int
     {
-        return sqrt($number);
+        return \sqrt($number);
     }
 }
