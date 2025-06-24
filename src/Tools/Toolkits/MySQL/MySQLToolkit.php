@@ -7,6 +7,9 @@ namespace NeuronAI\Tools\Toolkits\MySQL;
 use NeuronAI\Tools\Toolkits\AbstractToolkit;
 use PDO;
 
+/**
+ * @method static make(PDO $pdo)
+ */
 class MySQLToolkit extends AbstractToolkit
 {
     public function __construct(protected PDO $pdo)

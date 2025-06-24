@@ -12,6 +12,9 @@ use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 
+/**
+ * @method static make(SesClient $sesClient, string $fromEmail)
+ */
 class SESTool extends Tool
 {
     public function __construct(

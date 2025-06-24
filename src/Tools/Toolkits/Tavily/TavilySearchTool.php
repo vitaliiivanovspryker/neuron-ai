@@ -11,7 +11,7 @@ use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Tools\Tool;
 
 /**
- * @method static static make(string $key)
+ * @method static static make(string $key, array $topics)
  */
 class TavilySearchTool extends Tool
 {
