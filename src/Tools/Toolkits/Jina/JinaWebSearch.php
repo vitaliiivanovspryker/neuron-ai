@@ -8,6 +8,9 @@ use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Tools\Tool;
 
+/**
+ * @method static make(string $key, array $topics)
+ */
 class JinaWebSearch extends Tool
 {
     protected Client $client;

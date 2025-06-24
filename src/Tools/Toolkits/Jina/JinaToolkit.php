@@ -5,6 +5,9 @@ namespace NeuronAI\Tools\Toolkits\Jina;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\Toolkits\AbstractToolkit;
 
+/**
+ * @method static make(string $key)
+ */
 class JinaToolkit extends AbstractToolkit
 {
     public function __construct(protected string $key)

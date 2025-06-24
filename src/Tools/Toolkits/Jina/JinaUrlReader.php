@@ -9,6 +9,9 @@ use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Tools\Tool;
 
+/**
+ * @method static make(string $key)
+ */
 class JinaUrlReader extends Tool
 {
     protected Client $client;
