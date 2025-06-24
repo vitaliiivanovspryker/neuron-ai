@@ -2,7 +2,12 @@
 
 namespace NeuronAI;
 
+use NeuronAI\Chat\Messages\ToolCallMessage;
+use NeuronAI\Chat\Messages\ToolCallResultMessage;
 use NeuronAI\Exceptions\AgentException;
+use NeuronAI\Observability\Events\AgentError;
+use NeuronAI\Observability\Events\ToolCalled;
+use NeuronAI\Observability\Events\ToolCalling;
 use NeuronAI\Observability\Events\ToolsBootstrapped;
 use NeuronAI\Tools\ToolInterface;
 use NeuronAI\Tools\Toolkits\ToolkitInterface;
@@ -85,7 +90,7 @@ trait ResolveTools
         }
 
         if (!empty($guidelines)) {
-            $instructions = $this->removeDelimitedContent($this->instructions(), '<TOOLS-GUIDELINES>', '</TOOLS-GUIDELINES>');
+            $instructions = $this->removeDelimitedContent($this->resolveInstructions(), '<TOOLS-GUIDELINES>', '</TOOLS-GUIDELINES>');
             $this->withInstructions(
                 $instructions.PHP_EOL.'<TOOLS-GUIDELINES>'.PHP_EOL.implode(PHP_EOL.PHP_EOL, $guidelines).PHP_EOL.'</TOOLS-GUIDELINES>'
             );
@@ -118,5 +123,23 @@ trait ResolveTools
         $this->toolsBootstrapCache = [];
 
         return $this;
+    }
+
+    protected function executeTools(ToolCallMessage $toolCallMessage): ToolCallResultMessage
+    {
+        $toolCallResult = new ToolCallResultMessage($toolCallMessage->getTools());
+
+        foreach ($toolCallResult->getTools() as $tool) {
+            $this->notify('tool-calling', new ToolCalling($tool));
+            try {
+                $tool->execute();
+            } catch (\Throwable $exception) {
+                $this->notify('error', new AgentError($exception));
+                throw $exception;
+            }
+            $this->notify('tool-called', new ToolCalled($tool));
+        }
+
+        return $toolCallResult;
     }
 }
