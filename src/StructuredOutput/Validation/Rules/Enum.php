@@ -38,8 +38,8 @@ class Enum extends AbstractValidationRule
     {
         $value = $value instanceof \BackedEnum ? $value->value : $value;
 
-        if (!in_array($value, $this->values, true)) {
-            $violations[] = $this->buildMessage($name, $this->message, ['choices' => implode(", ", $this->values)]);
+        if (!\in_array($value, $this->values, true)) {
+            $violations[] = $this->buildMessage($name, $this->message, ['choices' => \implode(", ", $this->values)]);
         }
     }
 
@@ -48,14 +48,14 @@ class Enum extends AbstractValidationRule
      */
     private function handleEnum(): void
     {
-        if (!enum_exists($this->class)) {
+        if (!\enum_exists($this->class)) {
             throw new StructuredOutputException("Enum '{$this->class}' does not exist.");
         }
 
-        if (!is_subclass_of($this->class, \BackedEnum::class)) {
+        if (!\is_subclass_of($this->class, \BackedEnum::class)) {
             throw new StructuredOutputException("Enum '{$this->class}' must implement BackedEnum.");
         }
 
-        $this->values = array_map(fn (\BackedEnum $case) => $case->value, $this->class::cases());
+        $this->values = \array_map(fn (\BackedEnum $case) => $case->value, $this->class::cases());
     }
 }

@@ -11,7 +11,7 @@ class IPAddress extends AbstractValidationRule
 
     public function validate(string $name, mixed $value, array &$violations): void
     {
-        if (filter_var($value, FILTER_VALIDATE_IP) === false) {
+        if (\filter_var($value, \FILTER_VALIDATE_IP) === false) {
             $violations[] = $this->buildMessage($name, $this->message);
         }
     }

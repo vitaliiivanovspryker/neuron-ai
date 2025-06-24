@@ -34,9 +34,9 @@ try {
 } catch (WorkflowInterrupt $interrupt) {
     // Verify interrupt was saved
     $savedInterrupt = $persistence->load('test_workflow');
-    echo "Workflow interrupted at {$savedInterrupt->getCurrentNode()}.".PHP_EOL;
+    echo "Workflow interrupted at {$savedInterrupt->getCurrentNode()}.".\PHP_EOL;
 }
 
 $result = $workflow->resume(['status' => 'approved']);
 
-echo $result->get('final_value').PHP_EOL; // It should print 28
+echo $result->get('final_value').\PHP_EOL; // It should print 28

@@ -47,7 +47,7 @@ class TavilyExtractTool extends Tool
 
     public function __invoke(string $url): string
     {
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+        if (!\filter_var($url, \FILTER_VALIDATE_URL)) {
             throw new ToolException('Invalid URL.');
         }
 
@@ -67,7 +67,7 @@ class TavilyExtractTool extends Tool
     protected function getClient(): Client
     {
         return $this->client ?? $this->client = new Client([
-            'base_uri' => trim($this->url, '/').'/',
+            'base_uri' => \trim($this->url, '/').'/',
             'headers' => [
                 'Authorization' => 'Bearer '.$this->key,
                 'Content-Type' => 'application/json',

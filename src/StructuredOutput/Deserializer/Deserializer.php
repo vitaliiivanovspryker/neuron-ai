@@ -19,10 +19,10 @@ class Deserializer
     public static function fromJson(string $jsonData, string $className): mixed
     {
         // Decode JSON data
-        $data = json_decode($jsonData, true);
+        $data = \json_decode($jsonData, true);
 
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new DeserializerException('Invalid JSON: ' . json_last_error_msg());
+        if (\json_last_error() !== \JSON_ERROR_NONE) {
+            throw new DeserializerException('Invalid JSON: ' . \json_last_error_msg());
         }
 
         return self::deserializeObject($data, $className);
@@ -38,7 +38,7 @@ class Deserializer
      */
     private static function deserializeObject(array $data, string $className): mixed
     {
-        if (!class_exists($className)) {
+        if (!\class_exists($className)) {
             throw new DeserializerException("Class {$className} does not exist");
         }
 
@@ -87,19 +87,19 @@ class Deserializer
     private static function findPropertyValue(array $data, string $propertyName): mixed
     {
         // Direct match
-        if (array_key_exists($propertyName, $data)) {
+        if (\array_key_exists($propertyName, $data)) {
             return $data[$propertyName];
         }
 
         // Convert camelCase to snake_case
-        $snakeCase = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $propertyName));
-        if (array_key_exists($snakeCase, $data)) {
+        $snakeCase = \strtolower(\preg_replace('/(?<!^)[A-Z]/', '_$0', $propertyName));
+        if (\array_key_exists($snakeCase, $data)) {
             return $data[$snakeCase];
         }
 
         // Convert snake_case to camelCase
-        $camelCase = lcfirst(str_replace('_', '', ucwords($propertyName, '_')));
-        if (array_key_exists($camelCase, $data)) {
+        $camelCase = \lcfirst(\str_replace('_', '', \ucwords($propertyName, '_')));
+        if (\array_key_exists($camelCase, $data)) {
             return $data[$camelCase];
         }
 
@@ -163,16 +163,16 @@ class Deserializer
      */
     private static function handleSingleObject(mixed $value, string $typeName, \ReflectionProperty $property): mixed
     {
-        if (is_array($value) && class_exists($typeName)) {
+        if (\is_array($value) && \class_exists($typeName)) {
             return self::deserializeObject($value, $typeName);
         }
 
-        if (enum_exists($typeName)) {
+        if (\enum_exists($typeName)) {
             return self::handleEnum($typeName, $value);
         }
 
         // If it's already the correct type, return as-is
-        if (is_object($value) && $value::class === $typeName) {
+        if (\is_object($value) && $value::class === $typeName) {
             return $value;
         }
 
@@ -190,8 +190,8 @@ class Deserializer
         // Handle arrays of objects using docblock annotations
         if (self::isArrayOfObjects($property)) {
             $elementType = self::getArrayElementType($property);
-            if ($elementType && class_exists($elementType)) {
-                return array_map(fn ($item) => self::deserializeObject($item, $elementType), $value);
+            if ($elementType && \class_exists($elementType)) {
+                return \array_map(fn ($item) => self::deserializeObject($item, $elementType), $value);
             }
         }
 
@@ -209,7 +209,7 @@ class Deserializer
             return false;
         }
 
-        return preg_match('/@var\s+([a-zA-Z_\\\\]+)\[\]/', $docComment) === 1;
+        return \preg_match('/@var\s+([a-zA-Z_\\\\]+)\[\]/', $docComment) === 1;
     }
 
     /**
@@ -222,7 +222,7 @@ class Deserializer
             return null;
         }
 
-        if (preg_match('/@var\s+([a-zA-Z_\\\\]+)\[\]/', $docComment, $matches)) {
+        if (\preg_match('/@var\s+([a-zA-Z_\\\\]+)\[\]/', $docComment, $matches)) {
             return $matches[1];
         }
 
@@ -240,7 +240,7 @@ class Deserializer
             return $value;
         }
 
-        if (is_string($value)) {
+        if (\is_string($value)) {
             try {
                 return new \DateTime($value);
             } catch (\Exception) {
@@ -248,11 +248,11 @@ class Deserializer
             }
         }
 
-        if (is_numeric($value)) {
+        if (\is_numeric($value)) {
             return new \DateTime('@' . $value);
         }
 
-        throw new DeserializerException("Cannot create DateTime from value type: " . gettype($value));
+        throw new DeserializerException("Cannot create DateTime from value type: " . \gettype($value));
     }
 
     /**
@@ -266,7 +266,7 @@ class Deserializer
             return $value;
         }
 
-        if (is_string($value)) {
+        if (\is_string($value)) {
             try {
                 return new \DateTimeImmutable($value);
             } catch (\Exception) {
@@ -274,16 +274,16 @@ class Deserializer
             }
         }
 
-        if (is_numeric($value)) {
+        if (\is_numeric($value)) {
             return new \DateTimeImmutable('@' . $value);
         }
 
-        throw new DeserializerException("Cannot create DateTimeImmutable from value type: " . gettype($value));
+        throw new DeserializerException("Cannot create DateTimeImmutable from value type: " . \gettype($value));
     }
 
     private static function handleEnum(BackedEnum|string $typeName, mixed $value): BackedEnum
     {
-        if (! is_subclass_of($typeName, BackedEnum::class)) {
+        if (! \is_subclass_of($typeName, BackedEnum::class)) {
             throw new DeserializerException("Cannot create BackedEnum from: {$typeName}");
         }
 

@@ -52,7 +52,7 @@ class JinaUrlReader extends Tool
 
     public function __invoke(string $url): string
     {
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+        if (!\filter_var($url, \FILTER_VALIDATE_URL)) {
             throw new ToolException('Invalid URL.');
         }
 

@@ -57,7 +57,7 @@ class RizaFunctionExecutor extends Tool
     protected function getClient(): Client
     {
         return $this->client ?? $this->client = new Client([
-            'base_uri' => trim($this->url, '/').'/',
+            'base_uri' => \trim($this->url, '/').'/',
             'headers' => [
                 'Authorization' => 'Bearer '.$this->key,
                 'Content-Type' => 'application/json; charset=utf-8',

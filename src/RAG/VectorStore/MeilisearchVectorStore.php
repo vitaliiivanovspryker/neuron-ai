@@ -20,17 +20,17 @@ class MeilisearchVectorStore implements VectorStoreInterface
         protected int $topK = 5,
     ) {
         $this->client = new Client([
-            'base_uri' => trim($host, '/').'/indexes/'.$indexUid.'/',
+            'base_uri' => \trim($host, '/').'/indexes/'.$indexUid.'/',
             'headers' => [
                 'Content-Type' => 'application/json',
-                ...(!is_null($key) ? ['Authorization' => "Bearer {$key}"] : [])
+                ...(!\is_null($key) ? ['Authorization' => "Bearer {$key}"] : [])
             ]
         ]);
 
         try {
             $this->client->get('');
         } catch (\Exception) {
-            $this->client->post(trim($host, '/').'/indexes/', [
+            $this->client->post(\trim($host, '/').'/indexes/', [
                 RequestOptions::JSON => [
                     'uid' => $indexUid,
                     'primaryKey' => 'id',
@@ -68,7 +68,7 @@ class MeilisearchVectorStore implements VectorStoreInterface
         $response = $this->client->post('search', [
             RequestOptions::JSON => [
                 'vector' => $embedding,
-                'limit' => min($this->topK, 20),
+                'limit' => \min($this->topK, 20),
                 'retrieveVectors' => true,
                 'showRankingScore' => true,
                 'hybrid' => [

@@ -31,13 +31,13 @@ class ObjectProperty implements ToolPropertyInterface
         protected ?string $class = null,
         protected array $properties = [],
     ) {
-        if (empty($this->properties) && class_exists($this->class)) {
+        if (empty($this->properties) && \class_exists($this->class)) {
             $schema = (new JsonSchema())->generate($this->getClass());
             $required = [];
 
             // Identify required properties
             foreach ($schema['required'] as $r) {
-                if (!in_array($r, $required)) {
+                if (!\in_array($r, $required)) {
                     $required[] = $r;
                 }
             }
@@ -68,7 +68,7 @@ class ObjectProperty implements ToolPropertyInterface
     // The mapped class required properties and required properties are merged
     public function getRequiredProperties(): array
     {
-        return array_values(\array_filter(\array_map(fn (
+        return \array_values(\array_filter(\array_map(fn (
             ToolPropertyInterface $property
         ) => $property->isRequired() ? $property->getName() : null, $this->properties)));
     }

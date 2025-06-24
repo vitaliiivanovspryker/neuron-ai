@@ -222,11 +222,11 @@ class ValidationTest extends TestCase
         $this->assertCount(1, $violations);
 
 
-        $class->tags = range(1, 10);
+        $class->tags = \range(1, 10);
         $violations = Validator::validate($class);
         $this->assertCount(0, $violations);
 
-        $class->tags = range(1, 11);
+        $class->tags = \range(1, 11);
         $violations = Validator::validate($class);
         $this->assertCount(1, $violations);
 

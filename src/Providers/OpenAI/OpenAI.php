@@ -50,7 +50,7 @@ class OpenAI implements AIProviderInterface
         protected array $parameters = [],
     ) {
         $this->client = new Client([
-            'base_uri' => trim($this->baseUri, '/').'/',
+            'base_uri' => \trim($this->baseUri, '/').'/',
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',

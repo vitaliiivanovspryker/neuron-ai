@@ -42,10 +42,10 @@ abstract class SupportedDoctrineVectorStore
 
     public static function fromPlatform(AbstractPlatform $platform): self
     {
-        if (str_starts_with($platform::class, 'Doctrine\DBAL\Platforms\MariaDb')) {
+        if (\str_starts_with($platform::class, 'Doctrine\DBAL\Platforms\MariaDb')) {
             return new MariaDBVectorStoreType();
         }
-        if (str_starts_with($platform::class, 'Doctrine\DBAL\Platforms\PostgreSQL')) {
+        if (\str_starts_with($platform::class, 'Doctrine\DBAL\Platforms\PostgreSQL')) {
             return new PostgresqlVectorStoreType();
         }
 

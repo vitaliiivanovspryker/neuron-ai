@@ -31,11 +31,11 @@ class LogObserver implements \SplObserver
             return [];
         }
 
-        if (is_array($data)) {
+        if (\is_array($data)) {
             return $data;
         }
 
-        if (!is_object($data)) {
+        if (!\is_object($data)) {
             return ['data' => $data];
         }
 

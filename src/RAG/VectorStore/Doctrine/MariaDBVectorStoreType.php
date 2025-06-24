@@ -15,7 +15,7 @@ class MariaDBVectorStoreType extends SupportedDoctrineVectorStore
 
     public function convertToDatabaseValueSQL(string $sqlExpression): string
     {
-        return sprintf('Vec_FromText(%s)', $sqlExpression);
+        return \sprintf('Vec_FromText(%s)', $sqlExpression);
     }
 
     public function addCustomisationsTo(EntityManagerInterface $entityManager): void

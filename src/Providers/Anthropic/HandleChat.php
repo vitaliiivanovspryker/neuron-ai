@@ -35,7 +35,7 @@ trait HandleChat
         }
 
 
-        return $this->client->postAsync('messages', compact('json'))
+        return $this->client->postAsync('messages', \compact('json'))
             ->then(function (ResponseInterface $response) {
                 $result = \json_decode($response->getBody()->getContents(), true);
 

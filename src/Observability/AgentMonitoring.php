@@ -170,7 +170,7 @@ class AgentMonitoring implements \SplObserver
 
     public function getPrefix(string $event): string
     {
-        return explode('-', $event)[0];
+        return \explode('-', $event)[0];
     }
 
     protected function getContext(Agent $agent): array
@@ -204,8 +204,8 @@ class AgentMonitoring implements \SplObserver
     {
         $content = $message->getContent();
 
-        if (!is_string($content)) {
-            $content = json_encode($content, JSON_UNESCAPED_UNICODE);
+        if (!\is_string($content)) {
+            $content = \json_encode($content, \JSON_UNESCAPED_UNICODE);
         }
 
         return \md5($content.$message->getRole());
@@ -213,6 +213,6 @@ class AgentMonitoring implements \SplObserver
 
     protected function getBaseClassName(string $class): string
     {
-        return substr(strrchr($class, '\\'), 1);
+        return \substr(\strrchr($class, '\\'), 1);
     }
 }

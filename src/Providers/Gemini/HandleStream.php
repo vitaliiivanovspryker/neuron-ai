@@ -33,7 +33,7 @@ trait HandleStream
             $json['tools'] = $this->generateToolsPayload();
         }
 
-        $stream = $this->client->post(trim($this->baseUri, '/')."/{$this->model}:streamGenerateContent", [
+        $stream = $this->client->post(\trim($this->baseUri, '/')."/{$this->model}:streamGenerateContent", [
             'stream' => true,
             ...\compact('json')
         ])->getBody();
@@ -44,7 +44,7 @@ trait HandleStream
         while (! $stream->eof()) {
             $line = $this->readLine($stream);
 
-            if (($line = json_decode($line, true)) === null) {
+            if (($line = \json_decode($line, true)) === null) {
                 continue;
             }
 
@@ -126,15 +126,15 @@ trait HandleStream
         while (! $stream->eof()) {
             $buffer .= $stream->read(1);
 
-            if (strlen($buffer) === 1 && $buffer !== '{') {
+            if (\strlen($buffer) === 1 && $buffer !== '{') {
                 $buffer = '';
             }
 
-            if (json_decode($buffer) !== null) {
+            if (\json_decode($buffer) !== null) {
                 return $buffer;
             }
         }
 
-        return rtrim($buffer, ']');
+        return \rtrim($buffer, ']');
     }
 }

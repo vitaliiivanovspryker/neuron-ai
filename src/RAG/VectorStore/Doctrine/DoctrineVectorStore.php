@@ -19,14 +19,14 @@ class DoctrineVectorStore implements VectorStoreInterface
         public readonly string $entityClassName,
         protected int $topK = 4,
     ) {
-        if (!interface_exists(EntityManagerInterface::class)) {
+        if (!\interface_exists(EntityManagerInterface::class)) {
             throw new \RuntimeException('To use this functionality, you must install the `doctrine/orm` package: `composer require doctrine/orm`.');
         }
 
         $conn = $entityManager->getConnection();
         $this->doctrineVectorStoreType = SupportedDoctrineVectorStore::fromPlatform($conn->getDatabasePlatform());
         $registeredTypes = Type::getTypesMap();
-        if (!array_key_exists(VectorType::VECTOR, $registeredTypes)) {
+        if (!\array_key_exists(VectorType::VECTOR, $registeredTypes)) {
             Type::addType(VectorType::VECTOR, VectorType::class);
             $conn->getDatabasePlatform()->registerDoctrineTypeMapping('vector', VectorType::VECTOR);
         }
@@ -68,7 +68,7 @@ class DoctrineVectorStore implements VectorStoreInterface
 
         foreach ($this->filters as $key => $value) {
             $paramName = 'where_'.$key;
-            $qb->andWhere(sprintf('e.%s = :%s', $key, $paramName))
+            $qb->andWhere(\sprintf('e.%s = :%s', $key, $paramName))
                 ->setParameter($paramName, $value);
         }
 

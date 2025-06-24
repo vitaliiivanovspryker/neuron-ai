@@ -39,7 +39,7 @@ class SentenceTextSplitter implements SplitterInterface
     public function splitDocument(Document $document): array
     {
         // Split by paragraphs (2 or more newlines)
-        $paragraphs = preg_split('/\n{2,}/', $document->getContent());
+        $paragraphs = \preg_split('/\n{2,}/', $document->getContent());
         $chunks = [];
         $currentWords = [];
 
@@ -50,30 +50,30 @@ class SentenceTextSplitter implements SplitterInterface
                 $sentenceWords = $this->tokenizeWords($sentence);
 
                 // If the sentence alone exceeds the limit, split it
-                if (count($sentenceWords) > $this->maxWords) {
+                if (\count($sentenceWords) > $this->maxWords) {
                     if (!empty($currentWords)) {
-                        $chunks[] = implode(' ', $currentWords);
+                        $chunks[] = \implode(' ', $currentWords);
                         $currentWords = [];
                     }
-                    $chunks = array_merge($chunks, $this->splitLongSentence($sentenceWords));
+                    $chunks = \array_merge($chunks, $this->splitLongSentence($sentenceWords));
                     continue;
                 }
 
-                $candidateCount = count($currentWords) + count($sentenceWords);
+                $candidateCount = \count($currentWords) + \count($sentenceWords);
 
                 if ($candidateCount > $this->maxWords) {
                     if (!empty($currentWords)) {
-                        $chunks[] = implode(' ', $currentWords);
+                        $chunks[] = \implode(' ', $currentWords);
                     }
                     $currentWords = $sentenceWords;
                 } else {
-                    $currentWords = array_merge($currentWords, $sentenceWords);
+                    $currentWords = \array_merge($currentWords, $sentenceWords);
                 }
             }
         }
 
         if (!empty($currentWords)) {
-            $chunks[] = implode(' ', $currentWords);
+            $chunks[] = \implode(' ', $currentWords);
         }
 
         // Apply overlap only if necessary
@@ -100,7 +100,7 @@ class SentenceTextSplitter implements SplitterInterface
     {
         $result = [];
         foreach ($documents as $document) {
-            $result = array_merge($result, $this->splitDocument($document));
+            $result = \array_merge($result, $this->splitDocument($document));
         }
         return $result;
     }
@@ -111,8 +111,8 @@ class SentenceTextSplitter implements SplitterInterface
     private function splitSentences(string $text): array
     {
         $pattern = '/(?<=[.!?…])\s+(?=(?:[\"\'\""\'\'«»„""]?)[A-ZÀ-Ÿ])/u';
-        $sentences = preg_split($pattern, trim($text));
-        return array_filter(array_map('trim', $sentences));
+        $sentences = \preg_split($pattern, \trim($text));
+        return \array_filter(\array_map('trim', $sentences));
     }
 
     /**
@@ -123,7 +123,7 @@ class SentenceTextSplitter implements SplitterInterface
      */
     private function tokenizeWords(string $text): array
     {
-        return preg_split('/\s+/u', trim($text));
+        return \preg_split('/\s+/u', \trim($text));
     }
 
     /**
@@ -139,20 +139,20 @@ class SentenceTextSplitter implements SplitterInterface
         }
 
         $result = [$chunks[0]]; // First chunk remains unchanged
-        $count = count($chunks);
+        $count = \count($chunks);
 
         for ($i = 1; $i < $count; $i++) {
             $prevWords = $this->tokenizeWords($chunks[$i - 1]);
             $curWords = $this->tokenizeWords($chunks[$i]);
 
             // Get only the words needed for overlap
-            $overlap = array_slice($prevWords, -$this->overlapWords);
+            $overlap = \array_slice($prevWords, -$this->overlapWords);
 
             // Remove duplicate words at the beginning of current chunk
-            $curWords = array_slice($curWords, $this->overlapWords);
+            $curWords = \array_slice($curWords, $this->overlapWords);
 
-            $merged = array_merge($overlap, $curWords);
-            $result[] = implode(' ', $merged);
+            $merged = \array_merge($overlap, $curWords);
+            $result[] = \implode(' ', $merged);
         }
 
         return $result;
@@ -170,15 +170,15 @@ class SentenceTextSplitter implements SplitterInterface
         $currentChunk = [];
 
         foreach ($words as $word) {
-            if (count($currentChunk) >= $this->maxWords) {
-                $chunks[] = implode(' ', $currentChunk);
+            if (\count($currentChunk) >= $this->maxWords) {
+                $chunks[] = \implode(' ', $currentChunk);
                 $currentChunk = [];
             }
             $currentChunk[] = $word;
         }
 
         if (!empty($currentChunk)) {
-            $chunks[] = implode(' ', $currentChunk);
+            $chunks[] = \implode(' ', $currentChunk);
         }
 
         return $chunks;

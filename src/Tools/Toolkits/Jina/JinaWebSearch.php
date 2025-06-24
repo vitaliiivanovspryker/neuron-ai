@@ -24,7 +24,7 @@ class JinaWebSearch extends Tool
         parent::__construct(
             'web_search',
             'Use this tool to search the web for additional information '.
-            (!empty($topics) ? 'about '.implode(', ', $topics).', or ' : '').
+            (!empty($topics) ? 'about '.\implode(', ', $topics).', or ' : '').
             'if the question is outside the scope of the context you have.'
         );
     }

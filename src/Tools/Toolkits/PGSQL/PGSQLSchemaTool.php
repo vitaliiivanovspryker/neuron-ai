@@ -285,7 +285,7 @@ and performance optimization. If you already know the database structure, you ca
             $cleanColumns = [];
             foreach ($columns as $col) {
                 // Extract just the column name if it's wrapped in functions
-                if (preg_match('/([a-zA-Z_][a-zA-Z0-9_]*)/', $col, $colMatches)) {
+                if (\preg_match('/([a-zA-Z_][a-zA-Z0-9_]*)/', $col, $colMatches)) {
                     $cleanColumns[] = $colMatches[1];
                 }
             }

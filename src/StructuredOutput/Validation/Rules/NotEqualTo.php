@@ -14,7 +14,7 @@ class NotEqualTo extends AbstractValidationRule
     public function validate(string $name, mixed $value, array &$violations): void
     {
         if ($value === $this->reference) {
-            $violations[] = $this->buildMessage($name, 'must not be equal to {compare}', ['compare' => get_debug_type($this->reference)]);
+            $violations[] = $this->buildMessage($name, 'must not be equal to {compare}', ['compare' => \get_debug_type($this->reference)]);
         }
     }
 }

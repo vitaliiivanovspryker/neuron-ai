@@ -19,7 +19,7 @@ class QdrantVectorStore implements VectorStoreInterface
         protected int $topK = 4,
     ) {
         $this->client = new Client([
-            'base_uri' => trim($this->collectionUrl, '/').'/',
+            'base_uri' => \trim($this->collectionUrl, '/').'/',
             'headers' => [
                 'Content-Type' => 'application/json',
                 'api-key' => $this->key,
@@ -70,7 +70,7 @@ class QdrantVectorStore implements VectorStoreInterface
         $this->client->put('points', [
             RequestOptions::JSON => [
                 'operations' => [
-                    ['upsert' => compact('points')]
+                    ['upsert' => \compact('points')]
                 ],
             ]
         ]);

@@ -132,7 +132,7 @@ It looks like you are trying to run a write query using the read-only query tool
             $statements = $this->splitStatements($query);
             foreach ($statements as $statement) {
                 if (!empty(\trim($statement))) {
-                    if (!$this->validateSingleStatement(trim($statement))) {
+                    if (!$this->validateSingleStatement(\trim($statement))) {
                         return false;
                     }
                 }

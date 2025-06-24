@@ -52,10 +52,10 @@ trait HandleStructured
         do {
             try {
                 // If something goes wrong, retry informing the model about the error
-                if (!empty(trim($error))) {
+                if (!empty(\trim($error))) {
                     $correctionMessage = new UserMessage(
                         "There was a problem in your previous response that generated the following errors".
-                        PHP_EOL.PHP_EOL.'- '.$error.PHP_EOL.PHP_EOL.
+                        \PHP_EOL.\PHP_EOL.'- '.$error.\PHP_EOL.\PHP_EOL.
                         "Try to generate the correct JSON structure based on the provided schema."
                     );
                     $this->fillChatHistory($correctionMessage);
@@ -131,7 +131,7 @@ trait HandleStructured
 
         if (\count($violations) > 0) {
             $this->notify('structured-validated', new Validated($class, $json, $violations));
-            throw new AgentException(PHP_EOL.'- '.implode(PHP_EOL.'- ', $violations));
+            throw new AgentException(\PHP_EOL.'- '.\implode(\PHP_EOL.'- ', $violations));
         }
         $this->notify('structured-validated', new Validated($class, $json));
 

@@ -11,7 +11,7 @@ class Url extends AbstractValidationRule
 
     public function validate(string $name, mixed $value, array &$violations): void
     {
-        if (filter_var($value, FILTER_VALIDATE_URL) === false) {
+        if (\filter_var($value, \FILTER_VALIDATE_URL) === false) {
             $violations[] = $this->buildMessage($name, $this->message);
         }
     }

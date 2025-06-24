@@ -66,14 +66,14 @@ class DoctrineVectorStoreTest extends TestCase
         $this->schemaTool = new SchemaTool($this->entityManager);
         $this->metadata = $this->entityManager->getClassMetadata(EntityVectorStub::class);
         $this->schemaTool->createSchema([$this->metadata]);
-        $this->embeddingToSearch = json_decode(file_get_contents(__DIR__ . '/../Stubs/hello-world.embeddings'), true);
+        $this->embeddingToSearch = \json_decode(\file_get_contents(__DIR__ . '/../Stubs/hello-world.embeddings'), true);
     }
 
     protected function bootstrapDatabase(): void
     {
         $scriptPath = __DIR__ . '/../scripts/setup-test-db.php';
 
-        if (!file_exists($scriptPath)) {
+        if (!\file_exists($scriptPath)) {
             throw new \RuntimeException("Bootstrap script not found at $scriptPath");
         }
 
@@ -124,7 +124,7 @@ class DoctrineVectorStoreTest extends TestCase
     private function generateVectors(array $vectors): array
     {
         $result = [];
-        $count = count($vectors);
+        $count = \count($vectors);
 
         for ($i = 0; $i < self::EMBEDDING_SIZE; $i++) {
             $result[] = $vectors[$i % $count];

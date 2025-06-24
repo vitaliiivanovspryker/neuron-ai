@@ -42,7 +42,7 @@ class TypesenseTest extends TestCase
         ]);
 
         // embedding "Hello World!"
-        $this->embedding = json_decode(file_get_contents(__DIR__ . '/../Stubs/hello-world.embeddings'), true);
+        $this->embedding = \json_decode(\file_get_contents(__DIR__ . '/../Stubs/hello-world.embeddings'), true);
     }
 
     public function test_typesense_instance(): void
