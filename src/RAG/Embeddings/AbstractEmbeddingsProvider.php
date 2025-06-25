@@ -10,7 +10,6 @@ abstract class AbstractEmbeddingsProvider implements EmbeddingsProviderInterface
 {
     public function embedDocuments(array $documents): array
     {
-        /** @var Document $document */
         foreach ($documents as $index => $document) {
             $documents[$index] = $this->embedDocument($document);
         }
