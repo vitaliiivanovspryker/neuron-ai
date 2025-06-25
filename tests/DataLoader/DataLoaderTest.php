@@ -18,13 +18,13 @@ class DataLoaderTest extends TestCase
         $this->assertEquals('test', $documents[0]->getContent());
     }
 
-    public function test_file_data_loader()
+    public function test_file_data_loader(): void
     {
         $documents = FileDataLoader::for(__DIR__.'/target.txt')
             ->withSplitter(
                 new DelimiterTextSplitter(
                     10,
-                    PHP_EOL
+                    \PHP_EOL
                 )
             )
             ->getDocuments();
