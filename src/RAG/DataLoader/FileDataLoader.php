@@ -48,7 +48,8 @@ class FileDataLoader extends AbstractDataLoader
 
         // If it's a file
         try {
-            return [$this->getDocument($this->getContentFromFile($this->path), $this->path)];
+            //return [$this->getDocument($this->getContentFromFile($this->path), $this->path)];
+            return $this->splitter->splitDocument($this->getDocument($this->getContentFromFile($this->path), $this->path));
         } catch (\Throwable) {
             return [];
         }
