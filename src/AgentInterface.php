@@ -6,6 +6,7 @@ namespace NeuronAI;
 
 use GuzzleHttp\Promise\PromiseInterface;
 use NeuronAI\Chat\History\AbstractChatHistory;
+use NeuronAI\Chat\History\ChatHistoryInterface;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Tools\ToolInterface;
@@ -27,7 +28,7 @@ interface AgentInterface extends \SplSubject
 
     public function withChatHistory(AbstractChatHistory $chatHistory): AgentInterface;
 
-    public function resolveChatHistory(): AbstractChatHistory;
+    public function resolveChatHistory(): ChatHistoryInterface;
 
     public function observe(\SplObserver $observer, string $event = "*"): self;
 

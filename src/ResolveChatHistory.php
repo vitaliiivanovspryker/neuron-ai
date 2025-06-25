@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NeuronAI;
 
-use NeuronAI\Chat\History\AbstractChatHistory;
 use NeuronAI\Chat\History\ChatHistoryInterface;
 use NeuronAI\Chat\History\InMemoryChatHistory;
 use NeuronAI\Chat\Messages\Message;
