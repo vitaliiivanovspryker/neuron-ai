@@ -24,7 +24,7 @@ class DataLoaderTest extends TestCase
             ->withSplitter(
                 new DelimiterTextSplitter(
                     10,
-                    PHP_EOL
+                    \PHP_EOL
                 )
             )
             ->getDocuments();
