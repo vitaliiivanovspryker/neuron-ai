@@ -6,7 +6,6 @@ namespace NeuronAI\RAG\VectorStore;
 
 use NeuronAI\Exceptions\VectorStoreException;
 use NeuronAI\RAG\Document;
-use NeuronAI\RAG\VectorStore\Search\SimilaritySearch;
 
 class FileVectorStore implements VectorStoreInterface
 {
@@ -48,7 +47,7 @@ class FileVectorStore implements VectorStoreInterface
             if (empty($document['embedding'])) {
                 throw new VectorStoreException("Document with the following content has no embedding: {$document['content']}");
             }
-            $dist = $this->cosineSimilarity($embedding, $document['embedding']);
+            $dist = VectorSimilarity::cosineDistance($embedding, $document['embedding']);
 
             $topItems[] = \compact('dist', 'document');
 
@@ -66,17 +65,11 @@ class FileVectorStore implements VectorStoreInterface
             $document->sourceType = $itemDoc['sourceType'];
             $document->sourceName = $itemDoc['sourceName'];
             $document->id = $itemDoc['id'];
-            $document->score = 1 - $item['dist'];
+            $document->score = VectorSimilarity::similarityFromDistance($item['dist']);
             $document->metadata = $itemDoc['metadata'] ?? [];
 
             return $document;
         }, $topItems);
-    }
-
-
-    protected function cosineSimilarity(array $vector1, array $vector2): float
-    {
-        return SimilaritySearch::cosine($vector1, $vector2);
     }
 
     protected function appendToFile(array $documents): void
