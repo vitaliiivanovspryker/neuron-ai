@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class VectorSimilarityTest extends TestCase
 {
-    public function test_identical_vectors()
+    public function test_identical_vectors(): void
     {
         $v1 = [1, 2, 3];
         $v2 = [1, 2, 3];
@@ -18,7 +18,7 @@ class VectorSimilarityTest extends TestCase
         $this->assertEquals(0.0, VectorSimilarity::cosineDistance($v1, $v2));
     }
 
-    public function test_orthogonal_vectors()
+    public function test_orthogonal_vectors(): void
     {
         $v1 = [1, 0];
         $v2 = [0, 1];
@@ -26,7 +26,7 @@ class VectorSimilarityTest extends TestCase
         $this->assertEquals(1.0, VectorSimilarity::cosineDistance($v1, $v2));
     }
 
-    public function test_opposite_vectors()
+    public function test_opposite_vectors(): void
     {
         $v1 = [1, 0];
         $v2 = [-1, 0];
@@ -34,7 +34,7 @@ class VectorSimilarityTest extends TestCase
         $this->assertEquals(2.0, VectorSimilarity::cosineDistance($v1, $v2));
     }
 
-    public function test_zero_vector()
+    public function test_zero_vector(): void
     {
         $v1 = [0, 0, 0];
         $v2 = [1, 2, 3];
@@ -42,9 +42,9 @@ class VectorSimilarityTest extends TestCase
         $this->assertEquals(1.0, VectorSimilarity::cosineDistance($v1, $v2));
     }
 
-    public function test_different_length_vectors()
+    public function test_different_length_vectors(): void
     {
         $this->expectException(VectorStoreException::class);
         VectorSimilarity::cosineSimilarity([1, 2], [1, 2, 3]);
     }
-} 
+}
