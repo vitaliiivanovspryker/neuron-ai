@@ -100,7 +100,7 @@ class RAG extends Agent
      */
     public function withDocumentsContext(array $documents): AgentInterface
     {
-        $originalInstructions = $this->instructions();
+        $originalInstructions = $this->resolveInstructions();
 
         // Remove the old context to avoid infinite grow
         $newInstructions = $this->removeDelimitedContent($originalInstructions, '<EXTRA-CONTEXT>', '</EXTRA-CONTEXT>');
