@@ -54,7 +54,7 @@ class TavilyCrawlTool extends Tool
         if (!\filter_var($url, \FILTER_VALIDATE_URL)) {
             throw new ToolException('Invalid URL.');
         }
-        dd($this->options);
+
         $result = $this->getClient()->post('crawl', [
             RequestOptions::JSON => \array_merge(
                 $this->options,
