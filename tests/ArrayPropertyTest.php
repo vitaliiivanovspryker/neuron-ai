@@ -73,7 +73,7 @@ class ArrayPropertyTest extends TestCase
         $this->assertEquals($expectedJsonSchema, $arrayProp->getJsonSchema());
     }
 
-    public function test_array_property_minmax_items_null(): void
+    public function test_array_property_min_and_max_items_null(): void
     {
         $arrayProp = new ArrayProperty(
             name: "array_prop",

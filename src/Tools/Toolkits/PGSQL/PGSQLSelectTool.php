@@ -18,7 +18,7 @@ class PGSQLSelectTool extends Tool
     /**
      * Patterns for write operations that should be blocked
      */
-    protected array $forbittemPatterns = [
+    protected array $forbiddenPatterns = [
         '/^\s*(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE|REPLACE)\s+/i',
         '/\b(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE|REPLACE)\s+/i',
         '/;\s*(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE|REPLACE)\s+/i',
@@ -103,7 +103,7 @@ It looks like you are trying to run a write query using the read-only query tool
         }
 
         // Check for forbidden write operations
-        foreach ($this->forbittemPatterns as $pattern) {
+        foreach ($this->forbiddenPatterns as $pattern) {
             if (\preg_match($pattern, $cleanQuery)) {
                 return false;
             }
