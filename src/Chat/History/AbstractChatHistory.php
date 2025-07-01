@@ -61,7 +61,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         return $this->history;
     }
 
-    public function getLastMessage(): Message
+    public function getLastMessage(): Message|false
     {
         return \end($this->history);
     }
