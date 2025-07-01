@@ -81,11 +81,10 @@ class AgentMonitoring implements \SplObserver
 
     /**
      * @param Inspector $inspector The monitoring instance
-     * @param bool $catch Report internal agent errors
      */
     public function __construct(
         protected Inspector $inspector,
-        protected bool $catch = true
+        protected bool $autoFlush = false,
     ) {
     }
 
@@ -95,12 +94,13 @@ class AgentMonitoring implements \SplObserver
         $configuration = new Configuration($_ENV['INSPECTOR_INGESTION_KEY']);
         $configuration->setTransport($_ENV['INSPECTOR_TRANSPORT'] ?? 'async');
 
+        // Split monitoring between agents and workflows.
         if (isset($_ENV['INSPECTOR_SPLIT_MONITORING'])) {
-            return new self(new Inspector($configuration));
+            return new self(new Inspector($configuration), $_ENV['NEURON_AUTOFLUSH']??false);
         }
 
         if (self::$instance === null) {
-            self::$instance = new self(new Inspector($configuration));
+            self::$instance = new self(new Inspector($configuration), $_ENV['NEURON_AUTOFLUSH']??false);
         }
         return self::$instance;
     }
@@ -115,12 +115,10 @@ class AgentMonitoring implements \SplObserver
 
     public function reportError(\SplSubject $subject, string $event, AgentError $data): void
     {
-        if ($this->catch) {
-            $this->inspector->reportException($data->exception, !$data->unhandled);
+        $this->inspector->reportException($data->exception, !$data->unhandled);
 
-            if ($data->unhandled) {
-                $this->inspector->transaction()->setResult('error');
-            }
+        if ($data->unhandled) {
+            $this->inspector->transaction()->setResult('error');
         }
     }
 
@@ -147,6 +145,9 @@ class AgentMonitoring implements \SplObserver
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     public function stop(Agent $agent, string $event, mixed $data = null): void
     {
         $method = $this->getPrefix($event);
@@ -165,6 +166,9 @@ class AgentMonitoring implements \SplObserver
         } elseif ($this->inspector->canAddSegments()) {
             $transaction = $this->inspector->transaction()->setResult('success');
             $transaction->setContext($this->getContext($agent));
+            if ($this->autoFlush) {
+                $this->inspector->flush();
+            }
         }
     }
 
