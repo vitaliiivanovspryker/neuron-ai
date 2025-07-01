@@ -114,7 +114,7 @@ class StdioTransport implements McpTransportInterface
             $status = \proc_get_status($this->process);
 
             if (!$status['running']) {
-                throw new McpException("MCP server process has terminated unexpectedly");
+                throw new McpException("MCP server process has terminated unexpectedly.");
             }
 
             $chunk = \fread($this->pipes[1], 4096);
