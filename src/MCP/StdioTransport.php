@@ -6,8 +6,9 @@ namespace NeuronAI\MCP;
 
 class StdioTransport implements McpTransportInterface
 {
-    private $process;
-    private $pipes;
+    /** @var null|resource|false $process */
+    private mixed $process;
+    private array $pipes;
 
     /**
      * Create a new StdioTransport with the given configuration

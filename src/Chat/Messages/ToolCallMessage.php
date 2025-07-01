@@ -6,6 +6,9 @@ namespace NeuronAI\Chat\Messages;
 
 use NeuronAI\Tools\ToolInterface;
 
+/**
+ * @method static static make(array|string|int|float|null $content = null, ToolInterface[] $tools)
+ */
 class ToolCallMessage extends AssistantMessage
 {
     /**

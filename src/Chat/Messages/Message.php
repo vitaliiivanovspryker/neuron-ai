@@ -6,9 +6,15 @@ namespace NeuronAI\Chat\Messages;
 
 use NeuronAI\Chat\Attachments\Attachment;
 use NeuronAI\Chat\Enums\MessageRole;
+use NeuronAI\StaticConstructor;
 
+/**
+ * @method static static make(MessageRole $role, array|string|int|float|null $content = null)
+ */
 class Message implements \JsonSerializable
 {
+    use StaticConstructor;
+
     protected ?Usage $usage = null;
     protected array $attachments = [];
 
