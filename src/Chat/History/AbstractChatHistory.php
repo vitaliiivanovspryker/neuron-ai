@@ -66,7 +66,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         return \end($this->history);
     }
 
-    abstract public function removeOldestMessage(): ChatHistoryInterface;
+    abstract public function removeOldMessage(int $index): ChatHistoryInterface;
 
     abstract protected function clear(): ChatHistoryInterface;
 
@@ -90,17 +90,26 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     protected function cutHistoryToContextWindow(): void
     {
-        if ($this->getFreeMemory() >= 0) {
-            return;
-        }
-
         // Cut old messages
-        do {
-            $this->removeOldestMessage();
-            if (\array_shift($this->history) === null) {
+        foreach ($this->history as $index => $message) {
+            if ($this->getFreeMemory() >= 0) {
                 break;
             }
-        } while ($this->getFreeMemory() < 0);
+
+            // Never remove tool messages otherwise the history can reference missing tool calls
+            // https://github.com/inspector-apm/neuron-ai/issues/204
+            if ($message instanceof ToolCallMessage || $message instanceof ToolCallResultMessage) {
+                continue;
+            }
+
+            $this->removeOldMessage($index);
+
+            // Unset preserve the keys
+            unset($this->history[$index]);
+        }
+
+        // Restore numerical keys
+        $this->history = \array_values($this->history);
     }
 
     public function getFreeMemory(): int
