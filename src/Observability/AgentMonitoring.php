@@ -96,11 +96,11 @@ class AgentMonitoring implements \SplObserver
 
         // Split monitoring between agents and workflows.
         if (isset($_ENV['INSPECTOR_SPLIT_MONITORING'])) {
-            return new self(new Inspector($configuration), $_ENV['NEURON_AUTOFLUSH']??false);
+            return new self(new Inspector($configuration), $_ENV['NEURON_AUTOFLUSH'] ?? false);
         }
 
         if (self::$instance === null) {
-            self::$instance = new self(new Inspector($configuration), $_ENV['NEURON_AUTOFLUSH']??false);
+            self::$instance = new self(new Inspector($configuration), $_ENV['NEURON_AUTOFLUSH'] ?? false);
         }
         return self::$instance;
     }
