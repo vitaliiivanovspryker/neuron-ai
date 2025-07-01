@@ -28,7 +28,6 @@ trait HandleStructured
     /**
      * Enforce a structured response.
      *
-     * @return mixed
      * @throws AgentException
      * @throws \ReflectionException
      * @throws \Throwable

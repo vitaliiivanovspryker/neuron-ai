@@ -136,7 +136,7 @@ class TypesenseVectorStore implements VectorStoreInterface
         $searchRequests = ['searches' => [$params]];
 
         $response = $this->client->multiSearch->perform($searchRequests);
-        return \array_map(function (array $hit) {
+        return \array_map(function (array $hit): Document {
             $item = $hit['document'];
             $document = new Document($item['content']);
             //$document->embedding = $item['embedding']; // avoid carrying large data

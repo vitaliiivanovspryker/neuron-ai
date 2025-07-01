@@ -33,7 +33,6 @@ class SentenceTextSplitter extends AbstractSplitter
     /**
      * Splits text into word-based chunks, preserving sentence boundaries.
      *
-     * @param Document $document
      * @return Document[] Array of Document chunks
      */
     public function splitDocument(Document $document): array
@@ -105,7 +104,6 @@ class SentenceTextSplitter extends AbstractSplitter
     /**
      * Tokenizes text into words (simple whitespace split).
      *
-     * @param string $text
      * @return string[] Array of words
      */
     private function tokenizeWords(string $text): array

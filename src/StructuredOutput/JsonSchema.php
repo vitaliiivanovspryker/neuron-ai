@@ -131,7 +131,6 @@ class JsonSchema
     /**
      * Process a single property to generate its schema
      *
-     * @param ReflectionProperty $property
      * @return array Property schema
      * @throws ReflectionException
      */
@@ -230,10 +229,6 @@ class JsonSchema
 
     /**
      * Process an enum to generate its schema
-     *
-     * @param ReflectionEnum $enum
-     * @param bool $isRoot
-     * @return array
      */
     private function processEnum(ReflectionEnum $enum, bool $isRoot = false): array
     {
@@ -277,9 +272,6 @@ class JsonSchema
 
     /**
      * Get the Property attribute if it exists on a property
-     *
-     * @param ReflectionProperty $property
-     * @return SchemaProperty|null
      */
     private function getPropertyAttribute(ReflectionProperty $property): ?SchemaProperty
     {

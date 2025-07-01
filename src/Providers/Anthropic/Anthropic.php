@@ -24,23 +24,17 @@ class Anthropic implements AIProviderInterface
 
     /**
      * The main URL of the provider API.
-     *
-     * @var string
      */
     protected string $baseUri = 'https://api.anthropic.com/v1/';
 
     /**
      * System instructions.
      * https://docs.anthropic.com/claude/docs/system-prompts#how-to-use-system-prompts
-     *
-     * @var string|null
      */
     protected ?string $system = null;
 
     /**
      * The component responsible for mapping the NeuronAI Message to the AI provider format.
-     *
-     * @var MessageMapperInterface
      */
     protected MessageMapperInterface $messageMapper;
 
@@ -83,7 +77,7 @@ class Anthropic implements AIProviderInterface
 
     protected function generateToolsPayload(): array
     {
-        return \array_map(function (ToolInterface $tool) {
+        return \array_map(function (ToolInterface $tool): array {
             $properties = \array_reduce($tool->getProperties(), function (array $carry, ToolPropertyInterface $property): array {
                 $carry[$property->getName()] = $property->getJsonSchema();
                 return $carry;

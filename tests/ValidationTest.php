@@ -513,7 +513,7 @@ class ValidationTest extends TestCase
 
         $this->expectException(StructuredOutputException::class);
 
-        $violations = Validator::validate($obj);
+        Validator::validate($obj);
     }
 
     public function test_enum_validation_exception_no_option_provided(): void
@@ -527,7 +527,7 @@ class ValidationTest extends TestCase
 
         $this->expectException(StructuredOutputException::class);
 
-        $violations = Validator::validate($obj);
+        Validator::validate($obj);
     }
 
     public function test_choice_validation_exception_invalid_enum(): void
@@ -541,7 +541,7 @@ class ValidationTest extends TestCase
 
         $this->expectException(StructuredOutputException::class);
 
-        $violations = Validator::validate($obj);
+        Validator::validate($obj);
     }
 
     public function test_enum_validation_exception_enum_non_backed(): void
@@ -555,6 +555,6 @@ class ValidationTest extends TestCase
 
         $this->expectException(StructuredOutputException::class);
 
-        $violations = Validator::validate($obj);
+        Validator::validate($obj);
     }
 }

@@ -16,8 +16,6 @@ class PineconeVectorStore implements VectorStoreInterface
      * Metadata filters.
      *
      * https://docs.pinecone.io/reference/api/2025-04/data-plane/query#body-filter
-     *
-     * @var array
      */
     protected array $filters = [];
 
@@ -78,7 +76,7 @@ class PineconeVectorStore implements VectorStoreInterface
 
         $result = \json_decode($result, true);
 
-        return \array_map(function (array $item) {
+        return \array_map(function (array $item): Document {
             $document = new Document();
             $document->id = $item['id'];
             $document->embedding = $item['values'];

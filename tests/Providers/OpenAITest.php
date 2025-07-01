@@ -232,7 +232,7 @@ class OpenAITest extends TestCase
             ])
             ->setClient($client);
 
-        $response = $provider->chat([new UserMessage('Hi')]);
+        $provider->chat([new UserMessage('Hi')]);
 
         // Ensure we sent one request
         $this->assertCount(1, $sentRequests);
@@ -301,7 +301,7 @@ class OpenAITest extends TestCase
             ])
             ->setClient($client);
 
-        $response = $provider->chat([new UserMessage('Hi')]);
+        $provider->chat([new UserMessage('Hi')]);
 
         // Ensure we sent one request
         $this->assertCount(1, $sentRequests);
@@ -375,7 +375,7 @@ class OpenAITest extends TestCase
             ])
             ->setClient($client);
 
-        $response = $provider->chat([new UserMessage('Hi')]);
+        $provider->chat([new UserMessage('Hi')]);
 
         // Ensure we sent one request
         $this->assertCount(1, $sentRequests);

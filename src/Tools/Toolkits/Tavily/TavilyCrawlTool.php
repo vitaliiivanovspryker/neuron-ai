@@ -62,9 +62,7 @@ class TavilyCrawlTool extends Tool
             )
         ])->getBody()->getContents();
 
-        $result = \json_decode($result, true);
-
-        return $result;
+        return \json_decode($result, true);
     }
 
 

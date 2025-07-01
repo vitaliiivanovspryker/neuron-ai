@@ -106,8 +106,6 @@ trait ResolveTools
     /**
      * Add tools.
      *
-     * @param ToolInterface|ToolkitInterface|array $tools
-     * @return AgentInterface
      * @throws AgentException
      */
     public function addTool(ToolInterface|ToolkitInterface|array $tools): AgentInterface

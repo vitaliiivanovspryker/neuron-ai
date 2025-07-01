@@ -57,7 +57,6 @@ class AdaptiveThresholdPostProcessor implements PostProcessorInterface
      * Calculates the median of an array of values
      *
      * @param float[] $values
-     * @return float
      */
     protected function calculateMedian(array $values): float
     {
@@ -77,7 +76,6 @@ class AdaptiveThresholdPostProcessor implements PostProcessorInterface
      *
      * @param float[] $values
      * @param float $median The median of the values
-     * @return float
      */
     protected function calculateMAD(array $values, float $median): float
     {

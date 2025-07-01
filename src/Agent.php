@@ -19,8 +19,6 @@ class Agent implements AgentInterface
 
     /**
      * The system instructions.
-     *
-     * @var string
      */
     protected string $instructions;
 

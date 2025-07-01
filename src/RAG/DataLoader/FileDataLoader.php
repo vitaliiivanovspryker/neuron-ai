@@ -25,10 +25,6 @@ class FileDataLoader extends AbstractDataLoader
         return $this;
     }
 
-    /**
-     * @param array $readers
-     * @return FileDataLoader
-     */
     public function setReaders(array $readers): self
     {
         $this->readers = $readers;

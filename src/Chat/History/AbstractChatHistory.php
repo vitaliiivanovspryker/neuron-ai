@@ -80,7 +80,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     public function calculateTotalUsage(): int
     {
-        return \array_reduce($this->history, function (int $carry, Message $message) {
+        return \array_reduce($this->history, function (int $carry, Message $message): int {
             if ($message->getUsage() instanceof \NeuronAI\Chat\Messages\Usage) {
                 $carry += $message->getUsage()->getTotal();
             }
@@ -208,11 +208,6 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         return new ToolCallResultMessage($tools);
     }
 
-    /**
-     * @param array $message
-     * @param Message $item
-     * @return void
-     */
     protected function deserializeMeta(array $message, Message $item): void
     {
         foreach ($message as $key => $value) {

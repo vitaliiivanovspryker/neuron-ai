@@ -22,9 +22,6 @@ class ToolProperty implements ToolPropertyInterface
     ) {
     }
 
-    /**
-     * @return array
-     */
     public function jsonSerialize(): array
     {
         return [

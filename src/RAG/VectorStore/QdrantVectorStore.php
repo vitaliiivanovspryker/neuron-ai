@@ -51,7 +51,6 @@ class QdrantVectorStore implements VectorStoreInterface
      * Bulk save documents.
      *
      * @param Document[] $documents
-     * @return void
      * @throws GuzzleException
      */
     public function addDocuments(array $documents): void
@@ -89,7 +88,7 @@ class QdrantVectorStore implements VectorStoreInterface
 
         $response = \json_decode($response, true);
 
-        return \array_map(function (array $item) {
+        return \array_map(function (array $item): Document {
             $document = new Document($item['payload']['content']);
             $document->id = $item['id'];
             $document->embedding = $item['vector'];

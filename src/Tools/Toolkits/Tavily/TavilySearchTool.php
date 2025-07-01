@@ -92,7 +92,7 @@ class TavilySearchTool extends Tool
         ?string $topic = null,
         ?string $time_range = null,
         ?int $days = null,
-    ) {
+    ): array {
         $topic ??= 'general';
         $time_range ??= 'day';
         $days ??= 7;

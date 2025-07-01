@@ -184,7 +184,6 @@ class RAG extends Agent
      * Feed the vector store with documents.
      *
      * @param Document[] $documents
-     * @return void
      */
     public function addDocuments(array $documents): void
     {

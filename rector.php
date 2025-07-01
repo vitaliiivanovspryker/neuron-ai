@@ -11,10 +11,10 @@ return RectorConfig::configure()
         __DIR__ . '/tests',
     ])
     ->withPhpSets(php81: true)
-    ->withTypeCoverageLevel(5)
-    ->withDeadCodeLevel(5)
     ->withPreparedSets(
-        codeQuality: true
+        codeQuality: true,
+        deadCode: true,
+        typeDeclarations: true
     )
     ->withRules([
         AddReturnTypeDeclarationRector::class

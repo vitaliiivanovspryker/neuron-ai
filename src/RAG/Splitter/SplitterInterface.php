@@ -9,7 +9,6 @@ use NeuronAI\RAG\Document;
 interface SplitterInterface
 {
     /**
-     * @param  Document  $document
      * @return array<Document>
      */
     public function splitDocument(Document $document): array;

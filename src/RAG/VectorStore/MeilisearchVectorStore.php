@@ -80,7 +80,7 @@ class MeilisearchVectorStore implements VectorStoreInterface
 
         $response = \json_decode($response, true);
 
-        return \array_map(function (array $item) {
+        return \array_map(function (array $item): Document {
             $document = new Document($item['content']);
             $document->id = $item['id'] ?? \uniqid();
             $document->sourceType = $item['sourceType'] ?? null;

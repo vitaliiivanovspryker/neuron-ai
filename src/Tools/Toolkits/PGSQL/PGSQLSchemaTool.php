@@ -38,7 +38,6 @@ and performance optimization. If you already know the database structure, you ca
     private function getTables(): array
     {
         $whereClause = "WHERE t.table_schema = current_schema() AND t.table_type = 'BASE TABLE'";
-        $paramIndex = 1;
         $params = [];
 
         if ($this->tables !== null && $this->tables !== []) {
@@ -248,7 +247,6 @@ and performance optimization. If you already know the database structure, you ca
     private function getIndexes(): array
     {
         $whereClause = "WHERE schemaname = current_schema() AND indexname NOT LIKE '%_pkey'";
-        $paramIndex = 1;
         $params = [];
 
         if ($this->tables !== null && $this->tables !== []) {
@@ -320,7 +318,6 @@ and performance optimization. If you already know the database structure, you ca
     private function getConstraints(): array
     {
         $whereClause = "WHERE table_schema = current_schema() AND constraint_type IN ('UNIQUE', 'CHECK')";
-        $paramIndex = 1;
         $params = [];
 
         if ($this->tables !== null && $this->tables !== []) {

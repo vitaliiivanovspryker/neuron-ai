@@ -97,7 +97,7 @@ class ArrayPropertyTest extends TestCase
         $this->expectException(ArrayPropertyException::class);
         $this->expectExceptionMessage('minItems must be >= 0, got -1');
 
-        $arrayProp = new ArrayProperty(
+        new ArrayProperty(
             name :"array_prop",
             description: "array prop description",
             items: new ToolProperty(
@@ -116,7 +116,7 @@ class ArrayPropertyTest extends TestCase
         $this->expectException(ArrayPropertyException::class);
         $this->expectExceptionMessage('maxItems must be >= 0, got -1');
 
-        $arrayProp = new ArrayProperty(
+        new ArrayProperty(
             name :"array_prop",
             description: "array prop description",
             items: new ToolProperty(
@@ -135,7 +135,7 @@ class ArrayPropertyTest extends TestCase
         $this->expectException(ArrayPropertyException::class);
         $this->expectExceptionMessage('minItems (10) cannot be greater than maxItems (9)');
 
-        $arrayProp = new ArrayProperty(
+        new ArrayProperty(
             name :"array_prop",
             description: "array prop description",
             items: new ToolProperty(

@@ -69,7 +69,7 @@ class RizaCodeInterpreter extends Tool
         string $code,
         array $args = [],
         array $env = [],
-    ) {
+    ): mixed {
         $result = $this->getClient()->post('execute', [
             RequestOptions::JSON => [
                 'language' => $this->language,

@@ -10,7 +10,6 @@ interface MessageMapperInterface
 {
     /**
      * @param array<Message> $messages
-     * @return array
      */
     public function map(array $messages): array;
 }

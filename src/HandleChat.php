@@ -19,8 +19,6 @@ trait HandleChat
     /**
      * Execute the chat.
      *
-     * @param Message|array $messages
-     * @return Message
      * @throws \Throwable
      */
     public function chat(Message|array $messages): Message

@@ -33,7 +33,6 @@ class Deserializer
      *
      * @param  array  $data  The data to deserialize
      * @param  string  $className  The target class name
-     * @return object
      * @throws DeserializerException|\ReflectionException
      */
     private static function deserializeObject(array $data, string $className): object
@@ -79,10 +78,6 @@ class Deserializer
 
     /**
      * Find property value in data, supporting different naming conventions
-     *
-     * @param  array  $data
-     * @param  string  $propertyName
-     * @return mixed
      */
     private static function findPropertyValue(array $data, string $propertyName): mixed
     {
@@ -154,17 +149,17 @@ class Deserializer
             'int' => (int) $value,
             'float' => (float) $value,
             'bool' => (bool) $value,
-            'array' => self::handleArray($value, $typeName, $property),
+            'array' => self::handleArray($value, $property),
             'DateTime' => self::createDateTime($value),
             'DateTimeImmutable' => self::createDateTimeImmutable($value),
-            default => self::handleSingleObject($value, $typeName, $property)
+            default => self::handleSingleObject($value, $typeName)
         };
     }
 
     /**
      * @throws DeserializerException|\ReflectionException
      */
-    private static function handleSingleObject(mixed $value, string $typeName, \ReflectionProperty $property): mixed
+    private static function handleSingleObject(mixed $value, string $typeName): mixed
     {
         if (\is_array($value) && \class_exists($typeName)) {
             return self::deserializeObject($value, $typeName);
@@ -172,11 +167,6 @@ class Deserializer
 
         if (\enum_exists($typeName)) {
             return self::handleEnum($typeName, $value);
-        }
-
-        // If it's already the correct type, return as-is
-        if (\is_object($value) && $value::class === $typeName) {
-            return $value;
         }
 
         // Fallback: return the value as-is
@@ -188,7 +178,7 @@ class Deserializer
      *
      * @throws DeserializerException|\ReflectionException
      */
-    private static function handleArray(mixed $value, string $typeName, \ReflectionProperty $property): mixed
+    private static function handleArray(mixed $value, \ReflectionProperty $property): mixed
     {
         // Handle arrays of objects using docblock annotations
         if (self::isArrayOfObjects($property)) {
