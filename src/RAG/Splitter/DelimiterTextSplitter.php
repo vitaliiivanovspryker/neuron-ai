@@ -6,7 +6,7 @@ namespace NeuronAI\RAG\Splitter;
 
 use NeuronAI\RAG\Document;
 
-class DelimiterTextSplitter implements SplitterInterface
+class DelimiterTextSplitter extends AbstractSplitter
 {
     public function __construct(private readonly int $maxLength = 1000, private readonly string $separator = ' ', private readonly int $wordOverlap = 0)
     {
@@ -37,21 +37,6 @@ class DelimiterTextSplitter implements SplitterInterface
             $newDocument->sourceType = $document->getSourceType();
             $newDocument->sourceName = $document->getSourceName();
             $split[] = $newDocument;
-        }
-
-        return $split;
-    }
-
-    /**
-     * @param  Document[]  $documents
-     * @return Document[]
-     */
-    public function splitDocuments(array $documents): array
-    {
-        $split = [];
-
-        foreach ($documents as $document) {
-            $split = \array_merge($split, $this->splitDocument($document));
         }
 
         return $split;

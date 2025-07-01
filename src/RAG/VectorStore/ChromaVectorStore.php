@@ -62,7 +62,7 @@ class ChromaVectorStore implements VectorStoreInterface
             $document->content = $response['documents'][$i];
             $document->sourceType = $response['metadatas'][$i]['sourceType'] ?? null;
             $document->sourceName = $response['metadatas'][$i]['sourceName'] ?? null;
-            $document->score = $response['distances'][$i];
+            $document->score = VectorSimilarity::similarityFromDistance($response['distances'][$i]);
 
             foreach ($response['metadatas'][$i] as $name => $value) {
                 if (!\in_array($name, ['content', 'sourceType', 'sourceName', 'score', 'embedding', 'id'])) {

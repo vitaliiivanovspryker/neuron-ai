@@ -17,16 +17,13 @@ class ObjectProperty implements ToolPropertyInterface
     protected PropertyType $type = PropertyType::OBJECT;
 
     /**
-     * @param  string  $name  The name of the property.
-     * @param  string  $description  A description explaining the purpose or usage of the property.
-     * @param  bool  $required  Whether the property is required (true) or optional (false). Defaults to false.
      * @param  string|null  $class  The associated class name, or null if not applicable.
      * @param  array<ToolPropertyInterface>  $properties  An array of additional properties.
      * @throws \ReflectionException
      */
     public function __construct(
         protected string $name,
-        protected string $description,
+        protected ?string $description = null,
         protected bool $required = false,
         protected ?string $class = null,
         protected array $properties = [],
@@ -108,7 +105,7 @@ class ObjectProperty implements ToolPropertyInterface
         return $this->type;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }

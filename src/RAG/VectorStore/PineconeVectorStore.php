@@ -69,6 +69,7 @@ class PineconeVectorStore implements VectorStoreInterface
             RequestOptions::JSON => [
                 'namespace' => $this->namespace,
                 'includeMetadata' => true,
+                'includeValues' => true,
                 'vector' => $embedding,
                 'topK' => $this->topK,
                 'filters' => $this->filters, // Hybrid search
