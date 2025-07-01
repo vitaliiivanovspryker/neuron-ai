@@ -104,12 +104,8 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
             $this->removeOldMessage($index);
 
-            // Unset preserve the keys
-            unset($this->history[$index]);
+            \array_splice($this->history, $index, 1);
         }
-
-        // Restore numerical keys
-        $this->history = \array_values($this->history);
     }
 
     public function getFreeMemory(): int
