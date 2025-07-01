@@ -8,6 +8,7 @@
             "email": "valerio@inspector.dev"
         }
     ],
+    "license": "MIT",
     "require": {
         "php": "^8.1",
         "guzzlehttp/guzzle": "^7.0",
