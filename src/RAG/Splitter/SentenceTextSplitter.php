@@ -11,7 +11,7 @@ use InvalidArgumentException;
  * Splits text into sentences, groups into word-based chunks, and applies
  * overlap in terms of words.
  */
-class SentenceTextSplitter implements SplitterInterface
+class SentenceTextSplitter extends AbstractSplitter
 {
     private readonly int $maxWords;
     private readonly int $overlapWords;
@@ -90,19 +90,6 @@ class SentenceTextSplitter implements SplitterInterface
         }
 
         return $split;
-    }
-
-    /**
-     * @param  array<Document>  $documents
-     * @return array<Document>
-     */
-    public function splitDocuments(array $documents): array
-    {
-        $result = [];
-        foreach ($documents as $document) {
-            $result = \array_merge($result, $this->splitDocument($document));
-        }
-        return $result;
     }
 
     /**

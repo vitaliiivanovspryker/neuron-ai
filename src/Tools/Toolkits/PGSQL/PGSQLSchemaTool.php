@@ -44,7 +44,7 @@ and performance optimization. If you already know the database structure, you ca
         if (!empty($this->tables)) {
             $placeholders = [];
             foreach ($this->tables as $table) {
-                $placeholders[] = '$' . $paramIndex++;
+                $placeholders[] = '?';
                 $params[] = $table;
             }
             $whereClause .= " AND t.table_name = ANY(ARRAY[" . \implode(',', $placeholders) . "])";
@@ -206,7 +206,7 @@ and performance optimization. If you already know the database structure, you ca
         if (!empty($this->tables)) {
             $placeholders = [];
             foreach ($this->tables as $table) {
-                $placeholders[] = '$' . $paramIndex++;
+                $placeholders[] = '?';
                 $params[] = $table;
             }
             $additionalPlaceholders = [];
@@ -254,7 +254,7 @@ and performance optimization. If you already know the database structure, you ca
         if (!empty($this->tables)) {
             $placeholders = [];
             foreach ($this->tables as $table) {
-                $placeholders[] = '$' . $paramIndex++;
+                $placeholders[] = '?';
                 $params[] = $table;
             }
             $whereClause .= " AND tablename = ANY(ARRAY[" . \implode(',', $placeholders) . "])";
@@ -326,7 +326,7 @@ and performance optimization. If you already know the database structure, you ca
         if (!empty($this->tables)) {
             $placeholders = [];
             foreach ($this->tables as $table) {
-                $placeholders[] = '$' . $paramIndex++;
+                $placeholders[] = '?';
                 $params[] = $table;
             }
             $whereClause .= " AND table_name = ANY(ARRAY[" . \implode(',', $placeholders) . "])";

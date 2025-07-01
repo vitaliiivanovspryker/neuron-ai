@@ -21,7 +21,7 @@ class ArrayProperty implements ToolPropertyInterface
      */
     public function __construct(
         protected string $name,
-        protected string $description,
+        protected ?string $description = null,
         protected bool $required = false,
         protected ?ToolPropertyInterface $items = null,
         protected ?int $minItems = null,
@@ -78,7 +78,7 @@ class ArrayProperty implements ToolPropertyInterface
         return $this->type;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }

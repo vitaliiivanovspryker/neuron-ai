@@ -15,5 +15,9 @@ interface EmbeddingsProviderInterface
 
     public function embedDocument(Document $document): Document;
 
+    /**
+     * @param Document[] $documents
+     * @return Document[]
+     */
     public function embedDocuments(array $documents): array;
 }

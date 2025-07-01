@@ -142,7 +142,7 @@ class TypesenseVectorStore implements VectorStoreInterface
             //$document->embedding = $item['embedding']; // avoid carrying large data
             $document->sourceType = $item['sourceType'];
             $document->sourceName = $item['sourceName'];
-            $document->score = 1 - $hit['vector_distance'];
+            $document->score = VectorSimilarity::similarityFromDistance($hit['vector_distance']);
 
             foreach ($item as $name => $value) {
                 if (!\in_array($name, ['content', 'sourceType', 'sourceName', 'score', 'embedding', 'id', 'vector_distance'])) {

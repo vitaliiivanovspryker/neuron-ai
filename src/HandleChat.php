@@ -65,7 +65,7 @@ trait HandleChat
                 return $response;
             }, function (\Throwable $exception): void {
                 $this->notify('error', new AgentError($exception));
-                throw new AgentException($exception->getMessage(), (int)$exception->getCode(), $exception);
+                throw new AgentException($exception->getMessage(), $exception->getCode(), $exception);
             });
     }
 }

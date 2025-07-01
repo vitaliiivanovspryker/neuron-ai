@@ -10,7 +10,7 @@ interface ToolPropertyInterface extends \JsonSerializable
 
     public function getType(): PropertyType;
 
-    public function getDescription(): string;
+    public function getDescription(): ?string;
 
     public function isRequired(): bool;
 
