@@ -116,8 +116,8 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
                 // Delete the item without altering the keys
                 $this->removeOldMessage($index);
                 unset($this->history[$index]);
+                $processedIndices[] = $index;
             }
-
         }
 
         // Recalculate numerical keys
