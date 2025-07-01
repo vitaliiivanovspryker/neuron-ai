@@ -16,7 +16,7 @@ class ToolProperty implements ToolPropertyInterface
     public function __construct(
         protected string $name,
         protected PropertyType $type,
-        protected string $description,
+        protected ?string $description = null,
         protected bool $required = false,
         protected array $enum = [],
     ) {
@@ -51,7 +51,7 @@ class ToolProperty implements ToolPropertyInterface
         return $this->type;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }

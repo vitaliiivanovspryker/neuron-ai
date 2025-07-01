@@ -33,7 +33,7 @@ class VectorSimilarity
             return 0.0;
         }
 
-        return $dotProduct / (sqrt($magnitude1) * sqrt($magnitude2));
+        return $dotProduct / (\sqrt($magnitude1) * \sqrt($magnitude2));
     }
 
     public static function cosineDistance(array $vector1, array $vector2): float|int

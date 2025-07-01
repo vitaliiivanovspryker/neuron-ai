@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace NeuronAI\MCP;
 
+use NeuronAI\Exceptions\ArrayPropertyException;
 use NeuronAI\StaticConstructor;
+use NeuronAI\Tools\ArrayProperty;
+use NeuronAI\Tools\ObjectProperty;
 use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Tools\Tool;
@@ -36,6 +39,8 @@ class McpConnector
 
     /**
      * Convert the list of tools from the MCP server to Neuron compatible entities.
+     * @throws ArrayPropertyException
+     * @throws \ReflectionException
      */
     protected function createTool(array $item): ToolInterface
     {
@@ -74,17 +79,56 @@ class McpConnector
                 }
             }
 
-            $property = new ToolProperty(
-                name: $name,
-                type: $type ?? PropertyType::STRING,
-                description: $input['description'] ?? '',
-                required: $required,
-                enum: $input['items']['enum'] ?? []
-            );
+            $type = $type ?? PropertyType::STRING;
+
+            $property = match ($type) {
+                PropertyType::ARRAY => $this->createArrayProperty($name, $type, $required, $input),
+                PropertyType::OBJECT => $this->createObjectProperty($name, $type, $required, $input),
+                default => $this->createProperty($name, $type, $required, $input),
+            };
 
             $tool->addProperty($property);
         }
 
         return $tool;
+    }
+
+    protected function createProperty(string $name, PropertyType $type, bool $required, array $input): ToolProperty
+    {
+        return new ToolProperty(
+            name: $name,
+            type: $type,
+            description: $input['description'] ?? null,
+            required: $required,
+            enum: $input['items']['enum'] ?? []
+        );
+    }
+
+    /**
+     * @throws ArrayPropertyException
+     */
+    protected function createArrayProperty(string $name, PropertyType $type, bool $required, array $input): ArrayProperty
+    {
+        return new ArrayProperty(
+            name: $name,
+            description: $input['description'] ?? null,
+            required: $required,
+            items: new ToolProperty(
+                name: 'type',
+                type: PropertyType::from($input['items']['type']),
+            )
+        );
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
+    protected function createObjectProperty(string $name, PropertyType $type, bool $required, array $input): ObjectProperty
+    {
+        return new ObjectProperty(
+            name: $name,
+            description: $input['description'] ?? null,
+            required: $required,
+        );
     }
 }
