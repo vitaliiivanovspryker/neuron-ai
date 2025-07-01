@@ -14,10 +14,10 @@ class JsonExtractor
     public function __construct()
     {
         $this->extractors = [
-            fn (string $text) => [$text],                   // Try as it is
-            fn (string $text) => $this->findByMarkdown($text),
-            fn (string $text) => $this->findByBrackets($text),
-            fn (string $text) => $this->findJSONLikeStrings($text),
+            fn (string $text): array => [$text],                   // Try as it is
+            fn (string $text): array => $this->findByMarkdown($text),
+            fn (string $text): ?string => $this->findByBrackets($text),
+            fn (string $text): array => $this->findJSONLikeStrings($text),
         ];
     }
 

@@ -56,6 +56,6 @@ class Enum extends AbstractValidationRule
             throw new StructuredOutputException("Enum '{$this->class}' must implement BackedEnum.");
         }
 
-        $this->values = \array_map(fn (\BackedEnum $case) => $case->value, $this->class::cases());
+        $this->values = \array_map(fn (\BackedEnum $case): int|string => $case->value, $this->class::cases());
     }
 }

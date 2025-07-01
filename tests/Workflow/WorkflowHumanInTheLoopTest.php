@@ -80,13 +80,13 @@ class WorkflowHumanInTheLoopTest extends TestCase
                 new Edge(
                     MultipleInterruptNode::class,
                     MultipleInterruptNode::class,
-                    fn (WorkflowState $state) => $state->get('interrupt_counter', 0) < 2
+                    fn (WorkflowState $state): bool => $state->get('interrupt_counter', 0) < 2
                 ),
                 // Move forward when the interrupt_counter is >= 2
                 new Edge(
                     MultipleInterruptNode::class,
                     AfterInterruptNode::class,
-                    fn (WorkflowState $state) => $state->get('interrupt_counter', 0) >= 2
+                    fn (WorkflowState $state): bool => $state->get('interrupt_counter', 0) >= 2
                 )
             ])
             ->setStart(MultipleInterruptNode::class)

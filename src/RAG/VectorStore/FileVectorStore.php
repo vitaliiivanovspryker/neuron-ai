@@ -33,7 +33,7 @@ class FileVectorStore implements VectorStoreInterface
     public function addDocuments(array $documents): void
     {
         $this->appendToFile(
-            \array_map(fn (Document $document) => $document->jsonSerialize(), $documents)
+            \array_map(fn (Document $document): array => $document->jsonSerialize(), $documents)
         );
     }
 

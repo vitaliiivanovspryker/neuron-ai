@@ -95,7 +95,7 @@ class Message implements \JsonSerializable
         }
 
         if ($this->getAttachments() !== []) {
-            $data['attachments'] = \array_map(fn (Attachment $attachment) => $attachment->jsonSerialize(), $this->getAttachments());
+            $data['attachments'] = \array_map(fn (Attachment $attachment): array => $attachment->jsonSerialize(), $this->getAttachments());
         }
 
         return \array_merge($this->meta, $data);

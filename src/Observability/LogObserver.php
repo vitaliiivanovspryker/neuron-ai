@@ -91,7 +91,7 @@ class LogObserver implements \SplObserver
             ],
             Events\WorkflowStart::class => [
                 'nodes' => \array_keys($data->nodes),
-                'edges' => \array_map(fn (Edge $edge) => [
+                'edges' => \array_map(fn (Edge $edge): array => [
                     'from' => $edge->getFrom(),
                     'to' => $edge->getTo(),
                     'has_condition' => $edge->hasCondition(),

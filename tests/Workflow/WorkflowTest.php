@@ -77,12 +77,12 @@ class WorkflowTest extends TestCase
                 new Edge(
                     ConditionalNode::class,
                     MiddleNode::class,
-                    fn (WorkflowState $state) => $state->get('should_loop', false)
+                    fn (WorkflowState $state): mixed => $state->get('should_loop', false)
                 ),
                 new Edge(
                     ConditionalNode::class,
                     FinishNode::class,
-                    fn (WorkflowState $state) => !$state->get('should_loop', false)
+                    fn (WorkflowState $state): bool => !$state->get('should_loop', false)
                 )
             ])
             ->setStart(StartNode::class)
@@ -187,7 +187,7 @@ class WorkflowTest extends TestCase
             ->addEdge(new Edge(
                 StartNode::class,
                 FinishNode::class,
-                fn (WorkflowState $state) => false
+                fn (WorkflowState $state): bool => false
             ))
             ->setStart(StartNode::class)
             ->setEnd(FinishNode::class);
@@ -257,7 +257,7 @@ class WorkflowTest extends TestCase
         $edge = new Edge(
             StartNode::class,
             FinishNode::class,
-            fn (WorkflowState $s) => $s->get('test_value', false)
+            fn (WorkflowState $s): mixed => $s->get('test_value', false)
         );
 
         $this->assertTrue($edge->shouldExecute($state));

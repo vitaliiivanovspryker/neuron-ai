@@ -162,7 +162,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     protected function deserializeMessages(array $messages): array
     {
-        return \array_map(fn (array $message) => match ($message['type'] ?? null) {
+        return \array_map(fn (array $message): Message => match ($message['type'] ?? null) {
             'tool_call' => $this->deserializeToolCall($message),
             'tool_call_result' => $this->deserializeToolCallResult($message),
             default => $this->deserializeMessage($message),

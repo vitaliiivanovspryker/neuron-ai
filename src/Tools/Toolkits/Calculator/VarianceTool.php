@@ -50,7 +50,7 @@ DESC
         }
 
         // Filter and validate numeric values
-        $numericData = \array_filter($numbers, fn (string|float|int $value) => \is_numeric($value));
+        $numericData = \array_filter($numbers, fn (string|float|int $value): bool => \is_numeric($value));
 
         if ($numericData === []) {
             return ['error' => 'Data array must contain at least one numeric value'];

@@ -220,7 +220,7 @@ class Tool implements ToolInterface
                 $items = $property->getItems();
                 if ($items instanceof ObjectProperty && $items->getClass()) {
                     $class = $items->getClass();
-                    $carry[$propertyName] = \array_map(fn (array|object $input) => Deserializer::fromJson(\json_encode($input), $class), $inputValue);
+                    $carry[$propertyName] = \array_map(fn (array|object $input): object => Deserializer::fromJson(\json_encode($input), $class), $inputValue);
                     return $carry;
                 }
             }

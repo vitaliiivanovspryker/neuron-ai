@@ -49,7 +49,7 @@ class PineconeVectorStore implements VectorStoreInterface
         $this->client->post("vectors/upsert", [
             RequestOptions::JSON => [
                 'namespace' => $this->namespace,
-                'vectors' => \array_map(fn (Document $document) => [
+                'vectors' => \array_map(fn (Document $document): array => [
                     'id' => $document->getId(),
                     'values' => $document->getEmbedding(),
                     'metadata' => [

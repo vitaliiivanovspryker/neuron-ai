@@ -50,7 +50,7 @@ class AdaptiveThresholdPostProcessor implements PostProcessorInterface
         // Ensure a threshold is not negative
         $threshold = \max(0, $threshold);
 
-        return \array_values(\array_filter($documents, fn (Document $document) => $document->getScore() >= $threshold));
+        return \array_values(\array_filter($documents, fn (Document $document): bool => $document->getScore() >= $threshold));
     }
 
     /**

@@ -29,7 +29,7 @@ trait HandleToolEvents
     {
         if (\array_key_exists($agent::class.'_tools_bootstrap', $this->segments) && $data->tools !== []) {
             $segment = $this->segments[$agent::class.'_tools_bootstrap']->end();
-            $segment->addContext('Tools', \array_map(fn (ToolInterface $tool) => $tool->getName(), $data->tools));
+            $segment->addContext('Tools', \array_map(fn (ToolInterface $tool): string => $tool->getName(), $data->tools));
         }
     }
 
