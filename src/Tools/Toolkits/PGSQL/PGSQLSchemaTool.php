@@ -315,8 +315,7 @@ and performance optimization. If you already know the database structure, you ca
         }
         if (\str_contains($indexDef, 'USING brin')) {
             return 'BRIN';
-        }
-        else {
+        } else {
             return 'BTREE'; // Default
         }
     }
