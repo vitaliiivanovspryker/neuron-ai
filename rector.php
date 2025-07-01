@@ -14,9 +14,9 @@ return RectorConfig::configure()
     ->withPhpSets(php81: true)
     ->withTypeCoverageLevel(0)
     ->withDeadCodeLevel(0)
-    ->withCodeQualityLevel(0)
-//    ->withSkip([NullToStrictStringFuncCallArgRector::class])
-//    ->withPreparedSets()
+    ->withPreparedSets(
+        codeQuality: true
+    )
     ->withRules([
         AddReturnTypeDeclarationRector::class
     ]);

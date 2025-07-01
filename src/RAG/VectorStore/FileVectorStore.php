@@ -49,7 +49,7 @@ class FileVectorStore implements VectorStoreInterface
             }
             $dist = VectorSimilarity::cosineDistance($embedding, $document['embedding']);
 
-            $topItems[] = \compact('dist', 'document');
+            $topItems[] = ['dist' => $dist, 'document' => $document];
 
             \usort($topItems, fn (array $a, array $b): int => $a['dist'] <=> $b['dist']);
 

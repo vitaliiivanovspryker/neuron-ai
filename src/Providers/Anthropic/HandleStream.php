@@ -34,7 +34,7 @@ trait HandleStream
         // https://docs.anthropic.com/claude/reference/messages_post
         $stream = $this->client->post('messages', [
             'stream' => true,
-            ...\compact('json')
+            ...['json' => $json]
         ])->getBody();
 
         $toolCalls = [];
@@ -100,10 +100,8 @@ trait HandleStream
                 'name' => $line['content_block']['name'],
                 'input' => '',
             ];
-        } else {
-            if ($input = $line['delta']['partial_json'] ?? null) {
-                $toolCalls[$line['index']]['input'] .= $input;
-            }
+        } elseif ($input = $line['delta']['partial_json'] ?? null) {
+            $toolCalls[$line['index']]['input'] .= $input;
         }
 
         return $toolCalls;

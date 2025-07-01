@@ -292,7 +292,7 @@ class Deserializer
 
         $enum = $typeName::tryFrom($value);
 
-        if ($enum === null) {
+        if (!$enum instanceof \BackedEnum) {
             throw new DeserializerException("Invalid enum value '{$value}' for {$typeName}");
         }
 

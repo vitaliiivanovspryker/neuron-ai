@@ -48,7 +48,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
         ];
 
         // Map metadata
-        foreach ($document->metadata as $name => $value) {
+        foreach (array_keys($document->metadata) as $name) {
             $properties[$name] = [
                 'type' => 'keyword',
             ];
@@ -69,7 +69,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
      */
     public function addDocument(Document $document): void
     {
-        if (empty($document->embedding)) {
+        if ($document->embedding === []) {
             throw new \Exception('Document embedding must be set before adding a document');
         }
 
@@ -156,7 +156,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
         ];
 
         // Hybrid search
-        if (!empty($this->filters)) {
+        if ($this->filters !== []) {
             $searchParams['body']['knn']['filter'] = $this->filters;
         }
 

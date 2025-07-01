@@ -21,15 +21,15 @@ class Enum extends AbstractValidationRule
         protected ?array  $values = [],
         protected ?string $class = null,
     ) {
-        if (!empty($this->values) && $this->class !== null) {
+        if ($this->values !== null && $this->values !== [] && $this->class !== null) {
             throw new StructuredOutputException('You cannot provide both "choices" and "enum" options simultaneously. Please use only one.');
         }
 
-        if (empty($this->values) && $this->class === null) {
+        if (($this->values === null || $this->values === []) && $this->class === null) {
             throw new StructuredOutputException('Either option "choices" or "enum" must be given for validation rule "Enum"');
         }
 
-        if (empty($this->values)) {
+        if ($this->values === null || $this->values === []) {
             $this->handleEnum();
         }
     }

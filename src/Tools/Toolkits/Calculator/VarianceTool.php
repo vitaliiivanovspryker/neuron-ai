@@ -45,14 +45,14 @@ DESC
     public function __invoke(array $numbers): float|array
     {
         // Validate input
-        if (empty($numbers)) {
+        if ($numbers === []) {
             return ['error' => 'Data array cannot be empty'];
         }
 
         // Filter and validate numeric values
         $numericData = \array_filter($numbers, fn (string|float|int $value) => \is_numeric($value));
 
-        if (empty($numericData)) {
+        if ($numericData === []) {
             return ['error' => 'Data array must contain at least one numeric value'];
         }
 

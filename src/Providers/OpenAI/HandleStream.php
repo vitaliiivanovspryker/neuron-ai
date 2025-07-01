@@ -38,7 +38,7 @@ trait HandleStream
 
         $stream = $this->client->post('chat/completions', [
             'stream' => true,
-            ...\compact('json')
+            ...['json' => $json]
         ])->getBody();
 
         $text = '';

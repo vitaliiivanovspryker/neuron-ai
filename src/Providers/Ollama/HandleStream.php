@@ -30,7 +30,7 @@ trait HandleStream
 
         $stream = $this->client->post('chat', [
             'stream' => true,
-            ...\compact('json')
+            ...['json' => $json]
         ])->getBody();
 
         while (! $stream->eof()) {

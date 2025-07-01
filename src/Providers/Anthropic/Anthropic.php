@@ -94,7 +94,7 @@ class Anthropic implements AIProviderInterface
                 'description' => $tool->getDescription(),
                 'input_schema' => [
                     'type' => 'object',
-                    'properties' => !empty($properties) ? $properties : null,
+                    'properties' => empty($properties) ? null : $properties,
                     'required' => $tool->getRequiredProperties(),
                 ],
             ];

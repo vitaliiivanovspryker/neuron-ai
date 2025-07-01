@@ -37,7 +37,7 @@ class JsonExtractor
             }
 
             foreach ($candidates as $candidate) {
-                if (!\is_string($candidate) || empty(\trim($candidate))) {
+                if (!\is_string($candidate) || \trim($candidate) === '') {
                     continue;
                 }
 
@@ -83,7 +83,7 @@ class JsonExtractor
      */
     private function findByMarkdown(string $text): array
     {
-        if (empty(\trim($text))) {
+        if (\trim($text) === '') {
             return [];
         }
 
@@ -127,7 +127,7 @@ class JsonExtractor
     private function findByBrackets(string $text): ?string
     {
         $trimmed = \trim($text);
-        if (empty($trimmed)) {
+        if ($trimmed === '') {
             return null;
         }
 
@@ -151,7 +151,7 @@ class JsonExtractor
     private function findJSONLikeStrings(string $text): array
     {
         $text = \trim($text);
-        if (empty($text)) {
+        if ($text === '') {
             return [];
         }
 

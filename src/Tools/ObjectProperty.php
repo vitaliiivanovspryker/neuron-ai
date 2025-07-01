@@ -28,7 +28,7 @@ class ObjectProperty implements ToolPropertyInterface
         protected ?string $class = null,
         protected array $properties = [],
     ) {
-        if (empty($this->properties) && \class_exists($this->class)) {
+        if ($this->properties === [] && \class_exists($this->class)) {
             $schema = (new JsonSchema())->generate($this->getClass());
             $required = [];
 

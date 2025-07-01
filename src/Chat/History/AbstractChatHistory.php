@@ -27,11 +27,11 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     protected function updateUsedTokens(Message $message): void
     {
-        if ($message->getUsage()) {
+        if ($message->getUsage() instanceof \NeuronAI\Chat\Messages\Usage) {
             // For every new message, we store only the marginal contribution of input tokens
             // of the latest interactions.
             $previousInputConsumption = \array_reduce($this->history, function (int $carry, Message $message): int {
-                if ($message->getUsage()) {
+                if ($message->getUsage() instanceof \NeuronAI\Chat\Messages\Usage) {
                     $carry += $message->getUsage()->inputTokens;
                 }
                 return $carry;
@@ -80,7 +80,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
     public function calculateTotalUsage(): int
     {
         return \array_reduce($this->history, function (int $carry, Message $message) {
-            if ($message->getUsage()) {
+            if ($message->getUsage() instanceof \NeuronAI\Chat\Messages\Usage) {
                 $carry += $message->getUsage()->getTotal();
             }
 

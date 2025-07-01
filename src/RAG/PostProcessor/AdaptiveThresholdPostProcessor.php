@@ -65,7 +65,7 @@ class AdaptiveThresholdPostProcessor implements PostProcessorInterface
         $n = \count($values);
         $mid = (int) \floor(($n - 1) / 2);
 
-        if ($n % 2) {
+        if ($n % 2 !== 0) {
             return $values[$mid];
         }
 

@@ -43,7 +43,7 @@ class JsonSchema
         ];
 
         // Add definitions if any exist
-        if (!empty($this->definitions)) {
+        if ($this->definitions !== []) {
             $schema['definitions'] = \array_map(fn (array $definition) => [...$definition, 'additionalProperties' => false], $this->definitions);
         }
 
@@ -95,8 +95,8 @@ class JsonSchema
             $schema['properties'][$propertyName] = $this->processProperty($property);
 
             $attribute = $this->getPropertyAttribute($property);
-            if (!empty($attribute) && $attribute->required !== null) {
-                if ($attribute->required === true) {
+            if ($attribute instanceof \NeuronAI\StructuredOutput\SchemaProperty && $attribute->required !== null) {
+                if ($attribute->required) {
                     $requiredProperties[] = $propertyName;
                 }
             } else {
@@ -113,7 +113,7 @@ class JsonSchema
         }
 
         // Add required properties
-        if (!empty($requiredProperties)) {
+        if ($requiredProperties !== []) {
             $schema['required'] = $requiredProperties;
         }
 
@@ -141,7 +141,7 @@ class JsonSchema
 
         // Process Property attribute if present
         $attribute = $this->getPropertyAttribute($property);
-        if (!empty($attribute)) {
+        if ($attribute instanceof \NeuronAI\StructuredOutput\SchemaProperty) {
             if ($attribute->title !== null) {
                 $schema['title'] = $attribute->title;
             }
@@ -284,7 +284,7 @@ class JsonSchema
     private function getPropertyAttribute(ReflectionProperty $property): ?SchemaProperty
     {
         $attributes = $property->getAttributes(SchemaProperty::class);
-        if (!empty($attributes)) {
+        if ($attributes !== []) {
             return $attributes[0]->newInstance();
         }
         return null;

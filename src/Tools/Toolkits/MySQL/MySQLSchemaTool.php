@@ -132,7 +132,7 @@ class MySQLSchemaTool extends Tool
         $params = [];
 
         // Add table filtering if specific tables are requested
-        if (!empty($this->tables)) {
+        if ($this->tables !== null && $this->tables !== []) {
             $placeholders = \str_repeat('?,', \count($this->tables) - 1) . '?';
             $whereClause .= " AND t.TABLE_NAME IN ($placeholders)";
             $params = $this->tables;
@@ -225,7 +225,7 @@ class MySQLSchemaTool extends Tool
         $params = [];
 
         // Add table filtering if specific tables are requested
-        if (!empty($this->tables)) {
+        if ($this->tables !== null && $this->tables !== []) {
             $placeholders = \str_repeat('?,', \count($this->tables) - 1) . '?';
             $whereClause .= " AND (kcu.TABLE_NAME IN ($placeholders) OR kcu.REFERENCED_TABLE_NAME IN ($placeholders))";
             $params = \array_merge($this->tables, $this->tables);
@@ -296,7 +296,7 @@ class MySQLSchemaTool extends Tool
         $params = [];
 
         // Add table filtering if specific tables are requested
-        if (!empty($this->tables)) {
+        if ($this->tables !== null && $this->tables !== []) {
             $placeholders = \str_repeat('?,', \count($this->tables) - 1) . '?';
             $whereClause .= " AND TABLE_NAME IN ($placeholders)";
             $params = $this->tables;

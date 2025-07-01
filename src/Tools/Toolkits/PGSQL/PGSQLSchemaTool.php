@@ -41,7 +41,7 @@ and performance optimization. If you already know the database structure, you ca
         $paramIndex = 1;
         $params = [];
 
-        if (!empty($this->tables)) {
+        if ($this->tables !== null && $this->tables !== []) {
             $placeholders = [];
             foreach ($this->tables as $table) {
                 $placeholders[] = '?';
@@ -203,7 +203,7 @@ and performance optimization. If you already know the database structure, you ca
         $paramIndex = 1;
         $params = [];
 
-        if (!empty($this->tables)) {
+        if ($this->tables !== null && $this->tables !== []) {
             $placeholders = [];
             foreach ($this->tables as $table) {
                 $placeholders[] = '?';
@@ -251,7 +251,7 @@ and performance optimization. If you already know the database structure, you ca
         $paramIndex = 1;
         $params = [];
 
-        if (!empty($this->tables)) {
+        if ($this->tables !== null && $this->tables !== []) {
             $placeholders = [];
             foreach ($this->tables as $table) {
                 $placeholders[] = '?';
@@ -285,7 +285,7 @@ and performance optimization. If you already know the database structure, you ca
             $cleanColumns = [];
             foreach ($columns as $col) {
                 // Extract just the column name if it's wrapped in functions
-                if (\preg_match('/([a-zA-Z_][a-zA-Z0-9_]*)/', $col, $colMatches)) {
+                if (\preg_match('/([a-zA-Z_]\w*)/', $col, $colMatches)) {
                     $cleanColumns[] = $colMatches[1];
                 }
             }
@@ -295,7 +295,7 @@ and performance optimization. If you already know the database structure, you ca
                 'name' => $row['indexname'],
                 'unique' => \str_contains((string) $row['indexdef'], 'UNIQUE'),
                 'type' => $this->extractIndexType($row['indexdef']),
-                'columns' => !empty($cleanColumns) ? $cleanColumns : $columns
+                'columns' => $cleanColumns === [] ? $columns : $cleanColumns
             ];
         }
 
@@ -323,7 +323,7 @@ and performance optimization. If you already know the database structure, you ca
         $paramIndex = 1;
         $params = [];
 
-        if (!empty($this->tables)) {
+        if ($this->tables !== null && $this->tables !== []) {
             $placeholders = [];
             foreach ($this->tables as $table) {
                 $placeholders[] = '?';

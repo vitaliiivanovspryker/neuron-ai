@@ -23,7 +23,7 @@ class MeilisearchVectorStore implements VectorStoreInterface
             'base_uri' => \trim($host, '/').'/indexes/'.$indexUid.'/',
             'headers' => [
                 'Content-Type' => 'application/json',
-                ...(!\is_null($key) ? ['Authorization' => "Bearer {$key}"] : [])
+                ...(\is_null($key) ? [] : ['Authorization' => "Bearer {$key}"])
             ]
         ]);
 

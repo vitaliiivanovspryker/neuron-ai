@@ -238,7 +238,7 @@ class Workflow implements SplSubject
      */
     public function getNodes(): array
     {
-        if (empty($this->nodes)) {
+        if ($this->nodes === []) {
             foreach ($this->nodes() as $node) {
                 $this->addNode($node);
             }
@@ -269,7 +269,7 @@ class Workflow implements SplSubject
      */
     public function getEdges(): array
     {
-        if (empty($this->edges)) {
+        if ($this->edges === []) {
             $this->edges = $this->edges();
         }
 

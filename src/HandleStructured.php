@@ -49,7 +49,7 @@ trait HandleStructured
         do {
             try {
                 // If something goes wrong, retry informing the model about the error
-                if (!empty(\trim($error))) {
+                if (\trim($error) !== '') {
                     $correctionMessage = new UserMessage(
                         "There was a problem in your previous response that generated the following errors".
                         \PHP_EOL.\PHP_EOL.'- '.$error.\PHP_EOL.\PHP_EOL.

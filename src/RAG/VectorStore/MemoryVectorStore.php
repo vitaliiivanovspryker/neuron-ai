@@ -33,7 +33,7 @@ class MemoryVectorStore implements VectorStoreInterface
         $distances = [];
 
         foreach ($this->documents as $index => $document) {
-            if (empty($document->embedding)) {
+            if ($document->embedding === []) {
                 throw new VectorStoreException("Document with the following content has no embedding: {$document->getContent()}");
             }
             $dist = VectorSimilarity::cosineDistance($embedding, $document->getEmbedding());

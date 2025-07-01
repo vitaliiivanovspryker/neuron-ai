@@ -34,7 +34,7 @@ trait HandleInferenceEvents
         }
 
         $segment = $this->segments[$id];
-        $segment->addContext('Message', \array_merge($data->message->jsonSerialize(), $data->message->getUsage() ? [
+        $segment->addContext('Message', \array_merge($data->message->jsonSerialize(), $data->message->getUsage() instanceof \NeuronAI\Chat\Messages\Usage ? [
                 'usage' => [
                     'input_tokens' => $data->message->getUsage()->inputTokens,
                     'output_tokens' => $data->message->getUsage()->outputTokens,
