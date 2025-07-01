@@ -45,7 +45,9 @@ class MessageMapper implements MessageMapperInterface
             ],
         ];
 
-        if ($attachments = $message->getAttachments()) {
+        $attachments = $message->getAttachments();
+
+        if ($attachments !== []) {
             foreach ($attachments as $attachment) {
                 $payload['parts'][] = $this->mapAttachment($attachment);
             }
@@ -80,7 +82,7 @@ class MessageMapper implements MessageMapperInterface
                 ...\array_map(fn (ToolInterface $tool): array => [
                     'functionCall' => [
                         'name' => $tool->getName(),
-                        'args' => $tool->getInputs() ?: new \stdClass(),
+                        'args' => $tool->getInputs() !== [] ? $tool->getInputs() : new \stdClass(),
                     ]
                 ], $message->getTools())
             ]

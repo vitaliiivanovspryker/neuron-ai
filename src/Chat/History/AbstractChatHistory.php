@@ -211,7 +211,10 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
     protected function deserializeMeta(array $message, Message $item): void
     {
         foreach ($message as $key => $value) {
-            if ($key === 'role' || $key === 'content') {
+            if ($key === 'role') {
+                continue;
+            }
+            if ($key === 'content') {
                 continue;
             }
             if ($key === 'usage') {

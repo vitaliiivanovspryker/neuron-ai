@@ -184,12 +184,14 @@ and performance optimization. If you already know the database structure, you ca
         if ($type === 'varchar' || $type === 'character varying') {
             $type = 'character varying';
         }
-
         if ($row['character_maximum_length']) {
             return "{$type}({$row['character_maximum_length']})";
-        } elseif ($row['numeric_precision'] && $row['numeric_scale']) {
+        }
+        if ($row['numeric_precision'] && $row['numeric_scale']) {
             return "{$type}({$row['numeric_precision']},{$row['numeric_scale']})";
-        } elseif ($row['numeric_precision']) {
+        }
+
+        if ($row['numeric_precision']) {
             return "{$type}({$row['numeric_precision']})";
         }
 
@@ -304,13 +306,17 @@ and performance optimization. If you already know the database structure, you ca
     {
         if (\str_contains($indexDef, 'USING gin')) {
             return 'GIN';
-        } elseif (\str_contains($indexDef, 'USING gist')) {
+        }
+        if (\str_contains($indexDef, 'USING gist')) {
             return 'GIST';
-        } elseif (\str_contains($indexDef, 'USING hash')) {
+        }
+        if (\str_contains($indexDef, 'USING hash')) {
             return 'HASH';
-        } elseif (\str_contains($indexDef, 'USING brin')) {
+        }
+        if (\str_contains($indexDef, 'USING brin')) {
             return 'BRIN';
-        } else {
+        }
+        else {
             return 'BTREE'; // Default
         }
     }

@@ -14,7 +14,9 @@ return RectorConfig::configure()
     ->withPreparedSets(
         codeQuality: true,
         deadCode: true,
-        typeDeclarations: true
+        typeDeclarations: true,
+        earlyReturn: true,
+        strictBooleans: true,
     )
     ->withRules([
         AddReturnTypeDeclarationRector::class

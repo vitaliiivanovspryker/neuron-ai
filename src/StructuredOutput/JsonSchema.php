@@ -317,7 +317,9 @@ class JsonSchema
                 // Check if it's a class or enum
                 if (\class_exists($type)) {
                     return $this->generateClassSchema($type, false);
-                } elseif (\enum_exists($type)) {
+                }
+                // Check if it's a class or enum
+                if (\enum_exists($type)) {
                     return $this->processEnum(new ReflectionEnum($type));
                 }
 

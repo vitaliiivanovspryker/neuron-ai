@@ -64,7 +64,8 @@ trait ResolveTools
 
         foreach ($this->getTools() as $tool) {
             if ($tool instanceof ToolkitInterface) {
-                if ($kitGuidelines = $tool->guidelines()) {
+                $kitGuidelines = $tool->guidelines();
+                if ($kitGuidelines !== null && $kitGuidelines !== '') {
                     $name = (new \ReflectionClass($tool))->getShortName();
                     $kitGuidelines = '# '.$name.\PHP_EOL.$kitGuidelines;
                 }
@@ -74,7 +75,7 @@ trait ResolveTools
                 $this->toolsBootstrapCache = \array_merge($this->toolsBootstrapCache, $innerTools);
 
                 // Add guidelines to the system prompt
-                if ($kitGuidelines) {
+                if ($kitGuidelines !== null && $kitGuidelines !== '' && $kitGuidelines !== '0') {
                     $kitGuidelines .= \PHP_EOL.\implode(
                         \PHP_EOL.'- ',
                         \array_map(

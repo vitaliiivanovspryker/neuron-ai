@@ -37,10 +37,12 @@ class JsonExtractor
             }
 
             foreach ($candidates as $candidate) {
-                if (!\is_string($candidate) || \trim($candidate) === '') {
+                if (!\is_string($candidate)) {
                     continue;
                 }
-
+                if (\trim((string) $candidate) === '') {
+                    continue;
+                }
                 try {
                     $data = $this->tryParse($candidate);
                 } catch (\Throwable) {
@@ -130,8 +132,8 @@ class JsonExtractor
         if ($trimmed === '') {
             return null;
         }
-
-        if (!$firstOpen = \strpos($trimmed, '{')) {
+        $firstOpen = \strpos($trimmed, '{');
+        if ($firstOpen === 0 || $firstOpen === false) {
             return null;
         }
 
