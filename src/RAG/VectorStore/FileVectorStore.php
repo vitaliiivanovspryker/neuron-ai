@@ -42,7 +42,7 @@ class FileVectorStore implements VectorStoreInterface
         $topItems = [];
 
         foreach ($this->getLine($this->getFilePath()) as $document) {
-            $document = \json_decode($document, true);
+            $document = \json_decode((string) $document, true);
 
             if (empty($document['embedding'])) {
                 throw new VectorStoreException("Document with the following content has no embedding: {$document['content']}");

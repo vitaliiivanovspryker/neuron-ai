@@ -7,7 +7,7 @@ namespace NeuronAI\MCP;
 class StdioTransport implements McpTransportInterface
 {
     /** @var null|resource|false $process */
-    private mixed $process;
+    private mixed $process = null;
     private array $pipes;
 
     /**
@@ -38,7 +38,7 @@ class StdioTransport implements McpTransportInterface
         // Build command with arguments
         $commandLine = $command;
         foreach ($args as $arg) {
-            $commandLine .= ' ' . \escapeshellarg($arg);
+            $commandLine .= ' ' . \escapeshellarg((string) $arg);
         }
 
         // Start the process

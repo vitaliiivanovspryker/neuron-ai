@@ -119,7 +119,7 @@ It looks like you are trying to run a write query using the read-only query tool
         $query = \preg_replace('/--.*$/m', '', $query);
 
         // Remove multi-line comments (/* */ style)
-        $query = \preg_replace('/\/\*.*?\*\//s', '', $query);
+        $query = \preg_replace('/\/\*.*?\*\//s', '', (string) $query);
 
         return $query;
     }
@@ -131,8 +131,8 @@ It looks like you are trying to run a write query using the read-only query tool
             // Multiple statements detected - need to validate each one
             $statements = $this->splitStatements($query);
             foreach ($statements as $statement) {
-                if (!empty(\trim($statement))) {
-                    if (!$this->validateSingleStatement(\trim($statement))) {
+                if (!empty(\trim((string) $statement))) {
+                    if (!$this->validateSingleStatement(\trim((string) $statement))) {
                         return false;
                     }
                 }

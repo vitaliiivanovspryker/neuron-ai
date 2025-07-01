@@ -15,7 +15,8 @@ return RectorConfig::configure()
     ->withTypeCoverageLevel(0)
     ->withDeadCodeLevel(0)
     ->withCodeQualityLevel(0)
-    ->withSkip([NullToStrictStringFuncCallArgRector::class])
+//    ->withSkip([NullToStrictStringFuncCallArgRector::class])
+//    ->withPreparedSets()
     ->withRules([
         AddReturnTypeDeclarationRector::class
     ]);

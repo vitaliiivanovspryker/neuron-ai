@@ -39,7 +39,7 @@ trait HandleStream
             $usage = new Usage(0, 0);
             foreach ($stream as $text) {
                 // Catch usage when streaming
-                $decoded = \json_decode($text, true);
+                $decoded = \json_decode((string) $text, true);
                 if (\is_array($decoded) && \array_key_exists('usage', $decoded)) {
                     $usage->inputTokens += $decoded['usage']['input_tokens'] ?? 0;
                     $usage->outputTokens += $decoded['usage']['output_tokens'] ?? 0;

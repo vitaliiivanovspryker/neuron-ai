@@ -67,7 +67,7 @@ class GeminiTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expectedRequest, \json_decode($request['request']->getBody()->getContents(), true));
+        $this->assertSame($expectedRequest, \json_decode((string) $request['request']->getBody()->getContents(), true));
         $this->assertSame('test response', $response->getContent());
     }
 
@@ -110,7 +110,7 @@ class GeminiTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expectedRequest, \json_decode($request['request']->getBody()->getContents(), true));
+        $this->assertSame($expectedRequest, \json_decode((string) $request['request']->getBody()->getContents(), true));
         $this->assertSame('test response', $response->getContent());
     }
 
@@ -154,7 +154,7 @@ class GeminiTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expectedRequest, \json_decode($request['request']->getBody()->getContents(), true));
+        $this->assertSame($expectedRequest, \json_decode((string) $request['request']->getBody()->getContents(), true));
         $this->assertSame('test response', $response->getContent());
     }
 
@@ -197,7 +197,7 @@ class GeminiTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expectedRequest, \json_decode($request['request']->getBody()->getContents(), true));
+        $this->assertSame($expectedRequest, \json_decode((string) $request['request']->getBody()->getContents(), true));
         $this->assertSame('test response', $response->getContent());
     }
 
@@ -241,7 +241,7 @@ class GeminiTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expectedRequest, \json_decode($request['request']->getBody()->getContents(), true));
+        $this->assertSame($expectedRequest, \json_decode((string) $request['request']->getBody()->getContents(), true));
         $this->assertSame('test response', $response->getContent());
     }
 
@@ -307,6 +307,6 @@ class GeminiTest extends TestCase
             ]
         ];
 
-        $this->assertSame($expectedRequest, \json_decode($request['request']->getBody()->getContents(), true));
+        $this->assertSame($expectedRequest, \json_decode((string) $request['request']->getBody()->getContents(), true));
     }
 }

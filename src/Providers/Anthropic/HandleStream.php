@@ -68,7 +68,7 @@ trait HandleStream
             if ($line['type'] === 'content_block_stop' && !empty($toolCalls)) {
                 // Restore the input field as an array
                 $toolCalls = \array_map(function (array $call) {
-                    $call['input'] = \json_decode($call['input'], true);
+                    $call['input'] = \json_decode((string) $call['input'], true);
                     return $call;
                 }, $toolCalls);
 
@@ -113,11 +113,11 @@ trait HandleStream
     {
         $line = $this->readLine($stream);
 
-        if (! \str_starts_with($line, 'data:')) {
+        if (! \str_starts_with((string) $line, 'data:')) {
             return null;
         }
 
-        $line = \trim(\substr($line, \strlen('data: ')));
+        $line = \trim(\substr((string) $line, \strlen('data: ')));
 
         try {
             return \json_decode($line, true, flags: \JSON_THROW_ON_ERROR);

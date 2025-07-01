@@ -92,7 +92,7 @@ class Deserializer
         }
 
         // Convert camelCase to snake_case
-        $snakeCase = \strtolower(\preg_replace('/(?<!^)[A-Z]/', '_$0', $propertyName));
+        $snakeCase = \strtolower((string) \preg_replace('/(?<!^)[A-Z]/', '_$0', $propertyName));
         if (\array_key_exists($snakeCase, $data)) {
             return $data[$snakeCase];
         }

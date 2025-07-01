@@ -69,7 +69,7 @@ trait HandleStream
             return null;
         }
 
-        $json = \json_decode($line, true);
+        $json = \json_decode((string) $line, true);
 
         if ($json['done']) {
             return null;
