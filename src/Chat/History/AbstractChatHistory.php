@@ -16,6 +16,7 @@ use NeuronAI\Chat\Messages\ToolCallResultMessage;
 use NeuronAI\Chat\Messages\Usage;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Tools\Tool;
+use NeuronAI\Tools\ToolInterface;
 
 abstract class AbstractChatHistory implements ChatHistoryInterface
 {
@@ -61,12 +62,12 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         return $this->history;
     }
 
-    public function getLastMessage(): Message
+    public function getLastMessage(): Message|false
     {
         return \end($this->history);
     }
 
-    abstract public function removeOldestMessage(): ChatHistoryInterface;
+    abstract public function removeOldMessage(int $index): ChatHistoryInterface;
 
     abstract protected function clear(): ChatHistoryInterface;
 
@@ -90,17 +91,62 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     protected function cutHistoryToContextWindow(): void
     {
-        if ($this->getFreeMemory() >= 0) {
-            return;
-        }
+        $processedIndices = [];
 
         // Cut old messages
-        do {
-            $this->removeOldestMessage();
-            if (\array_shift($this->history) === null) {
+        foreach ($this->history as $index => $message) {
+            if ($this->getFreeMemory() >= 0) {
                 break;
             }
-        } while ($this->getFreeMemory() < 0);
+
+            if (\in_array($index, $processedIndices)) {
+                continue;
+            }
+
+            // Remove tool call and tool call result pairs otherwise the history can reference missing tool calls
+            // https://github.com/inspector-apm/neuron-ai/issues/204
+            if ($message instanceof ToolCallMessage && $index < \count($this->history) - 1) {
+                $toolCallResultIndex = $this->findCorrespondingToolResult($index);
+                if ($toolCallResultIndex !== null) {
+                    $this->removeOldMessage($toolCallResultIndex);
+                    unset($this->history[$toolCallResultIndex]);
+                    $processedIndices[] = $toolCallResultIndex;
+                }
+            } else {
+                // Delete the item without altering the keys
+                $this->removeOldMessage($index);
+                unset($this->history[$index]);
+                $processedIndices[] = $index;
+            }
+        }
+
+        // Recalculate numerical keys
+        $this->history = \array_values($this->history);
+    }
+
+    protected function findCorrespondingToolResult(int $toolCallIndex): ?int
+    {
+        $toolCall = $this->history[$toolCallIndex];
+
+        if (!$toolCall instanceof ToolCallMessage) {
+            return null;
+        }
+
+        $toolCallNames = \array_map(fn (ToolInterface $tool): string => $tool->getName(), $toolCall->getTools());
+
+        // Look for tool results after the tool call
+        for ($i = $toolCallIndex + 1; $i < \count($this->history); $i++) {
+            $message = $this->history[$i];
+
+            if ($message instanceof ToolCallResultMessage) {
+                $toolCallResultNames = \array_map(fn (ToolInterface $tool): string => $tool->getName(), $message->getTools());
+                if ($toolCallResultNames === $toolCallNames) {
+                    return $i;
+                }
+            }
+        }
+
+        return null;
     }
 
     public function getFreeMemory(): int

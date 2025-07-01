@@ -9,7 +9,7 @@ use NeuronAI\Chat\Messages\Message;
 class InferenceStop
 {
     public function __construct(
-        public Message $message,
+        public Message|false $message,
         public Message $response
     ) {
     }
