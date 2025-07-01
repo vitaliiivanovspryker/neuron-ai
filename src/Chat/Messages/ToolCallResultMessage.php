@@ -6,8 +6,14 @@ namespace NeuronAI\Chat\Messages;
 
 use NeuronAI\Tools\ToolInterface;
 
+/**
+ * @method static static make(ToolInterface[] $tools)
+ */
 class ToolCallResultMessage extends UserMessage
 {
+    /**
+     * @param array<ToolInterface> $tools
+     */
     public function __construct(protected array $tools)
     {
         parent::__construct(null);
