@@ -135,7 +135,8 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         $toolCallNames = \array_map(fn (ToolInterface $tool): string => $tool->getName(), $toolCall->getTools());
 
         // Look for tool results after the tool call
-        for ($i = $toolCallIndex + 1; $i < \count($this->history); $i++) {
+        $counter = \count($this->history);
+        for ($i = $toolCallIndex + 1; $i < $counter; $i++) {
             $message = $this->history[$i];
 
             if ($message instanceof ToolCallResultMessage) {
