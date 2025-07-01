@@ -104,7 +104,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
             // Remove tool call and tool call result pairs otherwise the history can reference missing tool calls
             // https://github.com/inspector-apm/neuron-ai/issues/204
-            if ($message instanceof ToolCallMessage && $index < count($this->history) - 1) {
+            if ($message instanceof ToolCallMessage && $index < \count($this->history) - 1) {
                 $toolCallResultIndex = $this->findCorrespondingToolResult($index);
                 if ($toolCallResultIndex !== null) {
                     $this->removeOldMessage($toolCallResultIndex);
@@ -132,7 +132,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         $toolCallNames = \array_map(fn (Tool $tool): string => $tool->getName(), $toolCall->getTools());
 
         // Look for tool results after the tool call
-        for ($i = $toolCallIndex + 1; $i < count($this->history); $i++) {
+        for ($i = $toolCallIndex + 1; $i < \count($this->history); $i++) {
             $message = $this->history[$i];
 
             if ($message instanceof ToolCallResultMessage) {
