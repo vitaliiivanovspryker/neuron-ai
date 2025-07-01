@@ -16,6 +16,7 @@ use NeuronAI\Chat\Messages\ToolCallResultMessage;
 use NeuronAI\Chat\Messages\Usage;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Tools\Tool;
+use NeuronAI\Tools\ToolInterface;
 
 abstract class AbstractChatHistory implements ChatHistoryInterface
 {
@@ -109,12 +110,14 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
                 if ($toolCallResultIndex !== null) {
                     $this->removeOldMessage($toolCallResultIndex);
                     unset($this->history[$toolCallResultIndex]);
+                    $processedIndices[] = $toolCallResultIndex;
                 }
+            } else {
+                // Delete the item without altering the keys
+                $this->removeOldMessage($index);
+                unset($this->history[$index]);
             }
 
-            // Delete the item without altering the keys
-            $this->removeOldMessage($index);
-            unset($this->history[$index]);
         }
 
         // Recalculate numerical keys
@@ -129,14 +132,14 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
             return null;
         }
 
-        $toolCallNames = \array_map(fn (Tool $tool): string => $tool->getName(), $toolCall->getTools());
+        $toolCallNames = \array_map(fn (ToolInterface $tool): string => $tool->getName(), $toolCall->getTools());
 
         // Look for tool results after the tool call
         for ($i = $toolCallIndex + 1; $i < \count($this->history); $i++) {
             $message = $this->history[$i];
 
             if ($message instanceof ToolCallResultMessage) {
-                $toolCallResultNames = \array_map(fn (Tool $tool): string => $tool->getName(), $message->getTools());
+                $toolCallResultNames = \array_map(fn (ToolInterface $tool): string => $tool->getName(), $message->getTools());
                 if ($toolCallResultNames === $toolCallNames) {
                     return $i;
                 }
