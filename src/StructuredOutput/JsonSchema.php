@@ -43,7 +43,7 @@ class JsonSchema
         ];
 
         // Add definitions if any exist
-        if ($this->definitions !== []) {
+        if ($this->definitions !== []) { // @phpstan-ignore notIdentical.alwaysFalse
             $schema['definitions'] = \array_map(fn (array $definition) => [...$definition, 'additionalProperties' => false], $this->definitions);
         }
 
