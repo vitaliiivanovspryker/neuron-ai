@@ -48,7 +48,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
         ];
 
         // Map metadata
-        foreach (array_keys($document->metadata) as $name) {
+        foreach (\array_keys($document->metadata) as $name) {
             $properties[$name] = [
                 'type' => 'keyword',
             ];
