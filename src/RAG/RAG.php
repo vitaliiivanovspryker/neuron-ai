@@ -125,7 +125,7 @@ class RAG extends Agent
     {
         $question = $this->applyPreProcessors($question);
 
-        $this->notify('rag-vectorstore-searching', new Retrieving($question));
+        $this->notify('rag-retrieving', new Retrieving($question));
 
         $documents = $this->resolveVectorStore()->similaritySearch(
             $this->resolveEmbeddingsProvider()->embedText($question->getContent()),
@@ -140,7 +140,7 @@ class RAG extends Agent
 
         $retrievedDocs = \array_values($retrievedDocs);
 
-        $this->notify('rag-vectorstore-result', new Retrieved($question, $retrievedDocs));
+        $this->notify('rag-retrieved', new Retrieved($question, $retrievedDocs));
 
         return $this->applyPostProcessors($question, $retrievedDocs);
     }
