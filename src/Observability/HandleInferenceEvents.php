@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NeuronAI\Observability;
 
 use NeuronAI\Agent;
+use NeuronAI\Chat\Messages\Usage;
 use NeuronAI\Observability\Events\InferenceStart;
 use NeuronAI\Observability\Events\InferenceStop;
 use NeuronAI\Observability\Events\MessageSaved;
@@ -34,7 +35,8 @@ trait HandleInferenceEvents
         }
 
         $segment = $this->segments[$id];
-        $segment->addContext('Message', \array_merge($data->message->jsonSerialize(), $data->message->getUsage() instanceof \NeuronAI\Chat\Messages\Usage ? [
+        $segment->addContext('Message', \array_merge($data->message->jsonSerialize(),
+            $data->message->getUsage() instanceof Usage ? [
                 'usage' => [
                     'input_tokens' => $data->message->getUsage()->inputTokens,
                     'output_tokens' => $data->message->getUsage()->outputTokens,
