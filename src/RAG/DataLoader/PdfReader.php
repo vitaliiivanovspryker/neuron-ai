@@ -25,9 +25,19 @@ class PdfReader implements ReaderInterface
 
     protected array $env = [];
 
+    protected array $commonPaths = [
+        '/usr/bin/pdftotext',          // Common on Linux
+        '/usr/local/bin/pdftotext',    // Common on Linux
+        '/opt/homebrew/bin/pdftotext', // Homebrew on macOS (Apple Silicon)
+        '/opt/local/bin/pdftotext',    // MacPorts on macOS
+        '/usr/local/bin/pdftotext',    // Homebrew on macOS (Intel)
+    ];
+
     public function __construct(?string $binPath = null)
     {
-        $this->binPath = \is_string($binPath) ? $this->setBinPath($binPath) : $this->findPdfToText();
+        if (!\is_null($binPath)) {
+            $this->setBinPath($binPath);
+        }
     }
 
     public function setBinPath(string $binPath): self
@@ -41,15 +51,11 @@ class PdfReader implements ReaderInterface
 
     protected function findPdfToText(): string
     {
-        $commonPaths = [
-            '/usr/bin/pdftotext',          // Common on Linux
-            '/usr/local/bin/pdftotext',    // Common on Linux
-            '/opt/homebrew/bin/pdftotext', // Homebrew on macOS (Apple Silicon)
-            '/opt/local/bin/pdftotext',    // MacPorts on macOS
-            '/usr/local/bin/pdftotext',    // Homebrew on macOS (Intel)
-        ];
+        if (isset($this->binPath)) {
+            return $this->binPath;
+        }
 
-        foreach ($commonPaths as $path) {
+        foreach ($this->commonPaths as $path) {
             if (\is_executable($path)) {
                 return $path;
             }
@@ -110,7 +116,7 @@ class PdfReader implements ReaderInterface
 
     public function text(): string
     {
-        $process = new Process(\array_merge([$this->binPath], $this->options, [$this->pdf, '-']));
+        $process = new Process(\array_merge([$this->findPdfToText()], $this->options, [$this->pdf, '-']));
         $process->setTimeout($this->timeout);
         $process->run();
         if (!$process->isSuccessful()) {
