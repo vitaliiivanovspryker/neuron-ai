@@ -90,7 +90,7 @@ class TypesenseVectorStore implements VectorStoreInterface
     public function deleteBySource(string $sourceType, string $sourceName): void
     {
         $this->client->collections[$this->collection]->documents->delete([
-            "filter_by" => "sourceType:={$sourceType} AND sourceName:={$sourceName}",
+            "filter_by" => "sourceType:={$sourceType} && sourceName:={$sourceName}",
         ]);
     }
 
