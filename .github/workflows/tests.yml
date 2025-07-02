@@ -2,7 +2,7 @@ name: Tests
 
 on:
     push:
-        branches: ["main"]
+        branches: ["main", "vectors-update"]
     pull_request:
         branches: ["main" ]
 
