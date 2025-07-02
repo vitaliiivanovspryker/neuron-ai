@@ -128,6 +128,16 @@ class ElasticsearchVectorStore implements VectorStoreInterface
         $this->client->indices()->refresh(['index' => $this->index]);
     }
 
+    public function deleteBySource(string $sourceType, string $sourceName): void
+    {
+        $this->client->deleteByQuery([
+            'index' => $this->index,
+            'q' => "sourceType:{$sourceType} AND sourceName:{$sourceName}",
+            'body' => []
+        ]);
+        $this->client->indices()->refresh(['index' => $this->index]);
+    }
+
     /**
      * {@inheritDoc}
      *

@@ -39,7 +39,7 @@ class MemoryVectorStoreTest extends TestCase
 
     public function test_similarity_search_with_scores(): void
     {
-        $vectorStore = new MemoryVectorStore();
+        $store = new MemoryVectorStore();
 
         $doc1 = new Document("Document 1");
         $doc1->embedding = [1, 0];
@@ -48,9 +48,9 @@ class MemoryVectorStoreTest extends TestCase
         $doc3 = new Document("Document 3");
         $doc3->embedding = [0.5, 0.5];
 
-        $vectorStore->addDocuments([$doc1, $doc2, $doc3]);
+        $store->addDocuments([$doc1, $doc2, $doc3]);
 
-        $results = $vectorStore->similaritySearch([1, 0]);
+        $results = $store->similaritySearch([1, 0]);
 
         $this->assertCount(3, $results);
         $this->assertGreaterThanOrEqual($results[1]->getScore(), $results[0]->getScore());
@@ -63,12 +63,26 @@ class MemoryVectorStoreTest extends TestCase
         $document->addMetadata('customProperty', 'customValue');
         $document->embedding = [1, 0];
 
-        $vectorStore = new MemoryVectorStore();
-        $vectorStore->addDocuments([$document]);
+        $store = new MemoryVectorStore();
+        $store->addDocuments([$document]);
 
-        $results = $vectorStore->similaritySearch([1, 0]);
+        $results = $store->similaritySearch([1, 0]);
 
         $this->assertCount(1, $results);
         $this->assertEquals($document->metadata['customProperty'], $results[0]->metadata['customProperty']);
+    }
+
+    public function test_delete_documents(): void
+    {
+        $document = new Document('Hello World!');
+        $document->embedding = [1, 0];
+
+        $store = new MemoryVectorStore();
+        $store->addDocuments([$document]);
+
+        $store->deleteBySource('manual', 'manual');
+
+        $results = $store->similaritySearch([1, 0]);
+        $this->assertCount(0, $results);
     }
 }

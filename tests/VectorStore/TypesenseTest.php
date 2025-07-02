@@ -66,4 +66,14 @@ class TypesenseTest extends TestCase
         $this->assertEquals($document->getContent(), $results[0]->getContent());
         $this->assertEquals($document->metadata['customProperty'], $results[0]->metadata['customProperty']);
     }
+
+    public function test_delete_documents(): void
+    {
+        $store = new TypesenseVectorStore($this->client, 'test', $this->vectorDimension);
+
+        $store->deleteBySource('manual', 'manual');
+
+        $results = $store->similaritySearch($this->embedding);
+        $this->assertCount(0, $results);
+    }
 }

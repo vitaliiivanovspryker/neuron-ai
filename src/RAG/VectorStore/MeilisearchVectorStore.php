@@ -6,6 +6,7 @@ namespace NeuronAI\RAG\VectorStore;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
+use NeuronAI\Exceptions\VectorStoreException;
 use NeuronAI\RAG\Document;
 
 class MeilisearchVectorStore implements VectorStoreInterface
@@ -30,12 +31,7 @@ class MeilisearchVectorStore implements VectorStoreInterface
         try {
             $this->client->get('');
         } catch (\Exception) {
-            $this->client->post(\trim($host, '/').'/indexes/', [
-                RequestOptions::JSON => [
-                    'uid' => $indexUid,
-                    'primaryKey' => 'id',
-                ]
-            ]);
+            throw new VectorStoreException("Index {$indexUid} doesn't exists. Remember to attach a custom embedder to the index in order to process vectors.");
         }
     }
 
@@ -60,6 +56,15 @@ class MeilisearchVectorStore implements VectorStoreInterface
                     ],
                 ]
             ], $documents),
+        ]);
+    }
+
+    public function deleteBySource(string $sourceType, string $sourceName): void
+    {
+        $this->client->post('documents/delete', [
+            RequestOptions::JSON => [
+                'filter' => "sourceType = {$sourceType} AND sourceName = {$sourceName}",
+            ]
         ]);
     }
 

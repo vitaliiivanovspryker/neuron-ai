@@ -39,5 +39,27 @@ class FileVectorStoreTest extends TestCase
         $this->assertEquals($document->metadata, $results[0]->metadata);
 
         \unlink(__DIR__.'/neuron.store');
+        $this->assertFileDoesNotExist(__DIR__.'/neuron.store');
+    }
+
+    public function test_delete_documents(): void
+    {
+        $document = new Document('Hello!');
+        $document->embedding = [1, 2, 3];
+
+        $document2 = new Document('Hello 2!');
+        $document2->embedding = [3, 4, 5];
+
+        $store = new FileVectorStore(__DIR__);
+
+        $store->addDocuments([$document, $document2]);
+        $store->deleteBySource('manual', 'manual');
+
+        $results = $store->similaritySearch([1, 2, 3]);
+        $this->assertCount(0, $results);
+
+        \unlink(__DIR__.'/neuron.store');
+        $this->assertFileDoesNotExist(__DIR__.'/neuron.store');
+        $this->assertFileDoesNotExist(__DIR__.'/neuron_tmp.store');
     }
 }

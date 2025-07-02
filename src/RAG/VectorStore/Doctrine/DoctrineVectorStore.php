@@ -6,6 +6,7 @@ namespace NeuronAI\RAG\VectorStore\Doctrine;
 
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManagerInterface;
+use NeuronAI\Exceptions\VectorStoreException;
 use NeuronAI\RAG\Document;
 use NeuronAI\RAG\VectorStore\VectorStoreInterface;
 
@@ -54,6 +55,11 @@ class DoctrineVectorStore implements VectorStoreInterface
         }
 
         $this->entityManager->flush();
+    }
+
+    public function deleteBySource(string $sourceType, string $sourceName): void
+    {
+        throw new VectorStoreException("Delete by source not implemented in ".self::class);
     }
 
     public function similaritySearch(array $embedding): array

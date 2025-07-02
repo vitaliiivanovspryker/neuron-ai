@@ -28,6 +28,13 @@ class MemoryVectorStore implements VectorStoreInterface
         $this->documents = \array_merge($this->documents, $documents);
     }
 
+    public function deleteBySource(string $sourceType, string $sourceName): void
+    {
+        $this->documents = \array_filter($this->documents, function (Document $document) use ($sourceType, $sourceName): bool {
+            return $document->getSourceType() !== $sourceType || $document->getSourceName() !== $sourceName;
+        });
+    }
+
     public function similaritySearch(array $embedding): array
     {
         $distances = [];

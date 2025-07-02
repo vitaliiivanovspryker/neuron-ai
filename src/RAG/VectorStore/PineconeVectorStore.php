@@ -61,6 +61,19 @@ class PineconeVectorStore implements VectorStoreInterface
         ]);
     }
 
+    public function deleteBySource(string $sourceType, string $sourceName): void
+    {
+        $this->client->post("vectors/delete", [
+            RequestOptions::JSON => [
+                'namespace' => $this->namespace,
+                'filter' => [
+                    'sourceType' => ['$eq' => $sourceType],
+                    'sourceName' => ['$eq' => $sourceName],
+                ]
+            ]
+        ]);
+    }
+
     public function similaritySearch(array $embedding): iterable
     {
         $result = $this->client->post("query", [
@@ -86,7 +99,7 @@ class PineconeVectorStore implements VectorStoreInterface
             $document->score = $item['score'];
 
             foreach ($item['metadata'] as $name => $value) {
-                if (!\in_array($name, ['content', 'sourceType', 'sourceName', 'score', 'embedding', 'id'])) {
+                if (!\in_array($name, ['content', 'sourceType', 'sourceName'])) {
                     $document->addMetadata($name, $value);
                 }
             }

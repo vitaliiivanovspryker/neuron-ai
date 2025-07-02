@@ -193,6 +193,20 @@ class RAG extends Agent
     }
 
     /**
+     * @param Document[] $documents
+     */
+    public function reindexBySource(string $sourceType, string $sourceName, array $documents): void
+    {
+        $this->resolveVectorStore()->deleteBySource($sourceType, $sourceName);
+        $this->addDocuments(
+            \array_filter(
+                $documents,
+                fn (Document $document) => $document->getSourceType() === $sourceType && $document->getSourceName() === $sourceName
+            )
+        );
+    }
+
+    /**
      * @throws AgentException
      */
     public function setPreProcessors(array $preProcessors): RAG

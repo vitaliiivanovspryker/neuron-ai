@@ -34,6 +34,18 @@ class ChromaVectorStore implements VectorStoreInterface
         $this->addDocuments([$document]);
     }
 
+    public function deleteBySource(string $sourceType, string $sourceName): void
+    {
+        $this->getClient()->post('delete', [
+            RequestOptions::JSON => [
+                'where' => [
+                    'sourceType' => $sourceType,
+                    'sourceName' => $sourceName,
+                ]
+            ]
+        ]);
+    }
+
     public function addDocuments(array $documents): void
     {
         $this->getClient()->post('upsert', [
@@ -86,8 +98,8 @@ class ChromaVectorStore implements VectorStoreInterface
             'documents' => [],
             'embeddings' => [],
             'metadatas' => [],
-
         ];
+
         foreach ($documents as $document) {
             $payload['ids'][] = $document->getId();
             $payload['documents'][] = $document->getContent();

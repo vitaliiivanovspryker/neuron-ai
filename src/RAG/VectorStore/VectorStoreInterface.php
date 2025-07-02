@@ -15,6 +15,8 @@ interface VectorStoreInterface
      */
     public function addDocuments(array $documents): void;
 
+    public function deleteBySource(string $sourceType, string $sourceName): void;
+
     /**
      * Return docs most similar to the embedding.
      *
