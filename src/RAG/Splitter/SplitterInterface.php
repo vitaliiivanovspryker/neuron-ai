@@ -9,13 +9,13 @@ use NeuronAI\RAG\Document;
 interface SplitterInterface
 {
     /**
-     * @return array<Document>
+     * @return Document[]
      */
     public function splitDocument(Document $document): array;
 
     /**
-     * @param  array<Document>  $documents
-     * @return array<Document>
+     * @param  Document[]  $documents
+     * @return Document[]
      */
     public function splitDocuments(array $documents): array;
 }

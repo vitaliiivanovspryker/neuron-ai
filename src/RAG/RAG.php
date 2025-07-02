@@ -195,15 +195,27 @@ class RAG extends Agent
     /**
      * @param Document[] $documents
      */
-    public function reindexBySource(string $sourceType, string $sourceName, array $documents): void
+    public function reindexBySource(array $documents): void
     {
-        $this->resolveVectorStore()->deleteBySource($sourceType, $sourceName);
-        $this->addDocuments(
-            \array_filter(
-                $documents,
-                fn (Document $document) => $document->getSourceType() === $sourceType && $document->getSourceName() === $sourceName
-            )
-        );
+        $grouped = [];
+
+        foreach ($documents as $document) {
+            $key = $document->sourceType . ':' . $document->sourceName;
+
+            if (!isset($grouped[$key])) {
+                $grouped[$key] = [];
+            }
+
+            $grouped[$key][] = $document;
+        }
+
+        foreach ($grouped as $key => $items) {
+            [$sourceType, $sourceName] = \explode(':', $key);
+
+            $this->resolveVectorStore()->deleteBySource($sourceType, $sourceName);
+
+            $this->addDocuments($documents);
+        }
     }
 
     /**

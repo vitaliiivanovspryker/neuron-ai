@@ -76,15 +76,13 @@ class QdrantVectorStore implements VectorStoreInterface
     }
 
     /**
-     * Qdrant delete operation will be processed asynchronously.
-     * https://api.qdrant.tech/v-1-14-x/api-reference/points/delete-points
-     *
      * @throws GuzzleException
      */
     public function deleteBySource(string $sourceType, string $sourceName): void
     {
         $this->client->post('points/delete', [
             RequestOptions::JSON => [
+                'wait' => true,
                 'filter' => [
                     'must' => [
                         [
