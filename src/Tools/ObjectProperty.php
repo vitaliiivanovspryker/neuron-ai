@@ -28,7 +28,7 @@ class ObjectProperty implements ToolPropertyInterface
         protected ?string $class = null,
         protected array $properties = [],
     ) {
-        if (empty($this->properties) && \class_exists($this->class)) {
+        if ($this->properties === [] && \class_exists($this->class)) {
             $schema = (new JsonSchema())->generate($this->getClass());
             $required = [];
 
@@ -67,7 +67,7 @@ class ObjectProperty implements ToolPropertyInterface
     {
         return \array_values(\array_filter(\array_map(fn (
             ToolPropertyInterface $property
-        ) => $property->isRequired() ? $property->getName() : null, $this->properties)));
+        ): ?string => $property->isRequired() ? $property->getName() : null, $this->properties)));
     }
 
     public function getJsonSchema(): array

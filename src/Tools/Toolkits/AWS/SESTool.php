@@ -119,11 +119,11 @@ DESC
             'ToAddresses' => $to,
         ];
 
-        if (!empty($cc)) {
+        if ($cc !== null && $cc !== []) {
             $destinations['CcAddresses'] = $cc;
         }
 
-        if (!empty($bcc)) {
+        if ($bcc !== null && $bcc !== []) {
             $destinations['BccAddresses'] = $bcc;
         }
 

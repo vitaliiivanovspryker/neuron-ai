@@ -34,7 +34,7 @@ class MemoryVectorStoreTest extends TestCase
         $store = new MemoryVectorStore();
         $store->addDocument($document);
 
-        $results = $store->similaritySearch($this->embedding);
+        $store->similaritySearch($this->embedding);
     }
 
     public function test_similarity_search_with_scores(): void

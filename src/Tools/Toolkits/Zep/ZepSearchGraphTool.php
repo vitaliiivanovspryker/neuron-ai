@@ -71,7 +71,7 @@ Use this tool if you need to retrieve user information that can help you provide
 
     protected function mapEdges(array $edges): array
     {
-        return \array_map(fn (array $edge) => [
+        return \array_map(fn (array $edge): array => [
             'fact' => $edge['fact'],
             'created_at' => $edge['created_at'],
         ], $edges);
@@ -79,7 +79,7 @@ Use this tool if you need to retrieve user information that can help you provide
 
     protected function mapNodes(array $nodes): array
     {
-        return \array_map(fn (array $node) => [
+        return \array_map(fn (array $node): array => [
             'name' => $node['name'],
             'summary' => $node['summary'],
         ], $nodes);

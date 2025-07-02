@@ -25,22 +25,16 @@ class Gemini implements AIProviderInterface
 
     /**
      * The main URL of the provider API.
-     *
-     * @var string
      */
     protected string $baseUri = 'https://generativelanguage.googleapis.com/v1beta/models';
 
     /**
      * System instructions.
-     *
-     * @var ?string
      */
     protected ?string $system = null;
 
     /**
      * The component responsible for mapping the NeuronAI Message to the AI provider format.
-     *
-     * @var MessageMapperInterface
      */
     protected MessageMapperInterface $messageMapper;
 
@@ -76,7 +70,7 @@ class Gemini implements AIProviderInterface
 
     protected function generateToolsPayload(): array
     {
-        $tools = \array_map(function (ToolInterface $tool) {
+        $tools = \array_map(function (ToolInterface $tool): array {
             $payload = [
                 'name' => $tool->getName(),
                 'description' => $tool->getDescription(),
@@ -110,7 +104,7 @@ class Gemini implements AIProviderInterface
 
     protected function createToolCallMessage(array $message): Message
     {
-        $tools = \array_map(function (array $item) {
+        $tools = \array_map(function (array $item): ?\NeuronAI\Tools\ToolInterface {
             if (!isset($item['functionCall'])) {
                 return null;
             }

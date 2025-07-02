@@ -45,7 +45,9 @@ class MessageMapper implements MessageMapperInterface
             ],
         ];
 
-        if ($attachments = $message->getAttachments()) {
+        $attachments = $message->getAttachments();
+
+        if ($attachments !== []) {
             foreach ($attachments as $attachment) {
                 $payload['parts'][] = $this->mapAttachment($attachment);
             }
@@ -77,10 +79,10 @@ class MessageMapper implements MessageMapperInterface
         $this->mapping[] = [
             'role' => MessageRole::MODEL->value,
             'parts' => [
-                ...\array_map(fn (ToolInterface $tool) => [
+                ...\array_map(fn (ToolInterface $tool): array => [
                     'functionCall' => [
                         'name' => $tool->getName(),
-                        'args' => $tool->getInputs() ?: new \stdClass(),
+                        'args' => $tool->getInputs() !== [] ? $tool->getInputs() : new \stdClass(),
                     ]
                 ], $message->getTools())
             ]
@@ -91,7 +93,7 @@ class MessageMapper implements MessageMapperInterface
     {
         $this->mapping[] = [
             'role' => MessageRole::USER->value,
-            'parts' => \array_map(fn (ToolInterface $tool) => [
+            'parts' => \array_map(fn (ToolInterface $tool): array => [
                 'functionResponse' => [
                     'name' => $tool->getName(),
                     'response' => [

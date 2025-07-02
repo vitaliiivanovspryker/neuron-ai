@@ -79,7 +79,7 @@ class McpConnector
                 }
             }
 
-            $type = $type ?? PropertyType::STRING;
+            $type ??= PropertyType::STRING;
 
             $property = match ($type) {
                 PropertyType::ARRAY => $this->createArrayProperty($name, $type, $required, $input),

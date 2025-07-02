@@ -132,7 +132,7 @@ class MySQLSchemaTool extends Tool
         $params = [];
 
         // Add table filtering if specific tables are requested
-        if (!empty($this->tables)) {
+        if ($this->tables !== null && $this->tables !== []) {
             $placeholders = \str_repeat('?,', \count($this->tables) - 1) . '?';
             $whereClause .= " AND t.TABLE_NAME IN ($placeholders)";
             $params = $this->tables;
@@ -190,7 +190,7 @@ class MySQLSchemaTool extends Tool
                     'full_type' => $row['COLUMN_TYPE'],
                     'nullable' => $row['IS_NULLABLE'] === 'YES',
                     'default' => $row['COLUMN_DEFAULT'],
-                    'auto_increment' => \str_contains($row['EXTRA'], 'auto_increment'),
+                    'auto_increment' => \str_contains((string) $row['EXTRA'], 'auto_increment'),
                     'comment' => $row['COLUMN_COMMENT']
                 ];
 
@@ -225,7 +225,7 @@ class MySQLSchemaTool extends Tool
         $params = [];
 
         // Add table filtering if specific tables are requested
-        if (!empty($this->tables)) {
+        if ($this->tables !== null && $this->tables !== []) {
             $placeholders = \str_repeat('?,', \count($this->tables) - 1) . '?';
             $whereClause .= " AND (kcu.TABLE_NAME IN ($placeholders) OR kcu.REFERENCED_TABLE_NAME IN ($placeholders))";
             $params = \array_merge($this->tables, $this->tables);
@@ -296,7 +296,7 @@ class MySQLSchemaTool extends Tool
         $params = [];
 
         // Add table filtering if specific tables are requested
-        if (!empty($this->tables)) {
+        if ($this->tables !== null && $this->tables !== []) {
             $placeholders = \str_repeat('?,', \count($this->tables) - 1) . '?';
             $whereClause .= " AND TABLE_NAME IN ($placeholders)";
             $params = $this->tables;
@@ -321,8 +321,8 @@ class MySQLSchemaTool extends Tool
         foreach ($tables as $table) {
             foreach ($table['columns'] as $column) {
                 if (\in_array($column['type'], ['timestamp', 'datetime', 'date']) &&
-                    (\str_contains(\strtolower($column['name']), 'created') ||
-                        \str_contains(\strtolower($column['name']), 'updated'))) {
+                    (\str_contains(\strtolower((string) $column['name']), 'created') ||
+                        \str_contains(\strtolower((string) $column['name']), 'updated'))) {
                     $output .= "- For temporal queries on `{$table['name']}`, use `{$column['name']}` column\n";
                     break;
                 }
@@ -333,9 +333,9 @@ class MySQLSchemaTool extends Tool
         foreach ($tables as $table) {
             foreach ($table['columns'] as $column) {
                 if (\in_array($column['type'], ['varchar', 'text', 'longtext']) &&
-                    (\str_contains(\strtolower($column['name']), 'name') ||
-                        \str_contains(\strtolower($column['name']), 'title') ||
-                        \str_contains(\strtolower($column['name']), 'description'))) {
+                    (\str_contains(\strtolower((string) $column['name']), 'name') ||
+                        \str_contains(\strtolower((string) $column['name']), 'title') ||
+                        \str_contains(\strtolower((string) $column['name']), 'description'))) {
                     $output .= "- For text searches on `{$table['name']}`, consider using `{$column['name']}` with LIKE or FULLTEXT\n";
                     break;
                 }

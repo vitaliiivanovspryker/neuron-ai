@@ -33,7 +33,6 @@ class SentenceTextSplitter extends AbstractSplitter
     /**
      * Splits text into word-based chunks, preserving sentence boundaries.
      *
-     * @param Document $document
      * @return Document[] Array of Document chunks
      */
     public function splitDocument(Document $document): array
@@ -51,7 +50,7 @@ class SentenceTextSplitter extends AbstractSplitter
 
                 // If the sentence alone exceeds the limit, split it
                 if (\count($sentenceWords) > $this->maxWords) {
-                    if (!empty($currentWords)) {
+                    if ($currentWords !== []) {
                         $chunks[] = \implode(' ', $currentWords);
                         $currentWords = [];
                     }
@@ -62,7 +61,7 @@ class SentenceTextSplitter extends AbstractSplitter
                 $candidateCount = \count($currentWords) + \count($sentenceWords);
 
                 if ($candidateCount > $this->maxWords) {
-                    if (!empty($currentWords)) {
+                    if ($currentWords !== []) {
                         $chunks[] = \implode(' ', $currentWords);
                     }
                     $currentWords = $sentenceWords;
@@ -72,7 +71,7 @@ class SentenceTextSplitter extends AbstractSplitter
             }
         }
 
-        if (!empty($currentWords)) {
+        if ($currentWords !== []) {
             $chunks[] = \implode(' ', $currentWords);
         }
 
@@ -105,7 +104,6 @@ class SentenceTextSplitter extends AbstractSplitter
     /**
      * Tokenizes text into words (simple whitespace split).
      *
-     * @param string $text
      * @return string[] Array of words
      */
     private function tokenizeWords(string $text): array
@@ -121,7 +119,7 @@ class SentenceTextSplitter extends AbstractSplitter
      */
     private function applyOverlap(array $chunks): array
     {
-        if (empty($chunks)) {
+        if ($chunks === []) {
             return [];
         }
 
@@ -164,7 +162,7 @@ class SentenceTextSplitter extends AbstractSplitter
             $currentChunk[] = $word;
         }
 
-        if (!empty($currentChunk)) {
+        if ($currentChunk !== []) {
             $chunks[] = \implode(' ', $currentChunk);
         }
 

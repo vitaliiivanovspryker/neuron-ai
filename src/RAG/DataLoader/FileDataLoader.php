@@ -25,10 +25,6 @@ class FileDataLoader extends AbstractDataLoader
         return $this;
     }
 
-    /**
-     * @param array $readers
-     * @return FileDataLoader
-     */
     public function setReaders(array $readers): self
     {
         $this->readers = $readers;
@@ -62,7 +58,7 @@ class FileDataLoader extends AbstractDataLoader
             // Read the directory contents
             while (($entry = \readdir($handle)) !== false) {
                 $fullPath = $directory.'/'.$entry;
-                if ($entry != '.' && $entry != '..') {
+                if ($entry !== '.' && $entry !== '..') {
                     if (\is_dir($fullPath)) {
                         $documents = [...$documents, ...$this->getDocumentsFromDirectory($fullPath)];
                     } else {

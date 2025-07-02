@@ -26,8 +26,6 @@ class Ollama implements AIProviderInterface
 
     /**
      * The component responsible for mapping the NeuronAI Message to the AI provider format.
-     *
-     * @var MessageMapperInterface
      */
     protected MessageMapperInterface $messageMapper;
 
@@ -58,7 +56,7 @@ class Ollama implements AIProviderInterface
 
     protected function generateToolsPayload(): array
     {
-        return \array_map(function (ToolInterface $tool) {
+        return \array_map(function (ToolInterface $tool): array {
             $payload = [
                 'type' => 'function',
                 'function' => [

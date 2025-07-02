@@ -10,8 +10,6 @@ trait ResolveEmbeddingProvider
 {
     /**
      * The embeddings provider of the RAG system.
-     *
-     * @var EmbeddingsProviderInterface
      */
     protected EmbeddingsProviderInterface $embeddingsProvider;
 

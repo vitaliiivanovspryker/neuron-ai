@@ -19,7 +19,7 @@ class DelimiterTextSplitter extends AbstractSplitter
     {
         $text = $document->getContent();
 
-        if (empty($text)) {
+        if ($text === '') {
             return [];
         }
 

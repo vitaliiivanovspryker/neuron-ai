@@ -58,7 +58,7 @@ class OllamaTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expectedRequest, \json_decode($request['request']->getBody()->getContents(), true));
+        $this->assertSame($expectedRequest, \json_decode((string) $request['request']->getBody()->getContents(), true));
         $this->assertSame('test response', $response->getContent());
     }
 
@@ -101,7 +101,7 @@ class OllamaTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expectedRequest, \json_decode($request['request']->getBody()->getContents(), true));
+        $this->assertSame($expectedRequest, \json_decode((string) $request['request']->getBody()->getContents(), true));
         $this->assertSame('test response', $response->getContent());
     }
 
@@ -156,7 +156,7 @@ class OllamaTest extends TestCase
                 )
         ])->setClient($client);
 
-        $response = $provider->chat([new UserMessage('Hi')]);
+        $provider->chat([new UserMessage('Hi')]);
 
         // Ensure we sent one request
         $this->assertCount(1, $sentRequests);
@@ -193,6 +193,6 @@ class OllamaTest extends TestCase
             ]
         ];
 
-        $this->assertSame($expectedRequest, \json_decode($request['request']->getBody()->getContents(), true));
+        $this->assertSame($expectedRequest, \json_decode((string) $request['request']->getBody()->getContents(), true));
     }
 }

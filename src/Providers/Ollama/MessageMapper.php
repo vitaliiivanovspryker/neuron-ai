@@ -20,8 +20,6 @@ class MessageMapper implements MessageMapperInterface
 {
     /**
      * Mapped messages.
-     *
-     * @var array
      */
     protected array $mapping = [];
 

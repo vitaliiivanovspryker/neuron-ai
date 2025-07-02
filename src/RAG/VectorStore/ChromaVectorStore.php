@@ -78,7 +78,6 @@ class ChromaVectorStore implements VectorStoreInterface
 
     /**
      * @param Document[] $documents
-     * @return array
      */
     protected function mapDocuments(array $documents): array
     {

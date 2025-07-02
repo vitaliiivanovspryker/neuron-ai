@@ -48,15 +48,15 @@ class ArrayProperty implements ToolPropertyInterface
             'description' => $this->description,
         ];
 
-        if (!empty($this->items)) {
+        if ($this->items instanceof \NeuronAI\Tools\ToolPropertyInterface) {
             $schema['items'] = $this->items->getJsonSchema();
         }
 
-        if (!empty($this->minItems)) {
+        if ($this->minItems !== null && $this->minItems !== 0) {
             $schema['minItems'] = $this->minItems;
         }
 
-        if (!empty($this->maxItems)) {
+        if ($this->maxItems !== null && $this->maxItems !== 0) {
             $schema['maxItems'] = $this->maxItems;
         }
 

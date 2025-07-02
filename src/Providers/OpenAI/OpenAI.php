@@ -24,23 +24,17 @@ class OpenAI implements AIProviderInterface
 
     /**
      * The main URL of the provider API.
-     *
-     * @var string
      */
     protected string $baseUri = 'https://api.openai.com/v1';
 
     /**
      * System instructions.
      * https://platform.openai.com/docs/api-reference/chat/create
-     *
-     * @var ?string
      */
     protected ?string $system = null;
 
     /**
      * The component responsible for mapping the NeuronAI Message to the AI provider format.
-     *
-     * @var MessageMapperInterface
      */
     protected MessageMapperInterface $messageMapper;
 
@@ -111,7 +105,7 @@ class OpenAI implements AIProviderInterface
         $tools = \array_map(
             fn (array $item): ToolInterface => $this->findTool($item['function']['name'])
                 ->setInputs(
-                    \json_decode($item['function']['arguments'], true)
+                    \json_decode((string) $item['function']['arguments'], true)
                 )
                 ->setCallId($item['id']),
             $message['tool_calls']

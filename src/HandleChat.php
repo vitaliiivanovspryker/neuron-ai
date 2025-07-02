@@ -19,8 +19,6 @@ trait HandleChat
     /**
      * Execute the chat.
      *
-     * @param Message|array $messages
-     * @return Message
      * @throws \Throwable
      */
     public function chat(Message|array $messages): Message
@@ -55,11 +53,10 @@ trait HandleChat
                 if ($response instanceof ToolCallMessage) {
                     $toolCallResult = $this->executeTools($response);
                     return $this->chatAsync([$response, $toolCallResult]);
-                } else {
-                    $this->notify('message-saving', new MessageSaving($response));
-                    $this->resolveChatHistory()->addMessage($response);
-                    $this->notify('message-saved', new MessageSaved($response));
                 }
+                $this->notify('message-saving', new MessageSaving($response));
+                $this->resolveChatHistory()->addMessage($response);
+                $this->notify('message-saved', new MessageSaved($response));
 
                 $this->notify('chat-stop');
                 return $response;

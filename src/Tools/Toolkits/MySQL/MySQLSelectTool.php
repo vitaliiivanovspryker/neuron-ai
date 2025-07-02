@@ -79,10 +79,10 @@ This the tool to use only to gather information from the MySQL database.'
     {
         // Remove SQL comments
         $query = \preg_replace('/--.*$/m', '', $query);
-        $query = \preg_replace('/\/\*.*?\*\//s', '', $query);
+        $query = \preg_replace('/\/\*.*?\*\//s', '', (string) $query);
 
         // Normalize whitespace
-        return \preg_replace('/\s+/', ' ', \trim($query));
+        return \preg_replace('/\s+/', ' ', \trim((string) $query));
     }
 
     protected function getFirstKeyword(string $query): string

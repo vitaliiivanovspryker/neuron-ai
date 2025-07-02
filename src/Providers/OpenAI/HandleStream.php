@@ -38,7 +38,7 @@ trait HandleStream
 
         $stream = $this->client->post('chat/completions', [
             'stream' => true,
-            ...\compact('json')
+            ...['json' => $json]
         ])->getBody();
 
         $text = '';
@@ -121,11 +121,11 @@ trait HandleStream
     {
         $line = $this->readLine($stream);
 
-        if (! \str_starts_with($line, 'data:')) {
+        if (! \str_starts_with((string) $line, 'data:')) {
             return null;
         }
 
-        $line = \trim(\substr($line, \strlen('data: ')));
+        $line = \trim(\substr((string) $line, \strlen('data: ')));
 
         if (\str_contains($line, 'DONE')) {
             return null;

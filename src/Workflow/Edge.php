@@ -25,7 +25,7 @@ class Edge
 
     public function hasCondition(): bool
     {
-        return $this->condition !== null;
+        return $this->condition instanceof \Closure;
     }
 
     public function shouldExecute(WorkflowState $state): bool

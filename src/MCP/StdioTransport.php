@@ -7,7 +7,7 @@ namespace NeuronAI\MCP;
 class StdioTransport implements McpTransportInterface
 {
     /** @var null|resource|false $process */
-    private mixed $process;
+    private mixed $process = null;
     private array $pipes;
 
     /**
@@ -38,7 +38,7 @@ class StdioTransport implements McpTransportInterface
         // Build command with arguments
         $commandLine = $command;
         foreach ($args as $arg) {
-            $commandLine .= ' ' . \escapeshellarg($arg);
+            $commandLine .= ' ' . \escapeshellarg((string) $arg);
         }
 
         // Start the process
@@ -151,14 +151,12 @@ class StdioTransport implements McpTransportInterface
 
             // Try graceful termination first
             $status = \proc_get_status($this->process);
-            if ($status['running']) {
-                // On Unix systems, try sending SIGTERM
-                if (\function_exists('proc_terminate')) {
-                    \proc_terminate($this->process);
-
-                    // Give the process a moment to shut down gracefully
-                    \usleep(500000); // 500ms
-                }
+            // On Unix systems, try sending SIGTERM
+            if ($status['running'] && \function_exists('proc_terminate')) {
+                \proc_terminate($this->process);
+                // Give the process a moment to shut down gracefully
+                \usleep(500000);
+                // 500ms
             }
 
             // Close the process handle

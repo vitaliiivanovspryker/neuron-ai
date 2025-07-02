@@ -38,10 +38,9 @@ and performance optimization. If you already know the database structure, you ca
     private function getTables(): array
     {
         $whereClause = "WHERE t.table_schema = current_schema() AND t.table_type = 'BASE TABLE'";
-        $paramIndex = 1;
         $params = [];
 
-        if (!empty($this->tables)) {
+        if ($this->tables !== null && $this->tables !== []) {
             $placeholders = [];
             foreach ($this->tables as $table) {
                 $placeholders[] = '?';
@@ -134,7 +133,7 @@ and performance optimization. If you already know the database structure, you ca
                     'full_type' => $fullType,
                     'nullable' => $row['is_nullable'] === 'YES',
                     'default' => $row['column_default'],
-                    'auto_increment' => \str_contains($row['extra'], 'auto_increment'),
+                    'auto_increment' => \str_contains((string) $row['extra'], 'auto_increment'),
                     'comment' => $row['column_comment']
                 ];
 
@@ -185,12 +184,14 @@ and performance optimization. If you already know the database structure, you ca
         if ($type === 'varchar' || $type === 'character varying') {
             $type = 'character varying';
         }
-
         if ($row['character_maximum_length']) {
             return "{$type}({$row['character_maximum_length']})";
-        } elseif ($row['numeric_precision'] && $row['numeric_scale']) {
+        }
+        if ($row['numeric_precision'] && $row['numeric_scale']) {
             return "{$type}({$row['numeric_precision']},{$row['numeric_scale']})";
-        } elseif ($row['numeric_precision']) {
+        }
+
+        if ($row['numeric_precision']) {
             return "{$type}({$row['numeric_precision']})";
         }
 
@@ -203,7 +204,7 @@ and performance optimization. If you already know the database structure, you ca
         $paramIndex = 1;
         $params = [];
 
-        if (!empty($this->tables)) {
+        if ($this->tables !== null && $this->tables !== []) {
             $placeholders = [];
             foreach ($this->tables as $table) {
                 $placeholders[] = '?';
@@ -248,10 +249,9 @@ and performance optimization. If you already know the database structure, you ca
     private function getIndexes(): array
     {
         $whereClause = "WHERE schemaname = current_schema() AND indexname NOT LIKE '%_pkey'";
-        $paramIndex = 1;
         $params = [];
 
-        if (!empty($this->tables)) {
+        if ($this->tables !== null && $this->tables !== []) {
             $placeholders = [];
             foreach ($this->tables as $table) {
                 $placeholders[] = '?';
@@ -277,7 +277,7 @@ and performance optimization. If you already know the database structure, you ca
         $indexes = [];
         foreach ($results as $row) {
             // Parse column names from index definition
-            \preg_match('/\((.*?)\)/', $row['indexdef'], $matches);
+            \preg_match('/\((.*?)\)/', (string) $row['indexdef'], $matches);
             $columnList = $matches[1] ?? '';
             $columns = \array_map('trim', \explode(',', $columnList));
 
@@ -285,7 +285,7 @@ and performance optimization. If you already know the database structure, you ca
             $cleanColumns = [];
             foreach ($columns as $col) {
                 // Extract just the column name if it's wrapped in functions
-                if (\preg_match('/([a-zA-Z_][a-zA-Z0-9_]*)/', $col, $colMatches)) {
+                if (\preg_match('/([a-zA-Z_]\w*)/', $col, $colMatches)) {
                     $cleanColumns[] = $colMatches[1];
                 }
             }
@@ -293,9 +293,9 @@ and performance optimization. If you already know the database structure, you ca
             $indexes[] = [
                 'table' => $row['tablename'],
                 'name' => $row['indexname'],
-                'unique' => \str_contains($row['indexdef'], 'UNIQUE'),
+                'unique' => \str_contains((string) $row['indexdef'], 'UNIQUE'),
                 'type' => $this->extractIndexType($row['indexdef']),
-                'columns' => !empty($cleanColumns) ? $cleanColumns : $columns
+                'columns' => $cleanColumns === [] ? $columns : $cleanColumns
             ];
         }
 
@@ -306,11 +306,14 @@ and performance optimization. If you already know the database structure, you ca
     {
         if (\str_contains($indexDef, 'USING gin')) {
             return 'GIN';
-        } elseif (\str_contains($indexDef, 'USING gist')) {
+        }
+        if (\str_contains($indexDef, 'USING gist')) {
             return 'GIST';
-        } elseif (\str_contains($indexDef, 'USING hash')) {
+        }
+        if (\str_contains($indexDef, 'USING hash')) {
             return 'HASH';
-        } elseif (\str_contains($indexDef, 'USING brin')) {
+        }
+        if (\str_contains($indexDef, 'USING brin')) {
             return 'BRIN';
         } else {
             return 'BTREE'; // Default
@@ -320,10 +323,9 @@ and performance optimization. If you already know the database structure, you ca
     private function getConstraints(): array
     {
         $whereClause = "WHERE table_schema = current_schema() AND constraint_type IN ('UNIQUE', 'CHECK')";
-        $paramIndex = 1;
         $params = [];
 
-        if (!empty($this->tables)) {
+        if ($this->tables !== null && $this->tables !== []) {
             $placeholders = [];
             foreach ($this->tables as $table) {
                 $placeholders[] = '?';
@@ -452,8 +454,8 @@ and performance optimization. If you already know the database structure, you ca
         foreach ($tables as $table) {
             foreach ($table['columns'] as $column) {
                 if (\in_array($column['type'], ['timestamp without time zone', 'timestamp with time zone', 'timestamptz', 'date', 'time']) &&
-                    (\str_contains(\strtolower($column['name']), 'created') ||
-                     \str_contains(\strtolower($column['name']), 'updated'))) {
+                    (\str_contains(\strtolower((string) $column['name']), 'created') ||
+                     \str_contains(\strtolower((string) $column['name']), 'updated'))) {
                     $output .= "- For temporal queries on `{$table['name']}`, use `{$column['name']}` column\n";
                     break;
                 }
@@ -464,9 +466,9 @@ and performance optimization. If you already know the database structure, you ca
         foreach ($tables as $table) {
             foreach ($table['columns'] as $column) {
                 if (\in_array($column['type'], ['character varying', 'varchar', 'text', 'character']) &&
-                    (\str_contains(\strtolower($column['name']), 'name') ||
-                     \str_contains(\strtolower($column['name']), 'title') ||
-                     \str_contains(\strtolower($column['name']), 'description'))) {
+                    (\str_contains(\strtolower((string) $column['name']), 'name') ||
+                     \str_contains(\strtolower((string) $column['name']), 'title') ||
+                     \str_contains(\strtolower((string) $column['name']), 'description'))) {
                     $output .= "- For text searches on `{$table['name']}`, consider using `{$column['name']}` with ILIKE, ~ (regex), or full-text search\n";
                     break;
                 }
@@ -485,7 +487,7 @@ and performance optimization. If you already know the database structure, you ca
         // Find array columns
         foreach ($tables as $table) {
             foreach ($table['columns'] as $column) {
-                if (\str_contains($column['full_type'], '[]')) {
+                if (\str_contains((string) $column['full_type'], '[]')) {
                     $output .= "- Table `{$table['name']}` has array column `{$column['name']}` ({$column['full_type']}) - use array operators like ANY, ALL, @>\n";
                 }
             }

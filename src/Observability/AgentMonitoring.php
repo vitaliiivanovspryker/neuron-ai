@@ -99,7 +99,7 @@ class AgentMonitoring implements \SplObserver
             return new self(new Inspector($configuration), $_ENV['NEURON_AUTOFLUSH'] ?? false);
         }
 
-        if (self::$instance === null) {
+        if (!self::$instance instanceof \NeuronAI\Observability\AgentMonitoring) {
             self::$instance = new self(new Inspector($configuration), $_ENV['NEURON_AUTOFLUSH'] ?? false);
         }
         return self::$instance;

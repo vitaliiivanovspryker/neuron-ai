@@ -82,7 +82,7 @@ It looks like you are trying to run a write query using the read-only query tool
      */
     private function validateReadOnlyQuery(string $query): bool
     {
-        if (empty($query)) {
+        if ($query === '') {
             return false;
         }
 
@@ -119,7 +119,7 @@ It looks like you are trying to run a write query using the read-only query tool
         $query = \preg_replace('/--.*$/m', '', $query);
 
         // Remove multi-line comments (/* */ style)
-        $query = \preg_replace('/\/\*.*?\*\//s', '', $query);
+        $query = \preg_replace('/\/\*.*?\*\//s', '', (string) $query);
 
         return $query;
     }
@@ -131,10 +131,8 @@ It looks like you are trying to run a write query using the read-only query tool
             // Multiple statements detected - need to validate each one
             $statements = $this->splitStatements($query);
             foreach ($statements as $statement) {
-                if (!empty(\trim($statement))) {
-                    if (!$this->validateSingleStatement(\trim($statement))) {
-                        return false;
-                    }
+                if (\trim((string) $statement) !== '' && !$this->validateSingleStatement(\trim((string) $statement))) {
+                    return false;
                 }
             }
         }
@@ -167,7 +165,7 @@ It looks like you are trying to run a write query using the read-only query tool
         // Simple split on semicolons (this could be enhanced for more complex cases)
         return \array_filter(
             \array_map('trim', \explode(';', $query)),
-            fn (string $stmt): bool => !empty($stmt)
+            fn (string $stmt): bool => $stmt !== ''
         );
     }
 

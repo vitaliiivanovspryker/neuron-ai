@@ -18,15 +18,15 @@ class SystemPrompt implements \Stringable
     {
         $prompt = "# IDENTITY AND PURPOSE" . \PHP_EOL . \implode(\PHP_EOL, $this->background);
 
-        if (!empty($this->steps)) {
+        if ($this->steps !== []) {
             $prompt .= \PHP_EOL . \PHP_EOL . "# INTERNAL ASSISTANT STEPS" . \PHP_EOL . \implode(\PHP_EOL, $this->steps);
         }
 
-        if (!empty($this->output)) {
+        if ($this->output !== []) {
             $prompt .= \PHP_EOL . \PHP_EOL . "# OUTPUT INSTRUCTIONS" . \PHP_EOL . " - " . \implode(\PHP_EOL . " - ", $this->output);
         }
 
-        if (!empty($this->toolsUsage)) {
+        if ($this->toolsUsage !== []) {
             $prompt .= \PHP_EOL . \PHP_EOL . "# TOOLS USAGE RULES" . \PHP_EOL . " - " . \implode(\PHP_EOL . " - ", $this->toolsUsage);
         }
 

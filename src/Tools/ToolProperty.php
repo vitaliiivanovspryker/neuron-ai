@@ -22,9 +22,6 @@ class ToolProperty implements ToolPropertyInterface
     ) {
     }
 
-    /**
-     * @return array
-     */
     public function jsonSerialize(): array
     {
         return [
@@ -68,7 +65,7 @@ class ToolProperty implements ToolPropertyInterface
             'description' => $this->description,
         ];
 
-        if (!empty($this->enum)) {
+        if ($this->enum !== []) {
             $schema['enum'] = $this->enum;
         }
 

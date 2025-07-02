@@ -28,7 +28,6 @@ trait HandleStructured
     /**
      * Enforce a structured response.
      *
-     * @return mixed
      * @throws AgentException
      * @throws \ReflectionException
      * @throws \Throwable
@@ -49,7 +48,7 @@ trait HandleStructured
         do {
             try {
                 // If something goes wrong, retry informing the model about the error
-                if (!empty(\trim($error))) {
+                if (\trim($error) !== '') {
                     $correctionMessage = new UserMessage(
                         "There was a problem in your previous response that generated the following errors".
                         \PHP_EOL.\PHP_EOL.'- '.$error.\PHP_EOL.\PHP_EOL.
@@ -77,9 +76,8 @@ trait HandleStructured
                 if ($response instanceof ToolCallMessage) {
                     $toolCallResult = $this->executeTools($response);
                     return $this->structured([$response, $toolCallResult], $class, $maxRetries);
-                } else {
-                    $this->fillChatHistory($response);
                 }
+                $this->fillChatHistory($response);
 
                 $output = $this->processResponse($response, $schema, $class);
                 $this->notify('structured-stop');
@@ -111,7 +109,7 @@ trait HandleStructured
         $this->notify('structured-extracting', new Extracting($response));
         $json = (new JsonExtractor())->getJson($response->getContent());
         $this->notify('structured-extracted', new Extracted($response, $schema, $json));
-        if (!$json) {
+        if ($json === null || $json === '') {
             throw new AgentException("The response does not contains a valid JSON Object.");
         }
 

@@ -90,12 +90,12 @@ class Message implements \JsonSerializable
             'content' => $this->getContent()
         ];
 
-        if ($this->getUsage()) {
+        if ($this->getUsage() instanceof \NeuronAI\Chat\Messages\Usage) {
             $data['usage'] = $this->getUsage()->jsonSerialize();
         }
 
-        if (!empty($this->getAttachments())) {
-            $data['attachments'] = \array_map(fn (Attachment $attachment) => $attachment->jsonSerialize(), $this->getAttachments());
+        if ($this->getAttachments() !== []) {
+            $data['attachments'] = \array_map(fn (Attachment $attachment): array => $attachment->jsonSerialize(), $this->getAttachments());
         }
 
         return \array_merge($this->meta, $data);

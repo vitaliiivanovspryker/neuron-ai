@@ -7,8 +7,6 @@ namespace NeuronAI\Observability\Events;
 class Validated
 {
     /**
-     * @param string $class
-     * @param string $json
      * @param array<string> $violations
      */
     public function __construct(

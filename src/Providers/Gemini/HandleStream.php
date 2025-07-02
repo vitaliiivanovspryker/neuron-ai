@@ -35,7 +35,7 @@ trait HandleStream
 
         $stream = $this->client->post(\trim($this->baseUri, '/')."/{$this->model}:streamGenerateContent", [
             'stream' => true,
-            ...\compact('json')
+            ...['json' => $json]
         ])->getBody();
 
         $text = '';
@@ -44,7 +44,7 @@ trait HandleStream
         while (! $stream->eof()) {
             $line = $this->readLine($stream);
 
-            if (($line = \json_decode($line, true)) === null) {
+            if (($line = \json_decode((string) $line, true)) === null) {
                 continue;
             }
 

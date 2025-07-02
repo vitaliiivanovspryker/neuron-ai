@@ -91,7 +91,7 @@ class DeserializerTest extends TestCase
 
         $this->expectException(DeserializerException::class);
 
-        $obj = Deserializer::fromJson($json, $class::class);
+        Deserializer::fromJson($json, $class::class);
     }
 
     public function test_deserialize_invalid_input(): void
@@ -105,7 +105,7 @@ class DeserializerTest extends TestCase
 
         $this->expectException(DeserializerException::class);
 
-        $obj = Deserializer::fromJson($json, $class::class);
+        Deserializer::fromJson($json, $class::class);
     }
 
     public function test_deserialize_null_input(): void

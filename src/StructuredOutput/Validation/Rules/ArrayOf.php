@@ -66,11 +66,9 @@ class ArrayOf extends AbstractValidationRule
                 continue;
             }
 
-            if ($item instanceof $this->type) {
-                // It's like a recursive call.
-                if (empty(Validator::validate($item))) {
-                    continue;
-                }
+            // It's like a recursive call.
+            if ($item instanceof $this->type && Validator::validate($item) === []) {
+                continue;
             }
 
             $error = true;

@@ -33,7 +33,7 @@ class FileVectorStore implements VectorStoreInterface
     public function addDocuments(array $documents): void
     {
         $this->appendToFile(
-            \array_map(fn (Document $document) => $document->jsonSerialize(), $documents)
+            \array_map(fn (Document $document): array => $document->jsonSerialize(), $documents)
         );
     }
 
@@ -42,14 +42,14 @@ class FileVectorStore implements VectorStoreInterface
         $topItems = [];
 
         foreach ($this->getLine($this->getFilePath()) as $document) {
-            $document = \json_decode($document, true);
+            $document = \json_decode((string) $document, true);
 
             if (empty($document['embedding'])) {
                 throw new VectorStoreException("Document with the following content has no embedding: {$document['content']}");
             }
             $dist = VectorSimilarity::cosineDistance($embedding, $document['embedding']);
 
-            $topItems[] = \compact('dist', 'document');
+            $topItems[] = ['dist' => $dist, 'document' => $document];
 
             \usort($topItems, fn (array $a, array $b): int => $a['dist'] <=> $b['dist']);
 

@@ -28,11 +28,11 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     protected function updateUsedTokens(Message $message): void
     {
-        if ($message->getUsage()) {
+        if ($message->getUsage() instanceof Usage) {
             // For every new message, we store only the marginal contribution of input tokens
             // of the latest interactions.
             $previousInputConsumption = \array_reduce($this->history, function (int $carry, Message $message): int {
-                if ($message->getUsage()) {
+                if ($message->getUsage() instanceof Usage) {
                     $carry += $message->getUsage()->inputTokens;
                 }
                 return $carry;
@@ -80,8 +80,8 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     public function calculateTotalUsage(): int
     {
-        return \array_reduce($this->history, function (int $carry, Message $message) {
-            if ($message->getUsage()) {
+        return \array_reduce($this->history, function (int $carry, Message $message): int {
+            if ($message->getUsage() instanceof Usage) {
                 $carry += $message->getUsage()->getTotal();
             }
 
@@ -135,7 +135,8 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         $toolCallNames = \array_map(fn (ToolInterface $tool): string => $tool->getName(), $toolCall->getTools());
 
         // Look for tool results after the tool call
-        for ($i = $toolCallIndex + 1; $i < \count($this->history); $i++) {
+        $counter = \count($this->history);
+        for ($i = $toolCallIndex + 1; $i < $counter; $i++) {
             $message = $this->history[$i];
 
             if ($message instanceof ToolCallResultMessage) {
@@ -161,7 +162,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     protected function deserializeMessages(array $messages): array
     {
-        return \array_map(fn (array $message) => match ($message['type'] ?? null) {
+        return \array_map(fn (array $message): Message => match ($message['type'] ?? null) {
             'tool_call' => $this->deserializeToolCall($message),
             'tool_call_result' => $this->deserializeToolCallResult($message),
             default => $this->deserializeMessage($message),
@@ -207,15 +208,13 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         return new ToolCallResultMessage($tools);
     }
 
-    /**
-     * @param array $message
-     * @param Message $item
-     * @return void
-     */
     protected function deserializeMeta(array $message, Message $item): void
     {
         foreach ($message as $key => $value) {
-            if ($key === 'role' || $key === 'content') {
+            if ($key === 'role') {
+                continue;
+            }
+            if ($key === 'content') {
                 continue;
             }
             if ($key === 'usage') {

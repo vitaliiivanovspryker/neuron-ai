@@ -43,7 +43,7 @@ class JsonSchema
         ];
 
         // Add definitions if any exist
-        if (!empty($this->definitions)) {
+        if ($this->definitions !== []) { // @phpstan-ignore notIdentical.alwaysFalse
             $schema['definitions'] = \array_map(fn (array $definition) => [...$definition, 'additionalProperties' => false], $this->definitions);
         }
 
@@ -95,8 +95,8 @@ class JsonSchema
             $schema['properties'][$propertyName] = $this->processProperty($property);
 
             $attribute = $this->getPropertyAttribute($property);
-            if (!empty($attribute) && $attribute->required !== null) {
-                if ($attribute->required === true) {
+            if ($attribute instanceof \NeuronAI\StructuredOutput\SchemaProperty && $attribute->required !== null) {
+                if ($attribute->required) {
                     $requiredProperties[] = $propertyName;
                 }
             } else {
@@ -113,7 +113,7 @@ class JsonSchema
         }
 
         // Add required properties
-        if (!empty($requiredProperties)) {
+        if ($requiredProperties !== []) {
             $schema['required'] = $requiredProperties;
         }
 
@@ -131,7 +131,6 @@ class JsonSchema
     /**
      * Process a single property to generate its schema
      *
-     * @param ReflectionProperty $property
      * @return array Property schema
      * @throws ReflectionException
      */
@@ -141,7 +140,7 @@ class JsonSchema
 
         // Process Property attribute if present
         $attribute = $this->getPropertyAttribute($property);
-        if (!empty($attribute)) {
+        if ($attribute instanceof \NeuronAI\StructuredOutput\SchemaProperty) {
             if ($attribute->title !== null) {
                 $schema['title'] = $attribute->title;
             }
@@ -230,10 +229,6 @@ class JsonSchema
 
     /**
      * Process an enum to generate its schema
-     *
-     * @param ReflectionEnum $enum
-     * @param bool $isRoot
-     * @return array
      */
     private function processEnum(ReflectionEnum $enum, bool $isRoot = false): array
     {
@@ -277,14 +272,11 @@ class JsonSchema
 
     /**
      * Get the Property attribute if it exists on a property
-     *
-     * @param ReflectionProperty $property
-     * @return SchemaProperty|null
      */
     private function getPropertyAttribute(ReflectionProperty $property): ?SchemaProperty
     {
         $attributes = $property->getAttributes(SchemaProperty::class);
-        if (!empty($attributes)) {
+        if ($attributes !== []) {
             return $attributes[0]->newInstance();
         }
         return null;
@@ -325,7 +317,9 @@ class JsonSchema
                 // Check if it's a class or enum
                 if (\class_exists($type)) {
                     return $this->generateClassSchema($type, false);
-                } elseif (\enum_exists($type)) {
+                }
+                // Check if it's a class or enum
+                if (\enum_exists($type)) {
                     return $this->processEnum(new ReflectionEnum($type));
                 }
 

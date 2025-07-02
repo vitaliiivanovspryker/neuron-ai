@@ -50,14 +50,13 @@ class AdaptiveThresholdPostProcessor implements PostProcessorInterface
         // Ensure a threshold is not negative
         $threshold = \max(0, $threshold);
 
-        return \array_values(\array_filter($documents, fn (Document $document) => $document->getScore() >= $threshold));
+        return \array_values(\array_filter($documents, fn (Document $document): bool => $document->getScore() >= $threshold));
     }
 
     /**
      * Calculates the median of an array of values
      *
      * @param float[] $values
-     * @return float
      */
     protected function calculateMedian(array $values): float
     {
@@ -65,7 +64,7 @@ class AdaptiveThresholdPostProcessor implements PostProcessorInterface
         $n = \count($values);
         $mid = (int) \floor(($n - 1) / 2);
 
-        if ($n % 2) {
+        if ($n % 2 !== 0) {
             return $values[$mid];
         }
 
@@ -77,7 +76,6 @@ class AdaptiveThresholdPostProcessor implements PostProcessorInterface
      *
      * @param float[] $values
      * @param float $median The median of the values
-     * @return float
      */
     protected function calculateMAD(array $values, float $median): float
     {

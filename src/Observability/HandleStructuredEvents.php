@@ -69,7 +69,7 @@ trait HandleStructuredEvents
         if (\array_key_exists($id, $this->segments)) {
             $segment = $this->segments[$id]->end();
             $segment->addContext('Json', \json_decode($data->json));
-            if (!empty($data->violations)) {
+            if ($data->violations !== []) {
                 $segment->addContext('Violations', $data->violations);
             }
         }

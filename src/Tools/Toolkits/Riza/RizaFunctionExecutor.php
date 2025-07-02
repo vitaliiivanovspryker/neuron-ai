@@ -70,7 +70,7 @@ class RizaFunctionExecutor extends Tool
         string $code,
         array $input = [],
         array $env = [],
-    ) {
+    ): mixed {
         $result = $this->getClient()->post('execute-function', [
             RequestOptions::JSON => [
                 'language' => $this->language,

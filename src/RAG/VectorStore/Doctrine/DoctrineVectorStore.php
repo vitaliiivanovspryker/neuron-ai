@@ -36,7 +36,7 @@ class DoctrineVectorStore implements VectorStoreInterface
 
     public function addDocument(Document $document): void
     {
-        if (empty($document->embedding)) {
+        if ($document->embedding === []) {
             throw new \RuntimeException('document embedding must be set before adding a document');
         }
 
@@ -78,7 +78,7 @@ class DoctrineVectorStore implements VectorStoreInterface
 
     private function persistDocument(Document $document): void
     {
-        if (empty($document->embedding)) {
+        if ($document->embedding === []) {
             throw new \RuntimeException('Trying to save a document in a vectorStore without embedding');
         }
 

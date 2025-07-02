@@ -36,7 +36,7 @@ class Tool implements ToolInterface
     /**
      * @var ?callable
      */
-    protected $callback = null;
+    protected $callback;
 
     /**
      * The arguments to pass in to the callback.
@@ -63,15 +63,15 @@ class Tool implements ToolInterface
         ?string $description = null,
         array $properties = []
     ) {
-        if (!empty($name)) {
+        if ($name !== null && $name !== '') {
             $this->name = $name;
         }
 
-        if (!empty($description)) {
+        if ($description !== null && $description !== '') {
             $this->description = $description;
         }
 
-        if (!empty($properties)) {
+        if ($properties !== []) {
             $this->properties = $properties;
         }
     }
@@ -105,7 +105,7 @@ class Tool implements ToolInterface
      */
     public function getProperties(): array
     {
-        if (empty($this->properties)) {
+        if ($this->properties === []) {
             foreach ($this->properties() as $property) {
                 $this->addProperty($property);
             }
@@ -116,7 +116,7 @@ class Tool implements ToolInterface
 
     public function getRequiredProperties(): array
     {
-        return \array_reduce($this->getProperties(), function (array $carry, ToolPropertyInterface $property) {
+        return \array_reduce($this->getProperties(), function (array $carry, ToolPropertyInterface $property): array {
             if ($property->isRequired()) {
                 $carry[] = $property->getName();
             }
@@ -220,7 +220,7 @@ class Tool implements ToolInterface
                 $items = $property->getItems();
                 if ($items instanceof ObjectProperty && $items->getClass()) {
                     $class = $items->getClass();
-                    $carry[$propertyName] = \array_map(fn (array|object $input) => Deserializer::fromJson(\json_encode($input), $class), $inputValue);
+                    $carry[$propertyName] = \array_map(fn (array|object $input): object => Deserializer::fromJson(\json_encode($input), $class), $inputValue);
                     return $carry;
                 }
             }
@@ -242,7 +242,7 @@ class Tool implements ToolInterface
         return [
             'name' => $this->name,
             'description' => $this->description,
-            'inputs' => !empty($this->inputs) ? $this->inputs : new \stdClass(),
+            'inputs' => $this->inputs === [] ? new \stdClass() : $this->inputs,
             'callId' => $this->callId,
             'result' => $this->result,
         ];
