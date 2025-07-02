@@ -82,10 +82,10 @@ class LogObserver implements \SplObserver
                 'json' => $data->class,
                 'violations' => $data->violations,
             ],
-            Events\VectorStoreSearching::class => [
+            Events\Retrieving::class => [
                 'question' => $data->question->jsonSerialize(),
             ],
-            Events\VectorStoreResult::class => [
+            Events\Retrieved::class => [
                 'question' => $data->question->jsonSerialize(),
                 'documents' => $data->documents,
             ],

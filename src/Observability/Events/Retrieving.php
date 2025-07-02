@@ -6,7 +6,7 @@ namespace NeuronAI\Observability\Events;
 
 use NeuronAI\Chat\Messages\Message;
 
-class VectorStoreSearching
+class Retrieving
 {
     public function __construct(
         public Message $question

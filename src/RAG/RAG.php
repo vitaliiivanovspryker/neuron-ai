@@ -12,8 +12,8 @@ use NeuronAI\Observability\Events\PostProcessed;
 use NeuronAI\Observability\Events\PostProcessing;
 use NeuronAI\Observability\Events\PreProcessed;
 use NeuronAI\Observability\Events\PreProcessing;
-use NeuronAI\Observability\Events\VectorStoreResult;
-use NeuronAI\Observability\Events\VectorStoreSearching;
+use NeuronAI\Observability\Events\Retrieved;
+use NeuronAI\Observability\Events\Retrieving;
 use NeuronAI\Exceptions\MissingCallbackParameter;
 use NeuronAI\Exceptions\ToolCallableNotSet;
 use NeuronAI\Providers\AIProviderInterface;
@@ -125,7 +125,7 @@ class RAG extends Agent
     {
         $question = $this->applyPreProcessors($question);
 
-        $this->notify('rag-vectorstore-searching', new VectorStoreSearching($question));
+        $this->notify('rag-vectorstore-searching', new Retrieving($question));
 
         $documents = $this->resolveVectorStore()->similaritySearch(
             $this->resolveEmbeddingsProvider()->embedText($question->getContent()),
@@ -140,7 +140,7 @@ class RAG extends Agent
 
         $retrievedDocs = \array_values($retrievedDocs);
 
-        $this->notify('rag-vectorstore-result', new VectorStoreResult($question, $retrievedDocs));
+        $this->notify('rag-vectorstore-result', new Retrieved($question, $retrievedDocs));
 
         return $this->applyPostProcessors($question, $retrievedDocs);
     }

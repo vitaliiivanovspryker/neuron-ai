@@ -9,12 +9,12 @@ use NeuronAI\Observability\Events\PostProcessed;
 use NeuronAI\Observability\Events\PostProcessing;
 use NeuronAI\Observability\Events\PreProcessed;
 use NeuronAI\Observability\Events\PreProcessing;
-use NeuronAI\Observability\Events\VectorStoreResult;
-use NeuronAI\Observability\Events\VectorStoreSearching;
+use NeuronAI\Observability\Events\Retrieved;
+use NeuronAI\Observability\Events\Retrieving;
 
 trait HandleRagEvents
 {
-    public function vectorStoreSearching(AgentInterface $agent, string $event, VectorStoreSearching $data): void
+    public function ragRetrieving(AgentInterface $agent, string $event, Retrieving $data): void
     {
         if (!$this->inspector->canAddSegments()) {
             return;
@@ -23,11 +23,11 @@ trait HandleRagEvents
         $id = \md5($data->question->getContent());
 
         $this->segments[$id] = $this->inspector
-            ->startSegment(self::SEGMENT_TYPE.'-vector-search', "vectorSearch( {$data->question->getContent()} )")
+            ->startSegment(self::SEGMENT_TYPE.'-retrieval', "vectorRetrieval( {$data->question->getContent()} )")
             ->setColor(self::SEGMENT_COLOR);
     }
 
-    public function vectorStoreResult(AgentInterface $agent, string $event, VectorStoreResult $data): void
+    public function ragRetrieved(AgentInterface $agent, string $event, Retrieved $data): void
     {
         $id = \md5($data->question->getContent());
 
