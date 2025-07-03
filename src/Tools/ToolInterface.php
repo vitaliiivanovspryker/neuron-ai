@@ -58,7 +58,7 @@ interface ToolInterface extends \JsonSerializable
     public function setCallId(string $callId): ToolInterface;
 
 
-    public function getResult(): mixed;
+    public function getResult(): string;
 
     /**
      * Execute the tool's logic with input parameters.

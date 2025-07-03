@@ -181,7 +181,6 @@ class Tool implements ToolInterface
      */
     public function execute(): void
     {
-
         if (!\is_callable($this->callback) && !\method_exists($this, '__invoke')) {
             throw new ToolCallableNotSet('No function defined for tool execution.');
         }
@@ -198,7 +197,7 @@ class Tool implements ToolInterface
             $inputs = $this->getInputs();
 
             // Normalize missing optional properties by assigning them a null value
-            // Treat it as explicitly null to ensure consistent structure
+            // Treat it as explicitly null to ensure a consistent structure
             if (!\array_key_exists($propertyName, $inputs)) {
                 $carry[$propertyName] = null;
                 return $carry;

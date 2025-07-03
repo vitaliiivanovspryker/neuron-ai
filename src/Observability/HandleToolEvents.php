@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NeuronAI\Observability;
 
+use NeuronAI\AgentInterface;
 use NeuronAI\Observability\Events\ToolCalled;
 use NeuronAI\Observability\Events\ToolCalling;
 use NeuronAI\Observability\Events\ToolsBootstrapped;
@@ -11,7 +12,7 @@ use NeuronAI\Tools\ToolInterface;
 
 trait HandleToolEvents
 {
-    public function toolsBootstrapping(\NeuronAI\AgentInterface $agent, string $event, mixed $data): void
+    public function toolsBootstrapping(AgentInterface $agent, string $event, mixed $data): void
     {
         if (!$this->inspector->canAddSegments()) {
             return;
@@ -20,12 +21,12 @@ trait HandleToolEvents
         $this->segments[$agent::class.'_tools_bootstrap'] = $this->inspector
             ->startSegment(
                 self::SEGMENT_TYPE.'-tools-bootstrap',
-                "toolsBootstrap()"
+                "tools_bootstrap()"
             )
             ->setColor(self::SEGMENT_COLOR);
     }
 
-    public function toolsBootstrapped(\NeuronAI\AgentInterface $agent, string $event, ToolsBootstrapped $data): void
+    public function toolsBootstrapped(AgentInterface $agent, string $event, ToolsBootstrapped $data): void
     {
         if (\array_key_exists($agent::class.'_tools_bootstrap', $this->segments) && $data->tools !== []) {
             $segment = $this->segments[$agent::class.'_tools_bootstrap']->end();
@@ -36,7 +37,7 @@ trait HandleToolEvents
         }
     }
 
-    public function toolCalling(\NeuronAI\AgentInterface $agent, string $event, ToolCalling $data): void
+    public function toolCalling(AgentInterface $agent, string $event, ToolCalling $data): void
     {
         if (!$this->inspector->canAddSegments()) {
             return;
@@ -45,17 +46,18 @@ trait HandleToolEvents
         $this->segments[$data->tool->getName()] = $this->inspector
             ->startSegment(
                 self::SEGMENT_TYPE.'-tool-call',
-                "toolCall( {$data->tool->getName()} )"
+                "tool_call( {$data->tool->getName()} )"
             )
             ->setColor(self::SEGMENT_COLOR);
     }
 
-    public function toolCalled(\NeuronAI\AgentInterface $agent, string $event, ToolCalled $data): void
+    public function toolCalled(AgentInterface $agent, string $event, ToolCalled $data): void
     {
         if (\array_key_exists($data->tool->getName(), $this->segments)) {
             $this->segments[$data->tool->getName()]
                 ->end()
-                ->addContext('Tool', $data->tool->jsonSerialize());
+                ->addContext('Inputs', $data->tool->getInputs())
+                ->addContext('Output', $data->tool->getResult());
         }
     }
 }
