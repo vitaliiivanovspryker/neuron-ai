@@ -58,7 +58,7 @@ class StdioTransport implements McpTransportInterface
         \stream_set_write_buffer($this->pipes[0], 0);
         \stream_set_read_buffer($this->pipes[1], 0);
 
-        // Check that process started successfully
+        // Check that the process started successfully
         $status = \proc_get_status($this->process);
         if (!$status['running']) {
             $error = \stream_get_contents($this->pipes[2]);

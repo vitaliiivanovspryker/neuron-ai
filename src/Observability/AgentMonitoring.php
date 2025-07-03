@@ -163,12 +163,13 @@ class AgentMonitoring implements \SplObserver
                     break;
                 }
             }
-        } elseif ($this->inspector->canAddSegments()) {
-            $transaction = $this->inspector->transaction()->setResult('success');
-            $transaction->setContext($this->getContext($agent));
+
             if ($this->autoFlush) {
                 $this->inspector->flush();
             }
+        } elseif ($this->inspector->canAddSegments()) {
+            $transaction = $this->inspector->transaction()->setResult('success');
+            $transaction->setContext($this->getContext($agent));
         }
     }
 
