@@ -47,6 +47,9 @@
         "format": [
             "php-cs-fixer fix --allow-risky=yes"
         ],
+        "refactor": [
+            "vendor/bin/rector"
+        ],
         "test": [
             "vendor/bin/phpunit --colors=always"
         ]
