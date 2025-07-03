@@ -187,7 +187,7 @@ class RAG extends Agent
      */
     public function addDocuments(array $documents): \Generator
     {
-        foreach (\array_chunk($documents, 100) as $chunk) {
+        foreach (\array_chunk($documents, 50) as $chunk) {
             $this->resolveVectorStore()->addDocuments(
                 $this->resolveEmbeddingsProvider()->embedDocuments($chunk)
             );
