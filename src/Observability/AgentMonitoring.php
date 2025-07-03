@@ -97,7 +97,7 @@ class AgentMonitoring implements \SplObserver
         $configuration->setTransport($_ENV['INSPECTOR_TRANSPORT'] ?? 'async');
 
         // Split monitoring between agents and workflows.
-        if (isset($_ENV['INSPECTOR_SPLIT_MONITORING'])) {
+        if (isset($_ENV['NEURON_SPLIT_MONITORING'])) {
             return new self(new Inspector($configuration), $_ENV['NEURON_AUTOFLUSH'] ?? false);
         }
 
@@ -165,13 +165,13 @@ class AgentMonitoring implements \SplObserver
                     break;
                 }
             }
+        } elseif ($this->inspector->canAddSegments()) {
+            $transaction = $this->inspector->transaction()->setResult('success');
+            $transaction->setContext($this->getContext($agent));
 
             if ($this->autoFlush) {
                 $this->inspector->flush();
             }
-        } elseif ($this->inspector->canAddSegments()) {
-            $transaction = $this->inspector->transaction()->setResult('success');
-            $transaction->setContext($this->getContext($agent));
         }
     }
 

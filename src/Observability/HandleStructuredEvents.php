@@ -22,7 +22,7 @@ trait HandleStructuredEvents
             return;
         }
 
-        $this->segments[$data->class.'-schema'] = $this->inspector->startSegment('schema-generation', "schema( {$data->class} )")
+        $this->segments[$data->class.'-schema'] = $this->inspector->startSegment('neuron-schema-generation', "schemaGenerate( {$data->class} )")
             ->setColor(self::SEGMENT_COLOR);
     }
 
@@ -42,7 +42,7 @@ trait HandleStructuredEvents
 
         $id = $this->getMessageId($data->message).'-extract';
 
-        $this->segments[$id] = $this->inspector->startSegment('structured-extract')
+        $this->segments[$id] = $this->inspector->startSegment('neuron-structured-extract')
             ->setColor(self::SEGMENT_COLOR);
     }
 
@@ -72,7 +72,7 @@ trait HandleStructuredEvents
             return;
         }
 
-        $this->segments[$data->class.'-deserialize'] = $this->inspector->startSegment('structured-deserialize', "deserialize( {$data->class} )")
+        $this->segments[$data->class.'-deserialize'] = $this->inspector->startSegment('neuron-structured-deserialize', "deserialize( {$data->class} )")
             ->setColor(self::SEGMENT_COLOR);
     }
 
@@ -91,7 +91,7 @@ trait HandleStructuredEvents
             return;
         }
 
-        $this->segments[$data->class.'-validate'] = $this->inspector->startSegment('structured-validate', "validate( {$data->class} )")
+        $this->segments[$data->class.'-validate'] = $this->inspector->startSegment('neuron-structured-validate', "validate( {$data->class} )")
             ->setColor(self::SEGMENT_COLOR);
     }
 
