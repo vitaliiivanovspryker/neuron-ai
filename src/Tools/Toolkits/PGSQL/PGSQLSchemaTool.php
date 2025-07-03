@@ -315,9 +315,10 @@ and performance optimization. If you already know the database structure, you ca
         }
         if (\str_contains($indexDef, 'USING brin')) {
             return 'BRIN';
-        } else {
-            return 'BTREE'; // Default
         }
+        return 'BTREE';
+        // Default
+
     }
 
     private function getConstraints(): array

@@ -209,7 +209,7 @@ class RAG extends Agent
             $grouped[$key][] = $document;
         }
 
-        foreach ($grouped as $key => $items) {
+        foreach (\array_keys($grouped) as $key) {
             [$sourceType, $sourceName] = \explode(':', $key);
 
             $this->resolveVectorStore()->deleteBySource($sourceType, $sourceName);
