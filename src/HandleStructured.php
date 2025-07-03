@@ -97,7 +97,7 @@ trait HandleStructured
             "The LLM wasn't able to generate a structured response for the class {$class}."
         );
         $this->notify('error', new AgentError($exception));
-        throw new AgentException($exception->getMessage(), $exception->getCode(), $exception);
+        throw $exception;
     }
 
     protected function processResponse(
