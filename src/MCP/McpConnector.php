@@ -115,7 +115,7 @@ class McpConnector
             required: $required,
             items: new ToolProperty(
                 name: 'type',
-                type: PropertyType::from($prop['items']['type']??'string'),
+                type: PropertyType::from($prop['items']['type'] ?? 'string'),
             )
         );
     }
