@@ -56,6 +56,7 @@ trait HandleToolEvents
         if (\array_key_exists($data->tool->getName(), $this->segments)) {
             $this->segments[$data->tool->getName()]
                 ->end()
+                ->addContext('Properties', $data->tool->getProperties())
                 ->addContext('Inputs', $data->tool->getInputs())
                 ->addContext('Output', $data->tool->getResult());
         }
