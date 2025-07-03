@@ -148,7 +148,6 @@ class RAG extends Agent
     /**
      * Apply a series of preprocessors to the asked question.
      *
-     * @param Message $question The question to process.
      * @return Message The processed question.
      */
     protected function applyPreProcessors(Message $question): Message
@@ -165,7 +164,6 @@ class RAG extends Agent
     /**
      * Apply a series of postprocessors to the retrieved documents.
      *
-     * @param Message $question The question to process the documents for.
      * @param Document[] $documents The documents to process.
      * @return Document[] The processed documents.
      */
@@ -185,9 +183,9 @@ class RAG extends Agent
      *
      * @param Document[] $documents
      */
-    public function addDocuments(array $documents): \Generator
+    public function addDocuments(array $documents, int $chunkSize = 50): \Generator
     {
-        foreach (\array_chunk($documents, 50) as $chunk) {
+        foreach (\array_chunk($documents, $chunkSize) as $chunk) {
             $this->resolveVectorStore()->addDocuments(
                 $this->resolveEmbeddingsProvider()->embedDocuments($chunk)
             );
@@ -199,7 +197,7 @@ class RAG extends Agent
     /**
      * @param Document[] $documents
      */
-    public function reindexBySource(array $documents): \Generator
+    public function reindexBySource(array $documents, int $chunkSize = 50): \Generator
     {
         $grouped = [];
 
@@ -216,7 +214,7 @@ class RAG extends Agent
         foreach (\array_keys($grouped) as $key) {
             [$sourceType, $sourceName] = \explode(':', $key);
             $this->resolveVectorStore()->deleteBySource($sourceType, $sourceName);
-            yield from $this->addDocuments($grouped[$key]);
+            yield from $this->addDocuments($grouped[$key], $chunkSize);
         }
     }
 
