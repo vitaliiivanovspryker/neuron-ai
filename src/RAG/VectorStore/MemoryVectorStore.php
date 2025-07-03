@@ -30,7 +30,7 @@ class MemoryVectorStore implements VectorStoreInterface
 
     public function deleteBySource(string $sourceType, string $sourceName): void
     {
-        $this->documents = \array_filter($this->documents, fn(Document $document): bool => $document->getSourceType() !== $sourceType || $document->getSourceName() !== $sourceName);
+        $this->documents = \array_filter($this->documents, fn (Document $document): bool => $document->getSourceType() !== $sourceType || $document->getSourceName() !== $sourceName);
     }
 
     public function similaritySearch(array $embedding): array
