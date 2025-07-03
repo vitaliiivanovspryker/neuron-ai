@@ -46,7 +46,7 @@ class McpConnector
     {
         $tool = Tool::make(
             name: $item['name'],
-            description: $item['description'] ?? ''
+            description: $item['description'] ?? null
         )->setCallable(function (...$arguments) use ($item) {
             $response = \call_user_func($this->client->callTool(...), $item['name'], $arguments);
 
@@ -67,9 +67,9 @@ class McpConnector
             throw new McpException("Tool response format not supported: {$response['type']}");
         });
 
-        foreach ($item['inputSchema']['properties'] as $name => $input) {
+        foreach ($item['inputSchema']['properties'] as $name => $prop) {
             $required = \in_array($name, $item['inputSchema']['required'] ?? []);
-            $types = \is_array($input['type']) ? $input['type'] : [$input['type']];
+            $types = \is_array($prop['type']) ? $prop['type'] : [$prop['type']];
 
             foreach ($types as $type) {
                 try {
@@ -82,9 +82,9 @@ class McpConnector
             $type ??= PropertyType::STRING;
 
             $property = match ($type) {
-                PropertyType::ARRAY => $this->createArrayProperty($name, $type, $required, $input),
-                PropertyType::OBJECT => $this->createObjectProperty($name, $type, $required, $input),
-                default => $this->createProperty($name, $type, $required, $input),
+                PropertyType::ARRAY => $this->createArrayProperty($name, $required, $prop),
+                PropertyType::OBJECT => $this->createObjectProperty($name, $required, $prop),
+                default => $this->createToolProperty($name, $type, $required, $prop),
             };
 
             $tool->addProperty($property);
@@ -93,29 +93,29 @@ class McpConnector
         return $tool;
     }
 
-    protected function createProperty(string $name, PropertyType $type, bool $required, array $input): ToolProperty
+    protected function createToolProperty(string $name, PropertyType $type, bool $required, array $prop): ToolProperty
     {
         return new ToolProperty(
             name: $name,
             type: $type,
-            description: $input['description'] ?? null,
+            description: $prop['description'] ?? null,
             required: $required,
-            enum: $input['items']['enum'] ?? []
+            enum: $prop['items']['enum'] ?? []
         );
     }
 
     /**
      * @throws ArrayPropertyException
      */
-    protected function createArrayProperty(string $name, PropertyType $type, bool $required, array $input): ArrayProperty
+    protected function createArrayProperty(string $name, bool $required, array $prop): ArrayProperty
     {
         return new ArrayProperty(
             name: $name,
-            description: $input['description'] ?? null,
+            description: $prop['description'] ?? null,
             required: $required,
             items: new ToolProperty(
                 name: 'type',
-                type: PropertyType::from($input['items']['type']),
+                type: PropertyType::from($prop['items']['type']??'string'),
             )
         );
     }
@@ -123,11 +123,11 @@ class McpConnector
     /**
      * @throws \ReflectionException
      */
-    protected function createObjectProperty(string $name, PropertyType $type, bool $required, array $input): ObjectProperty
+    protected function createObjectProperty(string $name, bool $required, array $prop): ObjectProperty
     {
         return new ObjectProperty(
             name: $name,
-            description: $input['description'] ?? null,
+            description: $prop['description'] ?? null,
             required: $required,
         );
     }

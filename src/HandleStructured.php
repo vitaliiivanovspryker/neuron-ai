@@ -16,6 +16,8 @@ use NeuronAI\Observability\Events\Extracting;
 use NeuronAI\Observability\Events\InferenceStart;
 use NeuronAI\Observability\Events\InferenceStop;
 use NeuronAI\Exceptions\AgentException;
+use NeuronAI\Observability\Events\SchemaGenerated;
+use NeuronAI\Observability\Events\SchemaGeneration;
 use NeuronAI\Observability\Events\Validated;
 use NeuronAI\Observability\Events\Validating;
 use NeuronAI\StructuredOutput\Deserializer\Deserializer;
@@ -42,7 +44,9 @@ trait HandleStructured
 
         // Get the JSON schema from the response model
         $class ??= $this->getOutputClass();
+        $this->notify('schema-generation', new SchemaGeneration($class));
         $schema = (new JsonSchema())->generate($class);
+        $this->notify('schema-generated', new SchemaGenerated($class, $schema));
 
         $error = '';
         do {

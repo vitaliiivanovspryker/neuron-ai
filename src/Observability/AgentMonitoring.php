@@ -59,6 +59,8 @@ class AgentMonitoring implements \SplObserver
         'inference-stop' => 'inferenceStop',
         'tool-calling' => 'toolCalling',
         'tool-called' => 'toolCalled',
+        'schema-generation' => 'schemaGeneration',
+        'schema-generated' => 'schemaGenerated',
         'structured-extracting' => 'extracting',
         'structured-extracted' => 'extracted',
         'structured-deserializing' => 'deserializing',

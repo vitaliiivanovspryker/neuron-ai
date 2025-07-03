@@ -101,7 +101,7 @@ class Tool implements ToolInterface
     }
 
     /**
-     * @return array<ToolPropertyInterface>
+     * @return ToolPropertyInterface[]
      */
     public function getProperties(): array
     {

@@ -95,6 +95,8 @@ class TypesenseVectorStore implements VectorStoreInterface
     }
 
     /**
+     * Bulk save.
+     *
      * @param Document[] $documents
      * @throws Exception
      * @throws \JsonException
