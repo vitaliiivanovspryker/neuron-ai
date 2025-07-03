@@ -22,7 +22,7 @@ trait HandleInferenceEvents
         $label = $this->getBaseClassName($data->message::class);
 
         $this->segments[$this->getMessageId($data->message).'-save'] = $this->inspector
-            ->startSegment(self::SEGMENT_TYPE.'-chathistory', "save( {$label} )")
+            ->startSegment(self::SEGMENT_TYPE.'-chathistory', "save_message( {$label} )")
             ->setColor(self::SEGMENT_COLOR);
     }
 
@@ -68,9 +68,6 @@ trait HandleInferenceEvents
             $segment = $this->segments[$id]->end();
             $segment->addContext('Message', $data->message)
                 ->addContext('Response', $data->response);
-            foreach ($this->getContext($agent) as $key => $value) {
-                $segment->addContext($key, $value);
-            }
         }
     }
 }

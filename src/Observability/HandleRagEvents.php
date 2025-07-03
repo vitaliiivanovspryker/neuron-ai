@@ -23,7 +23,7 @@ trait HandleRagEvents
         $id = \md5($data->question->getContent());
 
         $this->segments[$id] = $this->inspector
-            ->startSegment(self::SEGMENT_TYPE.'-retrieval', "vectorRetrieval( {$data->question->getContent()} )")
+            ->startSegment(self::SEGMENT_TYPE.'-retrieval', "vector_retrieval( {$data->question->getContent()} )")
             ->setColor(self::SEGMENT_COLOR);
     }
 

@@ -22,7 +22,7 @@ trait HandleStructuredEvents
             return;
         }
 
-        $this->segments[$data->class.'-schema'] = $this->inspector->startSegment('neuron-schema-generation', "schemaGenerate( {$data->class} )")
+        $this->segments[$data->class.'-schema'] = $this->inspector->startSegment('neuron-schema-generation', "schema_generate( {$data->class} )")
             ->setColor(self::SEGMENT_COLOR);
     }
 

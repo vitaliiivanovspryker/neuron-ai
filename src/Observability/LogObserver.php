@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace NeuronAI\Observability;
 
+use NeuronAI\Observability\Events\PostProcessed;
+use NeuronAI\Observability\Events\PostProcessing;
+use NeuronAI\Observability\Events\PreProcessing;
+use NeuronAI\Observability\Events\SchemaGenerated;
+use NeuronAI\Observability\Events\SchemaGeneration;
 use NeuronAI\Workflow\Edge;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -86,6 +91,23 @@ class LogObserver implements \SplObserver
                 'question' => $data->question->jsonSerialize(),
             ],
             Events\Retrieved::class => [
+                'question' => $data->question->jsonSerialize(),
+                'documents' => $data->documents,
+            ],
+            SchemaGeneration::class => [
+                'class' => $data->class,
+            ],
+            SchemaGenerated::class => [
+                'class' => $data->class,
+                'schema' => $data->schema,
+            ],
+            PostProcessing::class => [
+                'processor' => $data->processor,
+                'question' => $data->question->jsonSerialize(),
+                'documents' => $data->documents,
+            ],
+            PostProcessed::class => [
+                'processor' => $data->processor,
                 'question' => $data->question->jsonSerialize(),
                 'documents' => $data->documents,
             ],
