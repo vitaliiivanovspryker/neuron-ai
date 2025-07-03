@@ -53,7 +53,7 @@ class FileVectorStore implements VectorStoreInterface
                 $document = \json_decode((string) $line, true);
 
                 if ($document['sourceType'] !== $sourceType || $document['sourceName'] !== $sourceName) {
-                    \fwrite($tempHandle, $line);
+                    \fwrite($tempHandle, (string) $line);
                 }
             }
         } finally {

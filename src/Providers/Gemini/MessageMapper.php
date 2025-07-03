@@ -47,10 +47,8 @@ class MessageMapper implements MessageMapperInterface
 
         $attachments = $message->getAttachments();
 
-        if ($attachments !== []) {
-            foreach ($attachments as $attachment) {
-                $payload['parts'][] = $this->mapAttachment($attachment);
-            }
+        foreach ($attachments as $attachment) {
+            $payload['parts'][] = $this->mapAttachment($attachment);
         }
 
         $this->mapping[] = $payload;

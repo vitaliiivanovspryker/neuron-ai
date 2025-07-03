@@ -40,7 +40,7 @@ class JsonExtractor
                 if (!\is_string($candidate)) {
                     continue;
                 }
-                if (\trim((string) $candidate) === '') {
+                if (\trim($candidate) === '') {
                     continue;
                 }
                 try {
