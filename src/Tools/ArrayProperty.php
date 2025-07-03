@@ -45,8 +45,11 @@ class ArrayProperty implements ToolPropertyInterface
     {
         $schema = [
             'type' => $this->type->value,
-            'description' => $this->description,
         ];
+
+        if (!\is_null($this->description)) {
+            $schema['description'] = $this->description;
+        }
 
         if ($this->items instanceof \NeuronAI\Tools\ToolPropertyInterface) {
             $schema['items'] = $this->items->getJsonSchema();

@@ -55,7 +55,7 @@ class ObjectProperty implements ToolPropertyInterface
     {
         return [
             'name' => $this->name,
-            'description' => $this->description,
+            ...(\is_null($this->description) ? [] : ['description' => $this->description]),
             'type' => $this->type,
             'properties' => $this->getJsonSchema(),
             'required' => $this->required,
@@ -74,8 +74,11 @@ class ObjectProperty implements ToolPropertyInterface
     {
         $schema = [
             'type' => $this->type->value,
-            'description' => $this->description,
         ];
+
+        if (!\is_null($this->description)) {
+            $schema['description'] = $this->description;
+        }
 
         $properties = \array_reduce($this->properties, function (array $carry, ToolPropertyInterface $property) {
             $carry[$property->getName()] = $property->getJsonSchema();
