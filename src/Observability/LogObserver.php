@@ -6,7 +6,6 @@ namespace NeuronAI\Observability;
 
 use NeuronAI\Observability\Events\PostProcessed;
 use NeuronAI\Observability\Events\PostProcessing;
-use NeuronAI\Observability\Events\PreProcessing;
 use NeuronAI\Observability\Events\SchemaGenerated;
 use NeuronAI\Observability\Events\SchemaGeneration;
 use NeuronAI\Workflow\Edge;
