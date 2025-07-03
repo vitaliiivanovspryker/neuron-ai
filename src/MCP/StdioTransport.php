@@ -8,7 +8,7 @@ class StdioTransport implements McpTransportInterface
 {
     /** @var null|resource|false $process */
     private mixed $process = null;
-    private array $pipes;
+    private ?array $pipes = null;
 
     /**
      * Create a new StdioTransport with the given configuration
