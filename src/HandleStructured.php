@@ -98,7 +98,7 @@ trait HandleStructured
         } while ($maxRetries >= 0);
 
         $exception = new AgentException(
-            "The LLM wasn't able to generate a structured response for the class {$class}."
+            "Impossible to generate a structured response for the class {$class}: {$error}"
         );
         $this->notify('error', new AgentError($exception));
         throw $exception;
