@@ -143,17 +143,6 @@ class JsonSchemaTest extends TestCase
                     'type' => 'string',
                 ],
                 'address' => [
-                    '$ref' => '#/definitions/Address'
-                ],
-                'tags' => [
-                    'type' => 'array',
-                    'items' => [
-                        '$ref' => '#/definitions/Tag'
-                    ]
-                ]
-            ],
-            'definitions' => [
-                'Address' => [
                     'type' => 'object',
                     'properties' => [
                         'street' => [
@@ -169,18 +158,19 @@ class JsonSchemaTest extends TestCase
                         ]
                     ],
                     'required' => ['street', 'city', 'zip'],
-                    'additionalProperties' => false,
                 ],
-                'Tag' => [
-                    'type' => 'object',
-                    'properties' => [
-                        'name' => [
-                            'description' => 'The name of the tag',
-                            'type' => 'string',
-                        ]
-                    ],
-                    'required' => ['name'],
-                    'additionalProperties' => false,
+                'tags' => [
+                    'type' => 'array',
+                    'items' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'name' => [
+                                'description' => 'The name of the tag',
+                                'type' => 'string',
+                            ]
+                        ],
+                        'required' => ['name'],
+                    ]
                 ]
             ],
             'required' => ['firstName', 'lastName', 'address', 'tags'],
