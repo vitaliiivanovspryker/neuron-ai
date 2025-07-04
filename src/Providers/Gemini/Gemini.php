@@ -62,10 +62,7 @@ class Gemini implements AIProviderInterface
 
     public function messageMapper(): MessageMapperInterface
     {
-        if (!isset($this->messageMapper)) {
-            $this->messageMapper = new MessageMapper();
-        }
-        return $this->messageMapper;
+        return new MessageMapper();
     }
 
     protected function generateToolsPayload(): array
