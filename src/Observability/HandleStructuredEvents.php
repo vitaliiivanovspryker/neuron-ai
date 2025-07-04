@@ -42,7 +42,7 @@ trait HandleStructuredEvents
 
         $id = $this->getMessageId($data->message).'-extract';
 
-        $this->segments[$id] = $this->inspector->startSegment('neuron-structured-extract')
+        $this->segments[$id] = $this->inspector->startSegment('neuron-structured-extract', 'extract_output')
             ->setColor(self::SEGMENT_COLOR);
     }
 
