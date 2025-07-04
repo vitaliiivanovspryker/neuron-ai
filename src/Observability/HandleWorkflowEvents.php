@@ -57,7 +57,7 @@ trait HandleWorkflowEvents
         $segment = $this->inspector
             ->startSegment('workflow-node', $data->node)
             ->setColor(self::SEGMENT_COLOR);
-        $segment->addContext('State', ['before' => $data->state->all()]);
+        $segment->addContext('Before', $data->state->all());
         $this->segments[$data->node] = $segment;
     }
 
@@ -65,7 +65,7 @@ trait HandleWorkflowEvents
     {
         if (\array_key_exists($data->node, $this->segments)) {
             $segment = $this->segments[$data->node]->end();
-            $segment->addContext('State', \array_merge($segment->getContext('State'), ['after' => $data->state->all()]));
+            $segment->addContext('After', $data->state->all());
         }
     }
 }
