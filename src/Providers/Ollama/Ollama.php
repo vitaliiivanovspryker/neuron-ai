@@ -24,11 +24,6 @@ class Ollama implements AIProviderInterface
 
     protected ?string $system = null;
 
-    /**
-     * The component responsible for mapping the NeuronAI Message to the AI provider format.
-     */
-    protected MessageMapperInterface $messageMapper;
-
     public function __construct(
         protected string $url, // http://localhost:11434/api
         protected string $model,

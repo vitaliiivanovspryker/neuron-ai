@@ -34,11 +34,6 @@ class Anthropic implements AIProviderInterface
     protected ?string $system = null;
 
     /**
-     * The component responsible for mapping the NeuronAI Message to the AI provider format.
-     */
-    protected MessageMapperInterface $messageMapper;
-
-    /**
      * AnthropicClaude constructor.
      */
     public function __construct(
