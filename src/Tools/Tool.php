@@ -9,7 +9,6 @@ use NeuronAI\Exceptions\ToolCallableNotSet;
 use NeuronAI\StaticConstructor;
 use NeuronAI\StructuredOutput\Deserializer\Deserializer;
 use NeuronAI\StructuredOutput\Deserializer\DeserializerException;
-use Stringable;
 
 /**
  * @method static static make(?string $name = null, ?string $description = null, array $properties = [])
@@ -158,15 +157,9 @@ class Tool implements ToolInterface
         return $this->result;
     }
 
-    public function setResult(Stringable|string|array|int $result): self
+    public function setResult(mixed $result): self
     {
-        if (\is_array($result)) {
-            $this->result = \json_encode($result);
-        } elseif (\is_string($result)) {
-            $this->result = $result;
-        } elseif ($result instanceof Stringable) {
-            $this->result = (string) $result;
-        }
+        $this->result = \is_array($result) ? \json_encode($result) : (string) $result;
 
         return $this;
     }
