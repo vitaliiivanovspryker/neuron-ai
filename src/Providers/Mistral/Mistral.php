@@ -21,7 +21,7 @@ class Mistral extends OpenAI
     public function stream(array|string $messages, callable $executeToolsCallback): \Generator
     {
         // Attach the system prompt
-        if (isset($this->system)) {
+        if ($this->system !== null) {
             \array_unshift($messages, new Message(MessageRole::SYSTEM, $this->system));
         }
 
@@ -33,7 +33,7 @@ class Mistral extends OpenAI
         ];
 
         // Attach tools
-        if (!empty($this->tools)) {
+        if ($this->tools !== []) {
             $json['tools'] = $this->generateToolsPayload();
         }
 
@@ -46,10 +46,12 @@ class Mistral extends OpenAI
         $toolCalls = [];
 
         while (! $stream->eof()) {
-            if (!$line = $this->parseNextDataLine($stream)) {
+            if (($line = $this->parseNextDataLine($stream)) === null) {
                 continue;
             }
-
+            if (($line = $this->parseNextDataLine($stream)) === []) {
+                continue;
+            }
             // Inform the agent about usage when stream
             if (empty($line['choices']) && !empty($line['usage'])) {
                 yield \json_encode(['usage' => [
@@ -88,7 +90,7 @@ class Mistral extends OpenAI
         }
     }
 
-    protected function isToolCallPart($line): bool
+    protected function isToolCallPart(array $line): bool
     {
         $calls = $line['choices'][0]['delta']['tool_calls'] ?? [];
 
