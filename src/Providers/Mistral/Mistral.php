@@ -49,9 +49,7 @@ class Mistral extends OpenAI
             if (($line = $this->parseNextDataLine($stream)) === null) {
                 continue;
             }
-            if (($line = $this->parseNextDataLine($stream)) === []) {
-                continue;
-            }
+
             // Inform the agent about usage when stream
             if (empty($line['choices']) && !empty($line['usage'])) {
                 yield \json_encode(['usage' => [
