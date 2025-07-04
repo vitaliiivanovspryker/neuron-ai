@@ -62,7 +62,7 @@ trait HandleStream
                 continue;
             }
 
-            // Process tool calls
+            // Compile tool calls
             if (isset($line['choices'][0]['delta']['tool_calls'])) {
                 $toolCalls = $this->composeToolCalls($line, $toolCalls);
                 continue;
