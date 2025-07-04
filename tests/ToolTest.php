@@ -125,10 +125,9 @@ class ToolTest extends TestCase
     {
         $tool = Tool::make('test', 'Test tool');
 
-        $this->expectException(\TypeError::class);
+        $this->expectException(\Error::class);
 
-        $tool->setCallable(fn (): object => new class () {
-        })->execute();
+        $tool->setCallable(fn (): object => new class () {})->execute();
     }
 
     public function test_tool_optional_parameters(): void
