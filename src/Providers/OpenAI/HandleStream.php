@@ -12,16 +12,6 @@ use Psr\Http\Message\StreamInterface;
 
 trait HandleStream
 {
-    protected function getStreamParameters(): array
-    {
-        return \array_merge(
-            $this->parameters,
-            [
-                'stream_options' => ['include_usage' => true],
-            ]
-        );
-    }
-
     /**
      * @throws ProviderException
      * @throws GuzzleException
@@ -37,7 +27,8 @@ trait HandleStream
             'stream' => true,
             'model' => $this->model,
             'messages' => $this->messageMapper()->map($messages),
-            ...$this->getStreamParameters(),
+            'stream_options' => ['include_usage' => true],
+            ...$this->parameters,
         ];
 
         // Attach tools
@@ -111,7 +102,7 @@ trait HandleStream
 
             if (!\array_key_exists($index, $toolCalls)) {
                 if ($name = $call['function']['name'] ?? null) {
-                    $toolCalls[$index]['function'] = ['name' => $name, 'arguments' => ''];
+                    $toolCalls[$index]['function'] = ['name' => $name, 'arguments' => $call['function']['arguments'] ?? ''];
                     $toolCalls[$index]['id'] = $call['id'];
                     $toolCalls[$index]['type'] = 'function';
                 }
