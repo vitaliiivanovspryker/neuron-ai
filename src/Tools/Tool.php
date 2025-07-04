@@ -158,7 +158,7 @@ class Tool implements ToolInterface
         return $this->result;
     }
 
-    public function setResult(Stringable|string|array $result): self
+    public function setResult(Stringable|string|array|int $result): self
     {
         if (\is_array($result)) {
             $this->result = \json_encode($result);
