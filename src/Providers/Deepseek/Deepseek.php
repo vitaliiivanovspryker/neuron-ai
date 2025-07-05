@@ -8,5 +8,7 @@ use NeuronAI\Providers\OpenAI\OpenAI;
 
 class Deepseek extends OpenAI
 {
+    use HandleStructured;
+
     protected string $baseUri = "https://api.deepseek.com/v1";
 }
