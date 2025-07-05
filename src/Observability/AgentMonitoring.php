@@ -145,9 +145,10 @@ class AgentMonitoring implements \SplObserver
                 $key .= '-'.\uniqid();
             }
 
-            $this->segments[$key] = $this->inspector->startSegment(self::SEGMENT_TYPE.'-'.$method, "{$class}::{$method}()")
-                ->setColor(self::SEGMENT_COLOR)
-                ->setContext($this->getContext($agent));
+            $segment = $this->inspector->startSegment(self::SEGMENT_TYPE.'-'.$method, "{$class}::{$method}()")
+                ->setColor(self::SEGMENT_COLOR);
+            $segment->setContext($this->getContext($agent));
+            $this->segments[$key] = $segment;
         }
     }
 
