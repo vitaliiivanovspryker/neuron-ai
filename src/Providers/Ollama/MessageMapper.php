@@ -25,6 +25,8 @@ class MessageMapper implements MessageMapperInterface
 
     public function map(array $messages): array
     {
+        $this->mapping = [];
+
         foreach ($messages as $message) {
             match ($message::class) {
                 Message::class,
