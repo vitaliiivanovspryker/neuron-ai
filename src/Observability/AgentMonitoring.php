@@ -135,7 +135,9 @@ class AgentMonitoring implements \SplObserver
         $class = $agent::class;
 
         if ($this->inspector->needTransaction()) {
-            $this->inspector->startTransaction($class.'::'.$method)->setType('ai-agent');
+            $this->inspector->startTransaction($class.'::'.$method)
+                ->setType('ai-agent')
+                ->setContext($this->getContext($agent));
         } elseif ($this->inspector->canAddSegments() && !$agent instanceof RAG) { // do not add "chat" segments on RAG
             $key = $class.$method;
 
@@ -144,7 +146,8 @@ class AgentMonitoring implements \SplObserver
             }
 
             $this->segments[$key] = $this->inspector->startSegment(self::SEGMENT_TYPE.'-'.$method, "{$class}::{$method}()")
-                ->setColor(self::SEGMENT_COLOR);
+                ->setColor(self::SEGMENT_COLOR)
+                ->setContext($this->getContext($agent));
         }
     }
 
