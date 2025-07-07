@@ -38,7 +38,7 @@ trait HandleStream
                 continue;
             }
 
-            // Last chunk will contains the usage information.
+            // Last chunk will contain the usage information.
             if ($line['done'] === true) {
                 yield \json_encode(['usage' => [
                     'input_tokens' => $line['prompt_eval_count'],

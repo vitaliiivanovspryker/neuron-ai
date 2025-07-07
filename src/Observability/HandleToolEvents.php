@@ -34,6 +34,7 @@ trait HandleToolEvents
                 $carry[$tool->getName()] = $tool->getDescription();
                 return $carry;
             }, []));
+            $segment->addContext('Guidelines', $data->guidelines);
         }
     }
 

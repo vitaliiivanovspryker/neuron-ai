@@ -92,14 +92,14 @@ trait ResolveTools
             }
         }
 
+        $instructions = $this->removeDelimitedContent($this->resolveInstructions(), '<TOOLS-GUIDELINES>', '</TOOLS-GUIDELINES>');
         if ($guidelines !== []) {
-            $instructions = $this->removeDelimitedContent($this->resolveInstructions(), '<TOOLS-GUIDELINES>', '</TOOLS-GUIDELINES>');
             $this->withInstructions(
                 $instructions.\PHP_EOL.'<TOOLS-GUIDELINES>'.\PHP_EOL.\implode(\PHP_EOL.\PHP_EOL, $guidelines).\PHP_EOL.'</TOOLS-GUIDELINES>'
             );
         }
 
-        $this->notify('tools-bootstrapped', new ToolsBootstrapped($this->toolsBootstrapCache));
+        $this->notify('tools-bootstrapped', new ToolsBootstrapped($this->toolsBootstrapCache, $guidelines));
 
         return $this->toolsBootstrapCache;
     }
