@@ -63,13 +63,13 @@ class RAG extends Agent
     {
         $question = \is_array($messages) ? $messages[0] : $messages;
 
-        $this->notify('rag-start');
+        $this->notify('chat-rag-start');
 
         $this->retrieval($question);
 
         $response = parent::chat($messages);
 
-        $this->notify('rag-stop');
+        $this->notify('chat-rag-stop');
         return $response;
     }
 
@@ -77,13 +77,13 @@ class RAG extends Agent
     {
         $question = \is_array($messages) ? $messages[0] : $messages;
 
-        $this->notify('rag-start');
+        $this->notify('stream-rag-start');
 
         $this->retrieval($question);
 
         yield from parent::stream($messages);
 
-        $this->notify('rag-stop');
+        $this->notify('stream-rag-stop');
     }
 
     protected function retrieval(Message $question): void

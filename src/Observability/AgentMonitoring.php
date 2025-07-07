@@ -47,10 +47,13 @@ class AgentMonitoring implements \SplObserver
         'chat-stop' => 'stop',
         'stream-start' => 'start',
         'stream-stop' => 'stop',
-        'rag-start' => 'start',
-        'rag-stop' => 'stop',
+        'chat-rag-start' => 'start',
+        'chat-rag-stop' => 'stop',
+        'stream-rag-start' => 'start',
+        'stream-rag-stop' => 'stop',
         'structured-start' => 'start',
         'structured-stop' => 'stop',
+
         'message-saving' => 'messageSaving',
         'message-saved' => 'messageSaved',
         'tools-bootstrapping' => 'toolsBootstrapping',
@@ -116,15 +119,6 @@ class AgentMonitoring implements \SplObserver
         }
     }
 
-    public function reportError(\SplSubject $subject, string $event, AgentError $data): void
-    {
-        $this->inspector->reportException($data->exception, !$data->unhandled);
-
-        if ($data->unhandled) {
-            $this->inspector->transaction()->setResult('error');
-        }
-    }
-
     public function start(Agent $agent, string $event, mixed $data = null): void
     {
         if (!$this->inspector->isRecording()) {
@@ -138,14 +132,14 @@ class AgentMonitoring implements \SplObserver
             $this->inspector->startTransaction($class.'::'.$method)
                 ->setType('ai-agent')
                 ->setContext($this->getContext($agent));
-        } elseif ($this->inspector->canAddSegments() && !$agent instanceof RAG) { // do not add "chat" segments on RAG
+        } elseif ($this->inspector->canAddSegments() && !$agent instanceof RAG) { // do not add "parent" agent segments on RAG
             $key = $class.$method;
 
             if (\array_key_exists($key, $this->segments)) {
                 $key .= '-'.\uniqid();
             }
 
-            $segment = $this->inspector->startSegment(self::SEGMENT_TYPE.'-'.$method, "{$class}::{$method}()")
+            $segment = $this->inspector->startSegment(self::SEGMENT_TYPE.'-'.$method, "{$class}::{$method}")
                 ->setColor(self::SEGMENT_COLOR);
             $segment->setContext($this->getContext($agent));
             $this->segments[$key] = $segment;
@@ -176,6 +170,18 @@ class AgentMonitoring implements \SplObserver
 
             if ($this->autoFlush) {
                 $this->inspector->flush();
+            }
+        }
+    }
+
+    public function reportError(\SplSubject $subject, string $event, AgentError $data): void
+    {
+        $this->inspector->reportException($data->exception, !$data->unhandled);
+
+        if ($data->unhandled) {
+            $this->inspector->transaction()->setResult('error');
+            if ($subject instanceof Agent) {
+                $this->inspector->transaction()->setContext($this->getContext($subject));
             }
         }
     }
