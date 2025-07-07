@@ -159,6 +159,7 @@ Supported providers:
 - OpenAI on Azure
 - Gemini
 - HuggingFace
+- Mistral
 
 <a name="tools">
 
