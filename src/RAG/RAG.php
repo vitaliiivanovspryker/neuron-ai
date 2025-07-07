@@ -183,21 +183,19 @@ class RAG extends Agent
      *
      * @param Document[] $documents
      */
-    public function addDocuments(array $documents, int $chunkSize = 50): \Generator
+    public function addDocuments(array $documents, int $chunkSize = 50): void
     {
         foreach (\array_chunk($documents, $chunkSize) as $chunk) {
             $this->resolveVectorStore()->addDocuments(
                 $this->resolveEmbeddingsProvider()->embedDocuments($chunk)
             );
-
-            yield \count($chunk);
         }
     }
 
     /**
      * @param Document[] $documents
      */
-    public function reindexBySource(array $documents, int $chunkSize = 50): \Generator
+    public function reindexBySource(array $documents, int $chunkSize = 50): void
     {
         $grouped = [];
 
@@ -214,7 +212,7 @@ class RAG extends Agent
         foreach (\array_keys($grouped) as $key) {
             [$sourceType, $sourceName] = \explode(':', $key);
             $this->resolveVectorStore()->deleteBySource($sourceType, $sourceName);
-            yield from $this->addDocuments($grouped[$key], $chunkSize);
+            $this->addDocuments($grouped[$key], $chunkSize);
         }
     }
 
