@@ -68,7 +68,6 @@ class MessageMapper implements MessageMapperInterface
     {
         return match ($attachment->contentType) {
             AttachmentContentType::BASE64 => $attachment->content,
-            // Transform url in base64 could be a security issue. So we raise an exception.
             AttachmentContentType::URL => throw new ProviderException('Ollama support only base64 attachment type.'),
         };
     }
