@@ -91,32 +91,27 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     protected function cutHistoryToContextWindow(): void
     {
-        $processedIndices = [];
-
         // Cut old messages
         foreach ($this->history as $index => $message) {
             if ($this->getFreeMemory() >= 0) {
                 break;
             }
 
-            if (\in_array($index, $processedIndices)) {
-                continue;
-            }
-
             // Remove tool call and tool call result pairs otherwise the history can reference missing tool calls
             // https://github.com/inspector-apm/neuron-ai/issues/204
             if ($message instanceof ToolCallMessage && $index < \count($this->history) - 1) {
                 $toolCallResultIndex = $this->findCorrespondingToolResult($index);
+                // remove both if we found the peer
                 if ($toolCallResultIndex !== null) {
                     $this->removeOldMessage($toolCallResultIndex);
                     unset($this->history[$toolCallResultIndex]);
-                    $processedIndices[] = $toolCallResultIndex;
+                    $this->removeOldMessage($index);
+                    unset($this->history[$index]);
                 }
             } else {
-                // Delete the item without altering the keys
+                // Unset remove the item without altering the keys
                 $this->removeOldMessage($index);
                 unset($this->history[$index]);
-                $processedIndices[] = $index;
             }
         }
 
