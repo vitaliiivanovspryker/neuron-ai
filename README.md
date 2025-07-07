@@ -33,7 +33,7 @@ https://docs.neuron-ai.dev/resources/guides-and-tutorials.
 - [Supported LLM Providers](#providers)
 - [Tools & Function Calls](#tools)
 - [MCP server connector](#mcp)
-- [Implement RAG systems](#rag)
+- [RAG](#rag)
 - [Structured Output](#structured)
 - [Official Documentation](#documentation)
 
