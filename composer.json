@@ -1,6 +1,6 @@
 {
     "name": "inspector-apm/neuron-ai",
-    "description": "AI Agent Development Kit for PHP.",
+    "description": "The AI Agent Development Kit for PHP.",
     "minimum-stability": "stable",
     "authors": [
         {
