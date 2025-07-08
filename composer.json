@@ -1,6 +1,6 @@
 {
     "name": "inspector-apm/neuron-ai",
-    "description": "PHP AI Framework with built-in observability.",
+    "description": "AI Agent Development Kit for PHP.",
     "minimum-stability": "stable",
     "authors": [
         {
@@ -70,6 +70,7 @@
         }
     },
     "config": {
+        "sort-packages": true,
         "allow-plugins": {
             "php-http/discovery": true
         }
