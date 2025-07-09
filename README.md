@@ -33,7 +33,7 @@ https://docs.neuron-ai.dev/resources/guides-and-tutorials.
 - [Supported LLM Providers](#providers)
 - [Tools & Function Calls](#tools)
 - [MCP server connector](#mcp)
-- [Implement RAG systems](#rag)
+- [RAG](#rag)
 - [Structured Output](#structured)
 - [Official Documentation](#documentation)
 
@@ -159,6 +159,7 @@ Supported providers:
 - OpenAI on Azure
 - Gemini
 - HuggingFace
+- Mistral
 
 <a name="tools">
 
@@ -258,7 +259,7 @@ Learn more about MCP connector in the [documentation](https://docs.neuron-ai.dev
 
 <a name="rag">
 
-## Implement RAG systems
+## RAG
 
 For RAG use case, you must extend the `NeuronAI\RAG\RAG` class instead of the default Agent class.
 
