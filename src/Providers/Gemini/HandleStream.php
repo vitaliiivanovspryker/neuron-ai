@@ -52,7 +52,7 @@ trait HandleStream
             if (\array_key_exists('usageMetadata', $line)) {
                 yield \json_encode(['usage' => [
                     'input_tokens' => $line['usageMetadata']['promptTokenCount'],
-                    'output_tokens' => $line['usageMetadata']['candidatesTokenCount']??0,
+                    'output_tokens' => $line['usageMetadata']['candidatesTokenCount'] ?? 0,
                 ]]);
                 continue;
             }
