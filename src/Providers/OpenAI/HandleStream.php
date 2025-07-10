@@ -50,12 +50,11 @@ trait HandleStream
             }
 
             // Inform the agent about usage when stream
-            if (empty($line['choices']) && !empty($line['usage'])) {
+            if (!empty($line['usage'])) {
                 yield \json_encode(['usage' => [
                     'input_tokens' => $line['usage']['prompt_tokens'],
                     'output_tokens' => $line['usage']['completion_tokens'],
                 ]]);
-                continue;
             }
 
             if (empty($line['choices'])) {
