@@ -66,7 +66,9 @@ class McpConnector
         // Filter by the only and exclude preferences.
         $tools = \array_filter(
             $this->client->listTools(),
-            fn (array $tool): bool => \in_array($tool['name'], $this->exclude) && ($this->only === [] || \in_array($tool['name'], $this->only)),
+            fn (array $tool): bool =>
+                !\in_array($tool['name'], $this->exclude) &&
+                ($this->only === [] || \in_array($tool['name'], $this->only)),
         );
 
         return \array_map(fn (array $tool): ToolInterface => $this->createTool($tool), $tools);
