@@ -19,7 +19,7 @@ interface AIProviderInterface
     /**
      * Set the tools to be exposed to the LLM.
      *
-     * @param array<ToolInterface> $tools
+     * @param ToolInterface[] $tools
      */
     public function setTools(array $tools): AIProviderInterface;
 
@@ -30,13 +30,26 @@ interface AIProviderInterface
 
     /**
      * Send a prompt to the AI agent.
+     *
+     * @param Message[] $messages
      */
     public function chat(array $messages): Message;
 
-    public function chatAsync(array $message): PromiseInterface;
+    /**
+     * Send a prompt to the AI agent.
+     *
+     * @param Message[] $messages
+     */
+    public function chatAsync(array $messages): PromiseInterface;
 
+    /**
+     * @param Message[]|string $messages
+     */
     public function stream(array|string $messages, callable $executeToolsCallback): \Generator;
 
+    /**
+     * @param Message[] $messages
+     */
     public function structured(array $messages, string $class, array $response_schema): Message;
 
     public function setClient(Client $client): AIProviderInterface;

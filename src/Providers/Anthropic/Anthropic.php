@@ -33,9 +33,6 @@ class Anthropic implements AIProviderInterface
      */
     protected ?string $system = null;
 
-    /**
-     * AnthropicClaude constructor.
-     */
     public function __construct(
         protected string $key,
         protected string $model,
@@ -53,9 +50,6 @@ class Anthropic implements AIProviderInterface
         ]);
     }
 
-    /**
-     * @inerhitDoc
-     */
     public function systemPrompt(?string $prompt): AIProviderInterface
     {
         $this->system = $prompt;
