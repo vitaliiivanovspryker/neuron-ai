@@ -160,6 +160,7 @@ Supported providers:
 - Gemini
 - HuggingFace
 - Mistral
+- Grok
 
 <a name="tools">
 
