@@ -8,7 +8,7 @@ use GuzzleHttp\Promise\PromiseInterface;
 use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\Usage;
-use NeuronAI\Exceptions\ProviderException;
+use NeuronAI\Chat\Messages\UserMessage;
 use Psr\Http\Message\ResponseInterface;
 
 trait HandleChat
@@ -38,12 +38,16 @@ trait HandleChat
         }
 
         return $this->client->postAsync(\trim($this->baseUri, '/')."/{$this->model}:generateContent", ['json' => $json])
-            ->then(function (ResponseInterface $response) {
+            ->then(function (ResponseInterface $response): Message {
                 $result = \json_decode($response->getBody()->getContents(), true);
 
                 $content = $result['candidates'][0]['content'];
 
-                $parts = $content['parts'] ?? throw new ProviderException('Model response does not contain valid parts.');
+                if (!isset($content['parts']) && $result['candidates'][0]['finishReason'] === 'MAX_TOKENS') {
+                    return new Message(MessageRole::from($content['role']), '');
+                }
+
+                $parts = $content['parts'];
 
                 if (\array_key_exists('functionCall', $parts[0]) && !empty($parts[0]['functionCall'])) {
                     $response = $this->createToolCallMessage($content);
