@@ -8,7 +8,6 @@ use GuzzleHttp\Promise\PromiseInterface;
 use NeuronAI\Chat\Enums\MessageRole;
 use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\Usage;
-use NeuronAI\Chat\Messages\UserMessage;
 use Psr\Http\Message\ResponseInterface;
 
 trait HandleChat
