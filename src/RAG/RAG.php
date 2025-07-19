@@ -86,6 +86,21 @@ class RAG extends Agent
         $this->notify('stream-rag-stop');
     }
 
+    public function structured(Message|array $messages, ?string $class = null, int $maxRetries = 1): mixed
+    {
+        $question = \is_array($messages) ? $messages[0] : $messages;
+
+        $this->notify('structured-rag-start');
+
+        $this->retrieval($question);
+
+        $structured = parent::structured($messages, $class, $maxRetries);
+
+        $this->notify('structured-rag-stop');
+
+        return $structured;
+    }
+
     protected function retrieval(Message $question): void
     {
         $this->withDocumentsContext(
