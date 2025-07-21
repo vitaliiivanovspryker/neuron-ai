@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NeuronAI\Tools;
 
+use NeuronAI\Exceptions\ArrayPropertyException;
 use NeuronAI\Exceptions\ToolException;
 use NeuronAI\StaticConstructor;
 use NeuronAI\StructuredOutput\JsonSchema;
@@ -22,6 +23,7 @@ class ObjectProperty implements ToolPropertyInterface
      * @param ToolPropertyInterface[] $properties An array of additional properties.
      * @throws \ReflectionException
      * @throws ToolException
+     * @throws ArrayPropertyException
      */
     public function __construct(
         protected string $name,
@@ -31,26 +33,160 @@ class ObjectProperty implements ToolPropertyInterface
         protected array $properties = [],
     ) {
         if ($this->properties === [] && \class_exists($this->class)) {
-            $schema = (new JsonSchema())->generate($this->getClass());
-            $required = [];
+            $schema = (new JsonSchema())->generate($this->class);
+            $this->properties = $this->buildPropertiesFromClass($schema);
+        }
+    }
 
-            // Identify required properties
-            foreach ($schema['required'] ?? [] as $r) {
-                if (!\in_array($r, $required)) {
-                    $required[] = $r;
-                }
-            }
+    /**
+     * Recursively build properties from a class schema
+     *
+     * @return ToolPropertyInterface[]
+     * @throws \ReflectionException
+     * @throws ToolException
+     * @throws ArrayPropertyException
+     */
+    protected function buildPropertiesFromClass(array $schema): array
+    {
+        $required = $schema['required'] ?? [];
+        $properties = [];
 
-            // Load the object properties from the given class
-            foreach ($schema['properties'] as $propertyName => $propertyData) {
-                $this->properties[] = new ToolProperty(
-                    $propertyName,
-                    PropertyType::fromSchema($propertyData['type']),
-                    $propertyData['description'],
-                    \in_array($propertyName, $required),
-                );
+        foreach ($schema['properties'] as $propertyName => $propertyData) {
+            $isRequired = \in_array($propertyName, $required);
+            $property = $this->createPropertyFromSchema($propertyName, $propertyData, $isRequired);
+
+            if ($property) {
+                $properties[] = $property;
             }
         }
+
+        return $properties;
+    }
+
+    /**
+     * Create a property from schema data recursively
+     *
+     * @param string $propertyName
+     * @param array $propertyData
+     * @param bool $isRequired
+     * @return ToolPropertyInterface|null
+     * @throws \ReflectionException
+     * @throws ToolException
+     * @throws ArrayPropertyException
+     */
+    protected function createPropertyFromSchema(string $propertyName, array $propertyData, bool $isRequired): ?ToolPropertyInterface
+    {
+        $type = $propertyData['type'] ?? 'string';
+        $description = $propertyData['description'] ?? null;
+
+        return match ($type) {
+            'object' => $this->createObjectProperty($propertyName, $propertyData, $isRequired, $description),
+            'array' => $this->createArrayProperty($propertyName, $propertyData, $isRequired, $description),
+            'string', 'integer', 'number', 'boolean' => $this->createScalarProperty($propertyName, $propertyData, $isRequired, $description),
+            default => new ToolProperty(
+                $propertyName,
+                PropertyType::STRING,
+                $description,
+                $isRequired,
+                $propertyData['enum'] ?? []
+            ),
+        };
+    }
+
+    /**
+     * Create an object property recursively
+     *
+     * @param string $name
+     * @param array $propertyData
+     * @param bool $required
+     * @param string|null $description
+     * @return ObjectProperty
+     * @throws \ReflectionException
+     * @throws ToolException
+     * @throws ArrayPropertyException
+     */
+    protected function createObjectProperty(string $name, array $propertyData, bool $required, ?string $description): ObjectProperty
+    {
+        $nestedProperties = [];
+        $nestedRequired = $propertyData['required'] ?? [];
+
+        // If there's a class reference in the schema, use it
+        $className = $propertyData['class'] ?? null;
+
+        // If no class is specified, but we have nested properties, build them recursively
+        if (!$className && isset($propertyData['properties'])) {
+            foreach ($propertyData['properties'] as $nestedPropertyName => $nestedPropertyData) {
+                $nestedIsRequired = \in_array($nestedPropertyName, $nestedRequired);
+                $nestedProperty = $this->createPropertyFromSchema($nestedPropertyName, $nestedPropertyData, $nestedIsRequired);
+
+                if ($nestedProperty) {
+                    $nestedProperties[] = $nestedProperty;
+                }
+            }
+        }
+
+        return new ObjectProperty(
+            $name,
+            $description,
+            $required,
+            $className,
+            $nestedProperties
+        );
+    }
+
+    /**
+     * Create an array property with recursive item handling
+     *
+     * @param string $name
+     * @param array $propertyData
+     * @param bool $required
+     * @param string|null $description
+     * @return ArrayProperty
+     * @throws \ReflectionException
+     * @throws ToolException
+     * @throws ArrayPropertyException
+     */
+    protected function createArrayProperty(string $name, array $propertyData, bool $required, ?string $description): ArrayProperty
+    {
+        $items = null;
+        $minItems = $propertyData['minItems'] ?? null;
+        $maxItems = $propertyData['maxItems'] ?? null;
+
+        // Handle array items recursively
+        if (isset($propertyData['items'])) {
+            $itemsData = $propertyData['items'];
+            $items = $this->createPropertyFromSchema($name . '_item', $itemsData, false);
+        }
+
+        return new ArrayProperty(
+            $name,
+            $description,
+            $required,
+            $items,
+            $minItems,
+            $maxItems
+        );
+    }
+
+    /**
+     * Create a scalar property (string, integer, number, boolean)
+     *
+     * @param string $name
+     * @param array $propertyData
+     * @param bool $required
+     * @param string|null $description
+     * @return ToolProperty
+     * @throws ToolException
+     */
+    protected function createScalarProperty(string $name, array $propertyData, bool $required, ?string $description): ToolProperty
+    {
+        return new ToolProperty(
+            $name,
+            PropertyType::fromSchema($propertyData['type']),
+            $description,
+            $required,
+            $propertyData['enum'] ?? []
+        );
     }
 
     public function jsonSerialize(): array
