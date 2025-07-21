@@ -46,7 +46,7 @@ class Person
     public array $contacts;
     /** @var string[] */
     public array $tags;
-    public ?Company $company;
+    public ?Company $company = null;
 }
 
 class NestedComplexStructure

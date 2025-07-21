@@ -55,7 +55,7 @@ class ObjectProperty implements ToolPropertyInterface
             $isRequired = \in_array($propertyName, $required);
             $property = $this->createPropertyFromSchema($propertyName, $propertyData, $isRequired);
 
-            if ($property) {
+            if ($property instanceof ToolPropertyInterface) {
                 $properties[] = $property;
             }
         }
@@ -66,10 +66,6 @@ class ObjectProperty implements ToolPropertyInterface
     /**
      * Create a property from schema data recursively
      *
-     * @param string $propertyName
-     * @param array $propertyData
-     * @param bool $isRequired
-     * @return ToolPropertyInterface|null
      * @throws \ReflectionException
      * @throws ToolException
      * @throws ArrayPropertyException
@@ -96,11 +92,6 @@ class ObjectProperty implements ToolPropertyInterface
     /**
      * Create an object property recursively
      *
-     * @param string $name
-     * @param array $propertyData
-     * @param bool $required
-     * @param string|null $description
-     * @return ObjectProperty
      * @throws \ReflectionException
      * @throws ToolException
      * @throws ArrayPropertyException
@@ -119,7 +110,7 @@ class ObjectProperty implements ToolPropertyInterface
                 $nestedIsRequired = \in_array($nestedPropertyName, $nestedRequired);
                 $nestedProperty = $this->createPropertyFromSchema($nestedPropertyName, $nestedPropertyData, $nestedIsRequired);
 
-                if ($nestedProperty) {
+                if ($nestedProperty instanceof ToolPropertyInterface) {
                     $nestedProperties[] = $nestedProperty;
                 }
             }
@@ -137,11 +128,6 @@ class ObjectProperty implements ToolPropertyInterface
     /**
      * Create an array property with recursive item handling
      *
-     * @param string $name
-     * @param array $propertyData
-     * @param bool $required
-     * @param string|null $description
-     * @return ArrayProperty
      * @throws \ReflectionException
      * @throws ToolException
      * @throws ArrayPropertyException
@@ -171,11 +157,6 @@ class ObjectProperty implements ToolPropertyInterface
     /**
      * Create a scalar property (string, integer, number, boolean)
      *
-     * @param string $name
-     * @param array $propertyData
-     * @param bool $required
-     * @param string|null $description
-     * @return ToolProperty
      * @throws ToolException
      */
     protected function createScalarProperty(string $name, array $propertyData, bool $required, ?string $description): ToolProperty
