@@ -8,7 +8,6 @@ use NeuronAI\Tools\ArrayProperty;
 use NeuronAI\Tools\ObjectProperty;
 use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\ToolProperty;
-use NeuronAI\Tools\ToolPropertyInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -109,7 +108,10 @@ class ObjectPropertyTest extends TestCase
                 new ToolProperty('street', PropertyType::STRING, 'Street address', true),
                 new ToolProperty('city', PropertyType::STRING, 'City name', true),
                 new ToolProperty('zipCode', PropertyType::STRING, 'ZIP code', false),
-                new ArrayProperty('coordinates', 'GPS coordinates', false,
+                new ArrayProperty(
+                    'coordinates',
+                    'GPS coordinates',
+                    false,
                     new ToolProperty('coordinate', PropertyType::NUMBER, 'A coordinate value')
                 )
             ]
@@ -192,7 +194,10 @@ class ObjectPropertyTest extends TestCase
                 new ToolProperty('age', PropertyType::INTEGER, 'Age', true),
                 $addressProperty,
                 new ArrayProperty('contacts', 'Contact list', false, $contactProperty),
-                new ArrayProperty('tags', 'Tags', false,
+                new ArrayProperty(
+                    'tags',
+                    'Tags',
+                    false,
                     new ToolProperty('tag', PropertyType::STRING, 'A tag')
                 ),
                 $companyProperty
@@ -408,7 +413,10 @@ class ObjectPropertyTest extends TestCase
                 new ToolProperty('street', PropertyType::STRING, 'Street', true),
                 new ToolProperty('city', PropertyType::STRING, 'City', true),
                 new ToolProperty('zipCode', PropertyType::STRING, 'ZIP', false),
-                new ArrayProperty('coordinates', 'Coordinates', false,
+                new ArrayProperty(
+                    'coordinates',
+                    'Coordinates',
+                    false,
                     new ToolProperty('coordinate', PropertyType::NUMBER, 'Coordinate')
                 )
             ]
