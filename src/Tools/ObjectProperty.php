@@ -35,7 +35,7 @@ class ObjectProperty implements ToolPropertyInterface
             $required = [];
 
             // Identify required properties
-            foreach ($schema['required']??[] as $r) {
+            foreach ($schema['required'] ?? [] as $r) {
                 if (!\in_array($r, $required)) {
                     $required[] = $r;
                 }
