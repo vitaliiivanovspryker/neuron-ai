@@ -51,7 +51,7 @@ class ArrayProperty implements ToolPropertyInterface
             $schema['description'] = $this->description;
         }
 
-        if ($this->items instanceof \NeuronAI\Tools\ToolPropertyInterface) {
+        if ($this->items instanceof ToolPropertyInterface) {
             $schema['items'] = $this->items->getJsonSchema();
         }
 

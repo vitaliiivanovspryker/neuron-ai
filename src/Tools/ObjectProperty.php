@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NeuronAI\Tools;
 
+use NeuronAI\Exceptions\ToolException;
 use NeuronAI\StaticConstructor;
 use NeuronAI\StructuredOutput\JsonSchema;
 
@@ -17,9 +18,10 @@ class ObjectProperty implements ToolPropertyInterface
     protected PropertyType $type = PropertyType::OBJECT;
 
     /**
-     * @param  string|null  $class  The associated class name, or null if not applicable.
-     * @param  array<ToolPropertyInterface>  $properties  An array of additional properties.
+     * @param string|null $class The associated class name, or null if not applicable.
+     * @param ToolPropertyInterface[] $properties An array of additional properties.
      * @throws \ReflectionException
+     * @throws ToolException
      */
     public function __construct(
         protected string $name,
@@ -33,7 +35,7 @@ class ObjectProperty implements ToolPropertyInterface
             $required = [];
 
             // Identify required properties
-            foreach ($schema['required'] as $r) {
+            foreach ($schema['required']??[] as $r) {
                 if (!\in_array($r, $required)) {
                     $required[] = $r;
                 }
@@ -43,7 +45,7 @@ class ObjectProperty implements ToolPropertyInterface
             foreach ($schema['properties'] as $propertyName => $propertyData) {
                 $this->properties[] = new ToolProperty(
                     $propertyName,
-                    PropertyType::from($propertyData['type']),
+                    PropertyType::fromSchema($propertyData['type']),
                     $propertyData['description'],
                     \in_array($propertyName, $required),
                 );

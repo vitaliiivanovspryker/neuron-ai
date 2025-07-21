@@ -59,7 +59,7 @@ class JsonSchema
         // Handle enum types differently
         if ($reflection->isEnum()) {
             $result = $this->processEnum(new ReflectionEnum($class));
-            // Remove the class from processed list after processing
+            // Remove the class from the processed list after processing
             \array_pop($this->processedClasses);
             return $result;
         }
@@ -82,7 +82,7 @@ class JsonSchema
             $schema['properties'][$propertyName] = $this->processProperty($property);
 
             $attribute = $this->getPropertyAttribute($property);
-            if ($attribute instanceof \NeuronAI\StructuredOutput\SchemaProperty && $attribute->required !== null) {
+            if ($attribute instanceof SchemaProperty && $attribute->required !== null) {
                 if ($attribute->required) {
                     $requiredProperties[] = $propertyName;
                 }
@@ -104,7 +104,7 @@ class JsonSchema
             $schema['required'] = $requiredProperties;
         }
 
-        // Remove the class from processed list after processing
+        // Remove the class from the processed list after processing
         \array_pop($this->processedClasses);
 
         return $schema;
@@ -122,7 +122,7 @@ class JsonSchema
 
         // Process Property attribute if present
         $attribute = $this->getPropertyAttribute($property);
-        if ($attribute instanceof \NeuronAI\StructuredOutput\SchemaProperty) {
+        if ($attribute instanceof SchemaProperty) {
             if ($attribute->title !== null) {
                 $schema['title'] = $attribute->title;
             }

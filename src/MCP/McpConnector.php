@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NeuronAI\MCP;
 
 use NeuronAI\Exceptions\ArrayPropertyException;
+use NeuronAI\Exceptions\ToolException;
 use NeuronAI\StaticConstructor;
 use NeuronAI\Tools\ArrayProperty;
 use NeuronAI\Tools\ObjectProperty;
@@ -78,6 +79,7 @@ class McpConnector
      * Convert the list of tools from the MCP server to Neuron compatible entities.
      * @throws ArrayPropertyException
      * @throws \ReflectionException
+     * @throws ToolException
      */
     protected function createTool(array $item): ToolInterface
     {
@@ -106,17 +108,8 @@ class McpConnector
 
         foreach ($item['inputSchema']['properties'] as $name => $prop) {
             $required = \in_array($name, $item['inputSchema']['required'] ?? []);
-            $types = \is_array($prop['type']) ? $prop['type'] : [$prop['type']];
 
-            foreach ($types as $type) {
-                try {
-                    $type = PropertyType::from($type);
-                    break;
-                } catch (\Throwable) {
-                }
-            }
-
-            $type ??= PropertyType::STRING;
+            $type = PropertyType::fromSchema($prop['type']);
 
             $property = match ($type) {
                 PropertyType::ARRAY => $this->createArrayProperty($name, $required, $prop),
