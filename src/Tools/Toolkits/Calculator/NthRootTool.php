@@ -35,7 +35,7 @@ DESC
                 required: true,
             ),
             new ToolProperty(
-                name: 'root_degree ',
+                name: 'root_degree',
                 type: PropertyType::INTEGER,
                 description: 'The degree of the root (e.g., 2 for square root, 3 for cube root, 4 for fourth root, etc.). Must be a positive number.',
                 required: true,
