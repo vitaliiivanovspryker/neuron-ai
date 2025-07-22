@@ -177,4 +177,53 @@ class JsonSchemaTest extends TestCase
             'additionalProperties' => false,
         ], $schema);
     }
+
+    public function test_nested_object_with_numeric_namespace(): void
+    {
+        $schema = (new JsonSchema())->generate(\NeuronAI\Tests\Stubs\Output123\Person::class);
+
+        $this->assertEquals([
+            'type' => 'object',
+            'properties' => [
+                'firstName' => [
+                    'type' => 'string',
+                ],
+                'lastName' => [
+                    'type' => 'string',
+                ],
+                'address' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'street' => [
+                            'description' => 'The name of the street',
+                            'type' => 'string',
+                        ],
+                        'city' => [
+                            'type' => 'string',
+                        ],
+                        'zip' => [
+                            'description' => 'The zip code of the address',
+                            'type' => 'string',
+                        ]
+                    ],
+                    'required' => ['street', 'city', 'zip'],
+                ],
+                'tags' => [
+                    'type' => 'array',
+                    'items' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'name' => [
+                                'description' => 'The name of the tag',
+                                'type' => 'string',
+                            ]
+                        ],
+                        'required' => ['name'],
+                    ]
+                ]
+            ],
+            'required' => ['firstName', 'lastName', 'address', 'tags'],
+            'additionalProperties' => false,
+        ], $schema);
+    }
 }
