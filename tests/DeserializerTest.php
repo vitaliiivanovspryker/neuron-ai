@@ -48,6 +48,17 @@ class DeserializerTest extends TestCase
         $this->assertEquals('agent', $obj->tags[0]->name);
     }
 
+    public function test_deserialize_array_with_alternative_syntax(): void
+    {
+        $json = '{"firstName": "John", "lastName": "Doe", "tags": [{"name": "agent"}]}';
+
+        $obj = Deserializer::fromJson($json, \NeuronAI\Tests\Stubs\Output123\Person::class);
+
+        $this->assertInstanceOf(\NeuronAI\Tests\Stubs\Output123\Person::class, $obj);
+        $this->assertInstanceOf(\NeuronAI\Tests\Stubs\Output123\Tag::class, $obj->tags[0]);
+        $this->assertEquals('agent', $obj->tags[0]->name);
+    }
+
     public function test_deserialize_string_enum(): void
     {
         $class = new class () {

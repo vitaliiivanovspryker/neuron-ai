@@ -17,7 +17,7 @@ class Person
     public Address $address;
 
     /**
-     * @var \NeuronAI\Tests\Stubs\Output123\Tag[]
+     * @var array<\NeuronAI\Tests\Stubs\Output123\Tag>
      */
     #[ArrayOf(Tag::class, allowEmpty: true)]
     public array $tags;

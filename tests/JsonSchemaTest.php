@@ -178,7 +178,7 @@ class JsonSchemaTest extends TestCase
         ], $schema);
     }
 
-    public function test_nested_object_with_numeric_namespace(): void
+    public function test_nested_object_with_alternative_syntax(): void
     {
         $schema = (new JsonSchema())->generate(\NeuronAI\Tests\Stubs\Output123\Person::class);
 

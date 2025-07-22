@@ -202,7 +202,7 @@ class Deserializer
             return false;
         }
 
-        return \preg_match('/@var\s+([a-zA-Z_\\\\]+)\[\]/', $docComment) === 1;
+        return \preg_match('/@var\s+(?:([a-zA-Z0-9_\\\\]+)\[\]|array<([a-zA-Z0-9_\\\\]+)>)/', $docComment) === 1;
     }
 
     /**
@@ -215,8 +215,9 @@ class Deserializer
             return null;
         }
 
-        if (\preg_match('/@var\s+([a-zA-Z_\\\\]+)\[\]/', $docComment, $matches)) {
-            return $matches[1];
+        // Extract type from both "@var \App\Type[]" and "@var array<\App\Type>"
+        if (\preg_match('/@var\s+(?:([a-zA-Z0-9_\\\\]+)\[\]|array<([a-zA-Z0-9_\\\\]+)>)/', $docComment, $matches) === 1) {
+            return empty($matches[1]) ? ((isset($matches[2]) && $matches[2] !== '0') ? $matches[2] : null) : ($matches[1]);
         }
 
         return null;

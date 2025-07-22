@@ -148,11 +148,11 @@ class JsonSchema
             // Parse PHPDoc for the array item type
             $docComment = $property->getDocComment();
             if ($docComment) {
-                // Extract type from "@var array<\App\Type>", or "@var \App\Type[]"
-                \preg_match('/@var\s+([a-zA-Z0-9_\\\\]+)\[\]/', $docComment, $matches);
+                // Extract type from both "@var \App\Type[]" and "@var array<\App\Type>"
+                \preg_match('/@var\s+(?:([a-zA-Z0-9_\\\\]+)\[\]|array<([a-zA-Z0-9_\\\\]+)>)/', $docComment, $matches);
 
-                if (isset($matches[1])) {
-                    $itemType = \trim($matches[1]);
+                if (isset($matches[1]) || isset($matches[2])) {
+                    $itemType = empty($matches[1]) ? ((isset($matches[2]) && $matches[2] !== '0') ? $matches[2] : null) : ($matches[1]);
 
                     // Handle class type for array items
                     if (\class_exists($itemType) || \enum_exists($itemType)) {
