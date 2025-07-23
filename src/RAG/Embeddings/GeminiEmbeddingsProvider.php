@@ -50,7 +50,6 @@ class GeminiEmbeddingsProvider extends AbstractEmbeddingsProvider
         foreach ($chunks as $chunk) {
             $response = $this->client->post('', [
                 RequestOptions::JSON => [
-                    'model' => $this->model,
                     'contents' => \array_map(fn (Document $document): array => ['parts' => [['text' => $document->getContent()]]], $chunk),
                 ]
             ])->getBody()->getContents();
