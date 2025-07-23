@@ -18,16 +18,6 @@ class Tool implements ToolInterface
     use StaticConstructor;
 
     /**
-     * The unique name of the tool (like a function name: only letter and _).
-     */
-    protected string $name;
-
-    /**
-     * The description of the tool.
-     */
-    protected string $description;
-
-    /**
      * @var ToolPropertyInterface[]
      */
     protected array $properties = [];
@@ -58,18 +48,10 @@ class Tool implements ToolInterface
      * @param ToolPropertyInterface[] $properties
      */
     public function __construct(
-        ?string $name = null,
-        ?string $description = null,
+        protected string $name,
+        protected ?string $description = null,
         array $properties = []
     ) {
-        if ($name !== null && $name !== '') {
-            $this->name = $name;
-        }
-
-        if ($description !== null && $description !== '') {
-            $this->description = $description;
-        }
-
         if ($properties !== []) {
             $this->properties = $properties;
         }
@@ -80,7 +62,7 @@ class Tool implements ToolInterface
         return $this->name;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }

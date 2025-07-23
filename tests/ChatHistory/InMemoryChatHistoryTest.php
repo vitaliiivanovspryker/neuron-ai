@@ -77,6 +77,8 @@ class InMemoryChatHistoryTest extends TestCase
         $this->assertEquals(200, $history->calculateTotalUsage());
         $this->assertEquals(100, $history->getFreeMemory());
 
+        $message = new UserMessage('Hello!');
+        $message->setUsage(new Usage(200, 100));
         $history->addMessage($message);
         $this->assertEquals(100, $history->getFreeMemory());
         $this->assertEquals(200, $history->calculateTotalUsage());
