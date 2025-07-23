@@ -32,6 +32,7 @@ class GeminiEmbeddingsProvider extends AbstractEmbeddingsProvider
     {
         $response = $this->client->post($this->getUrl(), [
             RequestOptions::JSON => [
+                'model' => 'models/'.$this->model,
                 'content' => [
                     ['parts' => [['text' => $text]]]
                 ],
@@ -51,6 +52,7 @@ class GeminiEmbeddingsProvider extends AbstractEmbeddingsProvider
         foreach ($chunks as $chunk) {
             $response = $this->client->post($this->getUrl(), [
                 RequestOptions::JSON => [
+                    'model' => 'models/'.$this->model,
                     'content' => \array_map(fn (Document $document): array => ['parts' => [['text' => $document->getContent()]]], $chunk),
                     'embedding_config' => $this->config,
                 ]
