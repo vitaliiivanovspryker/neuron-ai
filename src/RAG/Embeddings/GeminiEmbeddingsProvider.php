@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NeuronAI\RAG\Embeddings;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
-use NeuronAI\RAG\Document;
 
 class GeminiEmbeddingsProvider extends AbstractEmbeddingsProvider
 {
@@ -15,9 +16,7 @@ class GeminiEmbeddingsProvider extends AbstractEmbeddingsProvider
     public function __construct(
         protected string $key,
         protected string $model,
-        protected array $config = [
-            'output_dimensionality' => 1024
-        ]
+        protected array $config = []
     ) {
         $this->client = new Client([
             'headers' => [
@@ -30,46 +29,17 @@ class GeminiEmbeddingsProvider extends AbstractEmbeddingsProvider
 
     public function embedText(string $text): array
     {
-        $response = $this->client->post($this->getUrl(), [
+        $response = $this->client->post(\trim($this->baseUri, '/')."/{$this->model}:embedContent", [
             RequestOptions::JSON => [
-                'model' => 'models/'.$this->model,
                 'content' => [
-                    ['parts' => [['text' => $text]]]
+                    'parts' => [['text' => $text]]
                 ],
-                'embedding_config' => $this->config,
+                ...($this->config !== [] ? ['embedding_config' => $this->config] : []),
             ]
         ])->getBody()->getContents();
 
         $response = \json_decode($response, true);
 
-        return $response['embeddings'][0]['values'];
-    }
-
-    public function embedDocuments(array $documents): array
-    {
-        $chunks = \array_chunk($documents, 100);
-
-        foreach ($chunks as $chunk) {
-            $response = $this->client->post($this->getUrl(), [
-                RequestOptions::JSON => [
-                    'model' => 'models/'.$this->model,
-                    'content' => \array_map(fn (Document $document): array => ['parts' => [['text' => $document->getContent()]]], $chunk),
-                    'embedding_config' => $this->config,
-                ]
-            ])->getBody()->getContents();
-
-            $response = \json_decode($response, true);
-
-            foreach ($response['embeddings'][0]['values'] as $index => $item) {
-                $chunk[$index]->embedding = $item['embedding'];
-            }
-        }
-
-        return \array_merge(...$chunks);
-    }
-
-    protected function getUrl(): string
-    {
-        return \trim($this->baseUri, '/')."/{$this->model}:embedContent";
+        return $response['embedding'];
     }
 }
