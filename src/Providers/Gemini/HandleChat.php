@@ -43,7 +43,7 @@ trait HandleChat
 
                 $content = $result['candidates'][0]['content'];
 
-                if (!isset($content['parts']) && $result['candidates'][0]['finishReason'] === 'MAX_TOKENS') {
+                if (!isset($content['parts']) && isset($result['candidates'][0]['finishReason']) && $result['candidates'][0]['finishReason'] === 'MAX_TOKENS') {
                     return new Message(MessageRole::from($content['role']), '');
                 }
 

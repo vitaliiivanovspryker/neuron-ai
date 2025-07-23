@@ -62,7 +62,7 @@ trait HandleStream
                 $toolCalls = $this->composeToolCalls($line, $toolCalls);
 
                 // Handle tool calls
-                if ($line['candidates'][0]['finishReason'] === 'STOP') {
+                if (isset($line['candidates'][0]['finishReason']) && $line['candidates'][0]['finishReason'] === 'STOP') {
                     yield from $executeToolsCallback(
                         $this->createToolCallMessage([
                             'content' => $text,
