@@ -25,7 +25,7 @@ class Tool implements ToolInterface
     /**
      * The description of the tool.
      */
-    protected string $description;
+    protected ?string $description;
 
     /**
      * @var ToolPropertyInterface[]
@@ -58,17 +58,12 @@ class Tool implements ToolInterface
      * @param ToolPropertyInterface[] $properties
      */
     public function __construct(
-        ?string $name = null,
+        string $name,
         ?string $description = null,
         array $properties = []
     ) {
-        if ($name !== null && $name !== '') {
-            $this->name = $name;
-        }
-
-        if ($description !== null && $description !== '') {
-            $this->description = $description;
-        }
+        $this->name = $name;
+        $this->description = $description;
 
         if ($properties !== []) {
             $this->properties = $properties;
@@ -80,7 +75,7 @@ class Tool implements ToolInterface
         return $this->name;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
