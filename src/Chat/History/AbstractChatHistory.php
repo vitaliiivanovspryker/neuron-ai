@@ -41,7 +41,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
             // Subtract the previous input consumption.
             $inputTokens = $message->getUsage()->inputTokens - $previousInputConsumption;
 
-            if ($inputTokens <= 0) {
+            if ($inputTokens < 0) {
                 throw new ChatHistoryException('Input tokens cannot be negative');
             }
 
