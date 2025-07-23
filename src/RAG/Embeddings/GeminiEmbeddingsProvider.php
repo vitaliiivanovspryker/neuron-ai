@@ -1,47 +1,46 @@
 <?php
 
-declare(strict_types=1);
-
 namespace NeuronAI\RAG\Embeddings;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use NeuronAI\RAG\Document;
 
-class VoyageEmbeddingsProvider extends AbstractEmbeddingsProvider
+class GeminiEmbeddingsProvider extends AbstractEmbeddingsProvider
 {
     protected Client $client;
 
-    protected string $baseUri = 'https://api.voyageai.com/v1/embeddings';
+    protected string $baseUri = 'https://generativelanguage.googleapis.com/v1beta/models/';
 
     public function __construct(
-        string $key,
+        protected string $key,
         protected string $model,
-        protected ?int $dimensions = null
+        protected array $config = [
+            'output_dimensionality' => 1024
+        ]
     ) {
         $this->client = new Client([
-            'base_uri' => $this->baseUri,
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer ' . $key,
-            ],
+                'x-goog-api-key' => $this->key,
+            ]
         ]);
     }
 
     public function embedText(string $text): array
     {
-        $response = $this->client->post('', [
+        $response = $this->client->post(\trim($this->baseUri, '/')."/{$this->model}:embedContent", [
             RequestOptions::JSON => [
-                'model' => $this->model,
-                'input' => $text,
-                'output_dimension' => $this->dimensions,
+                'contents' => [
+                    ['parts' => [['text' => $text]]]
+                ]
             ]
         ])->getBody()->getContents();
 
         $response = \json_decode($response, true);
 
-        return $response['data'][0]['embedding'];
+        return $response['embeddings'][0]['values'];
     }
 
     public function embedDocuments(array $documents): array
@@ -52,14 +51,13 @@ class VoyageEmbeddingsProvider extends AbstractEmbeddingsProvider
             $response = $this->client->post('', [
                 RequestOptions::JSON => [
                     'model' => $this->model,
-                    'input' => \array_map(fn (Document $document): string => $document->getContent(), $chunk),
-                    'output_dimension' => $this->dimensions,
+                    'contents' => \array_map(fn (Document $document): array => ['parts' => [['text' => $document->getContent()]]], $chunk),
                 ]
             ])->getBody()->getContents();
 
             $response = \json_decode($response, true);
 
-            foreach ($response['data'] as $index => $item) {
+            foreach ($response['embeddings'][0]['values'] as $index => $item) {
                 $chunk[$index]->embedding = $item['embedding'];
             }
         }

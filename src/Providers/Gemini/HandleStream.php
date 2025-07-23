@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NeuronAI\Providers\Gemini;
 
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\RequestOptions;
 use NeuronAI\Exceptions\ProviderException;
 use Psr\Http\Message\StreamInterface;
 
@@ -35,7 +36,7 @@ trait HandleStream
 
         $stream = $this->client->post(\trim($this->baseUri, '/')."/{$this->model}:streamGenerateContent", [
             'stream' => true,
-            ...['json' => $json]
+            ...[RequestOptions::JSON => $json]
         ])->getBody();
 
         $text = '';
