@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace NeuronAI\Tests\ChatHistory;
 
 use NeuronAI\Chat\History\AbstractChatHistory;
-use NeuronAI\Chat\History\FileChatHistory;
 use NeuronAI\Chat\History\InMemoryChatHistory;
 use NeuronAI\Chat\Messages\AssistantMessage;
 use NeuronAI\Chat\Messages\Message;
@@ -78,6 +77,8 @@ class InMemoryChatHistoryTest extends TestCase
         $this->assertEquals(200, $history->calculateTotalUsage());
         $this->assertEquals(100, $history->getFreeMemory());
 
+        $message = new UserMessage('Hello!');
+        $message->setUsage(new Usage(200, 100));
         $history->addMessage($message);
         $this->assertEquals(100, $history->getFreeMemory());
         $this->assertEquals(200, $history->calculateTotalUsage());
@@ -92,8 +93,7 @@ class InMemoryChatHistoryTest extends TestCase
         int    $cumulativeInputTokens,
         int    $outputTokens,
         string $type = 'user'
-    ): Message
-    {
+    ): Message {
         $message = match ($type) {
             'assistant' => new AssistantMessage($content),
             'user' => new UserMessage($content),
@@ -110,8 +110,7 @@ class InMemoryChatHistoryTest extends TestCase
         array  $tools,
         int    $cumulativeInputTokens,
         int    $outputTokens
-    ): ToolCallMessage
-    {
+    ): ToolCallMessage {
         $message = new ToolCallMessage($content, $tools);
         $message->setUsage(new Usage($cumulativeInputTokens, $outputTokens));
 
@@ -122,8 +121,7 @@ class InMemoryChatHistoryTest extends TestCase
         array $tools,
         int   $cumulativeInputTokens,
         int   $outputTokens = 0
-    ): ToolCallResultMessage
-    {
+    ): ToolCallResultMessage {
         $message = new ToolCallResultMessage($tools);
         $message->setUsage(new Usage($cumulativeInputTokens, $outputTokens));
 
@@ -252,8 +250,8 @@ class InMemoryChatHistoryTest extends TestCase
             }
         }
 
-        sort($toolCallNames);
-        sort($toolResultNames);
+        \sort($toolCallNames);
+        \sort($toolResultNames);
 
         $this->assertEquals($toolCallNames, $toolResultNames, 'Tool call names should match tool result names');
         $this->assertLessThanOrEqual(1000, $this->chatHistory->calculateTotalUsage());
@@ -273,7 +271,7 @@ class InMemoryChatHistoryTest extends TestCase
         $remainingMessages = $this->chatHistory->getMessages();
 
         // With context window of 1000, we should have fewer than 5 messages
-        $this->assertLessThan(5, count($remainingMessages), 'Some messages should be removed due to context window limit');
+        $this->assertLessThan(5, \count($remainingMessages), 'Some messages should be removed due to context window limit');
 
         // Verify total usage is within context window
         $this->assertLessThanOrEqual(1000, $this->chatHistory->calculateTotalUsage());
@@ -320,7 +318,7 @@ class InMemoryChatHistoryTest extends TestCase
         $messages = $this->chatHistory->getMessages();
 
         // Verify we still have some messages
-        $this->assertGreaterThan(0, count($messages));
+        $this->assertGreaterThan(0, \count($messages));
     }
 
     public function testMarginalTokenCalculationIsCorrect(): void
@@ -429,7 +427,7 @@ class InMemoryChatHistoryTest extends TestCase
         $this->chatHistory->addMessage($this->createMessageWithCumulativeUsage('Test message', 100, 0));
         $this->chatHistory->addMessage($this->createMessageWithCumulativeUsage('Test response', 200, 50, 'assistant'));
 
-        $this->assertGreaterThan(0, count($this->chatHistory->getMessages()));
+        $this->assertGreaterThan(0, \count($this->chatHistory->getMessages()));
 
         // Flush all messages
         $this->chatHistory->flushAll();
@@ -453,8 +451,8 @@ class InMemoryChatHistoryTest extends TestCase
         $messages = $this->chatHistory->getMessages();
 
         // Check that array keys are sequential (0, 1, 2, ...)
-        $expectedKeys = array_keys($messages);
-        $actualKeys = range(0, count($messages) - 1);
+        $expectedKeys = \array_keys($messages);
+        $actualKeys = \range(0, \count($messages) - 1);
 
         $this->assertEquals($actualKeys, $expectedKeys, 'Array keys should be sequential after cutting');
         $this->assertLessThanOrEqual(1000, $this->chatHistory->calculateTotalUsage());
