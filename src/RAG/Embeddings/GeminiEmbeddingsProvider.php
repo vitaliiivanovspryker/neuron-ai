@@ -32,7 +32,7 @@ class GeminiEmbeddingsProvider extends AbstractEmbeddingsProvider
     {
         $response = $this->client->post($this->getUrl(), [
             RequestOptions::JSON => [
-                'contents' => [
+                'content' => [
                     ['parts' => [['text' => $text]]]
                 ],
                 'embedding_config' => $this->config,
@@ -51,7 +51,7 @@ class GeminiEmbeddingsProvider extends AbstractEmbeddingsProvider
         foreach ($chunks as $chunk) {
             $response = $this->client->post($this->getUrl(), [
                 RequestOptions::JSON => [
-                    'contents' => \array_map(fn (Document $document): array => ['parts' => [['text' => $document->getContent()]]], $chunk),
+                    'content' => \array_map(fn (Document $document): array => ['parts' => [['text' => $document->getContent()]]], $chunk),
                     'embedding_config' => $this->config,
                 ]
             ])->getBody()->getContents();
