@@ -30,7 +30,7 @@ class GeminiEmbeddingsProvider extends AbstractEmbeddingsProvider
 
     public function embedText(string $text): array
     {
-        $response = $this->client->post(\trim($this->baseUri, '/')."/{$this->model}:embedContent", [
+        $response = $this->client->post($this->getUrl(), [
             RequestOptions::JSON => [
                 'contents' => [
                     ['parts' => [['text' => $text]]]
@@ -48,7 +48,7 @@ class GeminiEmbeddingsProvider extends AbstractEmbeddingsProvider
         $chunks = \array_chunk($documents, 100);
 
         foreach ($chunks as $chunk) {
-            $response = $this->client->post('', [
+            $response = $this->client->post($this->getUrl(), [
                 RequestOptions::JSON => [
                     'contents' => \array_map(fn (Document $document): array => ['parts' => [['text' => $document->getContent()]]], $chunk),
                 ]
@@ -62,5 +62,10 @@ class GeminiEmbeddingsProvider extends AbstractEmbeddingsProvider
         }
 
         return \array_merge(...$chunks);
+    }
+
+    protected function getUrl(): string
+    {
+        return \trim($this->baseUri, '/')."/{$this->model}:embedContent";
     }
 }
