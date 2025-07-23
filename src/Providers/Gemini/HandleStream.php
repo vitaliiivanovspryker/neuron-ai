@@ -54,7 +54,6 @@ trait HandleStream
                     'input_tokens' => $line['usageMetadata']['promptTokenCount'],
                     'output_tokens' => $line['usageMetadata']['candidatesTokenCount'] ?? 0,
                 ]]);
-                continue;
             }
 
             // Process tool calls

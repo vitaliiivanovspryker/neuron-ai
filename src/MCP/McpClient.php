@@ -43,7 +43,12 @@ class McpClient
             ],
         ];
         $this->transport->send($request);
-        $this->transport->receive();
+        $response = $this->transport->receive();
+
+        if ($response['id'] !== $this->requestId) {
+            throw new McpException('Invalid response ID');
+        }
+
         $request = [
             "jsonrpc" => "2.0",
             "method"  => "notifications/initialized",
@@ -74,6 +79,10 @@ class McpClient
 
             $this->transport->send($request);
             $response = $this->transport->receive();
+
+            if ($response['id'] !== $this->requestId) {
+                throw new McpException('Invalid response ID');
+            }
 
             $tools = \array_merge($tools, $response['result']['tools']);
         } while (isset($response['result']['nextCursor']));
