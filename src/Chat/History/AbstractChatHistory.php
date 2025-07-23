@@ -15,6 +15,7 @@ use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Chat\Messages\ToolCallResultMessage;
 use NeuronAI\Chat\Messages\Usage;
 use NeuronAI\Chat\Messages\UserMessage;
+use NeuronAI\Exceptions\ChatHistoryException;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolInterface;
 
@@ -26,11 +27,10 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
     {
     }
 
-    protected function updateUsedTokens(Message $message): void
+    protected function calculateInputTokens(Message $message): void
     {
         if ($message->getUsage() instanceof Usage) {
-            // For every new message, we store only the marginal contribution of input tokens
-            // of the latest interactions.
+            // For every new message, we store only the marginal contribution of input tokens of the latest interactions.
             $previousInputConsumption = \array_reduce($this->history, function (int $carry, Message $message): int {
                 if ($message->getUsage() instanceof Usage) {
                     $carry += $message->getUsage()->inputTokens;
@@ -39,13 +39,22 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
             }, 0);
 
             // Subtract the previous input consumption.
-            $message->getUsage()->inputTokens -= $previousInputConsumption;
+            $inputTokens = $message->getUsage()->inputTokens - $previousInputConsumption;
+
+            if ($inputTokens < 0) {
+                throw new ChatHistoryException('Input tokens cannot be negative');
+            }
+
+            $message->getUsage()->inputTokens = $inputTokens;
         }
     }
 
+    /**
+     * @throws ChatHistoryException
+     */
     public function addMessage(Message $message): ChatHistoryInterface
     {
-        $this->updateUsedTokens($message);
+        $this->calculateInputTokens($message);
 
         $this->history[] = $message;
         $this->storeMessage($message);

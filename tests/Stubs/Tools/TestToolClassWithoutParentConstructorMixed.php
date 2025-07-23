@@ -10,7 +10,7 @@ use NeuronAI\Tools\ToolProperty;
 class TestToolClassWithoutParentConstructorMixed extends \NeuronAI\Tools\Tool
 {
     protected string $name = 'test_tool';
-    protected string $description = 'test tool';
+    protected ?string $description = 'test tool';
 
     public function __construct(protected string $key)
     {
