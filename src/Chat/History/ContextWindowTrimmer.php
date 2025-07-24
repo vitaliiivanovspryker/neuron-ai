@@ -14,9 +14,14 @@ use NeuronAI\Tools\ToolInterface;
 
 class ContextWindowTrimmer implements TrimmerInterface
 {
+    public function __construct(
+        protected TokenCounterInterface $tokenCounter = new TokenCounter()
+    ) {
+    }
+
     public function trim(array $messages, int $contextWindow): array
     {
-        // First validate the input
+        // First, validate the input
         if (!$this->validate($messages)) {
             throw new ChatHistoryException('Input messages array does not follow conversation integrity rules');
         }
@@ -160,7 +165,7 @@ class ContextWindowTrimmer implements TrimmerInterface
     }
 
     /**
-     * Check if a message can be removed without breaking conversation flow
+     * Check if a message can be removed without breaking the conversation flow
      */
     protected function canRemoveMessageSafely(array $messages, int $index): bool
     {
