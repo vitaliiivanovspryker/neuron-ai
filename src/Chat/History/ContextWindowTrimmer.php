@@ -12,7 +12,7 @@ use NeuronAI\Chat\Messages\Usage;
 use NeuronAI\Exceptions\ChatHistoryException;
 use NeuronAI\Tools\ToolInterface;
 
-class MessagesTrimmer implements TrimmerInterface
+class ContextWindowTrimmer implements TrimmerInterface
 {
     public function trim(array $messages, int $contextWindow): array
     {
