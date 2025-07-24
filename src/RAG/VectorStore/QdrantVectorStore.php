@@ -67,11 +67,7 @@ class QdrantVectorStore implements VectorStoreInterface
         ], $documents);
 
         $this->client->put('points', [
-            RequestOptions::JSON => [
-                'operations' => [
-                    ['upsert' => ['points' => $points]]
-                ],
-            ]
+            RequestOptions::JSON => ['points' => $points]
         ]);
     }
 
