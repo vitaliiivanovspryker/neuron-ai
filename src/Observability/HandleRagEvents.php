@@ -20,7 +20,7 @@ trait HandleRagEvents
             return;
         }
 
-        $id = \md5($data->question->getContent());
+        $id = \md5($data->question->getContent().$data->question->getRole());
 
         $this->segments[$id] = $this->inspector
             ->startSegment(self::SEGMENT_TYPE.'-retrieval', "vector_retrieval( {$data->question->getContent()} )")
@@ -29,7 +29,7 @@ trait HandleRagEvents
 
     public function ragRetrieved(AgentInterface $agent, string $event, Retrieved $data): void
     {
-        $id = \md5($data->question->getContent());
+        $id = \md5($data->question->getContent().$data->question->getRole());
 
         if (\array_key_exists($id, $this->segments)) {
             $segment = $this->segments[$id];
