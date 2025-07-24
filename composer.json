@@ -73,6 +73,7 @@
         "sort-packages": true,
         "allow-plugins": {
             "php-http/discovery": true
-        }
+        },
+        "process-timeout": 600
     }
 }
