@@ -196,8 +196,8 @@ class InMemoryChatHistoryTest extends TestCase
             }
         }
 
-        sort($toolCallNames);
-        sort($toolResultNames);
+        \sort($toolCallNames);
+        \sort($toolResultNames);
 
         $this->assertEquals($toolCallNames, $toolResultNames, 'Tool call names should match tool result names');
     }
@@ -214,7 +214,7 @@ class InMemoryChatHistoryTest extends TestCase
         $remainingMessages = $this->chatHistory->getMessages();
 
         // With the context window of 1000, we should have fewer than 5 messages
-        $this->assertLessThan(5, count($remainingMessages), 'Some messages should be removed due to context window limit');
+        $this->assertLessThan(5, \count($remainingMessages), 'Some messages should be removed due to context window limit');
 
         // Verify total usage is within the context window
         $this->assertLessThanOrEqual(1000, $this->chatHistory->calculateTotalUsage());
@@ -259,7 +259,7 @@ class InMemoryChatHistoryTest extends TestCase
         $messages = $this->chatHistory->getMessages();
 
         // Verify we still have some messages
-        $this->assertGreaterThan(0, count($messages));
+        $this->assertGreaterThan(0, \count($messages));
     }
 
     public function testFindCorrespondingToolResultMethod(): void
@@ -338,7 +338,7 @@ class InMemoryChatHistoryTest extends TestCase
         $this->chatHistory->addMessage(new UserMessage('Test message'));
         $this->chatHistory->addMessage(new AssistantMessage('Test response'));
 
-        $this->assertGreaterThan(0, count($this->chatHistory->getMessages()));
+        $this->assertGreaterThan(0, \count($this->chatHistory->getMessages()));
 
         // Flush all messages
         $this->chatHistory->flushAll();
@@ -360,8 +360,8 @@ class InMemoryChatHistoryTest extends TestCase
         $messages = $this->chatHistory->getMessages();
 
         // Check that array keys are sequential (0, 1, 2, ...)
-        $expectedKeys = array_keys($messages);
-        $actualKeys = range(0, count($messages) - 1);
+        $expectedKeys = \array_keys($messages);
+        $actualKeys = \range(0, \count($messages) - 1);
 
         $this->assertEquals($actualKeys, $expectedKeys, 'Array keys should be sequential after cutting');
     }
