@@ -15,48 +15,24 @@ use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Chat\Messages\ToolCallResultMessage;
 use NeuronAI\Chat\Messages\Usage;
 use NeuronAI\Chat\Messages\UserMessage;
-use NeuronAI\Exceptions\ChatHistoryException;
 use NeuronAI\Tools\Tool;
-use NeuronAI\Tools\ToolInterface;
 
 abstract class AbstractChatHistory implements ChatHistoryInterface
 {
     protected array $history = [];
 
-    public function __construct(protected int $contextWindow = 50000)
-    {
+    public function __construct(
+        protected TokenCounterInterface $tokenCounter = new TokenCounter(),
+        protected int $contextWindow = 50000
+    ) {
     }
-
-    /*protected function calculateInputTokens(Message $message): void
-    {
-        if ($message->getUsage() instanceof Usage) {
-            // For every new message, we store only the marginal contribution of input tokens of the latest interactions.
-            $previousInputConsumption = \array_reduce($this->history, function (int $carry, Message $message): int {
-                if ($message->getUsage() instanceof Usage) {
-                    $carry += $message->getUsage()->inputTokens;
-                }
-                return $carry;
-            }, 0);
-
-            // Subtract the previous input consumption.
-            $inputTokens = $message->getUsage()->inputTokens - $previousInputConsumption;
-
-            if ($inputTokens < 0) {
-                throw new ChatHistoryException('Input tokens cannot be negative');
-            }
-
-            $message->getUsage()->inputTokens = $inputTokens;
-        }
-    }*/
 
     public function addMessage(Message $message): ChatHistoryInterface
     {
-        //$this->calculateInputTokens($message);
-
         $this->history[] = $message;
         $this->storeMessage($message);
 
-        $this->cutHistoryToContextWindow();
+        $this->trimHistory();
 
         return $this;
     }
@@ -86,69 +62,168 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     public function calculateTotalUsage(): int
     {
-        return \array_reduce($this->history, function (int $carry, Message $message): int {
-            if ($message->getUsage() instanceof Usage) {
-                $carry += $message->getUsage()->getTotal();
-            }
-
-            return $carry;
-        }, 0);
+        return $this->tokenCounter->count($this->history);
     }
 
-    protected function cutHistoryToContextWindow(): void
+    protected function trimHistory(): void
     {
-        // Cut old messages
+        if ($this->history === []) {
+            return;
+        }
+
+        // Early exit if all messages fit within the token limit
+        $tokenCount = $this->tokenCounter->count($this->history);
+        if ($tokenCount <= $this->contextWindow) {
+            $this->ensureValidMessageSequence();
+        }
+
+        // Binary search to find the maximum number of messages that fit
+        $idx = $this->findMaxFittingMessages();
+
+        // Get the trimmed messages
+        $trimmedMessages = \array_slice($this->history, 0, $idx);
+
+        // Ensure valid message sequence
+        $this->ensureValidMessageSequence();
+    }
+
+    /**
+     * Binary search to find the maximum number of messages that fit within token limit.
+     */
+    private function findMaxFittingMessages(): int
+    {
+        $left = 0;
+        $right = \count($this->history);
+        $maxIterations = (int) \ceil(\log(\count($this->history), 2));
+
+        for ($i = 0; $i < $maxIterations && $left < $right; $i++) {
+            $mid = \intval(($left + $right + 1) / 2);
+            $subset = \array_slice($this->history, 0, $mid);
+
+            if ($this->tokenCounter->count($subset) <= $this->contextWindow) {
+                $left = $mid;
+            } else {
+                $right = $mid - 1;
+            }
+        }
+
+        return $left;
+    }
+
+    /**
+     * Ensures the message list:
+     * 1. Starts with a UserMessage
+     * 2. Ends with an AssistantMessage
+     * 3. Maintains tool call/result pairs
+     */
+    private function ensureValidMessageSequence(): void
+    {
+        // First, ensure tool call/result pairs are complete
+        $this->ensureCompleteToolPairs();
+
+        // Then ensure it starts with a UserMessage
+        $this->ensureStartsWithUser();
+
+        // Finally, ensure it ends with an AssistantMessage
+        $this->ensureEndsWithAssistant();
+    }
+
+    /**
+     * Ensures tool call/result pairs are complete
+     * If a ToolCallMessage is present, its corresponding ToolCallResultMessage must be included
+     * If a ToolCallResultMessage is at the end without its ToolCallMessage, both are removed
+     */
+    private function ensureCompleteToolPairs(): void
+    {
+        $result = [];
+        $pendingToolCall = null;
+        $pendingToolCallIndex = null;
+
+        foreach ($this->history as $message) {
+            if ($message instanceof ToolCallMessage) {
+                // Store the tool call message temporarily
+                $pendingToolCall = $message;
+                $pendingToolCallIndex = \count($result);
+                $result[] = $message;
+            } elseif ($message instanceof ToolCallResultMessage) {
+                if ($pendingToolCall !== null) {
+                    // We have a matching pair, add the result
+                    $result[] = $message;
+                    $pendingToolCall = null;
+                    $pendingToolCallIndex = null;
+                }
+                // If no pending tool call, skip this orphaned result
+            } else {
+                // Regular message
+                if ($pendingToolCall !== null) {
+                    // We have an incomplete tool call, remove it
+                    \array_splice($result, $pendingToolCallIndex, 1);
+                    $pendingToolCall = null;
+                    $pendingToolCallIndex = null;
+                }
+                $result[] = $message;
+            }
+        }
+
+        // Handle any remaining incomplete tool call at the end
+        if ($pendingToolCall !== null && $pendingToolCallIndex !== null) {
+            \array_splice($result, $pendingToolCallIndex, 1);
+        }
+    }
+
+    /**
+     * Ensures the message list starts with a UserMessage.
+     */
+    private function ensureStartsWithUser(): void
+    {
+        // Find the first UserMessage
+        $firstUserIndex = null;
         foreach ($this->history as $index => $message) {
-            if ($this->getFreeMemory() >= 0) {
+            if ($message instanceof UserMessage) {
+                $firstUserIndex = $index;
                 break;
             }
-
-            // Remove tool call and tool call result pairs otherwise the history can reference missing tool calls
-            // https://github.com/inspector-apm/neuron-ai/issues/204
-            if ($message instanceof ToolCallMessage && $index < \count($this->history) - 1) {
-                $toolCallResultIndex = $this->findCorrespondingToolResult($index);
-                // remove both if we found the peer
-                if ($toolCallResultIndex !== null) {
-                    $this->removeOldMessage($toolCallResultIndex);
-                    unset($this->history[$toolCallResultIndex]);
-                    $this->removeOldMessage($index);
-                    unset($this->history[$index]);
-                }
-            } else {
-                // Unset remove the item without altering the keys
-                $this->removeOldMessage($index);
-                unset($this->history[$index]);
-            }
         }
 
-        // Recalculate numerical keys
-        $this->history = \array_values($this->history);
+        if ($firstUserIndex === null || $firstUserIndex === 0) {
+            // No UserMessage found
+            return;
+        }
+
+        if ($firstUserIndex > 0) {
+            // Remove messages before the first UserMessage
+            $this->history = \array_slice($this->history, $firstUserIndex);
+        }
     }
 
-    protected function findCorrespondingToolResult(int $toolCallIndex): ?int
+    /**
+     * Ensures the message list ends with an AssistantMessage.
+     */
+    private function ensureEndsWithAssistant(): void
     {
-        $toolCall = $this->history[$toolCallIndex];
-
-        if (!$toolCall instanceof ToolCallMessage) {
-            return null;
-        }
-
-        $toolCallNames = \array_map(fn (ToolInterface $tool): string => $tool->getName(), $toolCall->getTools());
-
-        // Look for tool results after the tool call
-        $counter = \count($this->history);
-        for ($i = $toolCallIndex + 1; $i < $counter; $i++) {
-            $message = $this->history[$i];
-
-            if ($message instanceof ToolCallResultMessage) {
-                $toolCallResultNames = \array_map(fn (ToolInterface $tool): string => $tool->getName(), $message->getTools());
-                if ($toolCallResultNames === $toolCallNames) {
-                    return $i;
+        // Work backwards until we find an AssistantMessage (including ToolCallMessage)
+        $count = \count($this->history);
+        for ($i = $count - 1; $i >= 0; $i--) {
+            if ($this->history[$i] instanceof AssistantMessage) {
+                // Check if this is part of an incomplete tool pair
+                if ($this->history[$i] instanceof ToolCallMessage) {
+                    // Check if there's a result message after it
+                    $hasResult = false;
+                    for ($j = $i + 1; $j < $count; $j++) {
+                        if ($this->history[$j] instanceof ToolCallResultMessage) {
+                            $hasResult = true;
+                            break;
+                        }
+                    }
+                    // If no result, skip this ToolCallMessage
+                    if (!$hasResult) {
+                        continue;
+                    }
                 }
+                $this->history = \array_slice($this->history, 0, $i + 1);
+                return;
             }
         }
-
-        return null;
     }
 
     public function getFreeMemory(): int

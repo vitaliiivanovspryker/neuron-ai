@@ -20,4 +20,6 @@ return RectorConfig::configure()
     )
     ->withRules([
         AddReturnTypeDeclarationRector::class
-    ]);
+    ])
+    //->withParallel(120, 4, 10)
+;

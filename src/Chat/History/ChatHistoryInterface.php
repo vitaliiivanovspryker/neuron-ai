@@ -8,6 +8,8 @@ use NeuronAI\Chat\Messages\Message;
 
 interface ChatHistoryInterface extends \JsonSerializable
 {
+    public function __construct(TokenCounterInterface $tokenCounter, int $contextWindow);
+
     public function addMessage(Message $message): ChatHistoryInterface;
 
     /**
