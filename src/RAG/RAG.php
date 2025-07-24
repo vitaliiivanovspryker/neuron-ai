@@ -61,7 +61,7 @@ class RAG extends Agent
      */
     public function chat(Message|array $messages): Message
     {
-        $question = \is_array($messages) ? $messages[0] : $messages;
+        $question = \is_array($messages) ? \end($messages) : $messages;
 
         $this->notify('chat-rag-start');
 
@@ -75,7 +75,7 @@ class RAG extends Agent
 
     public function stream(Message|array $messages): \Generator
     {
-        $question = \is_array($messages) ? $messages[0] : $messages;
+        $question = \is_array($messages) ? \end($messages) : $messages;
 
         $this->notify('stream-rag-start');
 
@@ -88,7 +88,7 @@ class RAG extends Agent
 
     public function structured(Message|array $messages, ?string $class = null, int $maxRetries = 1): mixed
     {
-        $question = \is_array($messages) ? $messages[0] : $messages;
+        $question = \is_array($messages) ? \end($messages) : $messages;
 
         $this->notify('structured-rag-start');
 

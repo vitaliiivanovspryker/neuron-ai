@@ -27,7 +27,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
     {
     }
 
-    protected function calculateInputTokens(Message $message): void
+    /*protected function calculateInputTokens(Message $message): void
     {
         if ($message->getUsage() instanceof Usage) {
             // For every new message, we store only the marginal contribution of input tokens of the latest interactions.
@@ -41,20 +41,17 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
             // Subtract the previous input consumption.
             $inputTokens = $message->getUsage()->inputTokens - $previousInputConsumption;
 
-            if ($inputTokens <= 0) {
+            if ($inputTokens < 0) {
                 throw new ChatHistoryException('Input tokens cannot be negative');
             }
 
             $message->getUsage()->inputTokens = $inputTokens;
         }
-    }
+    }*/
 
-    /**
-     * @throws ChatHistoryException
-     */
     public function addMessage(Message $message): ChatHistoryInterface
     {
-        $this->calculateInputTokens($message);
+        //$this->calculateInputTokens($message);
 
         $this->history[] = $message;
         $this->storeMessage($message);
