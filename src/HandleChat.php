@@ -51,7 +51,7 @@ trait HandleChat
 
                 if ($response instanceof ToolCallMessage) {
                     $toolCallResult = $this->executeTools($response);
-                    return $this->chatAsync([$response, $toolCallResult]);
+                    return self::chatAsync([$response, $toolCallResult]);
                 }
                 $this->notify('message-saving', new MessageSaving($response));
                 $this->resolveChatHistory()->addMessage($response);
