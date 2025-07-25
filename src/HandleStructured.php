@@ -79,7 +79,7 @@ trait HandleStructured
 
                 if ($response instanceof ToolCallMessage) {
                     $toolCallResult = $this->executeTools($response);
-                    return $this->structured([$response, $toolCallResult], $class, $maxRetries);
+                    return self::structured([$response, $toolCallResult], $class, $maxRetries);
                 }
                 $this->fillChatHistory($response);
 
