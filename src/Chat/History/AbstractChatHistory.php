@@ -21,18 +21,10 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 {
     protected array $history = [];
 
-    protected TokenCounterInterface $tokenCounter;
-
     public function __construct(
-        protected int $contextWindow = 50000
+        protected int $contextWindow = 50000,
+        protected TokenCounterInterface $tokenCounter = new TokenCounter()
     ) {
-        $this->tokenCounter = new TokenCounter();
-    }
-
-    public function setTokenCounter(TokenCounterInterface $counter): ChatHistoryInterface
-    {
-        $this->tokenCounter = $counter;
-        return $this;
     }
 
     public function addMessage(Message $message): ChatHistoryInterface
@@ -87,32 +79,38 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
             return;
         }
 
-        // Binary search to find the maximum number of messages that fit
-        $idx = $this->findMaxFittingMessages();
+        // Binary search to find how many messages to skip from the beginning
+        $skipCount = $this->findMaxFittingMessages();
 
-        $this->history = \array_slice($this->history, 0, $idx);
+        $this->history = \array_slice($this->history, $skipCount);
 
         // Ensure valid message sequence
         $this->ensureValidMessageSequence();
     }
 
     /**
-     * Binary search to find the maximum number of messages that fit within token limit.
+     * Binary search to find the maximum number of messages that fit within the token limit.
+     *
+     * @return int The index of the first element to retain (keeping most recent messages) - 0 Skip no messages (include all) - count($this->>history): Skip all messages (include none)
      */
-    protected function findMaxFittingMessages(): int
+    private function findMaxFittingMessages(): int
     {
-        $left = 0;
-        $right = \count($this->history);
-        $maxIterations = (int) \ceil(\log(\count($this->history), 2));
+        $totalMessages = count($this->history);
+        $left = 0;  // Minimum messages to skip
+        $right = $totalMessages;  // Maximum messages to skip
+        $maxIterations = (int) ceil(log($totalMessages, 2));
 
         for ($i = 0; $i < $maxIterations && $left < $right; $i++) {
-            $mid = \intval(($left + $right + 1) / 2);
-            $subset = \array_slice($this->history, 0, $mid);
+            $mid = intval(($left + $right) / 2);
+            // Get messages from index $mid to the end
+            $subset = array_slice($this->history, $mid);
 
             if ($this->tokenCounter->count($subset) <= $this->contextWindow) {
-                $left = $mid;
+                // Fits! Try including more messages (skip fewer)
+                $right = $mid;
             } else {
-                $right = $mid - 1;
+                // Doesn't fit! Need to skip more messages
+                $left = $mid + 1;
             }
         }
 
@@ -147,15 +145,24 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         $result = [];
         $pendingToolCall = null;
         $pendingToolCallIndex = null;
+        $totalMessages = \count($this->history);
 
-        foreach ($this->history as $message) {
+        foreach ($this->history as $index => $message) {
+            $isLastMessage = ($index === $totalMessages - 1);
+
             if ($message instanceof ToolCallMessage) {
                 // Store the tool call message temporarily
                 $pendingToolCall = $message;
                 $pendingToolCallIndex = \count($result);
                 $result[] = $message;
+
+                // If this is the last message, it's valid (waiting for execution)
+                if ($isLastMessage) {
+                    $pendingToolCall = null;
+                    $pendingToolCallIndex = null;
+                }
             } elseif ($message instanceof ToolCallResultMessage) {
-                if ($pendingToolCall instanceof ToolCallMessage) {
+                if ($pendingToolCall !== null) {
                     // We have a matching pair, add the result
                     $result[] = $message;
                     $pendingToolCall = null;
@@ -164,8 +171,8 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
                 // If no pending tool call, skip this orphaned result
             } else {
                 // Regular message
-                if ($pendingToolCall instanceof ToolCallMessage) {
-                    // We have an incomplete tool call, remove it
+                if ($pendingToolCall !== null) {
+                    // We have an incomplete tool call in the middle, remove it
                     \array_splice($result, $pendingToolCallIndex, 1);
                     $pendingToolCall = null;
                     $pendingToolCallIndex = null;
@@ -190,7 +197,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         // Find the first UserMessage
         $firstUserIndex = null;
         foreach ($this->history as $index => $message) {
-            if ($message instanceof UserMessage) {
+            if ($message->getRole() === MessageRole::USER->value) {
                 $firstUserIndex = $index;
                 break;
             }
@@ -202,22 +209,27 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         }
 
         if ($firstUserIndex > 0) {
-            // Remove messages before the first UserMessage
+            // Remove messages before the first user message
             $this->history = \array_slice($this->history, $firstUserIndex);
         }
     }
 
     /**
-     * Ensures the message list ends with an AssistantMessage.
+     * Ensures the message list ends with an assistant message.
      */
     protected function ensureEndsWithAssistant(): void
     {
-        // Work backwards until we find an AssistantMessage (including ToolCallMessage)
+        // Work backwards until we find an AssistantMessage
         $count = \count($this->history);
         for ($i = $count - 1; $i >= 0; $i--) {
-            if ($this->history[$i] instanceof AssistantMessage) {
-                // Check if this is part of an incomplete tool pair
-                if ($this->history[$i] instanceof ToolCallMessage) {
+            if ($this->history[$i]->getRole() === MessageRole::ASSISTANT->value) {
+                // If it's a ToolCallMessage at the end, it's valid (waiting for execution)
+                if ($this->history[$i] instanceof ToolCallMessage && $i === $count - 1) {
+                    $this->history = \array_slice($this->history, 0, $i + 1);
+                }
+
+                // If it's a ToolCallMessage NOT at the end, check if it has a result
+                if ($this->history[$i] instanceof ToolCallMessage && $i < $count - 1) {
                     // Check if there's a result message after it
                     $hasResult = false;
                     for ($j = $i + 1; $j < $count; $j++) {
@@ -231,8 +243,9 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
                         continue;
                     }
                 }
+
+                // Valid AssistantMessage found
                 $this->history = \array_slice($this->history, 0, $i + 1);
-                return;
             }
         }
     }
