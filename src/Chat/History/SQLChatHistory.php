@@ -42,6 +42,15 @@ class SQLChatHistory extends AbstractChatHistory
         $stmt = $this->pdo->prepare("SELECT * FROM {$this->table} WHERE thread_id = :thread_id");
         $stmt->execute(['thread_id' => $this->thread_id]);
         $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if ($messages === []) {
+            $stmt = $this->pdo->prepare("INSERT INTO {$this->table} (thread_id, messages) VALUES (:thread_id, :messages)");
+            $stmt->execute([
+                'thread_id' => $this->thread_id,
+                'messages' => '[]'
+            ]);
+        }
+
         $this->history = $this->deserializeMessages($messages);
     }
 
