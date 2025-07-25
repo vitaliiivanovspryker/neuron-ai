@@ -77,11 +77,12 @@ trait HandleStructured
                     new InferenceStop($last, $response)
                 );
 
+                $this->fillChatHistory($response);
+
                 if ($response instanceof ToolCallMessage) {
                     $toolCallResult = $this->executeTools($response);
-                    return self::structured([$response, $toolCallResult], $class, $maxRetries);
+                    return self::structured($toolCallResult, $class, $maxRetries);
                 }
-                $this->fillChatHistory($response);
 
                 $output = $this->processResponse($response, $schema, $class);
                 $this->notify('structured-stop');
