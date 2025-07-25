@@ -84,7 +84,7 @@ class SQLChatHistory extends AbstractChatHistory
         $tableName = \trim($tableName);
 
         // Whitelist validation
-        if (!$this->tableExists($this->table)) {
+        if (!$this->tableExists($tableName)) {
             throw new ChatHistoryException('Table not allowed');
         }
 
