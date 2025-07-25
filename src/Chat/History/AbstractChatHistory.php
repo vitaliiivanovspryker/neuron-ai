@@ -31,7 +31,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
     abstract public function removeOldMessages(int $skipFrom): ChatHistoryInterface;
 
-    abstract public function removeMessage(int $index): ChatHistoryInterface;
+    abstract public function setMessages(array $messages): ChatHistoryInterface;
 
     abstract protected function clear(): ChatHistoryInterface;
 
@@ -192,14 +192,13 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
                 $expectingRole = ($expectingRole === MessageRole::USER->value)
                     ? MessageRole::ASSISTANT->value
                     : MessageRole::USER->value;
-            } else {
-                // If not the expected role, we have an invalid alternation
-                // Skip this message to maintain a valid sequence
-                $this->removeMessage($index);
             }
+            // If not the expected role, we have an invalid alternation
+            // Skip this message to maintain a valid sequence
         }
 
         $this->history = $result;
+        $this->setMessages($result);
     }
 
     public function jsonSerialize(): array

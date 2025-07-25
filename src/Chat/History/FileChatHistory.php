@@ -50,7 +50,7 @@ class FileChatHistory extends AbstractChatHistory
         return $this;
     }
 
-    public function removeMessage(int $index): ChatHistoryInterface
+    public function updateMessages(int $index): ChatHistoryInterface
     {
         $this->updateFile();
         return $this;

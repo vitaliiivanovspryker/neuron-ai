@@ -23,7 +23,7 @@ class InMemoryChatHistory extends AbstractChatHistory
         return $this;
     }
 
-    public function removeMessage(int $index): ChatHistoryInterface
+    public function updateMessages(int $index): ChatHistoryInterface
     {
         return $this;
     }
