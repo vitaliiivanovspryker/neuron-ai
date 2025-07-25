@@ -40,6 +40,6 @@ class GeminiEmbeddingsProvider extends AbstractEmbeddingsProvider
 
         $response = \json_decode($response, true);
 
-        return $response['embedding'];
+        return $response['embedding']['values'];
     }
 }
