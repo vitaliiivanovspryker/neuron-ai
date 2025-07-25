@@ -15,15 +15,18 @@ class QdrantVectorStore implements VectorStoreInterface
 
     public function __construct(
         protected string $collectionUrl, // like http://localhost:6333/collections/neuron-ai/
-        protected string $key,
+        protected ?string $key = null,
         protected int $topK = 4,
     ) {
+        $headers = ['Content-Type' => 'application/json'];
+
+        if ($this->key) {
+            $headers['api-key'] = $this->key;
+        }
+
         $this->client = new Client([
             'base_uri' => \trim($this->collectionUrl, '/').'/',
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'api-key' => $this->key,
-            ]
+            'headers' => $headers,
         ]);
     }
 
