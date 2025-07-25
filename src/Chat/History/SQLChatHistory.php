@@ -50,7 +50,7 @@ class SQLChatHistory extends AbstractChatHistory
                 'messages' => '[]'
             ]);
         } else {
-            $this->history = $this->deserializeMessages(\json_decode($history[0]['messages'], true));
+            $this->history = $this->deserializeMessages(\json_decode((string) $history[0]['messages'], true));
         }
     }
 
@@ -74,7 +74,8 @@ class SQLChatHistory extends AbstractChatHistory
 
     protected function clear(): ChatHistoryInterface
     {
-        $this->updateTable();
+        $stmt = $this->pdo->prepare("DELETE FROM {$this->table} WHERE thread_id = :thread_id");
+        $stmt->execute(['thread_id' => $this->thread_id]);
         return $this;
     }
 
