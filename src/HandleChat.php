@@ -49,13 +49,14 @@ trait HandleChat
                     new InferenceStop($this->resolveChatHistory()->getLastMessage(), $response)
                 );
 
-                if ($response instanceof ToolCallMessage) {
-                    $toolCallResult = $this->executeTools($response);
-                    return self::chatAsync([$response, $toolCallResult]);
-                }
                 $this->notify('message-saving', new MessageSaving($response));
                 $this->resolveChatHistory()->addMessage($response);
                 $this->notify('message-saved', new MessageSaved($response));
+
+                if ($response instanceof ToolCallMessage) {
+                    $toolCallResult = $this->executeTools($response);
+                    return self::chatAsync($toolCallResult);
+                }
 
                 $this->notify('chat-stop');
                 return $response;
