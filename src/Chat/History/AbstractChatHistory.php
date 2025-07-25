@@ -165,7 +165,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
     protected function ensureValidAlternation(): void
     {
         $result = [];
-        $expectingRole = MessageRole::USER->value; // Should start with user
+        $expectingRole = [MessageRole::USER->value]; // Should start with user
 
         foreach ($this->history as $message) {
             $messageRole = $message->getRole();
@@ -176,17 +176,17 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
             if ($message instanceof ToolCallResultMessage && ($result !== [] && $result[\count($result) - 1] instanceof ToolCallMessage)) {
                 $result[] = $message;
                 // After the tool result, we expect assistant again
-                $expectingRole = MessageRole::ASSISTANT->value;
+                $expectingRole = [MessageRole::ASSISTANT->value, MessageRole::MODEL->value];
                 continue;
             }
 
             // Check if this message has the expected role
-            if ($messageRole === $expectingRole) {
+            if (\in_array($messageRole, $expectingRole, true)) {
                 $result[] = $message;
                 // Toggle the expected role
-                $expectingRole = ($expectingRole === MessageRole::USER->value)
-                    ? MessageRole::ASSISTANT->value
-                    : MessageRole::USER->value;
+                $expectingRole = ($expectingRole === [MessageRole::USER->value])
+                    ? [MessageRole::ASSISTANT->value, MessageRole::MODEL->value]
+                    : [MessageRole::USER->value];
             }
             // If not the expected role, we have an invalid alternation
             // Skip this message to maintain a valid sequence
