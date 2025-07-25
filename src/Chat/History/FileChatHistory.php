@@ -22,10 +22,10 @@ class FileChatHistory extends AbstractChatHistory
             throw new ChatHistoryException("Directory '{$this->directory}' does not exist");
         }
 
-        $this->init();
+        $this->load();
     }
 
-    protected function init(): void
+    protected function load(): void
     {
         if (\is_file($this->getFilePath())) {
             $messages = \json_decode(\file_get_contents($this->getFilePath()), true) ?? [];
@@ -44,7 +44,13 @@ class FileChatHistory extends AbstractChatHistory
         return $this;
     }
 
-    public function removeOldMessage(int $index): ChatHistoryInterface
+    public function removeOldMessages(int $skipFrom): ChatHistoryInterface
+    {
+        $this->updateFile();
+        return $this;
+    }
+
+    public function removeMessage(int $index): ChatHistoryInterface
     {
         $this->updateFile();
         return $this;

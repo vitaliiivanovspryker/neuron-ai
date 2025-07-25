@@ -27,6 +27,14 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
     ) {
     }
 
+    abstract protected function storeMessage(Message $message): ChatHistoryInterface;
+
+    abstract public function removeOldMessages(int $skipFrom): ChatHistoryInterface;
+
+    abstract public function removeMessage(int $index): ChatHistoryInterface;
+
+    abstract protected function clear(): ChatHistoryInterface;
+
     public function addMessage(Message $message): ChatHistoryInterface
     {
         $this->history[] = $message;
@@ -37,8 +45,6 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         return $this;
     }
 
-    abstract protected function storeMessage(Message $message): ChatHistoryInterface;
-
     public function getMessages(): array
     {
         return $this->history;
@@ -48,10 +54,6 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
     {
         return \end($this->history);
     }
-
-    abstract public function removeOldMessage(int $index): ChatHistoryInterface;
-
-    abstract protected function clear(): ChatHistoryInterface;
 
     public function flushAll(): ChatHistoryInterface
     {
@@ -73,7 +75,6 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
         $tokenCount = $this->tokenCounter->count($this->history);
 
-
         // Early exit if all messages fit within the token limit
         if ($tokenCount <= $this->contextWindow) {
             $this->ensureValidMessageSequence();
@@ -84,6 +85,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         $skipFrom = $this->findMaxFittingMessages();
 
         $this->history = \array_slice($this->history, $skipFrom);
+        $this->removeOldMessages($skipFrom);
 
         // Ensure valid message sequence
         $this->ensureValidMessageSequence();
@@ -158,6 +160,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         if ($firstUserIndex > 0) {
             // Remove messages before the first user message
             $this->history = \array_slice($this->history, $firstUserIndex);
+            $this->removeOldMessages($firstUserIndex);
         }
     }
 
@@ -169,7 +172,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         $result = [];
         $expectingRole = MessageRole::USER->value; // Should start with user
 
-        foreach ($this->history as $message) {
+        foreach ($this->history as $index => $message) {
             $messageRole = $message->getRole();
 
             // Tool result messages have a special case - they're user messages
@@ -192,6 +195,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
             }
             // If not the expected role, we have an invalid alternation
             // Skip this message to maintain a valid sequence
+            $this->removeMessage($index);
         }
 
         $this->history = $result;

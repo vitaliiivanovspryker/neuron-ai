@@ -18,7 +18,12 @@ class InMemoryChatHistory extends AbstractChatHistory
         return $this;
     }
 
-    public function removeOldMessage(int $index): ChatHistoryInterface
+    public function removeOldMessages(int $skipFrom): ChatHistoryInterface
+    {
+        return $this;
+    }
+
+    public function removeMessage(int $index): ChatHistoryInterface
     {
         return $this;
     }

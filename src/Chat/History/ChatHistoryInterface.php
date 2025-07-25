@@ -17,7 +17,7 @@ interface ChatHistoryInterface extends \JsonSerializable
 
     public function getLastMessage(): Message|false;
 
-    public function removeOldMessage(int $index): ChatHistoryInterface;
+    public function removeOldMessages(int $skipFrom): ChatHistoryInterface;
 
     public function flushAll(): ChatHistoryInterface;
 
