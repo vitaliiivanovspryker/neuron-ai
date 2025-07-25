@@ -8,8 +8,10 @@ use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Exceptions\ChatHistoryException;
 use PDO;
 
-class MySQLChatHistory extends AbstractChatHistory
+class SQLChatHistory extends AbstractChatHistory
 {
+    protected string $table;
+
     public function __construct(
         protected string $thread_id,
         protected PDO $pdo,
@@ -66,7 +68,7 @@ class MySQLChatHistory extends AbstractChatHistory
     protected function sanitizeTableName(string $tableName): string
     {
         // Remove any potential SQL injection characters
-        $tableName = trim($tableName);
+        $tableName = \trim($tableName);
 
         // Whitelist validation
         if (!$this->tableExists($this->table)) {
@@ -74,7 +76,7 @@ class MySQLChatHistory extends AbstractChatHistory
         }
 
         // Format validation as backup
-        if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $tableName)) {
+        if (in_array(\preg_match('/^[a-zA-Z_]\w*$/', $tableName), [0, false], true)) {
             throw new ChatHistoryException('Invalid table name format');
         }
 
