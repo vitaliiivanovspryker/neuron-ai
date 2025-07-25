@@ -80,9 +80,9 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         }
 
         // Binary search to find how many messages to skip from the beginning
-        $skipCount = $this->findMaxFittingMessages();
+        $skipFrom = $this->findMaxFittingMessages();
 
-        $this->history = \array_slice($this->history, $skipCount);
+        $this->history = \array_slice($this->history, $skipFrom);
 
         // Ensure valid message sequence
         $this->ensureValidMessageSequence();
@@ -95,15 +95,15 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
      */
     private function findMaxFittingMessages(): int
     {
-        $totalMessages = count($this->history);
+        $totalMessages = \count($this->history);
         $left = 0;  // Minimum messages to skip
         $right = $totalMessages;  // Maximum messages to skip
-        $maxIterations = (int) ceil(log($totalMessages, 2));
+        $maxIterations = (int) \ceil(\log($totalMessages, 2));
 
         for ($i = 0; $i < $maxIterations && $left < $right; $i++) {
-            $mid = intval(($left + $right) / 2);
+            $mid = \intval(($left + $right) / 2);
             // Get messages from index $mid to the end
-            $subset = array_slice($this->history, $mid);
+            $subset = \array_slice($this->history, $mid);
 
             if ($this->tokenCounter->count($subset) <= $this->contextWindow) {
                 // Fits! Try including more messages (skip fewer)
@@ -162,7 +162,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
                     $pendingToolCallIndex = null;
                 }
             } elseif ($message instanceof ToolCallResultMessage) {
-                if ($pendingToolCall !== null) {
+                if ($pendingToolCall instanceof ToolCallMessage) {
                     // We have a matching pair, add the result
                     $result[] = $message;
                     $pendingToolCall = null;
@@ -171,7 +171,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
                 // If no pending tool call, skip this orphaned result
             } else {
                 // Regular message
-                if ($pendingToolCall !== null) {
+                if ($pendingToolCall instanceof ToolCallMessage) {
                     // We have an incomplete tool call in the middle, remove it
                     \array_splice($result, $pendingToolCallIndex, 1);
                     $pendingToolCall = null;
@@ -186,7 +186,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
             \array_splice($result, $pendingToolCallIndex, 1);
         }
 
-        $this->history = \array_values($result);
+        $this->history = $result;
     }
 
     /**

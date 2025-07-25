@@ -6,6 +6,7 @@ namespace NeuronAI\Chat\History;
 
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Chat\Messages\ToolCallResultMessage;
+use NeuronAI\Tools\ToolInterface;
 
 class TokenCounter implements TokenCounterInterface
 {
@@ -36,7 +37,7 @@ class TokenCounter implements TokenCounterInterface
                 $tools = $message->getTools();
                 if ($tools !== []) {
                     // Convert tools to their JSON representation for counting
-                    $toolsContent = \json_encode(\array_map(fn ($tool) => $tool->jsonSerialize(), $tools));
+                    $toolsContent = \json_encode(\array_map(fn (ToolInterface $tool): array => $tool->jsonSerialize(), $tools));
                     $messageChars += \strlen($toolsContent);
                 }
             }

@@ -41,20 +41,15 @@ class InMemoryChatHistoryTest extends TestCase
 
     public function test_chat_history_truncate(): void
     {
-        $history = new InMemoryChatHistory(300);
-        $this->assertEquals(300, $history->getFreeMemory());
+        $history = new InMemoryChatHistory(6);
 
         $message = new UserMessage('Hello!');
-        $message->setUsage(new Usage(100, 100));
         $history->addMessage($message);
-        $this->assertEquals(100, $history->getFreeMemory());
-        $this->assertEquals(200, $history->calculateTotalUsage());
+        $this->assertEquals(6, $history->calculateTotalUsage());
 
         $message = new UserMessage('Hello!');
-        $message->setUsage(new Usage(100, 100));
         $history->addMessage($message);
-        $this->assertEquals(100, $history->getFreeMemory());
-        $this->assertEquals(200, $history->calculateTotalUsage());
+        $this->assertEquals(6, $history->calculateTotalUsage());
         $this->assertCount(1, $history->getMessages());
     }
 
@@ -156,25 +151,20 @@ class InMemoryChatHistoryTest extends TestCase
 
         // Add the first tool call pair
         $toolCall1 = new ToolCallMessage('Calling first tool', [$tool1]);
-        $toolCall1->setUsage(new Usage(200, 50));
         $this->chatHistory->addMessage($toolCall1);
 
         $toolResult1 = new ToolCallResultMessage([$tool1WithResult]);
-        $toolResult1->setUsage(new Usage(100, 0));
         $this->chatHistory->addMessage($toolResult1);
 
         // Add the second tool call pair
         $toolCall2 = new ToolCallMessage('Calling second tool', [$tool2]);
-        $toolCall2->setUsage(new Usage(200, 50));
         $this->chatHistory->addMessage($toolCall2);
 
         $toolResult2 = new ToolCallResultMessage([$tool2WithResult]);
-        $toolResult2->setUsage(new Usage(100, 0));
         $this->chatHistory->addMessage($toolResult2);
 
         // Add a large message that should trigger context window cutting
         $largeMessage = new UserMessage('Large message');
-        $largeMessage->setUsage(new Usage(500, 0));
         $this->chatHistory->addMessage($largeMessage);
 
         $messages = $this->chatHistory->getMessages();
