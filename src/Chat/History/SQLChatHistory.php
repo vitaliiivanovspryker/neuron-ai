@@ -41,17 +41,17 @@ class SQLChatHistory extends AbstractChatHistory
     {
         $stmt = $this->pdo->prepare("SELECT * FROM {$this->table} WHERE thread_id = :thread_id");
         $stmt->execute(['thread_id' => $this->thread_id]);
-        $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $history = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        if ($messages === []) {
+        if (empty($history)) {
             $stmt = $this->pdo->prepare("INSERT INTO {$this->table} (thread_id, messages) VALUES (:thread_id, :messages)");
             $stmt->execute([
                 'thread_id' => $this->thread_id,
                 'messages' => '[]'
             ]);
+        } else {
+            $this->history = $this->deserializeMessages($history[0]['messages']);
         }
-
-        $this->history = $this->deserializeMessages($messages);
     }
 
     protected function storeMessage(Message $message): ChatHistoryInterface
