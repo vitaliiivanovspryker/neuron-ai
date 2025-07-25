@@ -124,68 +124,11 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
      */
     protected function ensureValidMessageSequence(): void
     {
-        // First, ensure tool call/result pairs are complete
-        $this->ensureCompleteToolCallPairs();
-
-        // Then ensure it starts with a UserMessage
+        // Ensure it starts with a UserMessage
         $this->ensureStartsWithUser();
 
-        // Finally, ensure it ends with an AssistantMessage
+        // Ensure it ends with an AssistantMessage
         $this->ensureValidAlternation();
-    }
-
-    /**
-     * Ensures tool call/result pairs are complete
-     * If a ToolCallMessage is present, its corresponding ToolCallResultMessage must be included
-     * If a ToolCallResultMessage is at the end without its ToolCallMessage, both are removed
-     */
-    protected function ensureCompleteToolCallPairs(): void
-    {
-        $result = [];
-        $pendingToolCall = null;
-        $pendingToolCallIndex = null;
-        $totalMessages = \count($this->history);
-
-        foreach ($this->history as $index => $message) {
-            $isLastMessage = ($index === $totalMessages - 1);
-
-            if ($message instanceof ToolCallMessage) {
-                // Store the tool call message temporarily
-                $pendingToolCall = $message;
-                $pendingToolCallIndex = \count($result);
-                $result[] = $message;
-
-                // If this is the last message, it's valid (waiting for execution)
-                if ($isLastMessage) {
-                    $pendingToolCall = null;
-                    $pendingToolCallIndex = null;
-                }
-            } elseif ($message instanceof ToolCallResultMessage) {
-                if ($pendingToolCall instanceof ToolCallMessage) {
-                    // We have a matching pair, add the result
-                    $result[] = $message;
-                    $pendingToolCall = null;
-                    $pendingToolCallIndex = null;
-                }
-                // If no pending tool call, skip this orphaned result
-            } else {
-                // Regular message
-                if ($pendingToolCall instanceof ToolCallMessage) {
-                    // We have an incomplete tool call in the middle, remove it
-                    \array_splice($result, $pendingToolCallIndex, 1);
-                    $pendingToolCall = null;
-                    $pendingToolCallIndex = null;
-                }
-                $result[] = $message;
-            }
-        }
-
-        // Handle any remaining incomplete tool call at the end
-        if ($pendingToolCall instanceof ToolCallMessage && $pendingToolCallIndex !== null) {
-            \array_splice($result, $pendingToolCallIndex, 1);
-        }
-
-        $this->history = $result;
     }
 
     /**
@@ -202,8 +145,13 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
             }
         }
 
-        if ($firstUserIndex === null || $firstUserIndex === 0) {
+        if ($firstUserIndex === null) {
             // No UserMessage found
+            $this->history = [];
+            return;
+        }
+
+        if ($firstUserIndex === 0) {
             return;
         }
 
@@ -229,7 +177,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
             if ($message instanceof ToolCallResultMessage) {
                 // This is valid after a ToolCallMessage
                 if (!empty($result) &&
-                    $result[count($result) - 1] instanceof ToolCallMessage) {
+                    $result[\count($result) - 1] instanceof ToolCallMessage) {
                     $result[] = $message;
                     // After the tool result, we expect assistant again
                     $expectingRole = MessageRole::ASSISTANT->value;

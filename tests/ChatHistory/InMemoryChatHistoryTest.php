@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace NeuronAI\Tests\ChatHistory;
 
-use NeuronAI\Chat\History\AbstractChatHistory;
+use NeuronAI\Chat\History\ChatHistoryInterface;
 use NeuronAI\Chat\History\InMemoryChatHistory;
 use NeuronAI\Chat\Messages\AssistantMessage;
-use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Chat\Messages\ToolCallMessage;
 use NeuronAI\Chat\Messages\ToolCallResultMessage;
-use NeuronAI\Chat\Messages\Usage;
 use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Tools\Tool;
 use PHPUnit\Framework\TestCase;
@@ -29,7 +27,7 @@ class InMemoryChatHistoryTest extends TestCase
     public function test_chat_history_instance(): void
     {
         $history = new InMemoryChatHistory();
-        $this->assertInstanceOf(AbstractChatHistory::class, $history);
+        $this->assertInstanceOf(ChatHistoryInterface::class, $history);
     }
 
     public function test_chat_history_add_message(): void
@@ -62,57 +60,10 @@ class InMemoryChatHistoryTest extends TestCase
         $this->assertCount(0, $history->getMessages());
     }
 
-    public function testToolCallPairIsRemovedTogether(): void
+    public function test_multiple_tool_call_pairs_are_handled_correctly(): void
     {
-        // Create a tool for testing
-        $tool = Tool::make('test_tool', 'A test tool')
-            ->setInputs(['param' => 'value'])
-            ->setCallId('call_123');
+        $this->chatHistory->flushAll();
 
-        $toolWithResult = Tool::make('test_tool', 'A test tool')
-            ->setInputs(['param' => 'value'])
-            ->setCallId('call_123')
-            ->setResult('Tool execution result');
-
-        // Add messages that will fill up the context window
-        $largeMessage1 = new UserMessage('Large message 1');
-        $largeMessage1->setUsage(new Usage(400, 0)); // Large input tokens
-        $this->chatHistory->addMessage($largeMessage1);
-
-        $toolCallMessage = new ToolCallMessage('Calling test tool', [$tool]);
-        $toolCallMessage->setUsage(new Usage(200, 50));
-        $this->chatHistory->addMessage($toolCallMessage);
-
-        $toolResultMessage = new ToolCallResultMessage([$toolWithResult]);
-        $toolResultMessage->setUsage(new Usage(100, 0));
-        $this->chatHistory->addMessage($toolResultMessage);
-
-        // Add another large message that should trigger context window cutting
-        $largeMessage2 = new UserMessage('Large message 2');
-        $largeMessage2->setUsage(new Usage(400, 0)); // This should trigger cutting
-        $this->chatHistory->addMessage($largeMessage2);
-
-        $messages = $this->chatHistory->getMessages();
-
-        // Verify that both tool call and tool result messages were removed together
-        $hasToolCall = false;
-        $hasToolResult = false;
-
-        foreach ($messages as $message) {
-            if ($message instanceof ToolCallMessage) {
-                $hasToolCall = true;
-            }
-            if ($message instanceof ToolCallResultMessage) {
-                $hasToolResult = true;
-            }
-        }
-
-        // Both should be absent (removed together) or both should be present
-        $this->assertEquals($hasToolCall, $hasToolResult, 'Tool call and tool result messages should be removed together');
-    }
-
-    public function testMultipleToolCallPairsAreHandledCorrectly(): void
-    {
         // Create two different tools
         $tool1 = Tool::make('tool_1', 'First tool')
             ->setInputs(['param1' => 'value1'])
@@ -132,6 +83,10 @@ class InMemoryChatHistoryTest extends TestCase
             ->setCallId('call_2')
             ->setResult('Second tool result');
 
+        // Add a large message that should trigger context window cutting
+        $largeMessage = new UserMessage('Test message');
+        $this->chatHistory->addMessage($largeMessage);
+
         // Add the first tool call pair
         $toolCall1 = new ToolCallMessage('Calling first tool', [$tool1]);
         $this->chatHistory->addMessage($toolCall1);
@@ -146,11 +101,9 @@ class InMemoryChatHistoryTest extends TestCase
         $toolResult2 = new ToolCallResultMessage([$tool2WithResult]);
         $this->chatHistory->addMessage($toolResult2);
 
-        // Add a large message that should trigger context window cutting
-        $largeMessage = new UserMessage('Large message');
-        $this->chatHistory->addMessage($largeMessage);
-
         $messages = $this->chatHistory->getMessages();
+
+        $this->assertCount(5, $messages);
 
         // Check that we have consistent tool call/result pairs
         $toolCallNames = [];
@@ -175,11 +128,13 @@ class InMemoryChatHistoryTest extends TestCase
         $this->assertEquals($toolCallNames, $toolResultNames, 'Tool call names should match tool result names');
     }
 
-    public function testRegularMessagesAreRemovedWhenContextWindowExceeded(): void
+    public function test_regular_messages_are_removed_when_context_window_exceeded(): void
     {
+        $this->chatHistory->flushAll();
+
         // Add several regular messages that exceed the context window
         for ($i = 0; $i < 50; $i++) {
-            $message = $i%2 === 0
+            $message = $i % 2 === 0
                 ? new UserMessage("Message $i - Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
                 : new AssistantMessage("Message $i - Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
             $this->chatHistory->addMessage($message);
@@ -188,58 +143,62 @@ class InMemoryChatHistoryTest extends TestCase
         $remainingMessages = $this->chatHistory->getMessages();
 
         // With the context window of 1000, we should have fewer than 5 messages
-        $this->assertEquals(44, \count($remainingMessages), 'Some messages should be removed due to context window limit');
+        $this->assertCount(44, $remainingMessages, 'Some messages should be removed due to context window limit');
     }
 
-    public function testContextWindowRespectedWithMixedMessageTypes(): void
+    public function test_remove_intermediate_invalid_message_types(): void
     {
+        $this->chatHistory->flushAll();
+
         $tool = Tool::make('mixed_tool', 'A mixed tool')
             ->setInputs(['param' => 'value'])
-            ->setCallId('mixed_call');
+            ->setCallId('123');
 
         $toolWithResult = Tool::make('mixed_tool', 'A mixed tool')
             ->setInputs(['param' => 'value'])
-            ->setCallId('mixed_call')
+            ->setCallId('123')
             ->setResult('Mixed tool result');
 
         // Add a mix of different message types
         $userMessage = new UserMessage('User message');
         $this->chatHistory->addMessage($userMessage);
-
-        $assistantMessage = new AssistantMessage('Assistant response');
-        $this->chatHistory->addMessage($assistantMessage);
+        $this->assertCount(1, $this->chatHistory->getMessages());
 
         $toolCall = new ToolCallMessage('Tool call', [$tool]);
         $this->chatHistory->addMessage($toolCall);
+        $this->assertCount(2, $this->chatHistory->getMessages());
 
         $toolResult = new ToolCallResultMessage([$toolWithResult]);
         $this->chatHistory->addMessage($toolResult);
+        $this->assertCount(3, $this->chatHistory->getMessages());
 
-        // Add a large message that should trigger cutting
-        $largeMessage = new UserMessage('Very large message');
-        $this->chatHistory->addMessage($largeMessage);
-
-        // Verify the context window is respected
-        $this->assertLessThanOrEqual(1000, $this->chatHistory->calculateTotalUsage());
+        // Add a mix of different message types
+        $userMessage = new UserMessage('User message');
+        $this->chatHistory->addMessage($userMessage);
+        // This UserMessage must be removed to restore a valid progression
+        $this->assertCount(3, $this->chatHistory->getMessages());
 
         $messages = $this->chatHistory->getMessages();
 
-        // Verify we still have some messages
-        $this->assertGreaterThan(0, \count($messages));
+        $this->assertInstanceOf(ToolCallResultMessage::class, \end($messages));
+        $this->chatHistory->flushAll();
     }
 
-    public function testEmptyHistoryAfterFlushAll(): void
+    public function test_empty_history_if_no_user_message()
     {
-        // Add some messages
-        $this->chatHistory->addMessage(new UserMessage('Test message'));
-        $this->chatHistory->addMessage(new AssistantMessage('Test response'));
-
-        $this->assertGreaterThan(0, \count($this->chatHistory->getMessages()));
-
-        // Flush all messages
         $this->chatHistory->flushAll();
 
+        $this->chatHistory->addMessage(new AssistantMessage('Test message'));
         $this->assertEmpty($this->chatHistory->getMessages());
-        $this->assertEquals(0, $this->chatHistory->calculateTotalUsage());
+    }
+
+    public function test_remove_messages_before_the_first_user_message()
+    {
+        $this->chatHistory->flushAll();
+
+        $this->chatHistory->addMessage(new AssistantMessage('Test message'));
+        $this->chatHistory->addMessage(new UserMessage('Test message'));
+        $this->assertCount(1, $this->chatHistory->getMessages());
+        $this->assertInstanceOf(UserMessage::class, $this->chatHistory->getMessages()[0]);
     }
 }
