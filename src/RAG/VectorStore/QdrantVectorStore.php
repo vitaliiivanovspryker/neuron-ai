@@ -30,6 +30,23 @@ class QdrantVectorStore implements VectorStoreInterface
         ]);
     }
 
+    public function initialize(int $size, string $distance): void
+    {
+        $response = $this->client->get('exists')->getBody()->getContents();
+        $response = \json_decode($response, true);
+
+        if ($response['result']['exists']) {
+            return;
+        }
+
+        $this->client->put('', [
+            'vectors' => [
+                'size' => $size,
+                'distance' => $distance,
+            ],
+        ]);
+    }
+
     public function addDocument(Document $document): void
     {
         $this->client->put('points', [
