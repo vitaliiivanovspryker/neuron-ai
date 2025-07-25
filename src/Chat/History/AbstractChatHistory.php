@@ -21,10 +21,18 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 {
     protected array $history = [];
 
+    protected TokenCounterInterface $tokenCounter;
+
     public function __construct(
-        protected TokenCounterInterface $tokenCounter = new TokenCounter(),
         protected int $contextWindow = 50000
     ) {
+        $this->tokenCounter = new TokenCounter();
+    }
+
+    public function setTokenCounter(TokenCounterInterface $counter): ChatHistoryInterface
+    {
+        $this->tokenCounter = $counter;
+        return $this;
     }
 
     public function addMessage(Message $message): ChatHistoryInterface
@@ -71,17 +79,18 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
             return;
         }
 
-        // Early exit if all messages fit within the token limit
         $tokenCount = $this->tokenCounter->count($this->history);
+
+        // Early exit if all messages fit within the token limit
         if ($tokenCount <= $this->contextWindow) {
             $this->ensureValidMessageSequence();
+            return;
         }
 
         // Binary search to find the maximum number of messages that fit
         $idx = $this->findMaxFittingMessages();
 
-        // Get the trimmed messages
-        $trimmedMessages = \array_slice($this->history, 0, $idx);
+        $this->history = \array_slice($this->history, 0, $idx);
 
         // Ensure valid message sequence
         $this->ensureValidMessageSequence();
@@ -90,7 +99,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
     /**
      * Binary search to find the maximum number of messages that fit within token limit.
      */
-    private function findMaxFittingMessages(): int
+    protected function findMaxFittingMessages(): int
     {
         $left = 0;
         $right = \count($this->history);
@@ -116,7 +125,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
      * 2. Ends with an AssistantMessage
      * 3. Maintains tool call/result pairs
      */
-    private function ensureValidMessageSequence(): void
+    protected function ensureValidMessageSequence(): void
     {
         // First, ensure tool call/result pairs are complete
         $this->ensureCompleteToolPairs();
@@ -133,7 +142,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
      * If a ToolCallMessage is present, its corresponding ToolCallResultMessage must be included
      * If a ToolCallResultMessage is at the end without its ToolCallMessage, both are removed
      */
-    private function ensureCompleteToolPairs(): void
+    protected function ensureCompleteToolPairs(): void
     {
         $result = [];
         $pendingToolCall = null;
@@ -146,7 +155,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
                 $pendingToolCallIndex = \count($result);
                 $result[] = $message;
             } elseif ($message instanceof ToolCallResultMessage) {
-                if ($pendingToolCall !== null) {
+                if ($pendingToolCall instanceof ToolCallMessage) {
                     // We have a matching pair, add the result
                     $result[] = $message;
                     $pendingToolCall = null;
@@ -155,7 +164,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
                 // If no pending tool call, skip this orphaned result
             } else {
                 // Regular message
-                if ($pendingToolCall !== null) {
+                if ($pendingToolCall instanceof ToolCallMessage) {
                     // We have an incomplete tool call, remove it
                     \array_splice($result, $pendingToolCallIndex, 1);
                     $pendingToolCall = null;
@@ -166,15 +175,17 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         }
 
         // Handle any remaining incomplete tool call at the end
-        if ($pendingToolCall !== null && $pendingToolCallIndex !== null) {
+        if ($pendingToolCall instanceof ToolCallMessage && $pendingToolCallIndex !== null) {
             \array_splice($result, $pendingToolCallIndex, 1);
         }
+
+        $this->history = \array_values($result);
     }
 
     /**
      * Ensures the message list starts with a UserMessage.
      */
-    private function ensureStartsWithUser(): void
+    protected function ensureStartsWithUser(): void
     {
         // Find the first UserMessage
         $firstUserIndex = null;
@@ -199,7 +210,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
     /**
      * Ensures the message list ends with an AssistantMessage.
      */
-    private function ensureEndsWithAssistant(): void
+    protected function ensureEndsWithAssistant(): void
     {
         // Work backwards until we find an AssistantMessage (including ToolCallMessage)
         $count = \count($this->history);
@@ -224,11 +235,6 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
                 return;
             }
         }
-    }
-
-    public function getFreeMemory(): int
-    {
-        return $this->contextWindow - $this->calculateTotalUsage();
     }
 
     public function jsonSerialize(): array
