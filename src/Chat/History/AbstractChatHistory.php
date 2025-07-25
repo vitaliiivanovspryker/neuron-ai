@@ -174,15 +174,12 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
             // Tool result messages have a special case - they're user messages
             // but can only follow tool call messages (assistant)
-            if ($message instanceof ToolCallResultMessage) {
-                // This is valid after a ToolCallMessage
-                if (!empty($result) &&
-                    $result[\count($result) - 1] instanceof ToolCallMessage) {
-                    $result[] = $message;
-                    // After the tool result, we expect assistant again
-                    $expectingRole = MessageRole::ASSISTANT->value;
-                    continue;
-                }
+            // This is valid after a ToolCallMessage
+            if ($message instanceof ToolCallResultMessage && ($result !== [] && $result[\count($result) - 1] instanceof ToolCallMessage)) {
+                $result[] = $message;
+                // After the tool result, we expect assistant again
+                $expectingRole = MessageRole::ASSISTANT->value;
+                continue;
             }
 
             // Check if this message has the expected role

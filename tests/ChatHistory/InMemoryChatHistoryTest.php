@@ -184,7 +184,7 @@ class InMemoryChatHistoryTest extends TestCase
         $this->chatHistory->flushAll();
     }
 
-    public function test_empty_history_if_no_user_message()
+    public function test_empty_history_if_no_user_message(): void
     {
         $this->chatHistory->flushAll();
 
@@ -192,7 +192,7 @@ class InMemoryChatHistoryTest extends TestCase
         $this->assertEmpty($this->chatHistory->getMessages());
     }
 
-    public function test_remove_messages_before_the_first_user_message()
+    public function test_remove_messages_before_the_first_user_message(): void
     {
         $this->chatHistory->flushAll();
 
