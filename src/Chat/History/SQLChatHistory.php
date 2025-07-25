@@ -80,10 +80,6 @@ class SQLChatHistory extends AbstractChatHistory
     {
         $stmt = $this->pdo->prepare("UPDATE {$this->table} SET messages = :messages WHERE thread_id = :thread_id");
         $stmt->execute(['thread_id' => $this->thread_id, 'messages' => \json_encode($this->jsonSerialize())]);
-
-        /*if ($stmt->rowCount() <= 0) {
-            throw new ChatHistoryException("No rows were updated (thread_id {$this->thread_id} not found)");
-        }*/
     }
 
     protected function sanitizeTableName(string $tableName): string
