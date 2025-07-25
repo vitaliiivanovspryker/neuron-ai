@@ -73,6 +73,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
 
         $tokenCount = $this->tokenCounter->count($this->history);
 
+
         // Early exit if all messages fit within the token limit
         if ($tokenCount <= $this->contextWindow) {
             $this->ensureValidMessageSequence();
@@ -91,18 +92,16 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
     /**
      * Binary search to find the maximum number of messages that fit within the token limit.
      *
-     * @return int The index of the first element to retain (keeping most recent messages) - 0 Skip no messages (include all) - count($this->>history): Skip all messages (include none)
+     * @return int The index of the first element to retain (keeping most recent messages) - 0 Skip no messages (include all) - count($this->history): Skip all messages (include none)
      */
     private function findMaxFittingMessages(): int
     {
         $totalMessages = \count($this->history);
-        $left = 0;  // Minimum messages to skip
-        $right = $totalMessages;  // Maximum messages to skip
-        $maxIterations = (int) \ceil(\log($totalMessages, 2));
+        $left = 0;
+        $right = $totalMessages;
 
-        for ($i = 0; $i < $maxIterations && $left < $right; $i++) {
+        while ($left < $right) {
             $mid = \intval(($left + $right) / 2);
-            // Get messages from index $mid to the end
             $subset = \array_slice($this->history, $mid);
 
             if ($this->tokenCounter->count($subset) <= $this->contextWindow) {
@@ -126,13 +125,13 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
     protected function ensureValidMessageSequence(): void
     {
         // First, ensure tool call/result pairs are complete
-        $this->ensureCompleteToolPairs();
+        $this->ensureCompleteToolCallPairs();
 
         // Then ensure it starts with a UserMessage
         $this->ensureStartsWithUser();
 
         // Finally, ensure it ends with an AssistantMessage
-        $this->ensureEndsWithAssistant();
+        $this->ensureValidAlternation();
     }
 
     /**
@@ -140,7 +139,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
      * If a ToolCallMessage is present, its corresponding ToolCallResultMessage must be included
      * If a ToolCallResultMessage is at the end without its ToolCallMessage, both are removed
      */
-    protected function ensureCompleteToolPairs(): void
+    protected function ensureCompleteToolCallPairs(): void
     {
         $result = [];
         $pendingToolCall = null;
@@ -215,39 +214,42 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
     }
 
     /**
-     * Ensures the message list ends with an assistant message.
+     * Ensures valid alternation between user and assistant messages.
      */
-    protected function ensureEndsWithAssistant(): void
+    protected function ensureValidAlternation(): void
     {
-        // Work backwards until we find an AssistantMessage
-        $count = \count($this->history);
-        for ($i = $count - 1; $i >= 0; $i--) {
-            if ($this->history[$i]->getRole() === MessageRole::ASSISTANT->value) {
-                // If it's a ToolCallMessage at the end, it's valid (waiting for execution)
-                if ($this->history[$i] instanceof ToolCallMessage && $i === $count - 1) {
-                    $this->history = \array_slice($this->history, 0, $i + 1);
-                }
+        $result = [];
+        $expectingRole = MessageRole::USER->value; // Should start with user
 
-                // If it's a ToolCallMessage NOT at the end, check if it has a result
-                if ($this->history[$i] instanceof ToolCallMessage && $i < $count - 1) {
-                    // Check if there's a result message after it
-                    $hasResult = false;
-                    for ($j = $i + 1; $j < $count; $j++) {
-                        if ($this->history[$j] instanceof ToolCallResultMessage) {
-                            $hasResult = true;
-                            break;
-                        }
-                    }
-                    // If no result, skip this ToolCallMessage
-                    if (!$hasResult) {
-                        continue;
-                    }
-                }
+        foreach ($this->history as $message) {
+            $messageRole = $message->getRole();
 
-                // Valid AssistantMessage found
-                $this->history = \array_slice($this->history, 0, $i + 1);
+            // Tool result messages have a special case - they're user messages
+            // but can only follow tool call messages (assistant)
+            if ($message instanceof ToolCallResultMessage) {
+                // This is valid after a ToolCallMessage
+                if (!empty($result) &&
+                    $result[count($result) - 1] instanceof ToolCallMessage) {
+                    $result[] = $message;
+                    // After the tool result, we expect assistant again
+                    $expectingRole = MessageRole::ASSISTANT->value;
+                    continue;
+                }
             }
+
+            // Check if this message has the expected role
+            if ($messageRole === $expectingRole) {
+                $result[] = $message;
+                // Toggle the expected role
+                $expectingRole = ($expectingRole === MessageRole::USER->value)
+                    ? MessageRole::ASSISTANT->value
+                    : MessageRole::USER->value;
+            }
+            // If not the expected role, we have an invalid alternation
+            // Skip this message to maintain a valid sequence
         }
+
+        $this->history = $result;
     }
 
     public function jsonSerialize(): array

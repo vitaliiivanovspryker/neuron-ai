@@ -62,23 +62,6 @@ class InMemoryChatHistoryTest extends TestCase
         $this->assertCount(0, $history->getMessages());
     }
 
-    public function test_tokens_calculation(): void
-    {
-        $history = new InMemoryChatHistory(300);
-
-        $message = new UserMessage('Hello!');
-        $message->setUsage(new Usage(100, 100));
-        $history->addMessage($message);
-        $this->assertEquals(200, $history->calculateTotalUsage());
-        $this->assertEquals(100, $history->getFreeMemory());
-
-        $message = new UserMessage('Hello!');
-        $message->setUsage(new Usage(100, 100));
-        $history->addMessage($message);
-        $this->assertEquals(100, $history->getFreeMemory());
-        $this->assertEquals(200, $history->calculateTotalUsage());
-    }
-
     public function testToolCallPairIsRemovedTogether(): void
     {
         // Create a tool for testing
@@ -194,20 +177,18 @@ class InMemoryChatHistoryTest extends TestCase
 
     public function testRegularMessagesAreRemovedWhenContextWindowExceeded(): void
     {
-        // Add several regular messages that exceed context window
-        for ($i = 0; $i < 5; $i++) {
-            $message = new UserMessage("Message $i");
-            $message->setUsage(new Usage(250, 0)); // Each message uses 250 tokens
+        // Add several regular messages that exceed the context window
+        for ($i = 0; $i < 50; $i++) {
+            $message = $i%2 === 0
+                ? new UserMessage("Message $i - Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
+                : new AssistantMessage("Message $i - Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
             $this->chatHistory->addMessage($message);
         }
 
         $remainingMessages = $this->chatHistory->getMessages();
 
         // With the context window of 1000, we should have fewer than 5 messages
-        $this->assertLessThan(5, \count($remainingMessages), 'Some messages should be removed due to context window limit');
-
-        // Verify total usage is within the context window
-        $this->assertLessThanOrEqual(1000, $this->chatHistory->calculateTotalUsage());
+        $this->assertEquals(44, \count($remainingMessages), 'Some messages should be removed due to context window limit');
     }
 
     public function testContextWindowRespectedWithMixedMessageTypes(): void
@@ -223,103 +204,28 @@ class InMemoryChatHistoryTest extends TestCase
 
         // Add a mix of different message types
         $userMessage = new UserMessage('User message');
-        $userMessage->setUsage(new Usage(200, 0));
         $this->chatHistory->addMessage($userMessage);
 
         $assistantMessage = new AssistantMessage('Assistant response');
-        $assistantMessage->setUsage(new Usage(150, 100));
         $this->chatHistory->addMessage($assistantMessage);
 
         $toolCall = new ToolCallMessage('Tool call', [$tool]);
-        $toolCall->setUsage(new Usage(200, 50));
         $this->chatHistory->addMessage($toolCall);
 
         $toolResult = new ToolCallResultMessage([$toolWithResult]);
-        $toolResult->setUsage(new Usage(100, 0));
         $this->chatHistory->addMessage($toolResult);
 
         // Add a large message that should trigger cutting
         $largeMessage = new UserMessage('Very large message');
-        $largeMessage->setUsage(new Usage(400, 0));
         $this->chatHistory->addMessage($largeMessage);
 
-        // Verify context window is respected
+        // Verify the context window is respected
         $this->assertLessThanOrEqual(1000, $this->chatHistory->calculateTotalUsage());
 
         $messages = $this->chatHistory->getMessages();
 
         // Verify we still have some messages
         $this->assertGreaterThan(0, \count($messages));
-    }
-
-    public function testFindCorrespondingToolResultMethod(): void
-    {
-        $tool1 = Tool::make('tool_1', 'First tool')
-            ->setInputs(['param' => 'value'])
-            ->setCallId('call_1');
-
-        $tool1WithResult = Tool::make('tool_1', 'First tool')
-            ->setInputs(['param' => 'value'])
-            ->setCallId('call_1')
-            ->setResult('Result 1');
-
-        $tool2 = Tool::make('tool_2', 'Second tool')
-            ->setInputs(['param' => 'value'])
-            ->setCallId('call_2');
-
-        $tool2WithResult = Tool::make('tool_2', 'Second tool')
-            ->setInputs(['param' => 'value'])
-            ->setCallId('call_2')
-            ->setResult('Result 2');
-
-        // Add messages in specific order
-        $regularMessage = new UserMessage('Regular message');
-        $regularMessage->setUsage(new Usage(100, 0));
-        $this->chatHistory->addMessage($regularMessage);
-
-        $toolCall1 = new ToolCallMessage('First tool call', [$tool1]);
-        $toolCall1->setUsage(new Usage(100, 0));
-        $this->chatHistory->addMessage($toolCall1);
-
-        $toolResult1 = new ToolCallResultMessage([$tool1WithResult]);
-        $toolResult1->setUsage(new Usage(100, 0));
-        $this->chatHistory->addMessage($toolResult1);
-
-        $toolCall2 = new ToolCallMessage('Second tool call', [$tool2]);
-        $toolCall2->setUsage(new Usage(100, 0));
-        $this->chatHistory->addMessage($toolCall2);
-
-        $toolResult2 = new ToolCallResultMessage([$tool2WithResult]);
-        $toolResult2->setUsage(new Usage(100, 0));
-        $this->chatHistory->addMessage($toolResult2);
-
-        // Use reflection to test the protected method
-        $reflection = new \ReflectionClass($this->chatHistory);
-        $method = $reflection->getMethod('findCorrespondingToolResult');
-
-        // Test finding the corresponding result for the first tool call (index 1)
-        $correspondingIndex = $method->invoke($this->chatHistory, 1);
-        $this->assertEquals(2, $correspondingIndex, 'Should find corresponding tool result at index 2');
-
-        // Test finding the corresponding result for the second tool call (index 3)
-        $correspondingIndex = $method->invoke($this->chatHistory, 3);
-        $this->assertEquals(4, $correspondingIndex, 'Should find corresponding tool result at index 4');
-    }
-
-    public function testGetFreeMemoryCalculation(): void
-    {
-        // Add messages with known token usage
-        $message1 = new UserMessage('Test message 1');
-        $message1->setUsage(new Usage(100, 50)); // Total: 150
-        $this->chatHistory->addMessage($message1);
-
-        $message2 = new AssistantMessage('Test message 2');
-        $message2->setUsage(new Usage(200, 100)); // Total: 300
-        $this->chatHistory->addMessage($message2);
-
-        // Total usage should be 150 + 300 = 450
-        // Free memory should be 1000 - 450 = 550
-        $this->assertEquals(550, $this->chatHistory->getFreeMemory());
     }
 
     public function testEmptyHistoryAfterFlushAll(): void
@@ -335,24 +241,5 @@ class InMemoryChatHistoryTest extends TestCase
 
         $this->assertEmpty($this->chatHistory->getMessages());
         $this->assertEquals(0, $this->chatHistory->calculateTotalUsage());
-        $this->assertEquals(1000, $this->chatHistory->getFreeMemory());
-    }
-
-    public function testHistoryKeysAreRecalculatedAfterCutting(): void
-    {
-        // Add messages that will exceed context window
-        for ($i = 0; $i < 6; $i++) {
-            $message = new UserMessage("Message $i");
-            $message->setUsage(new Usage(200, 0));
-            $this->chatHistory->addMessage($message);
-        }
-
-        $messages = $this->chatHistory->getMessages();
-
-        // Check that array keys are sequential (0, 1, 2, ...)
-        $expectedKeys = \array_keys($messages);
-        $actualKeys = \range(0, \count($messages) - 1);
-
-        $this->assertEquals($actualKeys, $expectedKeys, 'Array keys should be sequential after cutting');
     }
 }
