@@ -55,9 +55,7 @@ trait HandleStream
             // Avoid double saving due to the recursive call.
             $last = $this->resolveChatHistory()->getLastMessage();
             if ($response->getRole() !== $last->getRole()) {
-                $this->notify('message-saving', new MessageSaving($response));
-                $this->resolveChatHistory()->addMessage($response);
-                $this->notify('message-saved', new MessageSaved($response));
+                $this->fillChatHistory($response);
             }
 
             $this->notify('stream-stop');

@@ -49,9 +49,7 @@ trait HandleChat
                     new InferenceStop($this->resolveChatHistory()->getLastMessage(), $response)
                 );
 
-                $this->notify('message-saving', new MessageSaving($response));
-                $this->resolveChatHistory()->addMessage($response);
-                $this->notify('message-saved', new MessageSaved($response));
+                $this->fillChatHistory($response);
 
                 if ($response instanceof ToolCallMessage) {
                     $toolCallResult = $this->executeTools($response);
