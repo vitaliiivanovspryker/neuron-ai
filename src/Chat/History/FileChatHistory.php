@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NeuronAI\Chat\History;
 
-use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Exceptions\ChatHistoryException;
 
 class FileChatHistory extends AbstractChatHistory
@@ -38,19 +37,7 @@ class FileChatHistory extends AbstractChatHistory
         return $this->directory . \DIRECTORY_SEPARATOR . $this->prefix.$this->key.$this->ext;
     }
 
-    protected function storeMessage(Message $message): ChatHistoryInterface
-    {
-        $this->updateFile();
-        return $this;
-    }
-
-    public function removeOldMessages(int $skipFrom): ChatHistoryInterface
-    {
-        $this->updateFile();
-        return $this;
-    }
-
-    public function updateMessages(int $index): ChatHistoryInterface
+    public function setMessages(array $messages): ChatHistoryInterface
     {
         $this->updateFile();
         return $this;

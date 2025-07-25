@@ -27,10 +27,6 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
     ) {
     }
 
-    abstract protected function storeMessage(Message $message): ChatHistoryInterface;
-
-    abstract public function removeOldMessages(int $skipFrom): ChatHistoryInterface;
-
     abstract public function setMessages(array $messages): ChatHistoryInterface;
 
     abstract protected function clear(): ChatHistoryInterface;
@@ -38,9 +34,10 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
     public function addMessage(Message $message): ChatHistoryInterface
     {
         $this->history[] = $message;
-        $this->storeMessage($message);
 
         $this->trimHistory();
+
+        $this->setMessages($this->history);
 
         return $this;
     }
@@ -85,7 +82,6 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         $skipFrom = $this->findMaxFittingMessages();
 
         $this->history = \array_slice($this->history, $skipFrom);
-        $this->removeOldMessages($skipFrom);
 
         // Ensure valid message sequence
         $this->ensureValidMessageSequence();
@@ -160,7 +156,6 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         if ($firstUserIndex > 0) {
             // Remove messages before the first user message
             $this->history = \array_slice($this->history, $firstUserIndex);
-            $this->removeOldMessages($firstUserIndex);
         }
     }
 
@@ -172,7 +167,7 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         $result = [];
         $expectingRole = MessageRole::USER->value; // Should start with user
 
-        foreach ($this->history as $index => $message) {
+        foreach ($this->history as $message) {
             $messageRole = $message->getRole();
 
             // Tool result messages have a special case - they're user messages
@@ -198,7 +193,6 @@ abstract class AbstractChatHistory implements ChatHistoryInterface
         }
 
         $this->history = $result;
-        $this->setMessages($result);
     }
 
     public function jsonSerialize(): array

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NeuronAI\Chat\History;
 
-use NeuronAI\Chat\Messages\Message;
 use NeuronAI\Exceptions\ChatHistoryException;
 use PDO;
 
@@ -51,21 +50,10 @@ class SQLChatHistory extends AbstractChatHistory
         }
     }
 
-    protected function storeMessage(Message $message): ChatHistoryInterface
-    {
-        $this->updateTable();
-        return $this;
-    }
-
-    public function removeOldMessages(int $skipFrom): ChatHistoryInterface
-    {
-        $this->updateTable();
-        return $this;
-    }
-
     public function setMessages(array $messages): ChatHistoryInterface
     {
-        $this->updateTable();
+        $stmt = $this->pdo->prepare("UPDATE {$this->table} SET messages = :messages WHERE thread_id = :thread_id");
+        $stmt->execute(['thread_id' => $this->thread_id, 'messages' => \json_encode($this->jsonSerialize())]);
         return $this;
     }
 
@@ -74,12 +62,6 @@ class SQLChatHistory extends AbstractChatHistory
         $stmt = $this->pdo->prepare("DELETE FROM {$this->table} WHERE thread_id = :thread_id");
         $stmt->execute(['thread_id' => $this->thread_id]);
         return $this;
-    }
-
-    public function updateTable(): void
-    {
-        $stmt = $this->pdo->prepare("UPDATE {$this->table} SET messages = :messages WHERE thread_id = :thread_id");
-        $stmt->execute(['thread_id' => $this->thread_id, 'messages' => \json_encode($this->jsonSerialize())]);
     }
 
     protected function sanitizeTableName(string $tableName): string
