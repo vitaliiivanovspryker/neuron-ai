@@ -67,7 +67,6 @@ class SQLChatHistory extends AbstractChatHistory
 
     protected function sanitizeTableName(string $tableName): string
     {
-        // Remove any potential SQL injection characters
         $tableName = \trim($tableName);
 
         // Whitelist validation
