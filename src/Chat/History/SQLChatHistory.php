@@ -50,7 +50,7 @@ class SQLChatHistory extends AbstractChatHistory
                 'messages' => '[]'
             ]);
         } else {
-            $this->history = $this->deserializeMessages($history[0]['messages']);
+            $this->history = $this->deserializeMessages(\json_decode($history[0]['messages'], true));
         }
     }
 
