@@ -89,7 +89,7 @@ class SQLChatHistory extends AbstractChatHistory
         }
 
         // Format validation as backup
-        if (in_array(\preg_match('/^[a-zA-Z_]\w*$/', $tableName), [0, false], true)) {
+        if (\in_array(\preg_match('/^[a-zA-Z_]\w*$/', $tableName), [0, false], true)) {
             throw new ChatHistoryException('Invalid table name format');
         }
 
