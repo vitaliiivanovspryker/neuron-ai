@@ -150,14 +150,14 @@ Learn more about Monitoring in the [documentation](https://docs.neuron-ai.dev/ad
 
 ## Supported LLM Providers
 
-With NeuronAI, you can switch between LLM providers with just one line of code, without any impact on your agent implementation.
+With NeuronAI, you can switch between [LLM providers](https://docs.neuron-ai.dev/components/ai-provider) with just one line of code, without any impact on your agent implementation.
 Supported providers:
 
 - Anthropic
-- Ollama (also available as an [embeddings provider](https://docs.neuron-ai.dev/components/embeddings-provider#ollama))
-- OpenAI (also available as an [embeddings provider](https://docs.neuron-ai.dev/components/embeddings-provider#openai))
+- Ollama (also as an [embeddings provider](https://docs.neuron-ai.dev/components/embeddings-provider#ollama))
+- OpenAI (also as an [embeddings provider](https://docs.neuron-ai.dev/components/embeddings-provider#openai))
 - OpenAI on Azure
-- Gemini
+- Gemini (also as an [embeddings provider](https://docs.neuron-ai.dev/components/embeddings-provider#gemini))
 - HuggingFace
 - Mistral
 - Grok
