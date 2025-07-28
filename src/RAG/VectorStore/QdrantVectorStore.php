@@ -30,13 +30,17 @@ class QdrantVectorStore implements VectorStoreInterface
         ]);
     }
 
-    public function initialize(int $size, string $distance): void
+    public function initialize(int $size, string $distance, bool $override = false): void
     {
         $response = $this->client->get('exists')->getBody()->getContents();
         $response = \json_decode($response, true);
 
         if ($response['result']['exists']) {
-            return;
+            if ($override) {
+                $this->destroy();
+            } else {
+                return;
+            }
         }
 
         $this->client->put('', [
