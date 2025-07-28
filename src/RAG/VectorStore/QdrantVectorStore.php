@@ -40,9 +40,11 @@ class QdrantVectorStore implements VectorStoreInterface
         }
 
         $this->client->put('', [
-            'vectors' => [
-                'size' => $size,
-                'distance' => $distance,
+            RequestOptions::JSON => [
+                'vectors' => [
+                    'size' => $size,
+                    'distance' => $distance,
+                ],
             ],
         ]);
     }
