@@ -41,7 +41,7 @@ class MessageMapper implements MessageMapperInterface
     protected function mapMessage(Message $message): void
     {
         $payload = [
-            'role' => $message->getRole()/* === MessageRole::ASSISTANT->value ? MessageRole::MODEL->value : $message->getRole()*/,
+            'role' => $message->getRole() === MessageRole::ASSISTANT->value ? MessageRole::MODEL->value : $message->getRole(),
             'parts' => [
                 ['text' => $message->getContent()]
             ],
