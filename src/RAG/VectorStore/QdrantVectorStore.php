@@ -47,6 +47,11 @@ class QdrantVectorStore implements VectorStoreInterface
         ]);
     }
 
+    public function destroy(): void
+    {
+        $this->client->delete('');
+    }
+
     public function addDocument(Document $document): void
     {
         $this->client->put('points', [
