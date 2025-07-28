@@ -11,11 +11,11 @@ trait HandleStructured
     protected function sanitizeClassName(string $name): string
     {
         // Remove anonymous class markers and special characters
-        $name = preg_replace('/class@anonymous.*$/', 'anonymous', $name);
+        $name = \preg_replace('/class@anonymous.*$/', 'anonymous', $name);
         // Replace any non-alphanumeric characters with underscore
-        $name = preg_replace('/[^a-zA-Z0-9_-]/', '_', $name);
+        $name = \preg_replace('/[^a-zA-Z0-9_-]/', '_', $name);
         // Ensure it starts with a letter
-        if (preg_match('/^[^a-zA-Z]/', $name)) {
+        if (\preg_match('/^[^a-zA-Z]/', $name)) {
             $name = 'class_' . $name;
         }
         return $name;
