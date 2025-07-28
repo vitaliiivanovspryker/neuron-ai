@@ -8,19 +8,6 @@ use NeuronAI\Chat\Messages\Message;
 
 trait HandleStructured
 {
-    protected function sanitizeClassName(string $name): string
-    {
-        // Remove anonymous class markers and special characters
-        $name = \preg_replace('/class@anonymous.*$/', 'anonymous', $name);
-        // Replace any non-alphanumeric characters with underscore
-        $name = \preg_replace('/[^a-zA-Z0-9_-]/', '_', $name);
-        // Ensure it starts with a letter
-        if (\preg_match('/^[^a-zA-Z]/', $name)) {
-            $name = 'class_' . $name;
-        }
-        return $name;
-    }
-
     public function structured(
         array $messages,
         string $class,
@@ -41,5 +28,18 @@ trait HandleStructured
         ]);
 
         return $this->chat($messages);
+    }
+
+    protected function sanitizeClassName(string $name): string
+    {
+        // Remove anonymous class markers and special characters
+        $name = \preg_replace('/class@anonymous.*$/', 'anonymous', $name);
+        // Replace any non-alphanumeric characters with underscore
+        $name = \preg_replace('/[^a-zA-Z0-9_-]/', '_', (string) $name);
+        // Ensure it starts with a letter
+        if (\preg_match('/^[^a-zA-Z]/', (string) $name)) {
+            return 'class_' . $name;
+        }
+        return $name;
     }
 }
