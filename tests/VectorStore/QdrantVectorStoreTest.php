@@ -13,16 +13,25 @@ class QdrantVectorStoreTest extends TestCase
 {
     use CheckOpenPort;
 
+    public const SERVICE_PORT = 6333;
+    public const COLLECTION_NAME = 'neuron-ai';
+
+    public const VECTOR_DIMENSION = 3;
+    public const DISTANCE_METRIC = 'Cosine';
+
+    public const SOURCE_TYPE = 'manual';
+    public const SOURCE_NAME = 'manual';
+
     protected QdrantVectorStore $store;
 
     public function setUp(): void
     {
-        if (!$this->isPortOpen('127.0.0.1', 6333)) {
-            $this->markTestSkipped('Port 6333 is not open. Skipping test.');
+        if (!$this->isPortOpen('127.0.0.1', self::SERVICE_PORT)) {
+            $this->markTestSkipped(sprintf("Port %d is not open. Skipping test.", self::SERVICE_PORT));
         }
 
-        $this->store = new QdrantVectorStore('http://127.0.0.1:6333/collections/neuron-ai', '');
-        $this->store->initialize(3, 'Cosine', true);
+        $this->store = new QdrantVectorStore(sprintf("http://127.0.0.1:%d/collections/%s", self::SERVICE_PORT, self::COLLECTION_NAME));
+        $this->store->initialize(self::VECTOR_DIMENSION, self::DISTANCE_METRIC, true);
     }
 
     public function tearDown(): void
@@ -67,15 +76,19 @@ class QdrantVectorStoreTest extends TestCase
     public function test_delete_documents(): void
     {
         $document = new Document('Hello!');
+        $document->sourceType = self::SOURCE_TYPE;
+        $document->sourceName = self::SOURCE_NAME;
         $document->embedding = [1, 2, 3];
         $document->id = 1;
 
         $document2 = new Document('Hello 2!');
+        $document2->sourceType = self::SOURCE_TYPE;
+        $document2->sourceName = self::SOURCE_NAME;
         $document2->embedding = [3, 4, 5];
         $document2->id = 2;
 
         $this->store->addDocuments([$document, $document2]);
-        $this->store->deleteBySource('manual', 'manual');
+        $this->store->deleteBySource(self::SOURCE_TYPE, self::SOURCE_NAME);
 
         $results = $this->store->similaritySearch([1, 2, 3]);
         $this->assertCount(0, $results);
