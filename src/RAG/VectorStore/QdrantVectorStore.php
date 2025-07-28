@@ -60,22 +60,7 @@ class QdrantVectorStore implements VectorStoreInterface
 
     public function addDocument(Document $document): void
     {
-        $this->client->put('points', [
-            RequestOptions::JSON => [
-                'points' => [
-                    [
-                        'id' => $document->getId(),
-                        'payload' => [
-                            'content' => $document->getContent(),
-                            'sourceType' => $document->getSourceType(),
-                            'sourceName' => $document->getSourceName(),
-                            'metadata' => $document->metadata,
-                        ],
-                        'vector' => $document->getEmbedding(),
-                    ]
-                ]
-            ]
-        ]);
+        $this->addDocuments([$document]);
     }
 
     /**
