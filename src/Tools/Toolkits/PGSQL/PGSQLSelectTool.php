@@ -80,7 +80,7 @@ It looks like you are trying to run a write query using the read-only query tool
      *
      * @throws InvalidArgumentException if query contains write operations
      */
-    private function validateReadOnlyQuery(string $query): bool
+    protected function validateReadOnlyQuery(string $query): bool
     {
         if ($query === '') {
             return false;
@@ -113,7 +113,7 @@ It looks like you are trying to run a write query using the read-only query tool
         return $this->performAdditionalSecurityChecks($cleanQuery);
     }
 
-    private function removeComments(string $query): string
+    protected function removeComments(string $query): string
     {
         // Remove single-line comments (-- style)
         $query = \preg_replace('/--.*$/m', '', $query);
@@ -124,7 +124,7 @@ It looks like you are trying to run a write query using the read-only query tool
         return $query;
     }
 
-    private function performAdditionalSecurityChecks(string $query): bool
+    protected function performAdditionalSecurityChecks(string $query): bool
     {
         // Check for semicolon followed by potential write operations
         if (\preg_match('/;\s*(?!$)/i', $query)) {
@@ -160,7 +160,7 @@ It looks like you are trying to run a write query using the read-only query tool
     /**
      * Split query into individual statements
      */
-    private function splitStatements(string $query): array
+    protected function splitStatements(string $query): array
     {
         // Simple split on semicolons (this could be enhanced for more complex cases)
         return \array_filter(
@@ -174,7 +174,7 @@ It looks like you are trying to run a write query using the read-only query tool
      *
      * @return bool True if statement is valid read-only operation, false otherwise
      */
-    private function validateSingleStatement(string $statement): bool
+    protected function validateSingleStatement(string $statement): bool
     {
         $isAllowed = false;
         foreach ($this->allowedPatterns as $pattern) {

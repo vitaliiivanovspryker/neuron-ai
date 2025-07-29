@@ -35,7 +35,7 @@ and performance optimization. If you already know the database structure, you ca
         ]);
     }
 
-    private function getTables(): array
+    protected function getTables(): array
     {
         $whereClause = "WHERE t.table_schema = current_schema() AND t.table_type = 'BASE TABLE'";
         $params = [];
@@ -160,7 +160,7 @@ and performance optimization. If you already know the database structure, you ca
         return $tables;
     }
 
-    private function getTableRowCount(string $tableName): string
+    protected function getTableRowCount(string $tableName): string
     {
         try {
             $stmt = $this->pdo->prepare("
@@ -198,7 +198,7 @@ and performance optimization. If you already know the database structure, you ca
         return $type;
     }
 
-    private function getRelationships(): array
+    protected function getRelationships(): array
     {
         $whereClause = "WHERE tc.table_schema = current_schema()";
         $params = [];
@@ -246,7 +246,7 @@ and performance optimization. If you already know the database structure, you ca
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    private function getIndexes(): array
+    protected function getIndexes(): array
     {
         $whereClause = "WHERE schemaname = current_schema() AND indexname NOT LIKE '%_pkey'";
         $params = [];
@@ -302,7 +302,7 @@ and performance optimization. If you already know the database structure, you ca
         return $indexes;
     }
 
-    private function extractIndexType(string $indexDef): string
+    protected function extractIndexType(string $indexDef): string
     {
         if (\str_contains($indexDef, 'USING gin')) {
             return 'GIN';
@@ -321,7 +321,7 @@ and performance optimization. If you already know the database structure, you ca
 
     }
 
-    private function getConstraints(): array
+    protected function getConstraints(): array
     {
         $whereClause = "WHERE table_schema = current_schema() AND constraint_type IN ('UNIQUE', 'CHECK')";
         $params = [];
@@ -348,7 +348,7 @@ and performance optimization. If you already know the database structure, you ca
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    private function formatForLLM(array $structure): string
+    protected function formatForLLM(array $structure): string
     {
         $output = "# PostgreSQL Database Schema Analysis\n\n";
         $output .= "This PostgreSQL database contains " . \count($structure['tables']) . " tables with the following structure:\n\n";
@@ -449,7 +449,7 @@ and performance optimization. If you already know the database structure, you ca
         return $output;
     }
 
-    private function addCommonPatterns(string &$output, array $tables): void
+    protected function addCommonPatterns(string &$output, array $tables): void
     {
         // Find tables with timestamps for temporal queries
         foreach ($tables as $table) {
