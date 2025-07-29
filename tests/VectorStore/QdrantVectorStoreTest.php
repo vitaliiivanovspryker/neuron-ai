@@ -27,10 +27,10 @@ class QdrantVectorStoreTest extends TestCase
     public function setUp(): void
     {
         if (!$this->isPortOpen('127.0.0.1', self::SERVICE_PORT)) {
-            $this->markTestSkipped(sprintf("Port %d is not open. Skipping test.", self::SERVICE_PORT));
+            $this->markTestSkipped(\sprintf("Port %d is not open. Skipping test.", self::SERVICE_PORT));
         }
 
-        $this->store = new QdrantVectorStore(sprintf("http://127.0.0.1:%d/collections/%s", self::SERVICE_PORT, self::COLLECTION_NAME));
+        $this->store = new QdrantVectorStore(\sprintf("http://127.0.0.1:%d/collections/%s", self::SERVICE_PORT, self::COLLECTION_NAME));
         $this->store->initialize(self::VECTOR_DIMENSION, self::DISTANCE_METRIC, true);
     }
 
