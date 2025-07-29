@@ -99,7 +99,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
     public function addDocuments(array $documents): VectorStoreInterface
     {
         if ($documents === []) {
-            return;
+            return $this;
         }
 
         if (empty($documents[0]->getEmbedding())) {

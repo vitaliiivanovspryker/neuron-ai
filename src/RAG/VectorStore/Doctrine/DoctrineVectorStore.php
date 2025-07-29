@@ -35,7 +35,7 @@ class DoctrineVectorStore implements VectorStoreInterface
         $this->doctrineVectorStoreType->addCustomisationsTo($this->entityManager);
     }
 
-    public function addDocument(Document $document): void
+    public function addDocument(Document $document): VectorStoreInterface
     {
         if ($document->embedding === []) {
             throw new \RuntimeException('document embedding must be set before adding a document');
@@ -43,21 +43,23 @@ class DoctrineVectorStore implements VectorStoreInterface
 
         $this->persistDocument($document);
         $this->entityManager->flush();
+        return $this;
     }
 
-    public function addDocuments(array $documents): void
+    public function addDocuments(array $documents): VectorStoreInterface
     {
         if ($documents === []) {
-            return;
+            return $this;;
         }
         foreach ($documents as $document) {
             $this->persistDocument($document);
         }
 
         $this->entityManager->flush();
+        return $this;
     }
 
-    public function deleteBySource(string $sourceType, string $sourceName): void
+    public function deleteBySource(string $sourceType, string $sourceName): VectorStoreInterface
     {
         throw new VectorStoreException("Delete by source not implemented in ".self::class);
     }
