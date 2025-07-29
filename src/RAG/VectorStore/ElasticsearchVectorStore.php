@@ -67,7 +67,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
     /**
      * @throws \Exception
      */
-    public function addDocument(Document $document): void
+    public function addDocument(Document $document): VectorStoreInterface
     {
         if ($document->embedding === []) {
             throw new \Exception('Document embedding must be set before adding a document');
@@ -87,6 +87,8 @@ class ElasticsearchVectorStore implements VectorStoreInterface
         ]);
 
         $this->client->indices()->refresh(['index' => $this->index]);
+
+        return $this;
     }
 
     /**
@@ -94,7 +96,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
      *
      * @throws \Exception
      */
-    public function addDocuments(array $documents): void
+    public function addDocuments(array $documents): VectorStoreInterface
     {
         if ($documents === []) {
             return;
@@ -126,9 +128,10 @@ class ElasticsearchVectorStore implements VectorStoreInterface
         }
         $this->client->bulk($params);
         $this->client->indices()->refresh(['index' => $this->index]);
+        return $this;
     }
 
-    public function deleteBySource(string $sourceType, string $sourceName): void
+    public function deleteBySource(string $sourceType, string $sourceName): VectorStoreInterface
     {
         $this->client->deleteByQuery([
             'index' => $this->index,
@@ -136,6 +139,7 @@ class ElasticsearchVectorStore implements VectorStoreInterface
             'body' => []
         ]);
         $this->client->indices()->refresh(['index' => $this->index]);
+        return $this;
     }
 
     /**

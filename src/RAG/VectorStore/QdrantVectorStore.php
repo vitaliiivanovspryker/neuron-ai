@@ -20,7 +20,7 @@ class QdrantVectorStore implements VectorStoreInterface
     ) {
         $headers = ['Content-Type' => 'application/json'];
 
-        if ($this->key) {
+        if ($this->key !== null && $this->key !== '' && $this->key !== '0') {
             $headers['api-key'] = $this->key;
         }
 
@@ -58,9 +58,12 @@ class QdrantVectorStore implements VectorStoreInterface
         $this->client->delete('');
     }
 
-    public function addDocument(Document $document): void
+    /**
+     * @throws GuzzleException
+     */
+    public function addDocument(Document $document): VectorStoreInterface
     {
-        $this->addDocuments([$document]);
+        return $this->addDocuments([$document]);
     }
 
     /**
@@ -69,7 +72,7 @@ class QdrantVectorStore implements VectorStoreInterface
      * @param Document[] $documents
      * @throws GuzzleException
      */
-    public function addDocuments(array $documents): void
+    public function addDocuments(array $documents): VectorStoreInterface
     {
         $points = \array_map(fn (Document $document): array => [
             'id' => $document->getId(),
@@ -85,12 +88,14 @@ class QdrantVectorStore implements VectorStoreInterface
         $this->client->put('points', [
             RequestOptions::JSON => ['points' => $points]
         ]);
+
+        return $this;
     }
 
     /**
      * @throws GuzzleException
      */
-    public function deleteBySource(string $sourceType, string $sourceName): void
+    public function deleteBySource(string $sourceType, string $sourceName): VectorStoreInterface
     {
         $this->client->post('points/delete', [
             RequestOptions::JSON => [
@@ -113,6 +118,8 @@ class QdrantVectorStore implements VectorStoreInterface
                 ]
             ]
         ]);
+
+        return $this;
     }
 
     public function similaritySearch(array $embedding): iterable

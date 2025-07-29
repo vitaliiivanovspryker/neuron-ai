@@ -18,19 +18,22 @@ class MemoryVectorStore implements VectorStoreInterface
     {
     }
 
-    public function addDocument(Document $document): void
+    public function addDocument(Document $document): VectorStoreInterface
     {
         $this->documents[] = $document;
+        return $this;
     }
 
-    public function addDocuments(array $documents): void
+    public function addDocuments(array $documents): VectorStoreInterface
     {
         $this->documents = \array_merge($this->documents, $documents);
+        return $this;
     }
 
-    public function deleteBySource(string $sourceType, string $sourceName): void
+    public function deleteBySource(string $sourceType, string $sourceName): VectorStoreInterface
     {
         $this->documents = \array_filter($this->documents, fn (Document $document): bool => $document->getSourceType() !== $sourceType || $document->getSourceName() !== $sourceName);
+        return $this;
     }
 
     public function similaritySearch(array $embedding): array

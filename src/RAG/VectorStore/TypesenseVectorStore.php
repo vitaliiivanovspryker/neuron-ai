@@ -69,7 +69,7 @@ class TypesenseVectorStore implements VectorStoreInterface
         }
     }
 
-    public function addDocument(Document $document): void
+    public function addDocument(Document $document): VectorStoreInterface
     {
         if ($document->getEmbedding() === []) {
             throw new \Exception('document embedding must be set before adding a document');
@@ -85,13 +85,17 @@ class TypesenseVectorStore implements VectorStoreInterface
             'sourceName' => $document->getSourceName(),
             ...$document->metadata,
         ]);
+
+        return $this;
     }
 
-    public function deleteBySource(string $sourceType, string $sourceName): void
+    public function deleteBySource(string $sourceType, string $sourceName): VectorStoreInterface
     {
         $this->client->collections[$this->collection]->documents->delete([
             "filter_by" => "sourceType:={$sourceType} && sourceName:={$sourceName}",
         ]);
+
+        return $this;
     }
 
     /**
@@ -102,10 +106,10 @@ class TypesenseVectorStore implements VectorStoreInterface
      * @throws \JsonException
      * @throws TypesenseClientError
      */
-    public function addDocuments(array $documents): void
+    public function addDocuments(array $documents): VectorStoreInterface
     {
         if ($documents === []) {
-            return;
+            return $this;
         }
 
         if (empty($documents[0]->getEmbedding())) {
@@ -129,6 +133,8 @@ class TypesenseVectorStore implements VectorStoreInterface
         $ndjson = \implode("\n", $lines);
 
         $this->client->collections[$this->collection]->documents->import($ndjson);
+
+        return $this;
     }
 
     public function similaritySearch(array $embedding): array

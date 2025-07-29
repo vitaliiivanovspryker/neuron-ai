@@ -35,12 +35,12 @@ class MeilisearchVectorStore implements VectorStoreInterface
         }
     }
 
-    public function addDocument(Document $document): void
+    public function addDocument(Document $document): VectorStoreInterface
     {
-        $this->addDocuments([$document]);
+        return $this->addDocuments([$document]);
     }
 
-    public function addDocuments(array $documents): void
+    public function addDocuments(array $documents): VectorStoreInterface
     {
         $this->client->put('documents', [
             RequestOptions::JSON => \array_map(fn (Document $document) => [
@@ -57,15 +57,19 @@ class MeilisearchVectorStore implements VectorStoreInterface
                 ]
             ], $documents),
         ]);
+
+        return $this;
     }
 
-    public function deleteBySource(string $sourceType, string $sourceName): void
+    public function deleteBySource(string $sourceType, string $sourceName): VectorStoreInterface
     {
         $this->client->post('documents/delete', [
             RequestOptions::JSON => [
                 'filter' => "sourceType = {$sourceType} AND sourceName = {$sourceName}",
             ]
         ]);
+
+        return $this;
     }
 
     public function similaritySearch(array $embedding): iterable

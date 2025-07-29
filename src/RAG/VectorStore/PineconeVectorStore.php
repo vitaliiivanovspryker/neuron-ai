@@ -37,12 +37,12 @@ class PineconeVectorStore implements VectorStoreInterface
         ]);
     }
 
-    public function addDocument(Document $document): void
+    public function addDocument(Document $document): VectorStoreInterface
     {
-        $this->addDocuments([$document]);
+        return $this->addDocuments([$document]);
     }
 
-    public function addDocuments(array $documents): void
+    public function addDocuments(array $documents): VectorStoreInterface
     {
         $this->client->post("vectors/upsert", [
             RequestOptions::JSON => [
@@ -59,9 +59,11 @@ class PineconeVectorStore implements VectorStoreInterface
                 ], $documents)
             ]
         ]);
+
+        return $this;
     }
 
-    public function deleteBySource(string $sourceType, string $sourceName): void
+    public function deleteBySource(string $sourceType, string $sourceName): VectorStoreInterface
     {
         $this->client->post("vectors/delete", [
             RequestOptions::JSON => [
@@ -72,6 +74,8 @@ class PineconeVectorStore implements VectorStoreInterface
                 ]
             ]
         ]);
+
+        return $this;
     }
 
     public function similaritySearch(array $embedding): iterable

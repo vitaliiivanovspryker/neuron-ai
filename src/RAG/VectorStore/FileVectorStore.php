@@ -25,19 +25,20 @@ class FileVectorStore implements VectorStoreInterface
         return $this->directory . \DIRECTORY_SEPARATOR . $this->name.$this->ext;
     }
 
-    public function addDocument(Document $document): void
+    public function addDocument(Document $document): VectorStoreInterface
     {
-        $this->addDocuments([$document]);
+        return $this->addDocuments([$document]);
     }
 
-    public function addDocuments(array $documents): void
+    public function addDocuments(array $documents): VectorStoreInterface
     {
         $this->appendToFile(
             \array_map(fn (Document $document): array => $document->jsonSerialize(), $documents)
         );
+        return $this;
     }
 
-    public function deleteBySource(string $sourceType, string $sourceName): void
+    public function deleteBySource(string $sourceType, string $sourceName): VectorStoreInterface
     {
         // Temporary file
         $tmpFile = $this->directory . \DIRECTORY_SEPARATOR . $this->name.'_tmp'.$this->ext;
@@ -65,6 +66,8 @@ class FileVectorStore implements VectorStoreInterface
         if (!\rename($tmpFile, $this->getFilePath())) {
             throw new VectorStoreException(self::class." failed to replace original file.");
         }
+
+        return $this;
     }
 
     public function similaritySearch(array $embedding): array

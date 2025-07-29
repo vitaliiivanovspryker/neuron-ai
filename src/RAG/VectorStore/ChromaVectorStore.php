@@ -29,12 +29,12 @@ class ChromaVectorStore implements VectorStoreInterface
         ]);
     }
 
-    public function addDocument(Document $document): void
+    public function addDocument(Document $document): VectorStoreInterface
     {
-        $this->addDocuments([$document]);
+        return $this->addDocuments([$document]);
     }
 
-    public function deleteBySource(string $sourceType, string $sourceName): void
+    public function deleteBySource(string $sourceType, string $sourceName): VectorStoreInterface
     {
         $this->getClient()->post('delete', [
             RequestOptions::JSON => [
@@ -44,13 +44,17 @@ class ChromaVectorStore implements VectorStoreInterface
                 ]
             ]
         ]);
+
+        return $this;
     }
 
-    public function addDocuments(array $documents): void
+    public function addDocuments(array $documents): VectorStoreInterface
     {
         $this->getClient()->post('upsert', [
             RequestOptions::JSON => $this->mapDocuments($documents),
-        ])->getBody()->getContents();
+        ]);
+
+        return $this;
     }
 
     public function similaritySearch(array $embedding): iterable

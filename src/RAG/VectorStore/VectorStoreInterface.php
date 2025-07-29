@@ -8,14 +8,14 @@ use NeuronAI\RAG\Document;
 
 interface VectorStoreInterface
 {
-    public function addDocument(Document $document): void;
+    public function addDocument(Document $document): VectorStoreInterface;
 
     /**
      * @param  Document[]  $documents
      */
-    public function addDocuments(array $documents): void;
+    public function addDocuments(array $documents): VectorStoreInterface;
 
-    public function deleteBySource(string $sourceType, string $sourceName): void;
+    public function deleteBySource(string $sourceType, string $sourceName): VectorStoreInterface;
 
     /**
      * Return docs most similar to the embedding.
