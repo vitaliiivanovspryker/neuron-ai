@@ -18,15 +18,12 @@ class QdrantVectorStore implements VectorStoreInterface
         protected ?string $key = null,
         protected int $topK = 4,
     ) {
-        $headers = ['Content-Type' => 'application/json'];
-
-        if ($this->key !== null && $this->key !== '' && $this->key !== '0') {
-            $headers['api-key'] = $this->key;
-        }
-
         $this->client = new Client([
             'base_uri' => \trim($this->collectionUrl, '/').'/',
-            'headers' => $headers,
+            'headers' => [
+                'Content-Type' => 'application/json',
+                ...(!\is_null($this->key) && $this->key !== '' ? ['api-key' => $this->key] : [])
+            ],
         ]);
     }
 

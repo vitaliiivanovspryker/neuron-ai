@@ -49,7 +49,8 @@ class DoctrineVectorStore implements VectorStoreInterface
     public function addDocuments(array $documents): VectorStoreInterface
     {
         if ($documents === []) {
-            return $this;;
+            return $this;
+            ;
         }
         foreach ($documents as $document) {
             $this->persistDocument($document);
