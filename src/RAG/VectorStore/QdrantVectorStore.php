@@ -15,36 +15,52 @@ class QdrantVectorStore implements VectorStoreInterface
 
     public function __construct(
         protected string $collectionUrl, // like http://localhost:6333/collections/neuron-ai/
-        protected string $key,
+        protected ?string $key = null,
         protected int $topK = 4,
     ) {
+        $headers = ['Content-Type' => 'application/json'];
+
+        if ($this->key) {
+            $headers['api-key'] = $this->key;
+        }
+
         $this->client = new Client([
             'base_uri' => \trim($this->collectionUrl, '/').'/',
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'api-key' => $this->key,
-            ]
+            'headers' => $headers,
         ]);
+    }
+
+    public function initialize(int $size, string $distance, bool $override = false): void
+    {
+        $response = $this->client->get('exists')->getBody()->getContents();
+        $response = \json_decode($response, true);
+
+        if ($response['result']['exists']) {
+            if ($override) {
+                $this->destroy();
+            } else {
+                return;
+            }
+        }
+
+        $this->client->put('', [
+            RequestOptions::JSON => [
+                'vectors' => [
+                    'size' => $size,
+                    'distance' => $distance,
+                ],
+            ],
+        ]);
+    }
+
+    public function destroy(): void
+    {
+        $this->client->delete('');
     }
 
     public function addDocument(Document $document): void
     {
-        $this->client->put('points', [
-            RequestOptions::JSON => [
-                'points' => [
-                    [
-                        'id' => $document->getId(),
-                        'payload' => [
-                            'content' => $document->getContent(),
-                            'sourceType' => $document->getSourceType(),
-                            'sourceName' => $document->getSourceName(),
-                            'metadata' => $document->metadata,
-                        ],
-                        'vector' => $document->getEmbedding(),
-                    ]
-                ]
-            ]
-        ]);
+        $this->addDocuments([$document]);
     }
 
     /**
