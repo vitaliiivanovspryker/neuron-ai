@@ -201,7 +201,6 @@ and performance optimization. If you already know the database structure, you ca
     private function getRelationships(): array
     {
         $whereClause = "WHERE tc.table_schema = current_schema()";
-        $paramIndex = 1;
         $params = [];
 
         if ($this->tables !== null && $this->tables !== []) {
@@ -210,12 +209,13 @@ and performance optimization. If you already know the database structure, you ca
                 $placeholders[] = '?';
                 $params[] = $table;
             }
-            $additionalPlaceholders = [];
-            foreach ($this->tables as $table) {
-                $additionalPlaceholders[] = '$' . $paramIndex++;
-                $params[] = $table;
-            }
-            $whereClause .= " AND (tc.table_name = ANY(ARRAY[" . \implode(',', $placeholders) . "]) OR ccu.table_name = ANY(ARRAY[" . \implode(',', $additionalPlaceholders) . "]))";
+
+            $params = [
+                ...$params,
+                ...$params,
+            ];
+
+            $whereClause .= " AND (tc.table_name = ANY(ARRAY[" . \implode(',', $placeholders) . "]) OR ccu.table_name = ANY(ARRAY[" . \implode(',', $placeholders) . "]))";
         }
 
         $stmt = $this->pdo->prepare("
