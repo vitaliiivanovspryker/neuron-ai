@@ -1,5 +1,4 @@
-# Fork
-# Create Full-Featured AI Agents As Standalone Components In Any PHP Application
+# Create Full-Featured AI Agents As Standalone Components In Any PHP Application (fork with AWS bedrock support)
 
 [![Latest Stable Version](https://poser.pugx.org/inspector-apm/neuron-ai/v/stable)](https://packagist.org/packages/inspector-apm/neuron-ai)
 [![Total Downloads](http://poser.pugx.org/inspector-apm/neuron-ai/downloads)](https://packagist.org/packages/inspector-apm/neuron-ai)
@@ -44,8 +43,20 @@ https://docs.neuron-ai.dev/resources/guides-and-tutorials.
 
 Install the latest version of the package:
 
+`composer.json`
+```json
+{
+    "repositories": {
+        "neuron-ai": {
+            "type": "git",
+            "url": "https://github.com/vitaliiivanovspryker/neuron-ai.git"
+        }
+    }
+}
 ```
-composer require inspector-apm/neuron-ai
+
+```
+composer require vitaliiivanovspryker/neuron-ai:dev-main --prefer-source
 ```
 
 <a name="create">

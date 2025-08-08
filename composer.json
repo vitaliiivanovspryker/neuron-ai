@@ -1,12 +1,16 @@
 {
     "name": "vitaliiivanovspryker/neuron-ai",
     "type": "library",
-    "description": "The AI Agent Development Kit for PHP.",
+    "description": "The AI Agent Development Kit for PHP (fork with AWS Bedrock support).",
     "minimum-stability": "stable",
     "authors": [
         {
             "name": "Valerio Barbera",
             "email": "valerio@inspector.dev"
+        },
+        {
+            "name": "Vitalii Ivanov",
+            "email": "vitalii.ivanov@spryker.com"
         }
     ],
     "license": "MIT",
