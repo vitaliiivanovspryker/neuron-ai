@@ -57,6 +57,7 @@ Install the latest version of the package:
 
 ```
 composer require vitaliiivanovspryker/neuron-ai:dev-main --prefer-source
+composer require aws/aws-sdk-php
 ```
 
 <a name="create">
@@ -173,6 +174,7 @@ Supported providers:
 - HuggingFace
 - Mistral
 - Grok
+- AWS BedrockRuntime (`aws/aws-sdk-php` package is required)
 
 <a name="tools">
 
